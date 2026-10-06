@@ -1,0 +1,396 @@
+{
+ "checks": [
+  {
+   "topic": "license/Isaac Sim SaaS",
+   "claim": "Isaac Sim source is Apache-2.0, but delivering Isaac Sim (with Kit) as a service to third parties, or redistributing it, requires NVIDIA AI Enterprise. Selling only outputs (datasets, videos) does not.",
+   "verdict": "unverifiable",
+   "evidence": "The license FAQ (docs.isaacsim.omniverse.nvidia.com) and the nvidia.com agreement page are both egress-blocked. What I could verify: the GitHub LICENSE preamble says the repo is Apache-2.0, but 'building or using the software requires additional components' (Kit SDK, 3D models, textures) under the 'Isaac Sim Additional Software and Materials License'. PyPI isaacsim 6.1.0.0 (2026-09-09) is classified 'Other/Proprietary License (NVIDIA Proprietary Software)'. The specific NVAIE-for-SaaS clause and the outputs carve-out could not be read from any primary source.",
+   "source": "https://github.com/isaac-sim/IsaacSim/blob/develop/LICENSE ; https://pypi.org/project/isaacsim/#history",
+   "corrected_statement": "Confirmed: Isaac Sim runtime depends on proprietary NVIDIA components. Unverified: that NVAIE is the specific instrument required for SaaS and that output-only sales are exempt. Get written confirmation from NVIDIA before choosing an architecture."
+  },
+  {
+   "topic": "license/Isaac Lab pip wheel",
+   "claim": "Isaac Lab is BSD-3 (isaaclab_mimic Apache-2.0); the PyPI isaacsim/isaaclab wheels are labeled 'NVIDIA Proprietary Software'.",
+   "verdict": "confirmed",
+   "evidence": "PyPI JSON for isaaclab 2.3.2.post1 (2026-02-11) shows license 'NVIDIA Proprietary Software' with the classifier 'License :: Other/Proprietary License'. The GitHub README says BSD-3 for the framework and Apache-2.0 for isaaclab_mimic, and adds that 'full-featured workflows (PhysX, RTX rendering, ROS, URDF/MJCF importers) require Isaac Sim, which includes components under proprietary licensing terms.'",
+   "source": "https://pypi.org/pypi/isaaclab/json ; https://github.com/isaac-sim/IsaacLab",
+   "corrected_statement": "Build from the BSD-3 GitHub source, not the proprietary-labeled pip wheel, if you need clean licensing."
+  },
+  {
+   "topic": "license/ovphysx",
+   "claim": "(platform_arch) ovphysx is BSD-3-Clause. (robot_physics) ovphysx is 'LicenseRef-NVIDIA-Omniverse', not BSD.",
+   "verdict": "corrected",
+   "evidence": "Both are partly wrong. The PhysX repo's ovphysx/LICENSE.txt is Apache-2.0, and the ovphysx README says source is under 'Apache License 2.0' while 'Pre-built binaries' are 'distributed under the NVIDIA Omniverse License'. PyPI ovphysx 0.6.3 (2026-09-16, '3 - Alpha') declares LicenseRef-NVIDIA-Omniverse. It also runs on ovstage, which is LicenseRef-NvidiaProprietary on PyPI (0.2.1, 2026-10-05).",
+   "source": "https://github.com/NVIDIA-Omniverse/PhysX/tree/main/ovphysx ; https://pypi.org/project/ovphysx/ ; https://pypi.org/pypi/ovstage/json",
+   "corrected_statement": "ovphysx source is Apache-2.0. The pip binaries (and the ovstage dependency) are proprietary NVIDIA Omniverse-licensed. 'Kit-less' does not mean 'license-free'."
+  },
+  {
+   "topic": "license/ovrtx",
+   "claim": "ovrtx is proprietary (NVIDIA SLA + Product-Specific Terms for NVIDIA AI Products), alpha.",
+   "verdict": "confirmed",
+   "evidence": "PyPI ovrtx 0.5.1.385782 was released 2026-10-06, status '3 - Alpha', license LicenseRef-NvidiaProprietary. The GitHub README cites the NVIDIA Software License Agreement plus Product Specific Terms for NVIDIA AI Products, says the repo is not open to contributions, and requires an 'RTX-capable GPU'. The first PyPI build was 0.0.0a0 on 2025-12-12 and 0.1.0 on 2026-02-13.",
+   "source": "https://pypi.org/project/ovrtx/ ; https://github.com/NVIDIA-Omniverse/ovrtx"
+  },
+  {
+   "topic": "license/PhysX SDK",
+   "claim": "The PhysX SDK, including full GPU source, has been BSD-3 since PhysX 5.6 (April 2025); the latest SDK is 5.11.0.",
+   "verdict": "corrected",
+   "evidence": "physx/README.md now says 'PhysX is licensed under the Apache License 2.0' (copyright 2008-2026), and physx/LICENSE.md is Apache-2.0. Only the repo-root LICENSE.md is still BSD-3 (2008-2025). GPU source folders exist (gpusolver, gpunarrowphase, gpusimulationcontroller, gpuarticulation, cudamanager), but the README says the distribution 'downloads binary content, such as the PhysX GPU binaries ... on demand'. The CHANGELOG lists v5.11.0 as latest. The April 2025 open-sourcing date was not verifiable (cgchannel blocked).",
+   "source": "https://raw.githubusercontent.com/NVIDIA-Omniverse/PhysX/main/physx/README.md ; https://raw.githubusercontent.com/NVIDIA-Omniverse/PhysX/main/LICENSE.md ; https://github.com/NVIDIA-Omniverse/PhysX/tree/main/physx/source",
+   "corrected_statement": "The PhysX SDK 5.11 core is Apache-2.0 (permissive, with patent grant and NOTICE duties) and GPU source is in the repo. The repo root is still BSD-3."
+  },
+  {
+   "topic": "engine status/Newton",
+   "claim": "Newton 1.0.0 released 2026-03-10; latest v1.6.1 on 2026-10-05; Apache-2.0; Linux Foundation; started by Disney Research, Google DeepMind and NVIDIA. (market_competition: v1.0.0 Apr 13, 2026. training: PyPI newton-physics 1.0.0 on 2026-02-27.)",
+   "verdict": "confirmed",
+   "evidence": "PyPI 'newton' history: 1.0.0 Mar 10, 1.1.0 Apr 13, 1.2.0 May 12, 1.3.0 Jun 11, 1.4.0 Jul 16, 1.5.0 Aug 11, 1.6.0 Sep 10, 1.6.1 Oct 5, 2026. Status is Production/Stable; license Apache-2.0. The GitHub README confirms LF governance and the three founders, with about 5.7k stars. The 'newton-physics' PyPI 1.0.0 (2026-02-27) is a dead package name marked 'Development Status :: 7 - Inactive'.",
+   "source": "https://pypi.org/project/newton/ ; https://github.com/newton-physics/newton ; https://pypi.org/pypi/newton-physics/json",
+   "corrected_statement": "Newton 1.0.0 is from 2026-03-10; Apr 13, 2026 was 1.1.0. Install 'newton', not the inactive 'newton-physics'."
+  },
+  {
+   "topic": "hardware/Newton+Warp driver floor",
+   "claim": "Newton requires an NVIDIA GPU, Maxwell or newer, driver 545+.",
+   "verdict": "corrected",
+   "evidence": "The Newton README still says 'NVIDIA GPU (Maxwell or newer), driver 545 or newer (CUDA 12)'. But PyPI warp-lang 1.18.0 (2026-10-05), Newton's core dependency, says 'Minimum GPU architecture: Turing (sm_75)', 'Minimum driver: R580-series', with PyPI wheels built on CUDA Toolkit 13.4. macOS is CPU-only.",
+   "source": "https://github.com/newton-physics/newton ; https://pypi.org/project/warp-lang/",
+   "corrected_statement": "With current Warp wheels, plan for Turing or newer GPUs and R580+ drivers (CUDA 13). Check that cloud and Korean-CSP GPU images ship R580+ drivers."
+  },
+  {
+   "topic": "engine capability/Newton solvers",
+   "claim": "Newton solvers are Featherstone, MuJoCo, SemiImplicit, XPBD, Kamino, VBD, Style3D and ImplicitMPM. Only Featherstone and SemiImplicit are differentiable (basic). Only Featherstone and MuJoCo support generalized-coordinate articulations.",
+   "verdict": "confirmed",
+   "evidence": "docs/solvers/index.rst lists exactly these 8 solvers. Differentiability is '🟨 basic' for Featherstone and SemiImplicit only. Generalized coordinates are '✅' for Featherstone and MuJoCo only. VBD has full deformables; XPBD soft bodies are experimental.",
+   "source": "https://raw.githubusercontent.com/newton-physics/newton/main/docs/solvers/index.rst"
+  },
+  {
+   "topic": "engine capability/Newton determinism",
+   "claim": "Newton v1.4.0 added deterministic execution paths for bit-exact repeated rollouts, plus coupled solvers.",
+   "verdict": "confirmed",
+   "evidence": "The v1.4.0 release (Jul 16, 2026) offers 'Deterministic and portable execution' and lets XPBD, SemiImplicit, Featherstone, VBD and MuJoCo solvers 'opt into deterministic kernel paths for bit-exact repeated rollouts'. It also adds an experimental SolverCoupled composing MuJoCo, Kamino, VBD, XPBD and MPM, and reports 15-26% faster batched MuJoCo. v1.6.0 reports hydroelastic contact 33-37% faster. Kamino is still 'Experimental' in 1.5 and 1.6.",
+   "source": "https://github.com/newton-physics/newton/releases/tag/v1.4.0 ; https://github.com/newton-physics/newton/releases.atom"
+  },
+  {
+   "topic": "engine capability/MJWarp limits",
+   "claim": "MJWarp is not differentiable, is non-deterministic on GPU, uses float32, and struggles with single connected mechanisms above about 60 DoF; MJX exposes it as impl='warp'.",
+   "verdict": "confirmed",
+   "evidence": "MJWarp docs: 'not currently differentiable'. Determinism: 'No... ordering or small numerical differences'. It uses floats instead of doubles. 'Improving performance for single connected mechanisms beyond ~60 DoFs remains an active priority.' MJX supports impl='warp'. PyPI mujoco-warp 3.15.0 (2026-10-05) is still '3 - Alpha'.",
+   "source": "https://raw.githubusercontent.com/google-deepmind/mujoco/main/doc/mjwarp/index.rst ; https://pypi.org/project/mujoco-warp/"
+  },
+  {
+   "topic": "engine status/MuJoCo",
+   "claim": "MuJoCo Warp was officially released with MuJoCo 3.5.0 (2026-02-12), which added a system-identification toolbox. 3.14 added IPC flex contact; 3.15 (2026-10-05) added Stable Neo-Hookean flex.",
+   "verdict": "confirmed",
+   "evidence": "The changelog entry for Version 3.5.0 (February 12, 2026) says 'MuJoCo Warp is now officially released' and 'Added a new System Identification toolbox'. Release feed: 3.14.0 (2026-09-22) added an experimental IPC penetration-free flex contact mode; 3.15.0 (2026-10-05) added experimental Stable Neo-Hookean elasticity. PyPI: 3.11 Jul 28, 3.12 Aug 20, 3.13 Sep 9, 3.14 Sep 22, 3.15 Oct 5, 2026.",
+   "source": "https://raw.githubusercontent.com/google-deepmind/mujoco/main/doc/changelog.rst ; https://github.com/google-deepmind/mujoco/releases.atom ; https://pypi.org/pypi/mujoco/json"
+  },
+  {
+   "topic": "benchmark/MJWarp nightly",
+   "claim": "MJWarp on RTX PRO 6000 Blackwell: humanoid 7.95M, Franka 36.97M, G1 flat/heightfield 3.79M/2.49M, ALOHA pot 3.37M, ALOHA clutter 0.46M steps/s.",
+   "verdict": "confirmed",
+   "evidence": "PR #1748 (2026-10-05, RTX PRO 6000 Blackwell) lists Humanoid 7,950,988; Franka Panda 36,980,338; ALOHA Pot 3,371,503; MyoArm 2,089,475; G1 Flat 3,760,301; G1 Heightfield 2,471,225; Three Humanoids 1,842,400; ALOHA Clutter 452,105. These are physics-only steps/s, the number of worlds is not stated, and there is no rendering, policy inference or training.",
+   "source": "https://github.com/google-deepmind/mujoco_warp/pull/1748",
+   "corrected_statement": "The values are roughly right, but they are sim-only throughput. Do not compare them to Isaac Lab 'step+inference+train' FPS or use them as RL wall-clock estimates."
+  },
+  {
+   "topic": "benchmark/MJWarp vs MJX speedups",
+   "claim": "MuJoCo Warp is up to 252x (locomotion) and 475x (manipulation) faster than MJX on RTX PRO 6000 Blackwell; the Newton beta figures were 152x and 313x on an RTX 4090.",
+   "verdict": "unverifiable",
+   "evidence": "The NVIDIA developer blogs are egress-blocked. The MJWarp release feed and changelog contain no such ratios. These are vendor marketing 'up to' numbers against a JAX baseline.",
+   "source": "https://developer.nvidia.com/blog/newton-adds-contact-rich-manipulation-and-locomotion-capabilities-for-industrial-robotics (blocked)",
+   "corrected_statement": "Treat these as vendor 'up to' claims. Run your own benchmarks on target scenes."
+  },
+  {
+   "topic": "benchmark/Isaac Lab",
+   "claim": "On an RTX 4090: G1 rough 94k/88k/82k FPS (4,096 envs, 6.1 GB); Shadow repose 200k/170k (8,192 envs); Cartpole 1.1M; Cartpole RGB 50k (16.7 GB). On 4 nodes × 4 L40: G1 960k, Shadow 1.8M train FPS.",
+   "verdict": "confirmed",
+   "evidence": "The performance_benchmarks.rst figures match exactly. RTX 4090 runs used a Ryzen 9 7950X; L40 runs used a Xeon 8362. A single L40 gives G1 72k/64k/62k and Shadow 170k/140k/120k. 4×L40 gives G1 290k/270k/250k. The RGB-camera task trains about 16x slower than state-based Cartpole (32k vs 510k).",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "topic": "engine status/Isaac Lab 3.0",
+   "claim": "Isaac Lab v3.0.0-EA was released 2026-09-16 for Isaac Sim 6.1, PyTorch 2.11, Warp 1.16 and Newton 1.5.2; GA targeted end of Oct 2026. (robot_physics, citing beta2 docs: Newton backend is 'beta' with a focused set of environments.)",
+   "verdict": "confirmed",
+   "evidence": "The Atom feed timestamps v3.0.0-EA at 2026-09-16T22:34:03Z, beta2 at 2026-06-17 and beta at 2026-03-17. Release notes: 'General Availability is targeted toward the end of October 2026'. Backends are Isaac Sim PhysX, OVPhysX and Newton (MuJoCo-Warp, VBD, MPM). XR teleop, the ROS bridge, livestreaming and surface grippers need full Isaac Sim. EA calls Newton production-ready for many workflows, with Kamino experimental. The beta2 'beta' wording is outdated.",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases.atom ; https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+   "corrected_statement": "EA is not GA, and API stability is only promised from GA. Plan to pin release/3.0.0 after late-October 2026."
+  },
+  {
+   "topic": "engine status/Isaac Sim releases",
+   "claim": "Isaac Sim 6.0 GA on 2026-06-08; 6.1.0 on 2026-09-10; 7.0.0a1 on 2026-09-18.",
+   "verdict": "corrected",
+   "evidence": "GitHub releases: v6.0.0 June 4 (stable), v6.0.1 June 22, v6.1.0 Sept 10 (Latest), v7.0.0a1 Sept 18 (pre-release), v6.0.0-dev2 Mar 16, v6.0.0-dev Dec 19. PyPI isaacsim 6.0.0.0 was 2026-03-16, i.e. a pre-GA wheel at GTC; 6.0.0.1 was Jun 5 and 6.1.0.0 Sep 9. The forum post claiming June 8 is blocked.",
+   "source": "https://github.com/isaac-sim/IsaacSim/releases ; https://pypi.org/project/isaacsim/#history",
+   "corrected_statement": "The 6.0.0 GA tag is 2026-06-04 (the forum announcement may say Jun 8). 7.0 is alpha only."
+  },
+  {
+   "topic": "hardware/Isaac Sim GPUs and RT cores",
+   "claim": "Isaac Sim datacenter GPUs: A40 minimum, L40S recommended, RTX PRO 6000 Blackwell Server best. H100/A100/B200 lack RT cores and cannot be used for RTX rendering.",
+   "verdict": "confirmed",
+   "evidence": "The Isaac Sim README lists datacenter minimum A40, recommended L40S, best 'RTX PRO 6000 Blackwell Server' or L20, and workstation minimum RTX 4080 / recommended RTX 5080. kit-app-template requires an 'NVIDIA RTX capable GPU', and ovrtx requires an 'RTX-capable GPU'. No H100/A100/B200 appears on any list. NVIDIA spec pages that state the RT-core count directly were blocked, so the RT-core statement is corroborated indirectly.",
+   "source": "https://github.com/isaac-sim/IsaacSim ; https://github.com/NVIDIA-Omniverse/kit-app-template ; https://github.com/NVIDIA-Omniverse/ovrtx",
+   "corrected_statement": "Budget for two GPU pools: RT-core GPUs (L40S / RTX PRO 6000) for rendering and SDG, and H100/H200/B200 for training. Government-allocated B200/H200 cannot do RTX sensor rendering."
+  },
+  {
+   "topic": "hardware/MIG on RTX PRO 6000",
+   "claim": "RTX PRO 6000 Blackwell supports MIG (up to 4 instances), L40S has no MIG, so an RTX session costs about $0.84/h at a 4-way split.",
+   "verdict": "unverifiable",
+   "evidence": "NVIDIA product pages are egress-blocked. The 4-way MIG profile and the claim that a 24 GB slice suffices for an Isaac Sim RTX session are assumptions (the researcher marked them low confidence). Isaac Sim lists 16 GB+ VRAM-class GPUs, but its RTX camera task used 16.7 GB at 1,024 envs.",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst",
+   "corrected_statement": "Do not build SaaS unit economics on $0.84/h until MIG plus RTX streaming is tested on g7e/G4 instances."
+  },
+  {
+   "topic": "GPU prices/AWS",
+   "claim": "AWS us-east-1: g6e.xlarge (L40S) $1.861/h, g7e.2xlarge (RTX PRO 6000) $3.363/h, p5.48xlarge (8×H100) $55.04/h, p5en.48xlarge (8×H200) $63.30/h, p6-b200 $113.93/h. Seoul is 23-38% higher.",
+   "verdict": "confirmed",
+   "evidence": "SkyPilot catalog v8 (fetched 2026-10-06), us-east-1 / ap-northeast-2: g6e.xlarge 1.861 / 2.288; g7e.2xlarge 3.36312 / 4.13478; g7e.48xlarge 33.14 / 40.75; p5.48xlarge 55.04 / 75.9552; p5en.48xlarge 63.296 / 87.348; p6-b200.48xlarge 113.93; p6-b300.48xlarge 142.42 / 209.17; p5.4xlarge 6.88; g6.xlarge 0.8048 / 0.9896; p4d.24xlarge 21.96. Seoul premium is +23% (g6/g6e/g7e) and +38% (p5).",
+   "source": "https://raw.githubusercontent.com/skypilot-org/skypilot-catalog/master/catalogs/v8/aws/vms.csv",
+   "corrected_statement": "Confirmed against the SkyPilot catalog, which is derived from the AWS pricing API. aws.amazon.com itself was not reachable."
+  },
+  {
+   "topic": "GPU prices/neoclouds",
+   "claim": "RunPod on-demand: L40S $1.09, RTX PRO 6000 $2.09, H100 PCIe $2.89 / SXM $3.49, B200 $6.79, RTX 4090 $0.74, L4 $0.49. GCP G4 (RTX PRO 6000) $4.50/h.",
+   "verdict": "confirmed",
+   "evidence": "SkyPilot runpod catalog: 1x_L40S_SECURE 1.09, 1x_RTXPRO6000_SECURE 2.09, 1x_H100_SECURE 2.89, 1x_H100-SXM_SECURE 3.49, 1x_B200_SECURE 6.79, RTX4090 0.74, L4 0.49. GCP g4-standard-48 VM is $3.404/h in us-central1 (spot $1.216), with the GPU billed separately. a3-highgpu-8g VM is $9.46 US and $12.15 in Seoul.",
+   "source": "https://raw.githubusercontent.com/skypilot-org/skypilot-catalog/master/catalogs/v8/runpod/vms.csv ; https://raw.githubusercontent.com/skypilot-org/skypilot-catalog/master/catalogs/v8/gcp/vms.csv"
+  },
+  {
+   "topic": "license price/NVAIE and Omniverse Enterprise",
+   "claim": "NVIDIA AI Enterprise / Omniverse Enterprise is about $4,500 per GPU per year; $1,125 for Inception startups (75% off); about EUR 5,800 via an EU reseller.",
+   "verdict": "unverifiable",
+   "evidence": "pi3g.com, nvidia.com and fitgap are all egress-blocked. Two researchers marked the figure low confidence or from prior knowledge. The 75% Inception discount figure is unsupported by any primary source.",
+   "source": "https://pi3g.com/nvidia-ai-enterprise-subscription-cost-in-2026/ (blocked)",
+   "corrected_statement": "Treat as a placeholder. Get a written NVIDIA Korea / NPN quote covering multi-tenant SaaS and on-prem redistribution, per GPU or per node."
+  },
+  {
+   "topic": "license price/Unreal Engine",
+   "claim": "Unreal Engine charges non-game companies with more than $1M annual revenue $1,850 per seat per year (since UE 5.4, April 2024).",
+   "verdict": "unverifiable",
+   "evidence": "unrealengine.com is egress-blocked. The figure is consistent with Epic's 2024 announcement as recalled from prior knowledge, but 2026 terms could not be checked. The UE EULA's treatment of server-side Pixel Streaming for third-party SaaS was also not checked.",
+   "source": "https://www.unrealengine.com/en-US/license (blocked)"
+  },
+  {
+   "topic": "engine status/Genesis",
+   "claim": "Genesis World 1.4.3 (2026-09-30) is Apache-2.0. The original '43M FPS Franka on RTX 4090' claim was criticized as misleading.",
+   "verdict": "confirmed",
+   "evidence": "PyPI genesis-world 1.4.3 was released 2026-09-30 under Apache 2.0. The v0.2.1 README says 'Over 43 million FPS when simulating a Franka robotic arm with a single RTX 4090'. The current README says the project started as academic in Dec 2024, is 'now officially supported by Genesis AI', and that Quadrants (CUDA, ROCm, Metal, Vulkan, x86, ARM64) was forked from Taichi in June 2025. v1.4.0 adds export with bit-exact replay. The independent critique (Substack, about 150x lower) could not be fetched.",
+   "source": "https://pypi.org/project/genesis-world/ ; https://raw.githubusercontent.com/Genesis-Embodied-AI/Genesis/v0.2.1/README.md ; https://raw.githubusercontent.com/Genesis-Embodied-AI/Genesis/main/README.md",
+   "corrected_statement": "The 43M FPS figure is a launch marketing number; the size of the critique's gap is unverified."
+  },
+  {
+   "topic": "license/Genesis Nyx renderer",
+   "claim": "Nyx ships as a separate gs-nyx package; verify its license before embedding.",
+   "verdict": "corrected",
+   "evidence": "PyPI gs-nyx 0.1.7 (2026-09-25, Alpha, author Genesis AI) declares no license. The genesis-nyx repo shows an Apache-2.0 badge but contains only docs, examples and prebuilt x86-64 Linux/Windows wheels. Its docs say API references come from stubs in the wheel and 'no source checkout of the renderer is required'.",
+   "source": "https://pypi.org/project/gs-nyx/ ; https://github.com/Genesis-Embodied-AI/genesis-nyx",
+   "corrected_statement": "Nyx is effectively a closed-source binary with an ambiguous license. Do not treat Genesis's photoreal rendering path as open source."
+  },
+  {
+   "topic": "license/cuRobo",
+   "claim": "(training) SkillGen depends on cuRobo, which has proprietary terms. (build_vs_buy) cuRobo's LICENSE is now Apache-2.0.",
+   "verdict": "corrected",
+   "evidence": "The two sources conflict. Upstream NVlabs/curobo LICENSE is Apache-2.0 (Copyright 2023-2026 NVIDIA). But the Isaac Lab README still says the mimic extension 'requires cuRobo, which has proprietary licensing terms', and ships docs/licenses/dependencies/cuRobo-license.txt, the 'NVIDIA ISAAC LAB ADDITIONAL SOFTWARE AND MATERIALS LICENSE', which limits use to the Isaac Lab purpose ('use of NVIDIA cuRobo apart from use with Isaac Lab is outside of the Purpose').",
+   "source": "https://github.com/NVlabs/curobo/blob/main/LICENSE ; https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/licenses/dependencies/cuRobo-license.txt",
+   "corrected_statement": "Pin a cuRobo release that is Apache-2.0 at that tag, and ask NVIDIA which terms govern the version Isaac Lab installs."
+  },
+  {
+   "topic": "license/MimicGen",
+   "claim": "MimicGen and DexMimicGen code is under the NVIDIA Source Code License; datasets are CC-BY-4.0.",
+   "verdict": "confirmed",
+   "evidence": "The MimicGen LICENSE §3.3 says the Work 'only may be used or intended for use non-commercially... research or evaluation purposes only', with an NVIDIA commercial carve-out. The README says datasets are CC-BY 4.0.",
+   "source": "https://raw.githubusercontent.com/NVlabs/mimicgen/main/LICENSE ; https://github.com/NVlabs/mimicgen",
+   "corrected_statement": "MimicGen code is non-commercial. A commercial data-multiplication feature must use isaaclab_mimic (Apache-2.0) or an in-house reimplementation."
+  },
+  {
+   "topic": "license/Hunyuan3D 2.1",
+   "claim": "The Tencent Hunyuan 3D 2.1 Community License excludes the EU, UK and South Korea, and forbids using the Works or their outputs outside the Territory.",
+   "verdict": "confirmed",
+   "evidence": "§1.l: 'Territory shall mean the worldwide territory, excluding the territory of the European Union, United Kingdom and South Korea.' §5.c: no use of the Works, 'Output or results... outside the Territory.' §4 requires approval above 1M MAU.",
+   "source": "https://raw.githubusercontent.com/Tencent-Hunyuan/Hunyuan3D-2.1/main/LICENSE",
+   "corrected_statement": "AICHEMIST, as a Korean company, cannot use Hunyuan3D 2.1 open weights or their outputs."
+  },
+  {
+   "topic": "license/3D generation chain",
+   "claim": "TRELLIS.2-4B is MIT but depends on nvdiffrast (Nvidia Source Code License, 1-Way Commercial, non-commercial except NVIDIA); TRELLIS.2 generates 512³/1024³/1536³ in about 3/17/60 s on H100 with ≥24 GB VRAM.",
+   "verdict": "confirmed",
+   "evidence": "The TRELLIS.2 README states MIT, says nvdiffrast and nvdiffrec are under their own licenses, gives ≥24 GB VRAM and H100 timings of ~3 s / ~17 s / ~60 s. The nvdiffrast LICENSE.txt is titled 'Nvidia Source Code License (1-Way Commercial)': 'only may be used... non-commercially'.",
+   "source": "https://github.com/microsoft/TRELLIS.2 ; https://raw.githubusercontent.com/NVlabs/nvdiffrast/main/LICENSE.txt"
+  },
+  {
+   "topic": "license/Gaussian splatting stack",
+   "claim": "Inria 3DGS (and derivatives such as 2DGS and MILo) is research/evaluation only; Instant-NGP is non-commercial; 3DGRUT and gsplat are Apache-2.0; PhysX-Anything uses the S-Lab License.",
+   "verdict": "confirmed",
+   "evidence": "Inria LICENSE.md: may be used 'non-commercially, i.e., for research and/or evaluation purposes only'. 3DGRUT LICENSE and gsplat LICENSE are both Apache 2.0. The Instant-NGP LICENSE is the 'NVIDIA Source Code License'. The PhysX-Anything README says 'Distributed under the S-Lab License'.",
+   "source": "https://raw.githubusercontent.com/graphdeco-inria/gaussian-splatting/main/LICENSE.md ; https://raw.githubusercontent.com/nv-tlabs/3dgrut/main/LICENSE ; https://raw.githubusercontent.com/nerfstudio-project/gsplat/main/LICENSE ; https://raw.githubusercontent.com/ziangcao0312/PhysX-Anything/main/README.md"
+  },
+  {
+   "topic": "license/Cosmos 3",
+   "claim": "Cosmos 3 (Super 64B, Nano 16B, Edge 4B) is under OpenMDW-1.1 for code and weights; press reports said 32B/8B; Cosmos-Predict2.5 and Transfer2.5 are in limited maintenance.",
+   "verdict": "confirmed",
+   "evidence": "The NVIDIA/Cosmos README lists Super 64B (H200/B200/GB200, May 2026), Nano 16B (RTX PRO 6000/H100/B200, May 2026) and Edge 4B (Jetson AGX Orin/Thor/RTX PRO 6000, July 2026), and says 'Source code and models are released under OpenMDW-1.1'. The Predict2.5 and Transfer2.5 READMEs say they are 'no longer under active development and will receive only limited maintenance'. The OpenMDW-1.1 text itself (openmdw.ai) is blocked.",
+   "source": "https://github.com/NVIDIA/Cosmos ; https://raw.githubusercontent.com/nvidia-cosmos/cosmos-predict2.5/main/README.md ; https://raw.githubusercontent.com/nvidia-cosmos/cosmos-transfer2.5/main/README.md",
+   "corrected_statement": "Use 64B/16B/4B; the 32B/8B press figures are wrong. Build on Cosmos 3, not 2.5. Have counsel review OpenMDW-1.1."
+  },
+  {
+   "topic": "license/Alpamayo and AlpaSim",
+   "claim": "AlpaSim is Apache-2.0. Alpamayo weights are OpenMDW-1.1 with commercial use permitted. Alpamayo 1.5 came in Mar 2026 and Alpamayo 2 Super (32B) on 1 Jun 2026.",
+   "verdict": "confirmed",
+   "evidence": "The AlpaSim README states Apache 2.0, NuRec as default renderer with OmniDreams via FlashDreams, gRPC microservices, the HF dataset PhysicalAI-Autonomous-Vehicles-NuRec 26.01, and policies Alpamayo-R1, Alpamayo 1.5, VaVAM and Transfuser. The Alpamayo README gives Apache-2.0 code, OpenMDW-1.1 weights and 'Yes' to commercial use, with Alpamayo 1 (10B) and 1.5 in Mar 2026. Alpamayo 2 Super (32B) is not mentioned; future releases moved to alpamayo-recipes.",
+   "source": "https://github.com/NVlabs/alpasim ; https://github.com/NVlabs/alpamayo",
+   "corrected_statement": "Confirmed for AlpaSim and Alpamayo 1/1.5. Alpamayo 2 Super (32B) and the '~900 scenes' count remain unverified."
+  },
+  {
+   "topic": "license/GR00T N1.7",
+   "claim": "GR00T N1.7 is GA: 3B parameters, Cosmos-Reason2-2B backbone, 20K h EgoScale human video, fine-tune on ≥40 GB GPUs, inference on ≥16 GB; code Apache-2.0, weights NVIDIA Open Model License.",
+   "verdict": "confirmed",
+   "evidence": "The Isaac-GR00T README says 'This is a General Availability (GA) release' and confirms 3B parameters, the Cosmos-Reason2-2B (Qwen3-VL) backbone, 20K hours of EgoScale video, fine-tuning on 40 GB+ (H100/L40 recommended), inference on 16 GB+ including Jetson AGX Thor/Orin (JetPack 7.2) and DGX Spark, Apache 2.0 code and NVIDIA Open Model License weights.",
+   "source": "https://github.com/NVIDIA/Isaac-GR00T"
+  },
+  {
+   "topic": "license/datasets and model weights for marketplace",
+   "claim": "ManiSkill assets are CC BY-NC 4.0; AgiBot World and GO-1 are CC BY-NC-SA; Waymax is non-commercial; RLDX-1 weights are non-commercial; openpi weight license is unstated; VGGT-1B is non-commercial (only the -Commercial checkpoint allows commercial use); DA3 Large/Giant are CC BY-NC.",
+   "verdict": "confirmed",
+   "evidence": "ManiSkill README: assets 'CC BY-NC 4.0'; mani-skill 3.0.1 on 2026-04-21. AgiBot README: 'All the data and code within this repo are under CC BY-NC-SA 4.0', with 1,003,672 trajectories. Waymax README: 'Waymax License Agreement for Non-Commercial Use'. RLDX-1 README: code Apache 2.0, weights 'RLWRLD Model License v1.0 (a non-commercial license...)'. openpi: Apache-2.0 LICENSE and no weight-license statement in the README. VGGT README: only VGGT-1B-Commercial (Jul 29, 2025) is commercial, excluding military, with AUC@30 90.37 vs 89.98. DA3 README: Small/Base/Metric-Large/Mono-Large are Apache 2.0; Large/Giant/Nested are CC BY-NC 4.0.",
+   "source": "https://github.com/haosulab/ManiSkill ; https://raw.githubusercontent.com/OpenDriveLab/AgiBot-World/main/README.md ; https://raw.githubusercontent.com/waymo-research/waymax/main/README.md ; https://raw.githubusercontent.com/RLWRLD/RLDX-1/main/README.md ; https://raw.githubusercontent.com/facebookresearch/vggt/main/README.md ; https://raw.githubusercontent.com/ByteDance-Seed/Depth-Anything-3/main/README.md"
+  },
+  {
+   "topic": "license/SAM 3D Objects",
+   "claim": "SAM 3D Objects is under the SAM License: royalty-free and worldwide, with commercial use allowed subject to restrictions (e.g., military).",
+   "verdict": "confirmed",
+   "evidence": "The SAM License grants a 'non-exclusive, worldwide, non-transferable and royalty-free limited license', including a patent license to sell. Clause v forbids use for 'activities subject to ITAR or end uses prohibited by Trade Controls'.",
+   "source": "https://raw.githubusercontent.com/facebookresearch/sam-3d-objects/main/LICENSE",
+   "corrected_statement": "Commercial use is OK, but ITAR and trade-control restrictions block Korean defense or ADD use cases for this component."
+  },
+  {
+   "topic": "license/copyleft and source-available infrastructure",
+   "claim": "lakeFS v1.87.0 moved from Apache-2.0 to BSL 1.1. Ultralytics is AGPL-3.0. RF-DETR N–L are Apache-2.0 (XL/2XL under PML 1.0). BlenderProc and Stonefish are GPL-3.0.",
+   "verdict": "confirmed",
+   "evidence": "The lakeFS Atom feed timestamps v1.87.0 at 2026-09-22T14:39:55Z with release notes 'changes lakeFS's license from Apache 2.0 to the Business Source License 1.1'. Ultralytics README: AGPL-3.0 or Enterprise License. RF-DETR README: N/S/M/L Apache 2.0 (AP50:95 48.4/53.0/54.7/56.5 at 2.3/3.5/4.4/6.8 ms), XL/2XL under PML 1.0. BlenderProc LICENSE: GPL v3. Stonefish: GPL-3.0, Linux only, OpenGL 4.3.",
+   "source": "https://github.com/treeverse/lakeFS/releases.atom ; https://raw.githubusercontent.com/ultralytics/ultralytics/main/README.md ; https://github.com/roboflow/rf-detr ; https://raw.githubusercontent.com/DLR-RM/BlenderProc/main/LICENSE ; https://github.com/patrykcieslak/stonefish",
+   "corrected_statement": "GPL is fine for pure SaaS but is triggered by on-prem delivery, which counts as distribution. AGPL is triggered by network use, so avoid Ultralytics in the hosted product."
+  },
+  {
+   "topic": "engine status/CARLA",
+   "claim": "CARLA's latest tag is 0.10.0 (UE 5.5, Dec 2024), with no 0.10.x follow-up. The UE5 build needs an RTX 3070-class GPU with 16 GB+ VRAM and 32 GB+ RAM. Code is MIT, assets CC-BY.",
+   "verdict": "confirmed",
+   "evidence": "The releases feed shows no tag newer than 0.10.0 or 0.9.16; its timestamps are edit times, not publish dates. The ue5-dev README says '+32 Gb RAM', 'RTX 3070/3080/3090 / 4090 / 5090 or better', '16 Gb or more VRAM', 'CARLA specific code is distributed under the MIT License', 'assets ... CC-BY', and that UE5 follows its own license terms.",
+   "source": "https://github.com/carla-simulator/carla/releases.atom ; https://raw.githubusercontent.com/carla-simulator/carla/ue5-dev/README.md"
+  },
+  {
+   "topic": "engine status/legacy engines",
+   "claim": "RaiSim v1 was archived 2026-04-25 and needs a license key. PyBullet's last release is 3.2.7 (2025-01-30). Brax physics is deprecated, with only brax/training maintained since 0.13.0.",
+   "verdict": "confirmed",
+   "evidence": "The RaiSim repo was archived April 25, 2026 ('We no longer support Raisim. Please go to Raisim2'), and use requires a license and activation key. PyPI pybullet: 3.2.7 on Jan 30, 2025, 3.2.6 on Nov 28, 2023. Brax README: 'Only brax/training is actively being maintained as of 0.13.0', directing users to MJX or MuJoCo Warp. brax 0.13.0 was released 2025-08-15.",
+   "source": "https://github.com/raisimTech/raisimLib ; https://pypi.org/project/pybullet/#history ; https://github.com/google/brax"
+  },
+  {
+   "topic": "engine status/Chrono and Drake",
+   "claim": "Chrono 10.0.0 (spring 2026) is BSD-3 with refactored FSI, peridynamics and checkpointing; (build_vs_buy) Chrono 10.0.0 has an AMD ROCm GPU path. Drake v1.57.0 released 2026-09-10.",
+   "verdict": "corrected",
+   "evidence": "The Chrono CHANGELOG gives 'Release 10.0.0 (2026-03-27)', with FSI refactor, a Peridynamics module, output/checkpointing support, Sensor updates and VSG plugins; the GitHub release is dated Apr 7. But 'AMD GPU support and vendor-agnostic GPU layer (ROCm/HIP)', and Vulkan/Metal ray-tracing for Chrono::Sensor, are under '# Unreleased (development branch)', not 10.0.0. PyPI drake 1.57.0 was released Sep 10, 2026, labeled 'BSD License, Other/Proprietary License (Various)'.",
+   "source": "https://raw.githubusercontent.com/projectchrono/chrono/main/CHANGELOG.md ; https://pypi.org/project/drake/",
+   "corrected_statement": "Chrono's AMD/ROCm and Vulkan/Metal sensor backends are dev-branch only and not in a release."
+  },
+  {
+   "topic": "engine status/mjlab",
+   "claim": "(robot_physics) mjlab is in the 1.5.x series and pinned to MuJoCo Warp 3.11. (training) mjlab 1.6.0 was released 2026-08-09.",
+   "verdict": "corrected",
+   "evidence": "PyPI mjlab: 1.5.0 Jun 28, 1.5.3 Jul 22, 1.6.0 Aug 9, 2026, Apache-2.0, Production/Stable. The README badge still says 'MuJoCo_Warp-3.11.0', four minor versions behind upstream 3.15.0. arXiv 2601.22074 is confirmed as the citation.",
+   "source": "https://pypi.org/pypi/mjlab/json ; https://raw.githubusercontent.com/mujocolab/mjlab/main/README.md",
+   "corrected_statement": "Latest mjlab is 1.6.0 (2026-08-09). It lags upstream MJWarp (pinned to 3.11)."
+  },
+  {
+   "topic": "interop/ROS 2 and Isaac Sim",
+   "claim": "ROS 2 Lyrical Luth was released 2026-05-22 as an LTS with EOL May 2031. The Isaac Sim ROS workspaces repo provides only Humble and Jazzy. ros_gz pairs Lyrical with Jetty.",
+   "verdict": "confirmed",
+   "evidence": "Releases.rst: Lyrical Luth May 22, 2026, EOL May 2031. Kilted EOL December 2026, Jazzy May 2029, Humble May 2027; Makoa Mata-mata is planned for May 2027. The IsaacSim-ros_workspaces README says 'two workspaces: humble_ws and jazzy_ws'. The ros_gz table shows Lyrical–Jetty binaries on packages.ros.org. The Gazebo Jetty May 2031 EOL could not be verified.",
+   "source": "https://raw.githubusercontent.com/ros2/ros2_documentation/rolling/source/Releases.rst ; https://github.com/NVIDIA-Omniverse/IsaacSim-ros_workspaces ; https://github.com/gazebosim/ros_gz"
+  },
+  {
+   "topic": "standards/OpenUSD and glTF",
+   "claim": "OpenUSD 26.03 (2026-02-24) added wasm and UsdVolParticleField (3DGS). UsdPhysics gained nested rigid bodies and kinematic articulations. 26.05 made Hydra 2 the default. (realism) KHR_gaussian_splatting is a Release Candidate. (platform_arch) KHR_gaussian_splatting is ratified.",
+   "verdict": "corrected",
+   "evidence": "The OpenUSD CHANGELOG confirms 26.03 (2026-02-24) added wasm32/wasm64 and the UsdVolParticleField3DGaussianSplat schema. But the UsdPhysics nested-rigid-body/kinematic-articulation proposal and 'UsdImaging now defaults to using the Hydra 2 scene index code path' are both in the 25.11 (2025-10-24) section. The Khronos glTF extensions index lists KHR_gaussian_splatting and KHR_interactivity as ratified, and KHR_physics_rigid_bodies as Review Draft. AOUSD Core Spec 1.0.1 (2025-12-12, CC-BY-ND-4.0) is the only published spec; there is no physics spec.",
+   "source": "https://raw.githubusercontent.com/PixarAnimationStudios/OpenUSD/release/CHANGELOG.md ; https://raw.githubusercontent.com/KhronosGroup/glTF/main/extensions/README.md ; https://github.com/aousd/specifications-public",
+   "corrected_statement": "UsdPhysics nesting and the Hydra 2 default arrived in 25.11. KHR_gaussian_splatting is now ratified. No normative physics standard exists yet."
+  },
+  {
+   "topic": "platform/Omniverse libraries timing and streaming security",
+   "claim": "Omniverse libraries (ovrtx, ovphysx, ovstage) were announced at SIGGRAPH 2026 (robot_physics) or at GTC 2026 (platform_arch), in early access. Isaac Sim streaming has no auth or encryption.",
+   "verdict": "corrected",
+   "evidence": "PyPI first real builds: ovrtx 0.1.0 on 2026-02-13, ovphysx 0.2.8 on 2026-03-04 (0.0.0a0 placeholders from 2025-12-12), ovstorage 0.1.0 on 2026-06-01, ovstage 0.1.0 on 2026-07-16. All are still alpha or pre-release. The libraries pre-date both events, so the announcement venue cannot be settled (NVIDIA blogs blocked). The Isaac Sim docker README says it is 'designed for use on private/trusted networks. They do not include authentication or encryption', and requires --network=host for WebRTC and ACCEPT_EULA.",
+   "source": "https://pypi.org/pypi/ovrtx/json ; https://pypi.org/pypi/ovphysx/json ; https://pypi.org/pypi/ovstage/json ; https://github.com/isaac-sim/IsaacSim/blob/develop/tools/docker/README.md",
+   "corrected_statement": "ovrtx, ovphysx, ovstage and ovstorage are all alpha or pre-release as of Oct 2026, so none is production-stable. A multi-tenant streaming SaaS must add its own authentication and TLS layer."
+  },
+  {
+   "topic": "infra/K8s GPU scheduling",
+   "claim": "In the NVIDIA DRA driver, ComputeDomains are supported but GPU allocation is not yet officially supported and is disabled by default; it needs K8s 1.32+. KAI Scheduler is Apache-2.0. OSMO is Apache-2.0.",
+   "verdict": "confirmed",
+   "evidence": "DRA README: K8s 1.32+; ComputeDomains 'Officially supported'; 'some GPU allocation features can be tried out, they are not yet officially supported... GPU kubelet plugin is currently disabled by default'. The code now lives under kubernetes-sigs/dra-driver-nvidia-gpu. The KAI README has an Apache-2.0 badge, TAS and hierarchical gang scheduling. The OSMO README is Apache 2.0.",
+   "source": "https://raw.githubusercontent.com/NVIDIA/k8s-dra-driver-gpu/main/README.md ; https://raw.githubusercontent.com/NVIDIA/KAI-Scheduler/main/README.md ; https://raw.githubusercontent.com/NVIDIA/OSMO/main/README.md"
+  },
+  {
+   "topic": "vertical/drones",
+   "claim": "Pegasus Simulator v5.1.0 (26 Oct 2025) targets Isaac Sim 5.1 and PX4 1.14.3 (ArduPilot experimental). Project AirSim is MIT.",
+   "verdict": "confirmed",
+   "evidence": "Pegasus README: '2025-10-26: Pegasus Simulator v5.1.0 is released for Isaac 5.1.0. This version is NOT compatible with older versions', with badges for PX4 1.14.3 and ArduPilot-Copter 4.4. No Isaac Sim 6.x support is listed. Project AirSim README: MIT badge, PX4 SITL/HITL and ArduPilot SITL.",
+   "source": "https://raw.githubusercontent.com/PegasusSimulator/PegasusSimulator/main/README.md ; https://raw.githubusercontent.com/iamaisim/ProjectAirSim/main/README.md",
+   "corrected_statement": "Pegasus has not been ported to Isaac Sim 6.x. A drone vertical on Isaac Sim 6.1 needs porting work or a different path (Project AirSim, Gazebo + PX4)."
+  },
+  {
+   "topic": "Korea policy/GPU and budget",
+   "claim": "NVIDIA committed 260k+ Blackwell GPUs to Korea on 31 Oct 2025 (government ~50k, Samsung/SK/HMG ~50k each, Naver ~60k), with an HMG physical-AI cluster of ~$3B. MSIT selected NHN (~7,656 B200), Naver (~3,056 H200) and Kakao (~2,424 B200). The 2026 budget is KRW 727.9T with AI at ~10.1T. The AI Basic Act took effect 22 Jan 2026.",
+   "verdict": "unverifiable",
+   "evidence": "nvidianews.nvidia.com, msit.go.kr, korea.kr, motie.go.kr, law.go.kr and all Korean news domains were egress-blocked, and the session web-search budget was exhausted. The researcher who produced these also could not verify them. The headline 260k and AI Basic Act dates match prior knowledge. The per-CSP GPU counts, the KRW 1.46T supplementary budget and the 2026 AI budget have no primary source here.",
+   "source": "https://nvidianews.nvidia.com/news/south-korea-ai-infrastructure (blocked) ; https://www.law.go.kr (blocked)",
+   "corrected_statement": "Re-verify every Korean figure (budgets, GPU counts, program caps, 2027 call dates) against MSIT/MOTIE/MSS press releases before putting it in a CEO plan or grant proposal."
+  },
+  {
+   "topic": "Korea policy/startup programs",
+   "claim": "Deep-tech TIPS gives up to KRW 1.5B over 3 years (operator investment ≥ KRW 0.3B). Super-Gap 1000+ gives up to KRW 0.6B. The K-Humanoid Alliance launched 10 Apr 2025. The SME government R&D share is up to 75%.",
+   "verdict": "unverifiable",
+   "evidence": "jointips.or.kr, k-startup.go.kr, motie.go.kr and iris.go.kr are unreachable. The researcher marked these medium or low confidence from memory. A 'Physical AI Global Alliance' could not be confirmed to exist.",
+   "source": "https://www.jointips.or.kr (blocked)"
+  },
+  {
+   "topic": "market/funding and valuations",
+   "claim": "Applied Intuition $600M at $15B (Jun 2025); Figure $39B (Sep 2025); Physical Intelligence $600M at $5.6B (Nov 2025); Skild ~$14B (Jan 2026); Genesis AI $105M seed; Waabi $750M Series C (2026); Decart $300M at ~$4B (May 2026).",
+   "verdict": "unverifiable",
+   "evidence": "All press and company domains were blocked. The digest also contradicts itself: vehicle_sim says Waabi raised a $750M Series C (Jan/Feb 2026) plus up to $250M from Uber, while market_competition lists only the $200M Series B (Jun 2024) and calls the 2026 raise unverified. Skild's ~$14B is marked low confidence. Applied Intuition $15B and Figure $39B match prior knowledge but were not re-checked.",
+   "source": "https://www.electrive.com/2026/02/02/autonomy-startup-waabi-secures-750-million-and-partners-with-uber/ (blocked)",
+   "corrected_statement": "Use funding figures only as context, labeled 'reported', and do not use them for TAM or competitive-moat arguments."
+  },
+  {
+   "topic": "research benchmarks/fidelity",
+   "claim": "GPUSimBench (arXiv 2607.13059) found GPU-batched non-determinism, with ManiSkill EMD 2.520 cm and MJX 3.970 cm best. GAUGE (arXiv 2608.05948) found no uniformly faithful engine. Instant NuRec reconstructs a clip in ~1.5 s. SDQM r=0.8719.",
+   "verdict": "unverifiable",
+   "evidence": "arxiv.org, alphaxiv, emergentmind and the NeurIPS proceedings are egress-blocked, so the existence and numbers of these 2026 papers could not be checked. Only the PhysX determinism statement was verified: Isaac Lab docs say identical results on the same hardware and version for rigid and articulated scenes, may 'vary across different hardware', and give 'no guarantee' for cloth or soft bodies.",
+   "source": "https://arxiv.org/abs/2607.13059 (blocked) ; https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/features/reproducibility.rst",
+   "corrected_statement": "Do not cite GPUSimBench or GAUGE numbers in the engine decision until the papers are read. Run an in-house sim-to-real fidelity benchmark instead."
+  }
+ ],
+ "critical_warnings": [
+  "VERIFICATION SCOPE: The shared web-search budget was used up (200 calls per turn), and the egress proxy blocked almost everything except github.com, raw.githubusercontent.com and pypi.org. Blocked sources include nvidia.com (docs, forums, blogs, newsroom), arxiv, huggingface, unrealengine.com, all Korean government and news sites, and press sites. So every Korean policy figure, funding or valuation figure, license price (NVAIE, Omniverse Enterprise, UE, Unity), NVIDIA blog benchmark ratio, and 2026 arXiv paper in the digest is UNVERIFIED. These must be re-checked before any CEO or board decision or grant application.",
+  "KIT-LESS IS NOT LICENSE-FREE: ovphysx pip binaries (LicenseRef-NVIDIA-Omniverse), ovrtx (LicenseRef-NvidiaProprietary), ovstage (LicenseRef-NvidiaProprietary), and even the isaacsim and isaaclab PyPI wheels ('NVIDIA Proprietary Software') carry proprietary terms. Only Newton + MuJoCo/MJWarp + Warp (Apache-2.0) + Isaac Lab built from GitHub source (BSD-3) + the PhysX SDK built from source (now Apache-2.0) form a fully permissive stack. The build_vs_buy 'Strategy D' licensing score (4/5) only holds if the OVPhysX and OVRTX backends are excluded from the SaaS tier.",
+  "The central SaaS licensing claim (NVAIE is required to offer Isaac Sim or Kit as a service; selling outputs is exempt) could NOT be read from a primary source. Only the LICENSE preamble ('Isaac Sim Additional Software and Materials License' for Kit, models and textures) was verified. The $4,500/GPU/yr list price and the '$1,125 Inception 75% discount' are also unverified. Get written terms from NVIDIA Korea covering (a) multi-tenant browser streaming SaaS, (b) on-prem delivery to Korean enterprise or defense customers (= redistribution), and (c) dataset-only sales.",
+  "Hunyuan3D 2.1's license explicitly excludes South Korea, including use of outputs. AICHEMIST cannot use it for the NeRF/photo-to-3D marketplace pipeline. Other non-commercial traps verified: Inria 3DGS (and 2DGS/MILo derivatives), Instant-NGP, nvdiffrast (a hard dependency of the MIT-licensed TRELLIS.2), MimicGen code, PhysX-Anything (S-Lab), ManiSkill assets, AgiBot World/GO-1, Waymax/WOD, RLDX-1 weights, DA3-Large/Giant, original VGGT-1B. openpi weight terms are unstated. Use gsplat or 3DGRUT (Apache-2.0), VGGT-1B-Commercial, DA3 Small/Base/Metric/Mono, MapAnything-apache.",
+  "cuRobo licensing conflict: upstream NVlabs/curobo is now Apache-2.0, but Isaac Lab still ships cuRobo under the 'Isaac Lab Additional Software and Materials License', which forbids use outside Isaac Lab. Any SkillGen or motion-planning feature in CEN needs a pinned Apache-tagged cuRobo and NVIDIA confirmation.",
+  "On-prem or air-gapped delivery, which Korean chaebol and defense customers commonly require, counts as DISTRIBUTION. That triggers GPL-3.0 obligations (BlenderProc, Stonefish), Isaac Sim/Kit redistribution terms and Epic EULA terms that pure SaaS may avoid. AGPL-3.0 (Ultralytics YOLO) is triggered by network SaaS use as well. The SAM License (SAM 3D, SAM 3) forbids ITAR and trade-control-prohibited end uses, which affects any Korean defense or ADD vertical.",
+  "GPU pool split is confirmed: Isaac Sim, ovrtx and Kit need RT-core RTX GPUs (datacenter A40 min, L40S recommended, RTX PRO 6000 Blackwell best). H100/H200/B200 do not appear in any requirement list. Government-allocated B200/H200 capacity can cover training but not RTX sensor or SDG rendering. Verified AWS Seoul rates are 23-38% above us-east-1 (L40S $2.288/h, RTX PRO 6000 $4.135/h, 8×H100 $75.96/h). The $0.84/h MIG-split streaming cost is untested.",
+  "Driver floor: warp-lang 1.18 (Newton's core dependency) now needs a Turing+ GPU and an R580+ driver (CUDA 13.4 wheels). The Newton README's 'Maxwell+, driver 545' is stale. Cloud images and Korean-CSP GPU nodes must be checked for R580+ drivers.",
+  "Benchmark misuse risk: MJWarp nightly numbers (e.g., Franka 36.98M steps/s, humanoid 7.95M on RTX PRO 6000) are physics-only with an unstated world count. Isaac Lab numbers (G1 82k, Shadow 170k FPS on RTX 4090) include inference and training. Genesis' 43M FPS is a launch-README marketing figure. The 252x/475x MJWarp-vs-MJX ratios are unverified vendor claims. None of these should feed a weighted decision matrix without in-house benchmarks on target scenes.",
+  "Maturity risk: Isaac Lab 3.0 is Early Access (GA targeted end of Oct 2026), Isaac Sim 7.0 is alpha, MJWarp is 'Alpha' on PyPI, all Omniverse libraries (ovrtx, ovphysx, ovstage, ovstorage) are alpha or pre-release, Newton's Kamino solver is experimental, and the Genesis Nyx renderer is closed-source binary-only with no declared PyPI license. Isaac Sim streaming has no authentication or encryption. Isaac Sim ROS workspaces support only Humble and Jazzy, not the new Lyrical LTS. Pegasus (drones) is still on Isaac Sim 5.1.",
+  "Cross-researcher inconsistencies to correct in the final plan: Newton 1.0.0 is 2026-03-10, not Apr 13 (that was 1.1.0); 'newton-physics' on PyPI is an inactive name. ovphysx is not BSD-3. The PhysX SDK core is now Apache-2.0. Cosmos 3 sizes are 64B/16B/4B, not 32B/8B, and Cosmos 2.5 repos are in limited maintenance. KHR_gaussian_splatting is ratified, not an RC. The mjlab latest is 1.6.0. OpenUSD's UsdPhysics nesting and Hydra 2 default arrived in 25.11. Chrono's AMD/ROCm support is dev-branch only. Waabi funding figures conflict."
+ ],
+ "missing_coverage": [
+  "Primary text of the NVIDIA Isaac Sim license FAQ, the 'Isaac Sim Additional Software and Materials License', the NVIDIA AI Enterprise / Omniverse Product-Specific Terms and OpenMDW-1.1 (all blocked). The exact SaaS, on-prem and output clauses are the single most decision-critical unknown.",
+  "Epic Unreal Engine EULA terms for server-side Pixel Streaming offered to third parties as SaaS, and current 2026 seat pricing. Unity 2026 HDRP/URP status and Unity Industry runtime licensing.",
+  "Korean cloud GPU availability and pricing for RT-core GPUs (L40S, RTX PRO 6000) at NHN Cloud, KT Cloud, Naver Cloud, Kakao Cloud and Samsung SDS, plus whether the government GPU programs include any RT-core capacity. CSAP certification requirements for selling the SaaS to public agencies.",
+  "Data-residency and privacy compliance for a Korea-hosted multi-tenant SaaS (PIPA cross-border transfer, AI Basic Act obligations for generative-AI labeling). Export-control screening (US EAR on advanced GPUs and model weights; ITAR clauses in the SAM License) for defense and overseas customers.",
+  "Independent sim-to-real fidelity evidence: the cited 2026 benchmark papers (GPUSimBench, GAUGE) and the realism metrics (SDQM, SADGE) could not be accessed. No verified head-to-head contact-rich or deformable fidelity comparison among PhysX, Newton/MJWarp, Genesis and Drake exists in the digest.",
+  "Licensing and maturity of NuRec / 3DGUT containers on NGC, Sensor RTX APIs and the Omniverse Blueprint for AV simulation (early access only, terms unknown). Also the status of the claimed 'Instant NuRec' and 'OmniDreams' releases.",
+  "Non-NVIDIA GPU portability: AMD ROCm paths exist only in Genesis Quadrants and in Chrono's unreleased dev branch. The supply-risk and lock-in analysis for an all-NVIDIA stack (Warp, Newton and MJWarp require NVIDIA GPUs for speed) is missing.",
+  "Reproducibility across hardware for dataset products: Newton v1.4 claims 'deterministic and portable execution' while PhysX only guarantees same-hardware determinism and nothing for deformables. This should be tested, since CEN sells 'reproducible' synthetic data.",
+  "Customer-validated demand and pricing evidence for Korean anchor customers (HMG, Samsung, HD Hyundai, Doosan, MORAI's position). Most of the market sizing and competitor funding in the digest is prior-knowledge-only and low confidence.",
+  "Isaac Sim 6.x support for ROS 2 Lyrical (2031 LTS), and a porting plan for drone (Pegasus) and marine (OceanSim/MarineGym) verticals onto Isaac Sim 6.x / Isaac Lab 3.0."
+ ]
+}

@@ -1,0 +1,745 @@
+{
+ "key": "build_vs_buy",
+ "topic": "Build-vs-buy economics, licensing traps and cost model for AICHEMIST's general-purpose digital twin platform (CEN extension), as of 2026-10-06",
+ "executive_summary": "Recommendation: choose Strategy D, a hybrid. Use an open, vendor-neutral physics and training core: Newton 1.6.1 (Apache-2.0, Linux Foundation, PyPI status \"Production/Stable\"), MuJoCo 3.15 and MuJoCo-Warp (Apache-2.0), and Isaac Lab 3.0 (BSD-3) in its new kit-less mode. Add NVIDIA's RTX sensor rendering (Isaac Sim 6.1 / Omniverse Kit / ovrtx) only where photoreal or physically based camera, lidar and radar output earns its cost. Put AICHEMIST's own differentiation in the platform layer: CEN orchestration, multi-tenancy, LLM scene control, NeRF/3DGS-to-SimReady asset pipeline, marketplace, and data/training services. Weighted decision-matrix scores (1-5): D 4.23, B (Isaac/Omniverse-centric) 3.70, C (open multi-engine + UE5/web) 3.20, A (build our own engine) 2.40. Strategy A should be ruled out. History shows how long an engine takes even for well-funded groups. MuJoCo was developed by Roboti LLC for about a decade before DeepMind acquired it in Oct 2021 and open-sourced it in May 2022. Newton needed NVIDIA, Google DeepMind and Disney Research plus a decade of Warp/MuJoCo code to go from its March 2025 announcement to 1.0 on PyPI on 2026-03-10. Genesis went from academic project to company-backed 1.0 in May 2026. Chrono (20k commits) and Drake (35k commits) are multi-decade efforts. A competitive in-house physics engine plus renderer would realistically need 40-80 scarce specialists for 3-5 years (about ₩400-600억). It would then compete with free, fast-moving engines. The main licensing trap: Isaac Sim's 'Apache-2.0' covers only the repository source. The Kit SDK, RTX renderer and 3D assets come under a separate NVIDIA 'Isaac Sim Additional Software and Materials License', and the isaacsim PyPI package is classified 'Other/Proprietary'. The kit-less RTX renderer ovrtx 0.5.1 is 'LicenseRef-NvidiaProprietary' and alpha; ovphysx 0.6.3 is 'LicenseRef-NVIDIA-Omniverse' and alpha. Kit apps fall under the NVIDIA Software License Agreement plus Omniverse product-specific terms, and Kit collects anonymous telemetry. Hosting these components for paying third parties in a multi-tenant cloud, shipping them on-prem, and reselling NVIDIA assets in the CEN marketplace each need written confirmation from NVIDIA before launch. Isaac Sim streaming has no authentication or encryption and needs host networking, so AICHEMIST must build its own secure streaming gateway. Hardware: RTX rendering needs RT-core GPUs. Isaac Sim lists A40 as the datacenter minimum, L40S/L20 as recommended and RTX PRO 6000 Blackwell Server as best; H100/H200/B200 lack RT cores and belong in the physics-only RL and VLA/foundation-model training pool. Live GPU prices (SkyPilot catalog, 2026-10-05/06): H100 $6.88/GPU-h on AWS p5 vs $2.89-4.29 on RunPod/Lambda. L40S $1.86 on AWS g6e.xlarge vs $1.09 on RunPod. RTX PRO 6000 $3.36 on AWS g7e.2xlarge and about $4.50 on GCP G4 (spot about $1.71). B200 $11.28 on GCP and $14.24 on AWS vs $6.69 on Lambda. AWS/GCP Seoul regions cost 23-38% more than US regions. Unit costs: GPU-parallel RL physics is cheap at about $1-10 per 1B env-steps without cameras and $8-30 with one camera in the loop (from Isaac Lab's own benchmarks). Synthetic images cost about $5-60 per 1M rasterized 1080p frames, $20-250 with RTX real-time ray tracing, and $300-5,000 path-traced. Storage and egress (about $126/month and about $495 egress per 1M multimodal frames) can exceed raster compute, so pricing tokens per image needs a storage/egress component. Full AV sensor-rig simulation runs about $3-15 per sim-hour. People dominate cost. Mid-case 24-month totals including compute: lean 12 ≈ ₩50억 ($3.5M), standard 25 ≈ ₩103억 ($7.4M), aggressive 45 ≈ ₩208억 ($14.9M). Ramped hiring cuts these by about 20%; Strategy D with ramped hiring (12→25) is about ₩80억. Time-to-MVP: B 3-5 months, D 4-6 months (Phase 0 rides on Isaac Sim), C 9-15 months, A 30-48+ months. Caveat: the shared web-search budget was exhausted before this agent's first query, and most vendor sites (nvidia.com, unrealengine.com, unity.com, Korean clouds, salary sites) were blocked by the egress proxy. Facts were therefore verified through GitHub, PyPI and the SkyPilot price catalog. UE/Unity/Omniverse Enterprise prices, Korean cloud prices and KRW salaries are marked low/medium confidence and must be confirmed with vendors and recruiters.",
+ "options": [
+  {
+   "name": "Strategy A - Build whole engine in-house (physics + renderer)",
+   "category": "Build strategy",
+   "status_as_of_2026": "Not started. Benchmarks for effort: MuJoCo (Roboti LLC, about 2010-2021, then DeepMind acquisition Oct 2021 and open-sourcing May 2022). Newton (announced Mar 2025 by NVIDIA, Google DeepMind and Disney Research; 1.0.0 on PyPI 2026-03-10; v1.6.1 on 2026-10-05; built on Warp and MuJoCo-Warp). Genesis (academic project, then Genesis AI-backed; 1.0 in May 2026; 1.4.3 on 2026-09-30). Chrono (about 20k commits, v10.0.0). Drake (35,216 commits, copyright 2012-2025). Gazebo (16+ years).",
+   "license_and_cost": "Owned IP and no license fees. Estimated 150-300 engineer-years to reach rough parity on rigid and deformable contact physics, GPU batching, RTX-class path tracing and sensor models: about ₩400-600억 ($30-43M) over 3-5 years with 40-80 specialists.",
+   "strengths": [
+    "Full IP ownership and no vendor lock-in or EULA risk",
+    "Could target non-NVIDIA hardware",
+    "Potential deep differentiation if it succeeds"
+   ],
+   "weaknesses": [
+    "Time-to-MVP 30-48+ months; competes against free engines backed by NVIDIA, Google DeepMind, Disney and Genesis AI",
+    "Korea has very few contact-dynamics, GPU-solver, path-tracing and sensor-physics specialists",
+    "Moving target: Newton shipped 1.0 through 1.6.1 in 7 months and MuJoCo ships about every 2-3 weeks",
+    "Burns most of a startup's runway on infrastructure rather than product"
+   ],
+   "best_fit": "Not recommended. Only targeted in-house modules make sense: sensor noise and ISP models, domain-randomization engine, asset-physics property estimation, LLM scene compiler.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco/blob/main/doc/overview.rst",
+    "https://pypi.org/project/newton/#history",
+    "https://github.com/Genesis-Embodied-AI/Genesis",
+    "https://github.com/projectchrono/chrono",
+    "https://github.com/RobotLocomotion/drake",
+    "https://github.com/gazebosim/gz-sim"
+   ]
+  },
+  {
+   "name": "Strategy B - Adopt NVIDIA Isaac Sim / Omniverse as the base",
+   "category": "Adopt strategy",
+   "status_as_of_2026": "Isaac Sim 6.1.0 (PyPI 2026-09-09; GitHub GA 2026-09-10); 7.0.0a1 on GitHub 2026-09-18. Isaac Lab 3.0.0-EA (2026-09-16) requires Isaac Sim 6.1 for its PhysX/RTX/ROS backends.",
+   "license_and_cost": "Repo source is Apache-2.0. Kit SDK, RTX renderer, models and textures fall under the 'Isaac Sim Additional Software and Materials License'; the pip package is classified 'Other/Proprietary'. Isaac Sim itself costs nothing to download. Omniverse Enterprise (support/enterprise features) is about $4,500/GPU/year (LOW confidence, could not verify). Rendering needs RT-core GPUs at $1.09-4.50/GPU-h.",
+   "strengths": [
+    "Fastest path to photoreal RTX camera/lidar/radar plus PhysX and Replicator SDG (MVP in 3-5 months)",
+    "Largest robotics simulation ecosystem (Isaac Lab, GR00T, Cosmos, OpenUSD/SimReady)",
+    "Korean industrial customers often already standardize on OpenUSD and Omniverse"
+   ],
+   "weaknesses": [
+    "Proprietary Kit/RTX terms: hosted multi-tenant SaaS, on-prem redistribution and asset resale need NVIDIA's written confirmation",
+    "Hard NVIDIA lock-in on both GPUs and software, plus Kit telemetry",
+    "Needs RT-core GPUs (L40S/RTX PRO 6000) for every rendering session; heavy containers; streaming has no authentication or encryption and needs --network=host",
+    "Hard to differentiate: NVIDIA's own blueprints compete with a thin wrapper"
+   ],
+   "best_fit": "Phase-0 vehicle for the first paid pilots and photoreal sensor SDG. Not the long-term core.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacSim",
+    "https://github.com/isaac-sim/IsaacSim/blob/develop/LICENSE",
+    "https://pypi.org/project/isaacsim/",
+    "https://github.com/isaac-sim/IsaacSim/blob/develop/tools/docker/README.md",
+    "https://github.com/NVIDIA-Omniverse/kit-app-template",
+    "https://github.com/isaac-sim/IsaacSim/releases"
+   ]
+  },
+  {
+   "name": "Strategy C - Open-source multi-engine + own orchestration + UE5 or web/3DGS rendering",
+   "category": "Open-source assembly strategy",
+   "status_as_of_2026": "Components are current: MuJoCo 3.15.0 (2026-10-05), Newton 1.6.1 (2026-10-05), Genesis 1.4.3 (2026-09-30), Chrono 10.0.0, CARLA 0.10.0 (UE 5.5, Dec 2024) and 0.9.16, UE 5.8 is the current Pixel Streaming branch.",
+   "license_and_cost": "Physics is permissive: MuJoCo, Newton, MJWarp and Gazebo are Apache-2.0; Chrono and Drake are BSD-3; Genesis code is Apache-2.0. Unreal Engine charges about $1,850/seat/yr for non-game companies over $1M revenue (MEDIUM-LOW confidence, 2024 terms not re-verified); Pixel Streaming infrastructure is MIT. CARLA code is MIT and its assets are CC-BY.",
+   "strengths": [
+    "Minimal vendor lock-in at the software level (UE/web renderers run on any GPU)",
+    "Low license fees; full control of the UX and web delivery (WebGPU/3DGS viewers)",
+    "UE5 Lumen/Nanite visuals are strong for AV and city scenes"
+   ],
+   "weaknesses": [
+    "Two-engine coupling (MuJoCo/Newton physics plus UE Chaos-scene rendering) adds synchronization and maintenance cost",
+    "Physically based sensor models (lidar/radar, rolling shutter, ISP) must be built in-house",
+    "Time-to-MVP 9-15 months; integration-heavy team needed",
+    "UE EULA and Fab/Megascans asset terms restrict reuse outside UE and possibly AI-training use (unverified)"
+   ],
+   "best_fit": "AV/city-scale visualization and web-delivered twins where photoreal path tracing is not required.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco/releases",
+    "https://pypi.org/project/newton/",
+    "https://pypi.org/project/genesis-world/",
+    "https://github.com/carla-simulator/carla",
+    "https://github.com/EpicGames/PixelStreamingInfrastructure",
+    "https://github.com/projectchrono/chrono"
+   ]
+  },
+  {
+   "name": "Strategy D - Hybrid: open physics/training core + selective NVIDIA RTX/UE rendering + own platform layer (RECOMMENDED)",
+   "category": "Hybrid strategy",
+   "status_as_of_2026": "Feasible now because Isaac Lab 3.0-EA (2026-09-16) runs kit-less on Newton/MuJoCo-Warp and supports pluggable visualizers (Newton GL, Newton RTX, Kit, Viser, Rerun). Isaac Sim RTX, ovrtx and ovphysx stay optional extras.",
+   "license_and_cost": "Core stack is permissive: Newton, MJWarp, MuJoCo and Warp 1.18 are Apache-2.0; Isaac Lab is BSD-3; PhysX SDK is BSD-3; Cosmos 3 is OpenMDW-1.1. Proprietary pieces (Kit/RTX/ovrtx) are isolated behind a renderer interface and used only in a licensed tier. Cost: about ₩80억 over 24 months with ramped hiring (12→25 people) including compute.",
+   "strengths": [
+    "Training path (RL/IL/VLA) has no proprietary dependency and runs on H100/B200/RTX 4090/5090 without RT cores",
+    "Best fidelity is available where needed (RTX sensors) and can be swapped (UE5, Genesis Nyx, 3DGS)",
+    "Differentiation sits in AICHEMIST-owned layers: CEN data engine, LLM scene control, asset physics, marketplace",
+    "Phase 0 can reuse Isaac Sim directly, so MVP takes 4-6 months"
+   ],
+   "weaknesses": [
+    "Still NVIDIA/CUDA-locked for GPU physics (Newton, MJWarp and Warp need NVIDIA GPUs)",
+    "Multiple backends raise QA and benchmarking costs (sim-to-sim consistency)",
+    "Several key pieces are alpha (MJWarp alpha on PyPI, ovrtx 0.5 alpha, ovphysx 0.6 alpha)"
+   ],
+   "best_fit": "AICHEMIST/CEN: a general-purpose physical-AI digital twin plus synthetic-data SaaS with on-prem option for Korean enterprises.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+    "https://github.com/newton-physics/newton",
+    "https://pypi.org/project/mujoco-warp/",
+    "https://pypi.org/project/warp-lang/",
+    "https://github.com/NVIDIA/Cosmos",
+    "https://github.com/NVIDIA-Omniverse/PhysX"
+   ]
+  },
+  {
+   "name": "NVIDIA Isaac Sim",
+   "category": "Robotics simulator (PhysX + RTX, OpenUSD)",
+   "status_as_of_2026": "6.1.0 (PyPI 2026-09-09); 6.0.0 (PyPI 2026-03-16, GitHub GA 2026-06-04); 5.0.0 (2025-08-07, first open-source release); 7.0.0a1 (2026-09-18); develop VERSION = 6.1.0-rc.26. Owner: NVIDIA.",
+   "license_and_cost": "Apache-2.0 for the repo, plus a proprietary NVIDIA additional license for the Kit SDK, models and textures (URL in the LICENSE preamble); the pip metapackage is classified 'NVIDIA Proprietary Software'. Free to download; ACCEPT_EULA is required to run the container.",
+   "strengths": [
+    "Photoreal RTX sensors, Replicator SDG, ROS 2 bridge",
+    "Datacenter GPUs: A40 minimum, L40S/L20 recommended, RTX PRO 6000 Blackwell Server best; supports Linux aarch64"
+   ],
+   "weaknesses": [
+    "Proprietary runtime; unauthenticated WebRTC streaming that needs --network=host",
+    "Not usable on H100/H200/B200 for rendering because they lack RT cores"
+   ],
+   "best_fit": "High-fidelity sensor SDG and validation tier.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacSim",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacSim/develop/VERSION",
+    "https://pypi.org/project/isaacsim/#history",
+    "https://github.com/isaac-sim/IsaacSim/blob/develop/tools/docker/README.md"
+   ]
+  },
+  {
+   "name": "NVIDIA Isaac Lab",
+   "category": "Robot learning framework (RL/IL/teleop)",
+   "status_as_of_2026": "3.0.0-EA (2026-09-16), 3.0.0-beta2 (2026-06-17), 3.0.0-beta (2026-03-17, GTC 2026). Multi-backend: Newton (MJWarp, VBD, MPM), PhysX, OVPhysX; kit-less training; Python 3.12 / uv.",
+   "license_and_cost": "BSD-3 (main) and Apache-2.0 (isaaclab_mimic). cuRobo is now Apache-2.0. Proprietary only when the Isaac Sim, ovrtx or ovphysx extras are installed.",
+   "strengths": [
+    "One task API across physics and rendering backends",
+    "Published throughput benchmarks (for example, G1 rough-terrain locomotion at 82k FPS training on an RTX 4090)",
+    "Large community"
+   ],
+   "weaknesses": [
+    "3.0 is still Early Access; API churn",
+    "Mostly NVIDIA-only GPUs"
+   ],
+   "best_fit": "Default training layer of the platform (RL, imitation, mimic data generation).",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacLab/releases",
+    "https://github.com/isaac-sim/IsaacLab",
+    "https://github.com/isaac-sim/IsaacLab/blob/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst",
+    "https://github.com/NVlabs/curobo/blob/main/LICENSE"
+   ]
+  },
+  {
+   "name": "Newton physics engine",
+   "category": "GPU physics engine (Warp-based, multi-solver)",
+   "status_as_of_2026": "1.6.1 (2026-10-05), 1.6.0 (2026-09-10), 1.0.0 (PyPI 2026-03-10), first alpha 0.1.1a2 (2025-08-27). Linux Foundation project started by Disney Research, Google DeepMind and NVIDIA; governed by a Technical Steering Committee. PyPI status 'Production/Stable'.",
+   "license_and_cost": "Apache-2.0 (code), CC-BY-4.0 (docs). Free.",
+   "strengths": [
+    "Vendor-neutral governance; MuJoCo-Warp primary backend plus VBD/XPBD cloth, MPM, cables, differentiable simulation",
+    "OpenUSD support; fast many-world setup"
+   ],
+   "weaknesses": [
+    "NVIDIA GPU only (Maxwell or newer, driver 545+); macOS is CPU-only",
+    "Young (1.0 seven months ago)"
+   ],
+   "best_fit": "Primary physics core for robots, deformables and manipulation.",
+   "sources": [
+    "https://github.com/newton-physics/newton",
+    "https://pypi.org/project/newton/#history",
+    "https://github.com/newton-physics/newton/releases",
+    "https://github.com/newton-physics/newton-governance"
+   ]
+  },
+  {
+   "name": "MuJoCo / MuJoCo-Warp / MJX / MuJoCo Playground",
+   "category": "Physics engine (CPU reference + GPU batched)",
+   "status_as_of_2026": "MuJoCo 3.15.0 (2026-10-05), releasing every 2-3 weeks. MJWarp 3.15.0 (PyPI 2026-10-05, 'Alpha'), co-maintained by Google DeepMind and NVIDIA. MJX gives JAX access. Playground supports both MJX and MJWarp.",
+   "license_and_cost": "Apache-2.0; documentation CC-BY-4.0. Free.",
+   "strengths": [
+    "Gold-standard contact model for robot learning; CPU version is vendor-neutral",
+    "MJWarp benchmark: humanoid with 8,192 worlds at about 2.73M steps/s (GPU not stated)"
+   ],
+   "weaknesses": [
+    "MJWarp alpha: some features unsupported (IMPLICITFAST, PGS/noslip, plugin actuators); NVIDIA GPU needed for speed"
+   ],
+   "best_fit": "Reference physics, sim-to-sim validation and the JAX/TPU path.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco",
+    "https://github.com/google-deepmind/mujoco/releases",
+    "https://pypi.org/project/mujoco-warp/",
+    "https://github.com/google-deepmind/mujoco_warp/blob/main/benchmarks/README.md",
+    "https://github.com/google-deepmind/mujoco_playground"
+   ]
+  },
+  {
+   "name": "Genesis World (+ Nyx renderer, Quadrants compiler)",
+   "category": "Multi-physics simulator",
+   "status_as_of_2026": "1.4.3 (PyPI 2026-09-30); 1.0 announced May 2026. Started as an academic project, now backed by Genesis AI (commercial). About 30k GitHub stars.",
+   "license_and_cost": "Code is Apache-2.0. The Nyx renderer (gs-nyx 0.1.7, 2026-09-25, alpha) declares NO license on PyPI, so treat it as not open until clarified.",
+   "strengths": [
+    "Cross-vendor: CUDA, AMD ROCm, Apple Metal, Vulkan, x86, ARM64",
+    "Unified rigid/FEM/MPM/particle physics; good laptop-to-datacenter developer experience"
+   ],
+   "weaknesses": [
+    "Early marketing speed claims (43M FPS for a Franka on an RTX 4090) are not representative of contact-rich tasks",
+    "Renderer license unclear; corporate roadmap risk"
+   ],
+   "best_fit": "Secondary backend for non-NVIDIA hardware and the education or laptop tier.",
+   "sources": [
+    "https://github.com/Genesis-Embodied-AI/Genesis",
+    "https://pypi.org/project/genesis-world/",
+    "https://pypi.org/project/gs-nyx/",
+    "https://github.com/Genesis-Embodied-AI/Genesis/blob/v0.2.1/README.md"
+   ]
+  },
+  {
+   "name": "Omniverse Kit SDK / Kit App Streaming / ovrtx / ovphysx",
+   "category": "Proprietary NVIDIA runtime and streaming",
+   "status_as_of_2026": "ovrtx 0.5.1.385782 (2026-10-06, alpha): kit-less RTX camera/lidar/radar sensor simulation library. ovphysx 0.6.3 (2026-09-16, alpha): USD-based PhysX wrapper. kit-app-template documents Kit App Streaming on Kubernetes and NVCF / DGX Cloud deployment.",
+   "license_and_cost": "Kit: NVIDIA Software License Agreement plus Product-Specific Terms for Omniverse. ovrtx: LicenseRef-NvidiaProprietary under the NVIDIA SLA plus Product-Specific Terms for NVIDIA AI Products. ovphysx: LicenseRef-NVIDIA-Omniverse. Fees: none listed on PyPI; enterprise subscription terms not verified.",
+   "strengths": [
+    "ovrtx gives physically based sensor rendering without the full Kit app, so it can be embedded in our own renderer service",
+    "Official Kubernetes streaming reference"
+   ],
+   "weaknesses": [
+    "Proprietary and alpha; hosted-service, redistribution and telemetry terms must be checked",
+    "RT-core GPUs only"
+   ],
+   "best_fit": "Premium sensor-fidelity tier, isolated behind a renderer API.",
+   "sources": [
+    "https://pypi.org/project/ovrtx/",
+    "https://pypi.org/project/ovphysx/",
+    "https://github.com/NVIDIA-Omniverse/kit-app-template"
+   ]
+  },
+  {
+   "name": "NVIDIA Omniverse Enterprise subscription",
+   "category": "Commercial license and support",
+   "status_as_of_2026": "Could not verify 2026 terms (nvidia.com blocked).",
+   "license_and_cost": "About $4,500 per GPU per year list price as previously published (LOW confidence; verify with NVIDIA Korea, Inception discounts likely). Example: 16 rendering GPUs × 2 years ≈ $144k (₩2.0억).",
+   "strengths": [
+    "Enterprise support, SLAs, possibly clearer production-use rights"
+   ],
+   "weaknesses": [
+    "Recurring per-GPU cost on top of cloud GPU cost; deepens lock-in"
+   ],
+   "best_fit": "Buy only if NVIDIA requires it for hosted commercial use or if an enterprise customer demands NVIDIA support.",
+   "sources": []
+  },
+  {
+   "name": "NVIDIA PhysX 5 SDK + Warp",
+   "category": "Open physics libraries",
+   "status_as_of_2026": "PhysX repository is fully open source including GPU code (PhysX SDK 5.11 / ovphysx 0.6 compatible with Isaac Sim 6.0). warp-lang 1.18.0 (2026-10-05).",
+   "license_and_cost": "PhysX: BSD-3. Warp: Apache-2.0. Free.",
+   "strengths": [
+    "Mature articulation and vehicle physics; source access for customization"
+   ],
+   "weaknesses": [
+    "Warp needs an NVIDIA GPU (sm_75+, driver R580+); macOS is CPU-only"
+   ],
+   "best_fit": "Vehicle dynamics and PhysX parity backend; Warp for custom GPU kernels (sensors, randomization).",
+   "sources": [
+    "https://github.com/NVIDIA-Omniverse/PhysX",
+    "https://pypi.org/project/warp-lang/"
+   ]
+  },
+  {
+   "name": "NVIDIA Cosmos 3 (world foundation models)",
+   "category": "Generative world model / augmentation",
+   "status_as_of_2026": "Cosmos 3 (May 2026; Edge variant July 2026). Super 64B (H200/B200/GB200), Nano 16B (RTX PRO 6000/H100/B200), Edge 4B (Jetson Thor/RTX PRO). Cosmos-Predict2.5 is no longer under active development.",
+   "license_and_cost": "Cosmos 3 code and weights: OpenMDW-1.1. Cosmos 2.5 weights: NVIDIA Open Model License. Self-hosted GPU cost only.",
+   "strengths": [
+    "Sim-to-real appearance transfer and scenario augmentation for CEN synthetic data; permissive license in v3"
+   ],
+   "weaknesses": [
+    "Heavy GPUs; generated artifacts need validation for safety-critical use"
+   ],
+   "best_fit": "Augmentation and photoreal transfer layer on top of physics-correct simulation.",
+   "sources": [
+    "https://github.com/NVIDIA/Cosmos",
+    "https://github.com/nvidia-cosmos/cosmos-predict2.5",
+    "https://github.com/nvidia-cosmos"
+   ]
+  },
+  {
+   "name": "Unreal Engine 5 (+ Pixel Streaming)",
+   "category": "Game-engine renderer",
+   "status_as_of_2026": "UE 5.8 is the current Pixel Streaming infrastructure branch (5.7 supported, 5.6 end-of-life). Owner: Epic Games.",
+   "license_and_cost": "Pixel Streaming infrastructure is MIT. Engine: free under $1M annual revenue; non-game companies over $1M pay about $1,850/seat/yr (2024 terms; 2026 price not verified, MEDIUM-LOW). Games pay a 5% royalty over $1M.",
+   "strengths": [
+    "Best-in-class real-time visuals (Lumen/Nanite), large asset ecosystem, runs on any GPU vendor",
+    "Proven for AV simulation (CARLA 0.10 on UE 5.5)"
+   ],
+   "weaknesses": [
+    "Chaos physics is not robotics-grade, so it must be coupled to MuJoCo/Newton",
+    "EULA and Fab content terms (use outside UE, AI-training restrictions) need legal review"
+   ],
+   "best_fit": "AV and city-scale visual tier, marketing-grade visualization.",
+   "sources": [
+    "https://github.com/EpicGames/PixelStreamingInfrastructure",
+    "https://github.com/carla-simulator/carla/releases"
+   ]
+  },
+  {
+   "name": "Unity 6 Industry",
+   "category": "Game-engine renderer (industrial edition)",
+   "status_as_of_2026": "Not verified (unity.com blocked).",
+   "license_and_cost": "Unity Industry was about $4,950/seat/yr and Unity Pro about $2,200/seat/yr (2025), and distributing non-game apps may need an industrial runtime license (LOW confidence).",
+   "strengths": [
+    "Easy authoring, mobile/XR targets; may match CEN's existing tooling if CEN is Unity-based"
+   ],
+   "weaknesses": [
+    "Weaker robotics physics; higher seat cost; Unity Perception package history of deprioritization"
+   ],
+   "best_fit": "Only if CEN already runs on Unity.",
+   "sources": []
+  },
+  {
+   "name": "CARLA",
+   "category": "AV simulator",
+   "status_as_of_2026": "0.10.0 (2024-12-19, UE 5.5, Chaos physics, native ROS 2); 0.9.16 (Cosmos Transfer1 + NuRec + SimReady USD converters; date shown as Sept 16, year inferred 2025).",
+   "license_and_cost": "Code MIT; assets CC-BY (attribution required in derived datasets); UE terms apply to UE builds.",
+   "strengths": [
+    "Free AV scenario stack with traffic, maps and sensors; NVIDIA NuRec/Cosmos bridges"
+   ],
+   "weaknesses": [
+    "Single-node real-time bias; vehicle dynamics are simplified versus Chrono/PhysX vehicles"
+   ],
+   "best_fit": "AV vertical starter content and benchmarks.",
+   "sources": [
+    "https://github.com/carla-simulator/carla",
+    "https://github.com/carla-simulator/carla/releases"
+   ]
+  },
+  {
+   "name": "Project Chrono",
+   "category": "Multibody / vehicle / terramechanics engine",
+   "status_as_of_2026": "10.0.0; about 20,031 commits; UW-Madison SBEL and University of Parma; modules for vehicles, sensors, FSI, granular and FEA; AMD ROCm GPU path.",
+   "license_and_cost": "BSD-3. Free.",
+   "strengths": [
+    "Off-road vehicles, terramechanics, granular media and FSI that no other engine here covers"
+   ],
+   "weaknesses": [
+    "CPU-heavy; not built for RL-scale batching"
+   ],
+   "best_fit": "Off-road, construction-equipment and ship/FSI twins.",
+   "sources": [
+    "https://github.com/projectchrono/chrono",
+    "https://raw.githubusercontent.com/projectchrono/chrono/main/LICENSE"
+   ]
+  },
+  {
+   "name": "Drake",
+   "category": "Model-based robotics toolbox",
+   "status_as_of_2026": "Active; 35,216 commits; RobotLocomotion (MIT origins) with Toyota Research Institute.",
+   "license_and_cost": "BSD-3. Free.",
+   "strengths": [
+    "Rigorous contact (hydroelastic), optimization and verification tools"
+   ],
+   "weaknesses": [
+    "Not GPU-batched; steep learning curve"
+   ],
+   "best_fit": "Ground-truth and validation reference, planning/control customers.",
+   "sources": [
+    "https://github.com/RobotLocomotion/drake",
+    "https://raw.githubusercontent.com/RobotLocomotion/drake/master/LICENSE.TXT"
+   ]
+  },
+  {
+   "name": "Gazebo (gz-sim)",
+   "category": "ROS-native simulator",
+   "status_as_of_2026": "Active; maintained by Intrinsic; 16+ years of lineage.",
+   "license_and_cost": "Apache-2.0. Free.",
+   "strengths": [
+    "ROS 2 ecosystem default; lightweight"
+   ],
+   "weaknesses": [
+    "Low visual fidelity; no GPU-parallel RL"
+   ],
+   "best_fit": "ROS integration tests and customer compatibility layer.",
+   "sources": [
+    "https://github.com/gazebosim/gz-sim"
+   ]
+  },
+  {
+   "name": "GPU clouds (hyperscalers vs neoclouds vs Korean clouds)",
+   "category": "Compute supply",
+   "status_as_of_2026": "SkyPilot catalog snapshot 2026-10-05/06: AWS adds g7e (RTX PRO 6000) and p6-b200/b300; GCP adds G4 (RTX PRO 6000) and A4 (B200). Korean providers (NHN Cloud, KT Cloud, Naver Cloud, Kakao Cloud) could not be checked.",
+   "license_and_cost": "Per-GPU hour, on-demand: H100 $6.88 (AWS) / $10.98 (GCP) / $6.98 (Azure) / $3.99 (Lambda 8x SXM) / $2.89-3.49 (RunPod). L40S $1.86 (AWS) / $1.09 (RunPod). RTX PRO 6000 $3.36 (AWS) / $4.50 (GCP) / $2.09 (RunPod). L4 $0.56-0.81. A10G $1.01.",
+   "strengths": [
+    "Neoclouds are 40-60% cheaper than hyperscalers; spot gives 50-65% further discounts"
+   ],
+   "weaknesses": [
+    "Seoul regions cost 23-38% more; RT-core GPU supply is thinner than H100 supply"
+   ],
+   "best_fit": "Split pools: RT-core GPUs (L40S/RTX PRO 6000) for rendering, H100/B200 for training, plus a Korean sovereign/CSAP cloud for public-sector work.",
+   "sources": [
+    "https://github.com/skypilot-org/skypilot-catalog",
+    "https://github.com/skypilot-org/skypilot-catalog/commits/master"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "Isaac Sim's LICENSE file says the repo software is Apache-2.0, but 'Building or using the software requires additional components licenced under other terms', including the Omniverse Kit SDK and 3D models/textures, under the 'Isaac Sim Additional Software and Materials License' (nvidia.com agreements page).",
+   "source": "https://github.com/isaac-sim/IsaacSim/blob/develop/LICENSE",
+   "confidence": "high"
+  },
+  {
+   "claim": "The isaacsim pip metapackage is classified 'Other/Proprietary License (NVIDIA Proprietary Software)'. Latest 6.1.0.0 released 2026-09-09; 6.0.0.0 on 2026-03-16; 5.0.0.0 on 2025-08-07.",
+   "source": "https://pypi.org/project/isaacsim/#history",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Sim datacenter GPU guidance: minimum A40, recommended L40S or L20, best RTX PRO 6000 Blackwell Server. Workstation minimum is RTX 4080. Supports Linux aarch64.",
+   "source": "https://github.com/isaac-sim/IsaacSim",
+   "confidence": "high"
+  },
+  {
+   "claim": "H100, H200, B200 and B300 datacenter GPUs have no RT cores, so they cannot be used for Isaac Sim/Omniverse RTX rendering. They remain fine for kit-less physics RL and model training.",
+   "source": "NVIDIA architecture specifications (not re-fetched; nvidia.com blocked); consistent with the Isaac Sim README GPU list, which names only RT-core GPUs",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim's container streaming has no authentication or encryption ('designed for use on private/trusted networks'), requires --network=host for WebRTC, and requires ACCEPT_EULA to run.",
+   "source": "https://github.com/isaac-sim/IsaacSim/blob/develop/tools/docker/README.md",
+   "confidence": "high"
+  },
+  {
+   "claim": "Kit apps (kit-app-template) are governed by the 'NVIDIA Software License Agreement and the Product-Specific Terms for NVIDIA Omniverse'. The Kit SDK collects anonymous usage data. Documented deployment paths are Kit App Streaming on Kubernetes and NVCF / DGX Cloud.",
+   "source": "https://github.com/NVIDIA-Omniverse/kit-app-template",
+   "confidence": "high"
+  },
+  {
+   "claim": "ovrtx (kit-less RTX camera/lidar/radar sensor simulation library) 0.5.1 was released 2026-10-06 as alpha under LicenseRef-NvidiaProprietary (NVIDIA SLA plus Product Specific Terms for NVIDIA AI Products). ovphysx 0.6.3 (2026-09-16, alpha) is LicenseRef-NVIDIA-Omniverse.",
+   "source": "https://pypi.org/project/ovrtx/ ; https://pypi.org/project/ovphysx/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab 3.0.0-EA (2026-09-16) introduces a multi-backend architecture. Newton (MuJoCo-Warp, VBD, MPM), OVPhysX and OVRTX run kit-less. The Isaac Sim PhysX backend, Isaac Sim RTX rendering and the ROS bridge require Isaac Sim 6.1. Visualizers: Newton GL, Newton RTX, Kit, Viser, Rerun.",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab main code is BSD-3 and isaaclab_mimic is Apache-2.0. cuRobo's LICENSE is now Apache-2.0 (NVIDIA, 2023-2026).",
+   "source": "https://github.com/isaac-sim/IsaacLab ; https://github.com/NVlabs/curobo/blob/main/LICENSE",
+   "confidence": "high"
+  },
+  {
+   "claim": "Newton is Apache-2.0 (code) and CC-BY-4.0 (docs), a Linux Foundation project started by Disney Research, Google DeepMind and NVIDIA, with MuJoCo-Warp as its primary backend. It needs an NVIDIA GPU (Maxwell or newer, driver 545+). v1.0.0 on PyPI 2026-03-10; v1.6.1 on 2026-10-05; PyPI status Production/Stable.",
+   "source": "https://github.com/newton-physics/newton ; https://pypi.org/project/newton/#history",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo 'Initially developed by Roboti LLC, it was acquired and made freely available by Google DeepMind in October 2021, and open sourced in May 2022.' Apache-2.0. Latest 3.15.0 on 2026-10-05, with releases every 2-3 weeks (3.11 Jul 27, 3.12 Aug 20, 3.13 Sep 8, 3.14 Sep 22).",
+   "source": "https://github.com/google-deepmind/mujoco/blob/main/doc/overview.rst ; https://github.com/google-deepmind/mujoco/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo-Warp (MJWarp) 3.15.0 is Apache-2.0, maintained by Google DeepMind and NVIDIA, classified Alpha on PyPI, and requires an NVIDIA GPU for fast simulation. Its benchmark shows a humanoid with 8,192 worlds at 2,729,192 steps/s (GPU not stated).",
+   "source": "https://pypi.org/project/mujoco-warp/ ; https://github.com/google-deepmind/mujoco_warp/blob/main/benchmarks/README.md",
+   "confidence": "high"
+  },
+  {
+   "claim": "Genesis World code is Apache-2.0 and now officially supported by Genesis AI; latest 1.4.3 on 2026-09-30; 1.0 announced May 2026. Backends: CUDA, AMD ROCm, Apple Metal, Vulkan, x86, ARM64 via the Quadrants compiler. The Nyx renderer (gs-nyx 0.1.7) declares no license on PyPI.",
+   "source": "https://github.com/Genesis-Embodied-AI/Genesis ; https://pypi.org/project/genesis-world/ ; https://pypi.org/project/gs-nyx/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Genesis's launch README claimed 'Over 43 million FPS when simulating a Franka robotic arm with a single RTX 4090'. This is a contact-light best case, not representative of manipulation workloads.",
+   "source": "https://github.com/Genesis-Embodied-AI/Genesis/blob/v0.2.1/README.md",
+   "confidence": "high"
+  },
+  {
+   "claim": "Genesis was reported as a roughly 24-month collaboration of 20+ research labs before its Dec 2024 launch, and Genesis AI reportedly raised about $105M seed in 2025. Both claims come from memory and could not be re-verified.",
+   "source": "Not verified in this session (web search unavailable)",
+   "confidence": "low"
+  },
+  {
+   "claim": "NVIDIA PhysX repository (PhysX SDK, Blast, Flow) is BSD-3 with GPU source included; compatible with PhysX SDK 5.11 / ovphysx 0.6 / Isaac Sim 6.0.",
+   "source": "https://github.com/NVIDIA-Omniverse/PhysX",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Warp (warp-lang) 1.18.0, released 2026-10-05, is Apache-2.0 and requires an NVIDIA Turing (sm_75)+ GPU and an R580+ driver for CUDA; macOS is CPU-only.",
+   "source": "https://pypi.org/project/warp-lang/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Cosmos 3 (May 2026; Edge variant July 2026) is released under OpenMDW-1.1 for code and weights: Super 64B, Nano 16B, Edge 4B. Cosmos-Predict2.5 weights are under the NVIDIA Open Model License and that repo is no longer actively developed.",
+   "source": "https://github.com/NVIDIA/Cosmos ; https://github.com/nvidia-cosmos/cosmos-predict2.5",
+   "confidence": "high"
+  },
+  {
+   "claim": "CARLA code is MIT and its assets are CC-BY. Unreal Engine follows its own license. 0.10.0 (Dec 19 2024) moved to UE 5.5 with Chaos physics; 0.9.16 added Cosmos Transfer1 and NuRec integration.",
+   "source": "https://github.com/carla-simulator/carla ; https://github.com/carla-simulator/carla/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "Project Chrono is BSD-3 (Copyright 2016 Project Chrono Development Team), version 10.0.0, about 20,031 commits, with an AMD ROCm GPU path. Drake is BSD-3 (MIT CSAIL, 2012-2025) with 35,216 commits. Gazebo gz-sim is Apache-2.0, maintained by Intrinsic, with 16+ years of history.",
+   "source": "https://github.com/projectchrono/chrono ; https://github.com/RobotLocomotion/drake ; https://github.com/gazebosim/gz-sim",
+   "confidence": "high"
+  },
+  {
+   "claim": "Epic's Pixel Streaming infrastructure (signalling server, SFU, frontend, Matchmaker) is MIT-licensed. UE5.8 is the current branch, UE5.7 is supported and UE5.6 is end-of-life.",
+   "source": "https://github.com/EpicGames/PixelStreamingInfrastructure",
+   "confidence": "high"
+  },
+  {
+   "claim": "Unreal Engine: free under $1M annual gross revenue; non-game companies above that pay a seat subscription of about $1,850/seat/year (introduced 2024); games pay 5% royalty over $1M per product. 2026 price not re-verified.",
+   "source": "Epic pricing (unrealengine.com blocked by egress proxy; from 2024 terms)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Omniverse Enterprise list price is about $4,500 per GPU per year. Unity Industry is about $4,950/seat/year and Unity Pro about $2,200/seat/year. None of these could be re-verified for 2026.",
+   "source": "Vendor pricing pages blocked (nvidia.com, unity.com)",
+   "confidence": "low"
+  },
+  {
+   "claim": "The SkyPilot catalog GPU prices used here were refreshed by bot on 2026-10-05/06 (AWS, GCP, RunPod, Shadeform). The Lambda and Azure files may be older.",
+   "source": "https://github.com/skypilot-org/skypilot-catalog/commits/master",
+   "confidence": "high"
+  },
+  {
+   "claim": "AWS and GCP Seoul regions are 23-38% more expensive than US regions for the same GPU instances (AWS g6e/g7e/g6 +23%; AWS p5/p5en +38%; GCP A3-high and L4 +28%).",
+   "source": "https://github.com/skypilot-org/skypilot-catalog (catalogs/v8/aws/vms.csv, catalogs/v8/gcp/vms.csv)",
+   "confidence": "high"
+  },
+  {
+   "claim": "Korea secured large NVIDIA GPU allocations in 2025: about 260k GPUs announced at APEC on 2025-10-31 (government about 50k; Samsung, SK and Hyundai about 50k each; Naver about 60k). A government GPU-leasing program runs via NHN Cloud, Naver Cloud and Kakao. This could provide subsidized H100/H200/B200 access for startups.",
+   "source": "Not verified in this session (news sites blocked)",
+   "confidence": "low"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "AWS H100 on-demand (p5.48xlarge, us-east-1)",
+   "value": "$55.04/h per 8 GPUs = $6.88/GPU-h; Seoul ap-northeast-2 $75.96 = $9.49/GPU-h; spot min about $26.03/8 = $3.25/GPU-h",
+   "source": "https://github.com/skypilot-org/skypilot-catalog (v8/aws/vms.csv, 2026-10-06)"
+  },
+  {
+   "metric": "AWS H200 on-demand (p5en.48xlarge)",
+   "value": "$63.30/h = $7.91/GPU-h (us-east-1); $87.35 = $10.92/GPU-h (Seoul)",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "AWS B200 / B300 on-demand",
+   "value": "p6-b200.48xlarge $113.93/h = $14.24/GPU-h (spot about $6.70); p6-b300.48xlarge $142.42/h = $17.80/GPU-h (Seoul $26.15)",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "AWS L40S on-demand (g6e)",
+   "value": "g6e.xlarge $1.861/h (us-east-1), $2.288 (Seoul); g6e.48xlarge 8×L40S $30.13/h = $3.77/GPU-h",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "AWS RTX PRO 6000 Blackwell (g7e)",
+   "value": "g7e.2xlarge $3.363/h (us-east-1), $4.135 (Seoul), spot about $1.91; g7e.48xlarge 8 GPUs $33.14/h = $4.14/GPU-h",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "AWS L4 / A10G on-demand",
+   "value": "g6.xlarge (L4) $0.805/h US, $0.990 Seoul; g5.xlarge (A10G) $1.006/h US, $1.237 Seoul, spot about $0.41",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "GCP H100 (a3-highgpu-8g, us-central1) VM + GPU",
+   "value": "$9.46 + $78.37 = $87.83/h = $10.98/GPU-h; Seoul asia-northeast3 $112.79 = $14.10/GPU-h; spot $49.94 = $6.24/GPU-h",
+   "source": "https://github.com/skypilot-org/skypilot-catalog (v8/gcp/vms.csv, 2026-10-05)"
+  },
+  {
+   "metric": "GCP H200 (a3-ultragpu-8g) / B200 (a4-highgpu-8g)",
+   "value": "H200 $86.76/h = $10.85/GPU-h (spot $6.46); B200 $90.22/h = $11.28/GPU-h (spot $4.95)",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "GCP RTX PRO 6000 (G4) and L4 (G2)",
+   "value": "g4-standard-48 (1 GPU) $3.40 VM + $1.10 GPU = $4.50/h, spot $1.71/h; 8-GPU g4-standard-384 $36.0/h = $4.50/GPU-h. g2-standard-4 (1×L4) $0.71/h US; L4 GPU-only $0.72 in Seoul",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "Azure on-demand (eastus)",
+   "value": "NC40ads H100 v5 $6.98/GPU-h; ND96isr H100 v5 $98.32/h; NV36ads A10 v5 $3.20/h (spot $0.80); NC24ads A100 v4 $3.67/h",
+   "source": "https://github.com/skypilot-org/skypilot-catalog (v8/azure, freshness uncertain)"
+  },
+  {
+   "metric": "Lambda on-demand",
+   "value": "8×H100 SXM $31.92/h = $3.99/GPU-h; 1×H100 PCIe $3.29; 8×B200 $53.52 = $6.69/GPU-h; GH200 $2.29; A10 $1.29",
+   "source": "https://github.com/skypilot-org/skypilot-catalog (v8/lambda, freshness uncertain)"
+  },
+  {
+   "metric": "RunPod Secure Cloud on-demand",
+   "value": "H100 PCIe $2.89, H100 SXM $3.49, H200 $4.59, B200 $6.79, B300 $7.89, L40S $1.09, RTX PRO 6000 $2.09, L4 $0.49, RTX 4090 $0.74, RTX 5090 $0.99 per GPU-h",
+   "source": "https://github.com/skypilot-org/skypilot-catalog (v8/runpod, 2026-10-06)"
+  },
+  {
+   "metric": "Other neoclouds / marketplaces",
+   "value": "Nebius H100 $4.50 (spot $2.15), H200 $5.40, B200 $8.50, L40S $1.55. Vast.ai lows: H100 $1.80, H200 $2.35, L40S $0.60, RTX 4090 $0.35, RTX PRO 6000 WS $0.93. OCI H100/H200 $10.00, L40S $3.50, including Seoul",
+   "source": "https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "Seoul region premium over US",
+   "value": "AWS g6/g6e/g7e +23%; AWS p5/p5en +38%; GCP A3/L4 +28%",
+   "source": "Computed from https://github.com/skypilot-org/skypilot-catalog"
+  },
+  {
+   "metric": "Isaac Lab training throughput (step + inference + train, env-steps/s)",
+   "value": "RTX 4090: G1 rough locomotion 82k, Shadow-hand repose 170k, Cartpole 510k, Cartpole-RGB-camera 32k. L40: 62k / 120k / 260k / 21k. 4 nodes × 4 L40: G1 960k, Shadow 1.8M",
+   "source": "https://github.com/isaac-sim/IsaacLab/blob/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "Cost per 1B RL env-steps: humanoid G1 rough-terrain locomotion",
+   "value": "RTX 4090 3.39 GPU-h = $1.17-2.51. L40S-class 4.48 GPU-h = $2.69 (Vast), $4.88 (RunPod), $8.34 (AWS US), $10.25 (AWS Seoul)",
+   "source": "Derived from Isaac Lab benchmarks + SkyPilot prices"
+  },
+  {
+   "metric": "Cost per 1B RL env-steps: dexterous Shadow-hand manipulation",
+   "value": "RTX 4090 1.63 GPU-h = $0.57-1.21; L40S-class 2.31 GPU-h = $1.39-5.30",
+   "source": "Derived from Isaac Lab benchmarks + SkyPilot prices"
+  },
+  {
+   "metric": "Cost per 1B RL env-steps with one camera in the loop (Cartpole-RGB)",
+   "value": "RTX 4090 8.68 GPU-h = $3.00-6.42; L40S-class 13.2 GPU-h = $7.94-30.26. Realistic multi-camera manipulation is likely 5-20x higher (estimate)",
+   "source": "Derived from Isaac Lab benchmarks + SkyPilot prices"
+  },
+  {
+   "metric": "MuJoCo-Warp sim-only humanoid throughput",
+   "value": "2.73M steps/s with 8,192 worlds, about 0.10 GPU-h per 1B steps (well under $1 per 1B steps on any cloud GPU)",
+   "source": "https://github.com/google-deepmind/mujoco_warp/blob/main/benchmarks/README.md"
+  },
+  {
+   "metric": "Cost per 1M synthetic 1080p images, rasterized (assumed 20-60 img/s/GPU incl. annotators)",
+   "value": "4.6-13.9 GPU-h: $5-15 (L40S RunPod), $16-47 (AWS RTX PRO 6000), $21-62 (GCP G4 on-demand)",
+   "source": "Modeling assumption (throughput) × SkyPilot prices; LOW-MEDIUM confidence"
+  },
+  {
+   "metric": "Cost per 1M synthetic 1080p images, RTX real-time ray-traced (assumed 5-15 img/s/GPU)",
+   "value": "18.5-55.6 GPU-h: $20-61 (L40S RunPod), $62-187 (AWS RTX PRO 6000), $83-250 (GCP G4)",
+   "source": "Modeling assumption × SkyPilot prices; LOW-MEDIUM confidence"
+  },
+  {
+   "metric": "Cost per 1M synthetic 1080p images, path-traced 64-256 spp denoised (assumed 1-4 s/img)",
+   "value": "278-1,111 GPU-h: $303-1,211 (L40S RunPod), $934-3,737 (AWS RTX PRO 6000), $1,250-5,000 (GCP G4 on-demand)",
+   "source": "Modeling assumption × SkyPilot prices; LOW-MEDIUM confidence"
+  },
+  {
+   "metric": "Storage/egress per 1M multimodal frames (RGB + depth + seg + labels, about 5.5 TB)",
+   "value": "About $126/month on S3 Standard ($0.023/GB-mo) and about $495 one-time internet egress ($0.09/GB). Exceeds raster render compute.",
+   "source": "AWS list prices from prior knowledge (aws.amazon.com blocked); MEDIUM confidence"
+  },
+  {
+   "metric": "AV full sensor-rig simulation (8 cameras + lidar + radar, real time)",
+   "value": "2-4 RT-core GPUs per ego plus CPU for traffic, about $2.7-14.5 per sim-hour; a 1,000-hour regression suite costs about $2.7k-14.5k per run",
+   "source": "Modeling assumption × SkyPilot prices; LOW confidence"
+  },
+  {
+   "metric": "24-month team cost, LEAN (12 people, full team from month 1)",
+   "value": "Annual base payroll ₩13.0/16.2/19.4억 (low/mid/high). 24-month people cost incl. 1.18× statutory load + severance, ₩25M/head/yr overhead and recruiting: ₩37.7/45.4/53.2억. Compute ₩4.1억 ($0.29M). Mid total about ₩49.6억 ($3.5M)",
+   "source": "Own model; salary bands are planning assumptions (LOW confidence); FX 1,400 KRW/USD assumed"
+  },
+  {
+   "metric": "24-month team cost, STANDARD (25 people)",
+   "value": "Base payroll ₩25.5/31.7/38.1억 per year; 24-month people cost ₩74.6/89.7/105.3억; compute ₩13.7억 ($0.98M; 32 render GPUs at 70% + 16 H100 at 40%). Mid total about ₩103억 ($7.4M)",
+   "source": "Own model; LOW-MEDIUM confidence"
+  },
+  {
+   "metric": "24-month team cost, AGGRESSIVE (45 people)",
+   "value": "Base payroll ₩46.9/58.2/70.2억 per year; 24-month people cost ₩136.7/164.3/193.4억; compute ₩44억 ($3.14M; 64 render GPUs + 64 H100/B200 at 50%). Mid total about ₩208억 ($14.9M)",
+   "source": "Own model; LOW-MEDIUM confidence"
+  },
+  {
+   "metric": "Strategy D ramped plan (12 people months 1-12, then 25 people months 13-24)",
+   "value": "About 480 head-months × ₩1,495만 ≈ ₩72억 people + ₩8-12억 compute ≈ ₩80-84억 ($5.8-6.0M) over 24 months",
+   "source": "Own model"
+  },
+  {
+   "metric": "Senior KRW salary bands used (2026 annual base, planning assumptions)",
+   "value": "CTO/architect ₩1.8-2.6억; senior physics/sim ₩1.2-1.8억; senior rendering/sensor ₩1.1-1.7억; senior RL/VLA ML ₩1.2-1.8억; PhD research scientist ₩1.5-2.5억; senior infra/MLOps ₩1.0-1.5억; senior web-3D/full-stack ₩0.9-1.3억; mid engineer ₩0.65-0.95억; tech artist ₩0.6-0.9억. Employer load ≈ 4대보험 about 10-11% + severance 8.33% ≈ 1.18×",
+   "source": "Unverified (salary sites blocked); LOW confidence; validate with Wanted/Remember/headhunters"
+  },
+  {
+   "metric": "Strategy A effort estimate",
+   "value": "150-300 engineer-years (40-80 specialists × 3-5 years) ≈ ₩400-600억 ($30-43M) to approach Newton/MuJoCo + RTX-class parity",
+   "source": "Own estimate anchored on MuJoCo/Newton/Genesis/Chrono/Drake histories; LOW-MEDIUM confidence"
+  },
+  {
+   "metric": "Time-to-MVP by strategy",
+   "value": "A: 30-48+ months; B: 3-5 months (single vertical), 9-12 months to hardened multi-tenant SaaS; C: 9-15 months; D: 4-6 months MVP, 12-15 months to multi-domain GA",
+   "source": "Own estimate"
+  },
+  {
+   "metric": "Decision matrix weights",
+   "value": "Physics 15%, visual/sensor fidelity 15%, time-to-MVP 15%, 24-month cost 10%, licensing/SaaS legal safety 10%, strategic control/lock-in 10%, ease of use 10%, training integration 10%, Korean talent feasibility 5%",
+   "source": "Own framework"
+  },
+  {
+   "metric": "Decision matrix scores (1-5 per criterion, in the order above) and weighted totals",
+   "value": "A: 2,2,1,1,5,5,3,2,1 = 2.40. B: 4,5,5,3,2,1,3,5,4 = 3.70. C: 4,3,2,3,4,4,3,3,3 = 3.20. D: 5,4.5,4,4,4,3,4,5,4 = 4.23",
+   "source": "Own scoring"
+  },
+  {
+   "metric": "Optional license line items (24 months)",
+   "value": "UE seats 5 × about $1,850 × 2 years ≈ $18.5k (₩0.26억). Omniverse Enterprise 16 GPUs × about $4,500 × 2 years ≈ $144k (₩2.0억); LOW confidence prices",
+   "source": "Unverified vendor list prices"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "Adopt Strategy D (hybrid), which scores 4.23 vs 3.70 (B), 3.20 (C) and 2.40 (A). Do not build a physics engine or path tracer in-house. The evidence: MuJoCo took a decade-plus under Roboti and then DeepMind; Newton needed three large organizations plus prior code to reach 1.0 in March 2026; Genesis needed a VC-backed company to reach 1.0 in May 2026. A Korean startup cannot out-iterate engines that ship every 2-3 weeks for free.",
+  "Architecture: (1) Physics core: Newton 1.6.x with MuJoCo-Warp as the primary solver, plus VBD/MPM for deformables and cloth. Keep MuJoCo C and MJX as the CPU/JAX reference, PhysX 5 (BSD-3) for vehicle parity, and Chrono (BSD-3) for off-road/terramechanics and ships. (2) Training: Isaac Lab 3.x in kit-less mode, plus LeRobot-style imitation-learning pipelines and VLA fine-tuning on H100/B200 pools. (3) Rendering behind a single 'Renderer API': tier 1 Newton GL / web viewer (WebGPU/3DGS, Rerun/Viser) for editing and RL debugging; tier 2 UE5 or rasterized Kit for bulk synthetic data; tier 3 Isaac Sim 6.1 / ovrtx RTX for physically based camera/lidar/radar (premium); plus Cosmos 3 (OpenMDW-1.1) for appearance transfer. (4) Platform layer owned by AICHEMIST: OpenUSD scene graph, LLM scene compiler, NeRF/3DGS-to-SimReady asset physics estimation, domain-randomization engine, dataset versioning, CEN token billing and marketplace, multi-tenant K8s scheduler with separate RT-core and compute GPU pools.",
+  "Phase 0 (months 0-6, lean 12): ship one vertical MVP, either robot-arm pick-and-place or AMR in a warehouse, because they reuse CEN's indoor SDG strengths. Use Isaac Sim 6.1 directly for photoreal SDG and Isaac Lab/Newton for RL. Exit criteria: 2-3 paid PoCs with Korean manufacturers or logistics firms, a sim-to-real transfer demo, and a per-image/per-step cost dashboard.",
+  "Phase 1 (months 6-15, ramp to about 20-25): build the renderer abstraction and web viewer, a second vertical (AV/ADAS sensor simulation with CARLA content on UE5 or ovrtx, or mobile manipulators/humanoids), and the LLM scene control GA. Add an on-prem package for chaebol and sovereign customers. Phase 2 (months 15-24): multi-domain GA (vehicles, drones, ships via Chrono FSI), a marketplace of SimReady assets with physics parameters, and managed VLA fine-tuning.",
+  "Budget: plan about ₩80-85억 ($5.8-6.0M) for 24 months on the ramped D plan (12 → 25 people). This covers people at a mid-case ₩1,495만 per head-month fully loaded, plus ₩8-12억 for compute. The aggressive 45-person plan (about ₩208억) is justified only if a large anchor customer or a Series B is secured. The lean 12-person plan (about ₩50억) cannot cover more than one or two verticals.",
+  "Hiring priorities, in order: (1) a simulation architect or CTO with Isaac/MuJoCo/OpenUSD experience (consider Korean-American or remote hires); (2) two GPU physics engineers who can contribute upstream to Newton/MJWarp and earn credibility through Linux Foundation contributions; (3) two rendering/sensor engineers, recruitable from Korean game studios (Nexon, NCSoft, Krafton, Pearl Abyss) for real-time graphics; (4) two RL/VLA engineers; (5) a K8s GPU infra engineer; (6) two web-3D/platform engineers. Retain them with stock options because senior specialist salaries are ₩1.2-1.8억+.",
+  "Licensing actions before any paid hosted launch: get NVIDIA's written confirmation (via NVIDIA Korea / Inception) that the Isaac Sim Additional Software license, the Omniverse product-specific terms and the ovrtx 'AI Products' terms allow (a) multi-tenant hosted SaaS for third parties, (b) container redistribution for on-prem, (c) resale or bundling of NVIDIA assets in the CEN marketplace, and (d) disabling or controlling telemetry. Budget about $4,500/GPU/yr for Omniverse Enterprise only if NVIDIA requires it. Keep the training path free of proprietary dependencies so a licensing change can only affect the premium rendering tier.",
+  "Avoid asset-licensing contamination in the marketplace: build an asset provenance registry. Track CARLA assets as CC-BY with attribution in derived datasets, NVIDIA/Isaac assets as proprietary, UE Fab/Megascans as engine- and AI-use restricted (verify), and MuJoCo Menagerie and vendor robot models with per-model licenses. Sell only assets with clear rights, and attach a license manifest to every synthetic dataset.",
+  "GPU procurement: split pools. Use RT-core GPUs for rendering: RTX PRO 6000 Blackwell (AWS g7e $3.36/h, GCP G4 $4.50/h, spot $1.71) or L40S (RunPod $1.09, AWS $1.86). Use H100/H200/B200 for training (Lambda $3.99/GPU-h for 8×H100; RunPod $2.89-3.49) and use spot for batch SDG (50-65% cheaper). Avoid Seoul hyperscaler regions for non-sensitive batch work (+23-38%). Use Korean CSAP-certified clouds (NHN/KT/Naver) for public-sector twins. Apply for Korean government GPU support programs (unverified). Once utilization exceeds about 60%, buy a few on-prem 8× RTX PRO 6000 servers.",
+  "Pricing guardrails for CEN tokens derived from unit costs. Physics RL at about $1-10 per 1B steps means RL compute can be bundled cheaply. Price rasterized images at ≥ $0.0001 each, RTX ray-traced at ≥ $0.0005 and path-traced at ≥ $0.005, and meter storage/egress separately, since storage and egress (about $126/month and about $495 egress per 1M multimodal frames) exceed raster compute. Price AV sensor simulation per sim-hour at ≥ $20-30 to cover $3-15 COGS.",
+  "Hedge NVIDIA lock-in cheaply: keep OpenUSD as the canonical format, keep a MuJoCo C/MJX CPU/TPU path and a Genesis backend (AMD/Apple/Vulkan) for portability tests, and put every renderer and physics backend behind internal interfaces with sim-to-sim regression tests.",
+  "Differentiate where NVIDIA will not: Korean-language LLM scene control, vertical templates (shipbuilding yards, semiconductor fabs, logistics centers, defense and K-humanoids), photo-to-SimReady asset conversion with physical-parameter estimation, a sim-to-real validation service (real data in the marketplace for calibration), and turnkey managed training for non-expert customers."
+ ],
+ "risks": [
+  "NVIDIA license risk: the proprietary Kit/RTX/ovrtx/ovphysx terms (NVIDIA SLA + Omniverse / AI Products product-specific terms) may restrict hosted multi-tenant use, redistribution or asset resale, or may later require Omniverse Enterprise subscriptions. Mitigation: proprietary-free training path, renderer abstraction, written confirmation from NVIDIA.",
+  "GPU vendor lock-in: Newton, MuJoCo-Warp, Warp and Isaac are all NVIDIA-CUDA-only. A pricing or supply shock on RT-core GPUs (L40S/RTX PRO 6000 supply is thinner than H100) directly hits COGS.",
+  "Wrong GPU class: provisioning H100/H200/B200 for RTX rendering fails because they have no RT cores. Mixing pools without a scheduler causes idle expensive GPUs.",
+  "Alpha-quality dependencies: MuJoCo-Warp is alpha on PyPI, ovrtx 0.5 and ovphysx 0.6 are alpha, Isaac Lab 3.0 is Early Access, and Genesis Nyx is alpha with an undeclared license. API churn could consume 20-30% of engineering capacity.",
+  "Security: Isaac Sim WebRTC streaming has no authentication or encryption and needs host networking. A naive SaaS deployment exposes customer IP; a hardened gateway and per-tenant isolation are mandatory.",
+  "Asset and data licensing contamination: CC-BY attribution (CARLA), Fab/Megascans usage limits (unverified), proprietary NVIDIA assets, and per-model Menagerie/vendor licenses could make sold datasets legally defective.",
+  "Platform commoditization: NVIDIA (Isaac Lab Arena, Omniverse blueprints, Cosmos) and well-funded players (Genesis AI, Applied Intuition, Lightwheel and others) may ship similar hosted features. AICHEMIST must win on verticals, data, UX and Korean enterprise access.",
+  "Talent scarcity in Korea for GPU contact-physics and sensor-physics engineers. Salaries could exceed the planning bands, and hiring could slip by 3-6 months.",
+  "Fidelity gap: the sim-to-real gap for contact-rich manipulation and radar/lidar remains. Customers may churn if policies do not transfer, so calibration and validation services are needed.",
+  "Cost-model uncertainty: rendering throughput, AV-rig GPU counts, KRW salaries, the FX rate (1,400 assumed) and vendor list prices (UE, Unity, Omniverse Enterprise, Korean clouds) could not be verified in this session.",
+  "Unit-economics trap: storage and egress for multimodal synthetic data can exceed render compute. Underpricing tokens per image would create negative gross margin at scale.",
+  "Strategic over-reach: trying to cover robots, AVs, drones, ships and factories at once with a lean team dilutes quality. Sequence verticals."
+ ],
+ "open_questions": [
+  "Do the NVIDIA Isaac Sim Additional Software and Materials License, the Product-Specific Terms for Omniverse and the AI Products terms (ovrtx) allow commercial multi-tenant hosted SaaS, on-prem container redistribution and marketplace resale of NVIDIA assets? Is an Omniverse Enterprise subscription required, and at what 2026 price per GPU?",
+  "What are the 2026 Unreal Engine seat price and EULA terms for non-game simulation SaaS with Pixel Streaming, and do Fab/Megascans licenses allow use outside UE or for generating AI training data for sale?",
+  "What are the current 2026 GPU prices and availability (H100/H200/B200/L40S/RTX PRO 6000) at NHN Cloud, KT Cloud, Naver Cloud and Kakao Cloud, including government-subsidized GPU programs and startup eligibility?",
+  "What are the verified 2026 KRW salary benchmarks for senior graphics, physics, RL/VLA and infra engineers (Wanted, Remember, headhunter data)?",
+  "What renderer and engine does CEN currently use (Unity, UE, Omniverse, custom)? That determines whether tier-2 rendering should be UE5 or Kit rasterization, and how much existing code carries over.",
+  "Which first vertical and anchor customers (e.g., Hyundai/Kia, Samsung, HD Hyundai, CJ Logistics, Doosan Robotics, Rainbow Robotics) are reachable, and do they mandate NVIDIA Omniverse compatibility or on-prem deployment?",
+  "What is the measured throughput of RTX real-time vs path-traced SDG and of ovrtx sensor simulation on RTX PRO 6000 vs L40S for CEN's actual scenes? This is needed to replace the modeled image-cost assumptions.",
+  "Genesis AI's Nyx renderer license and long-term openness, and Genesis AI's funding and team size (unverified here)."
+ ]
+}

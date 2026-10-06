@@ -1,0 +1,752 @@
+{
+ "key": "korea_policy",
+ "topic": "Korean government policy, funding, compute access and go-to-market for a physical-AI digital twin platform (as of late 2026)",
+ "executive_summary": "VERIFICATION LIMIT: I could not check anything on the web in this run. The first WebSearch call came back with 'web search budget is used up (200 calls per turn, shared by every agent)'. WebFetch to primary sources (nvidianews.nvidia.com, korea.kr, msit.go.kr) was blocked by the egress proxy. Everything below therefore comes from model knowledge, which is solid through 2025 and patchy for H1 2026. Nothing from after mid-2026 is covered, including the 2027 budget proposal published around late Aug/Sep 2026. Every item carries a confidence level, and decision-critical numbers must be re-checked on IRIS, K-Startup, NIPA and the MSIT/MOTIE press pages before any proposal is written.\n\nThe policy direction is very favorable. In the 2026 budget, the AI line roughly tripled to about KRW 10.1T (from about 3.3T in 2025). National R&D went to a record of about KRW 35.3T in the proposal, and the total budget of about KRW 727.9T passed on 2 Dec 2025. The AI Basic Act took effect on 22 Jan 2026. The 'AI highway / sovereign AI' agenda and the Aug 2025 growth strategy name physical AI (robots/humanoids, autonomous vehicles, shipbuilding, drones, AI factories) as the main way to apply AI across industry.\n\nThe Oct 31, 2025 NVIDIA–Korea deal covers 260k+ Blackwell GPUs: about 50k for government, 50k each for Samsung, SK and Hyundai Motor Group, and 60k for Naver Cloud. Most of the commercial share is earmarked for physical AI and digital twins: Samsung's Omniverse 'AI Megafactory', Hyundai's roughly USD 3B physical-AI cluster, and SK's manufacturing AI cloud. So AICHEMIST's buyers are building Omniverse/Isaac-based twins right now. Those chaebol may also build in-house, which makes them both the best reference customers and the main substitution risk.\n\nThe best-fit role for AICHEMIST is not prime contractor on trillion-won national programs. It should be the 'simulation + synthetic-data + robot-learning infrastructure' supplier inside chaebol- or institute-led consortia:\n- K-Humanoid Alliance / KEIT robot R&D\n- the MOTIE M.AX alliance and AI-factory projects\n- IITP physical-AI and digital-twin R&D\n- the autonomous-driving R&D program\n- NIA data-construction projects\n\nStartup-only instruments should fund the core platform itself: Deep-tech TIPS (up to about KRW 1.5B of R&D over 3 years), Super-Gap Startup 1000+ (up to about KRW 0.6B over 3 years), and SME R&D. Vouchers (NIPA AI Voucher and the K-DATA Data Voucher) are the fastest route to subsidized revenue and paying references, because the government pays AICHEMIST to serve SMEs and mid-caps.\n\nCompute: government GPU allocations so far are training GPUs (B200/H200 from the about 13k-GPU pool run by NHN, Naver and Kakao). These have no RT cores, so they cannot run Omniverse/Isaac RTX sensor rendering. The plan should therefore use public B200/H200 for VLA, perception and RL training, and get RTX-class capacity (RTX PRO 6000 Blackwell / L40S) through domestic cloud providers or Hyundai/SK/Naver physical-AI clouds.\n\nRealistic non-dilutive intake over Q4 2026–2027, if 4–6 applications succeed, is about KRW 3–6B (my estimate, not a sourced figure), plus in-kind GPUs. Most of the 2026 calls have closed. The decisive window is Dec 2026–Apr 2027, when the yearly unified announcements come out.\n\nOverseas sequence:\n1. Lock in 2–3 named Korean references: one automotive or robot OEM, one AI-factory, one shipyard or defense customer.\n2. Get certified and enter the NVIDIA ecosystem: GS certification, a TTA test report, Inception and Omniverse partner listing.\n3. Japan first: labor-shortage automation, AIRoA robot-data consortium, and Japanese plants of Korean suppliers.\n4. The US, by following Korean OEMs' US plants (HMGMA Georgia, Samsung Taylor, Hanwha Philly Shipyard under the USD 150B MASGA shipbuilding package), plus a self-serve SaaS for US robotics startups.\n5. The Middle East through G2G smart-city and defense deals, following the precedent of Naver's Saudi 5-city digital-twin contract.\n\nThe key risks are:\n- NVIDIA commoditizing the stack: Isaac Sim/Lab are open source, and Cosmos and the Omniverse Blueprints are free.\n- Domestic competitors: MORAI in AV simulation, CyLab and E8 in synthetic data and digital twins.\n- Dependence on the policy cycle and the burden of matching funds.\n- Consortium IP and royalty terms, and the cap on how many concurrent projects one researcher may hold.\n\nIf the CEO funds one action now, it should be a single 'Korean physical-AI sim/data infrastructure' proposal kit with common KPIs (TRL 4→7, sim-to-real gap, synthetic-to-real mAP ratio, throughput), reused across TIPS, the vouchers and the consortia.",
+ "options": [
+  {
+   "name": "MSS Deep-tech TIPS (딥테크 팁스)",
+   "category": "Non-dilutive R&D + VC co-investment (startup-only)",
+   "status_as_of_2026": "Run by MSS/KOSME/TIPS operators since 2023 for deep-tech fields including AI, robotics and mobility. 2026 continuation assumed; 2026 rule changes not verified.",
+   "license_and_cost": "Up to about KRW 1.5B R&D over 3 years. Requires a TIPS operator (AC/VC) to invest at least about KRW 0.3B (equity dilution). Standard national-R&D matching share and 기술료 (royalty) rules apply.",
+   "strengths": [
+    "Largest startup-only R&D ticket",
+    "Rolling recommendation through operators rather than one annual call",
+    "Signals deep-tech status to VCs and to the Super-Gap/Post-TIPS follow-ons"
+   ],
+   "weaknesses": [
+    "Requires an equity round with an operator",
+    "Competitive; strong technical-novelty bar",
+    "Funds can only be spent on R&D cost categories"
+   ],
+   "best_fit": "Core platform R&D: physics/sensor-fidelity layer, synthetic data engine, robot-learning pipeline",
+   "sources": [
+    "https://www.jointips.or.kr",
+    "https://www.mss.go.kr",
+    "https://www.smtech.go.kr"
+   ]
+  },
+  {
+   "name": "Super-Gap Startup 1000+ (초격차 스타트업 1000+, DIPS)",
+   "category": "Non-dilutive commercialization grant (startup-only)",
+   "status_as_of_2026": "MSS program for 2023–2027 targeting 1,000 deep-tech startups across 10 fields: big data/AI, robotics, future mobility, aerospace and others. Annual call is usually Q1; the 2027 call is expected around Feb–Mar 2027 (unverified).",
+   "license_and_cost": "Up to about KRW 0.6B commercialization funding over up to 3 years, plus linked R&D, global and investment programs. For firms under about 10 years old.",
+   "strengths": [
+    "Can be applied under the AI or the robotics field",
+    "Includes global acceleration and overseas-partner programs",
+    "Can be combined with TIPS R&D"
+   ],
+   "weaknesses": [
+    "Smaller ticket",
+    "Annual window only",
+    "Heavy reporting"
+   ],
+   "best_fit": "Go-to-market for CEN as a sim/synthetic-data SaaS; overseas PoCs",
+   "sources": [
+    "https://www.k-startup.go.kr",
+    "https://www.mss.go.kr"
+   ]
+  },
+  {
+   "name": "NIPA AI Voucher (AI바우처) – AICHEMIST as supplier",
+   "category": "Demand-side voucher (revenue for supplier)",
+   "status_as_of_2026": "Annual NIPA program run since 2020. Calls typically Jan–Mar. Whether 2026–2027 has a physical-AI or manufacturing track is unverified.",
+   "license_and_cost": "Government pays the AI supplier on behalf of SME/mid-cap demand companies, at roughly KRW 0.2–0.3B per voucher (low confidence). The demand company pays a small matching share.",
+   "strengths": [
+    "Fastest subsidized revenue plus a named reference",
+    "Fits 'synthetic data + trained perception model' deliverables",
+    "Builds a pipeline of SME manufacturers and robot makers"
+   ],
+   "weaknesses": [
+    "Project-type, custom work",
+    "Demand company must apply jointly; selection can fail",
+    "Margin pressure"
+   ],
+   "best_fit": "Factory vision QA, logistics robots and AMR perception trained on CEN synthetic data",
+   "sources": [
+    "https://www.nipa.kr",
+    "https://www.aivoucher.kr"
+   ]
+  },
+  {
+   "name": "K-DATA Data Voucher (데이터바우처) – synthetic-data supplier",
+   "category": "Demand-side voucher (revenue for supplier)",
+   "status_as_of_2026": "Annual program of the Korea Data Industry Promotion Agency. Supplier registration around Dec–Jan, demand call around Jan–Feb. Synthetic data has been an accepted processing type (medium).",
+   "license_and_cost": "Per-task caps were roughly KRW 70M for AI processing, about 45M for general processing and about 18M for purchase in recent years (low confidence; 2026–2027 caps unverified).",
+   "strengths": [
+    "Directly monetizes synthetic datasets",
+    "Many small, repeatable wins",
+    "Feeds the CEN marketplace"
+   ],
+   "weaknesses": [
+    "Small tickets",
+    "Price competition with labeling firms",
+    "Annual timing"
+   ],
+   "best_fit": "Synthetic image/LiDAR datasets for SMEs and robotics startups",
+   "sources": [
+    "https://kdata.or.kr/datavoucher",
+    "https://www.kdata.or.kr"
+   ]
+  },
+  {
+   "name": "Government advanced-GPU allocation (첨단 GPU 확보·활용 / 고성능컴퓨팅 지원, MSIT–NIPA)",
+   "category": "In-kind compute",
+   "status_as_of_2026": "The 2025 1st supplementary budget (about KRW 1.46T) secured about 10k+ GPUs. In Aug 2025, NHN Cloud (about 7,656 B200), Naver Cloud (about 3,056 H200) and Kakao (about 2,424 B200) were selected, about 13k in total. Distribution to industry, academia and research institutes started from late 2025, with priority to national projects. The 2026 government share of the NVIDIA deal (about 50k GPUs) is being phased in. Application windows and per-company caps for 2026–2027 are unverified.",
+   "license_and_cost": "Free or heavily subsidized GPU-hours via selected CSPs. Allocation is competitive.",
+   "strengths": [
+    "Large in-kind value for VLA, perception and RL training",
+    "Signals alignment with sovereign AI"
+   ],
+   "weaknesses": [
+    "Hopper/Blackwell datacenter GPUs lack RT cores, so they cannot run Omniverse/Isaac RTX sensor rendering",
+    "Priority goes to foundation-model projects",
+    "Time-boxed allocations"
+   ],
+   "best_fit": "Training robot foundation models, VLA and perception models on synthetic data; headless physics RL",
+   "sources": [
+    "https://www.msit.go.kr",
+    "https://www.nipa.kr"
+   ]
+  },
+  {
+   "name": "National AI Computing Center (국가 AI 컴퓨팅센터)",
+   "category": "Long-term sovereign compute",
+   "status_as_of_2026": "A Samsung SDS-led consortium was selected in 2025, sited in Jeonnam Haenam (Solaseado), with a public-majority SPC and opening targeted around 2028 (medium/low confidence). Not usable for 2026–2027 workloads.",
+   "license_and_cost": "Expected to offer discounted access to industry and academia; pricing unknown.",
+   "strengths": [
+    "Long-term cheap sovereign GPU",
+    "Likely priority access for national physical-AI projects"
+   ],
+   "weaknesses": [
+    "Too late for the 2026–2027 roadmap",
+    "RTX/visualization capacity unknown"
+   ],
+   "best_fit": "2028+ scale-out of training workloads",
+   "sources": [
+    "https://www.msit.go.kr"
+   ]
+  },
+  {
+   "name": "AICA Gwangju National AI Data Center / KISTI 6th supercomputer",
+   "category": "Near-term public compute",
+   "status_as_of_2026": "AICA (인공지능산업융합사업단) in Gwangju runs an AI data center with GPU support for companies. KISTI's 6th system (about 600 PF class, NVIDIA GPU-based) was planned to become operational around 2025–2026 (medium-low).",
+   "license_and_cost": "Free or low-cost allocation through calls.",
+   "strengths": [
+    "Additional free compute",
+    "The Gwangju route can pair with regional AI-industry grants"
+   ],
+   "weaknesses": [
+    "Older GPUs or limited quotas",
+    "HPC-style queueing, not interactive RTX"
+   ],
+   "best_fit": "Batch RL and training jobs; regional R&D partnerships",
+   "sources": [
+    "https://www.aica-gj.kr",
+    "https://www.ksc.re.kr"
+   ]
+  },
+  {
+   "name": "MSIT/IITP physical-AI, digital-twin and synthetic-data R&D",
+   "category": "Consortium national R&D",
+   "status_as_of_2026": "IITP has run digital-twin and metaverse core-technology and synthetic-data programs. Physical AI became a top priority in the 2026 budget. Exact 2026–2027 new-task titles and sizes are unverified.",
+   "license_and_cost": "Typically KRW 1–5B per year per consortium over 3–5 years. Startup subcontracts or co-performer shares are typically KRW 0.2–1B per year. Matching: SME government share up to about 75%.",
+   "strengths": [
+    "Funds frontier work: world models, sim-to-real, sensor physics",
+    "Partners with ETRI, KAIST and SNU give credibility"
+   ],
+   "weaknesses": [
+    "Prime is usually an institute or university",
+    "IP shared",
+    "3책5공 (concurrent-project) limits on researchers"
+   ],
+   "best_fit": "Sensor-fidelity models, differentiable or GPU physics validation, LLM-driven scene generation",
+   "sources": [
+    "https://www.iitp.kr",
+    "https://www.iris.go.kr"
+   ]
+  },
+  {
+   "name": "K-Humanoid Alliance & MOTIE/KEIT robot R&D (K-휴머노이드 연합)",
+   "category": "Industry alliance + consortium R&D",
+   "status_as_of_2026": "MOTIE launched it on 10 Apr 2025 with robot makers, AI firms, component makers, universities and institutes. Goals for 2030 include a robot AI foundation model and humanoid hardware or components (medium). Membership is open to companies; work-package calls run through KEIT/KIAT.",
+   "license_and_cost": "Membership free. R&D awards are multi-year, in the tens of KRW billions per program. Startups receive work packages.",
+   "strengths": [
+    "Direct access to humanoid OEMs (Rainbow Robotics/Samsung, Doosan, LG and others) who need sim and synthetic data for training",
+    "Robot foundation models need large simulated data, which matches CEN"
+   ],
+   "weaknesses": [
+    "Large firms dominate",
+    "Risk of becoming a low-margin data contractor"
+   ],
+   "best_fit": "Isaac Lab/MuJoCo-based humanoid and dexterous-hand training environments; robot-data factory",
+   "sources": [
+    "https://www.motie.go.kr",
+    "https://www.keit.re.kr",
+    "https://www.kiria.org"
+   ]
+  },
+  {
+   "name": "MOTIE M.AX Alliance / AI Factory and AI autonomous-manufacturing lighthouse projects",
+   "category": "Industry alliance + solution-supplier contracts",
+   "status_as_of_2026": "The AI Autonomous Manufacturing strategy (2024) was followed by the M.AX (manufacturing AX) alliance launched around Sept 2025, covering AI factory, autonomous vehicles, shipbuilding, humanoids, drones, home appliances, semiconductors and more (medium/low). Targets of hundreds of AI factories by 2030 have been reported (low).",
+   "license_and_cost": "Projects led by large or mid-sized manufacturers. Startup supplier share is usually KRW 0.3–3B per project (estimate).",
+   "strengths": [
+    "Factory digital twins and synthetic vision data are core deliverables",
+    "Creates chaebol references"
+   ],
+   "weaknesses": [
+    "Integrators (Samsung SDS, LG CNS, SK AX, Siemens) may capture the prime role",
+    "Long procurement"
+   ],
+   "best_fit": "Factory and warehouse digital twins plus synthetic data for inspection and AMR perception",
+   "sources": [
+    "https://www.motie.go.kr",
+    "https://www.keit.re.kr",
+    "https://www.kiat.or.kr"
+   ]
+  },
+  {
+   "name": "Autonomous Driving Technology Innovation Program (자율주행기술개발혁신사업) & K-City",
+   "category": "Multi-ministry AV R&D",
+   "status_as_of_2026": "Runs 2021–2027, about KRW 1.1T, involving MOTIE, MSIT, MOLIT, the National Police Agency and others. Korea targets Level-4 commercialization by 2027. K-City (Hwaseong) is the AV testbed with digital-twin and simulation components. A follow-on post-2027 program is likely but unverified.",
+   "license_and_cost": "Program is ending; remaining tasks are small. A follow-on could be large.",
+   "strengths": [
+    "Sim-based safety validation and scenario generation are recognized needs",
+    "Possible links with K-City and the Korea Transportation Safety Authority"
+   ],
+   "weaknesses": [
+    "MORAI is the entrenched domestic AV-sim vendor",
+    "Program sunsets in 2027"
+   ],
+   "best_fit": "Synthetic camera, LiDAR and radar datasets; scenario-based validation for L4 shuttles and trucks",
+   "sources": [
+    "https://www.molit.go.kr",
+    "https://www.kotsa.or.kr"
+   ]
+  },
+  {
+   "name": "NIA AI training-data construction (AI 학습용 데이터 구축, AI-Hub)",
+   "category": "Consortium data-construction contracts",
+   "status_as_of_2026": "Long-running MSIT/NIA program (hundreds of datasets on AI-Hub). Recent years shifted toward multimodal, LLM and possibly physical-AI/robot data (low). PIPC published a synthetic-data generation reference model (2024).",
+   "license_and_cost": "Usually KRW 1–5B per dataset consortium per year. Data becomes public (open to AI-Hub).",
+   "strengths": [
+    "Pays for building large synthetic or robot datasets",
+    "Showcases CEN generation capacity"
+   ],
+   "weaknesses": [
+    "Outputs must be open-licensed",
+    "Low margin, labor-intensive QA"
+   ],
+   "best_fit": "Physical-AI and robot-manipulation synthetic datasets; benchmark sets",
+   "sources": [
+    "https://www.aihub.or.kr",
+    "https://www.nia.or.kr",
+    "https://www.pipc.go.kr"
+   ]
+  },
+  {
+   "name": "Defense M&S / defense AI synthetic data (방사청 방산혁신기업 100, 신속시범사업, 국방 AI 데이터)",
+   "category": "Defense R&D and procurement",
+   "status_as_of_2026": "DAPA programs for innovative defense SMEs and rapid prototyping exist. Defense AI data programs have used synthetic data for scarce targets (low).",
+   "license_and_cost": "Tens of KRW billions at program level. Security clearance and an on-premise setup are required.",
+   "strengths": [
+    "Synthetic data is uniquely valuable where real data is classified or scarce",
+    "Strong export pull with K-defense sales"
+   ],
+   "weaknesses": [
+    "Security, air-gapped delivery",
+    "Slow cycles",
+    "ITAR/export complications if US engines are embedded"
+   ],
+   "best_fit": "Synthetic EO/IR/SAR imagery, unmanned-vehicle sim",
+   "sources": [
+    "https://www.dapa.go.kr",
+    "https://www.krit.re.kr"
+   ]
+  },
+  {
+   "name": "MOLIT Digital Twin Korea (디지털트윈 국토) and NIPA local digital-twin pilots",
+   "category": "Public infrastructure twins",
+   "status_as_of_2026": "Ongoing national spatial-data and digital-twin land program. Local-government pilots have been funded by MOLIT and NIPA.",
+   "license_and_cost": "Small to mid-size contracts.",
+   "strengths": [
+    "Public references",
+    "Uses CEN's NeRF/3D asset pipeline"
+   ],
+   "weaknesses": [
+    "GIS/BIM-centric, low physics demand",
+    "Dominated by spatial-information firms such as E8"
+   ],
+   "best_fit": "Secondary; urban scenes for AV and drone sim",
+   "sources": [
+    "https://www.molit.go.kr",
+    "https://www.nipa.kr"
+   ]
+  },
+  {
+   "name": "Shipbuilding AX (HD Hyundai FOS, Hanwha Ocean, Samsung Heavy) + MASGA",
+   "category": "Industrial channel",
+   "status_as_of_2026": "Korean yards run 'Future of Shipyard' digital-twin programs. The Jul 2025 Korea–US trade deal includes about USD 150B for US shipbuilding cooperation (MASGA). An autonomous-ship R&D program ran 2020–2025 (about KRW 160B).",
+   "license_and_cost": "Enterprise contracts; MOTIE/MOF R&D.",
+   "strengths": [
+    "Strong Korea-specific niche: welding and painting robots, yard logistics twins",
+    "Bridge into US yards (Hanwha Philly)"
+   ],
+   "weaknesses": [
+    "Conservative buyers",
+    "Siemens/Dassault/AVEVA incumbency"
+   ],
+   "best_fit": "Robot-welding sim, yard logistics and AMR twins, synthetic vision for inspection",
+   "sources": [
+    "https://www.motie.go.kr",
+    "https://www.mof.go.kr"
+   ]
+  },
+  {
+   "name": "KIAT international joint R&D + Horizon Europe",
+   "category": "Cross-border R&D",
+   "status_as_of_2026": "KIAT runs bilateral joint R&D (US, Germany, EU/EUREKA and others). Korea became an associated country to Horizon Europe Pillar II from 2025 (medium).",
+   "license_and_cost": "Typically a few hundred million KRW per year over 2–3 years for the Korean side (low).",
+   "strengths": [
+    "Funds overseas PoCs with foreign partners",
+    "Builds a global reference"
+   ],
+   "weaknesses": [
+    "Requires a foreign partner with its own funding",
+    "Slow"
+   ],
+   "best_fit": "Japan, Germany or US robotics and automotive partner PoCs",
+   "sources": [
+    "https://www.kiat.or.kr",
+    "https://ec.europa.eu/info/funding-tenders/opportunities/portal"
+   ]
+  },
+  {
+   "name": "Export & overseas GTM programs (KOTRA, Export Voucher, KSC, NIPA KIC)",
+   "category": "Go-to-market support",
+   "status_as_of_2026": "Export Voucher (MOTIE/MSS, up to about KRW 100M per year per firm), KOTRA Global Partnering and branch-office service, K-Startup Centers abroad (KISED), and NIPA Korea Innovation Centers (Silicon Valley and others). All long-running.",
+   "license_and_cost": "Small grants plus services; company co-pay of about 30% on vouchers.",
+   "strengths": [
+    "Cheap market entry: legal, marketing, trade shows (GTC, Automatica, iREX Tokyo, CES)",
+    "Local landing offices"
+   ],
+   "weaknesses": [
+    "Generic services",
+    "Small money"
+   ],
+   "best_fit": "Japan and US launch in 2027–2028",
+   "sources": [
+    "https://www.exportvoucher.com",
+    "https://www.kotra.or.kr",
+    "https://www.k-startup.go.kr",
+    "https://www.nipa.kr"
+   ]
+  },
+  {
+   "name": "NVIDIA Inception + Omniverse/Isaac ecosystem / NVIDIA Partner Network",
+   "category": "Global ecosystem",
+   "status_as_of_2026": "Inception is free with no equity and accepts startups worldwide. Omniverse Blueprints, Cosmos WFMs and open-source Isaac Sim/Lab form the de facto physical-AI stack. NVIDIA committed to expand startup support in Korea as part of the Oct 2025 deal (low on specifics).",
+   "license_and_cost": "Free (Inception). NPN service-delivery or ISV partner tiers have requirements.",
+   "strengths": [
+    "Co-marketing at GTC and AI Day Seoul",
+    "Introductions to Hyundai, Samsung and SK physical-AI teams and to Japanese OEMs",
+    "Preferred pricing and DLI credits"
+   ],
+   "weaknesses": [
+    "NVIDIA's free blueprints compete with platform features",
+    "Lock-in"
+   ],
+   "best_fit": "Position CEN as the 'Korean physical-AI data and sim layer on Omniverse/Isaac'",
+   "sources": [
+    "https://www.nvidia.com/en-us/startups/",
+    "https://www.nvidia.com/en-us/omniverse/"
+   ]
+  },
+  {
+   "name": "Cloud startup credits (AWS Activate, Google for Startups Cloud AI, Microsoft for Startups) and Korean CSP programs (Naver Cloud, NHN, KT, SKT)",
+   "category": "Compute credits",
+   "status_as_of_2026": "Long-running. Caps have been about USD 100k (AWS), up to about USD 350k (Google AI tier) and about USD 150k (Azure) (medium).",
+   "license_and_cost": "Free credits, time-limited.",
+   "strengths": [
+    "RTX-class instances (L4/L40S) for rendering",
+    "Marketplace listing for global sales"
+   ],
+   "weaknesses": [
+    "Credits run out fast at physics-and-render scale",
+    "Availability of RTX instances in Korean regions varies"
+   ],
+   "best_fit": "Bridge RTX rendering capacity in 2026–2027",
+   "sources": [
+    "https://aws.amazon.com/activate/",
+    "https://cloud.google.com/startup",
+    "https://www.microsoft.com/en-us/startups"
+   ]
+  },
+  {
+   "name": "Equity: Mother Fund (KVIC) AI/deep-tech accounts and the National Growth Fund (국민성장펀드)",
+   "category": "Dilutive capital with policy backing",
+   "status_as_of_2026": "KVIC fund-of-funds keeps deep-tech and AI accounts. A large policy 'National Growth Fund' (about KRW 150T) targeting AI, semiconductors and other strategic industries was launched around Dec 2025 (medium/low).",
+   "license_and_cost": "Equity.",
+   "strengths": [
+    "Large follow-on rounds for capital-intensive GPU platforms"
+   ],
+   "weaknesses": [
+    "Mostly flows to later-stage or large firms",
+    "Dilution"
+   ],
+   "best_fit": "Series A/B to fund the GPU fleet and overseas expansion",
+   "sources": [
+    "https://www.kvic.or.kr",
+    "https://www.fsc.go.kr"
+   ]
+  },
+  {
+   "name": "Public-sector sales enablers: GS certification, Innovation Product designation, CSAP, Digital Service contracts",
+   "category": "Procurement certification",
+   "status_as_of_2026": "GS certification (TTA) and Innovation Product designation (PPS) allow preferential or non-competitive public procurement. CSAP (tiered high/mid/low) is required for cloud SaaS sold to public agencies. All long-running.",
+   "license_and_cost": "Certification fees in the tens of millions of KRW plus 2–6 months each (estimate).",
+   "strengths": [
+    "Unlocks public buyers (defense, MOLIT, local governments, public R&D institutes)",
+    "Proposal scoring bonus"
+   ],
+   "weaknesses": [
+    "Time and cost",
+    "Must freeze a version"
+   ],
+   "best_fit": "CEN on-prem/private-cloud edition for public and defense",
+   "sources": [
+    "https://www.tta.or.kr",
+    "https://www.pps.go.kr",
+    "https://isms.kisa.or.kr"
+   ]
+  },
+  {
+   "name": "Standards: TTA digital-twin PG, ISO/IEC JTC 1/SC 41 digital-twin standards, ISO 23247",
+   "category": "Standards and credibility",
+   "status_as_of_2026": "ISO/IEC 30173:2023 (digital twin concepts and terminology), ISO/IEC 30172:2023 (use cases), ISO 23247 series (2021, manufacturing DT framework), and a digital-twin reference architecture under development in SC 41 (medium). TTA hosts the Korean digital-twin standardization group (exact PG id unverified).",
+   "license_and_cost": "Participation cost only.",
+   "strengths": [
+    "Standards contribution is a scored item in many Korean R&D evaluations",
+    "Builds credibility with overseas buyers"
+   ],
+   "weaknesses": [
+    "Slow; staff time"
+   ],
+   "best_fit": "Contribute sim-fidelity and synthetic-data quality metrics to TTA and SC 41",
+   "sources": [
+    "https://www.tta.or.kr",
+    "https://www.iso.org/committee/6483279.html",
+    "https://www.iso.org/standard/75066.html"
+   ]
+  },
+  {
+   "name": "Japan market route (AIRoA, Japanese OEMs, METI)",
+   "category": "Overseas market",
+   "status_as_of_2026": "Japan has acute labor shortages. AIRoA (AI Robot Association) launched around Dec 2024 to pool robot data and foundation models (low). Strong robot OEM base (Fanuc, Yaskawa, Kawasaki) and the NVIDIA Japan physical-AI push.",
+   "license_and_cost": "Enterprise sales; long relationship building.",
+   "strengths": [
+    "Close, manufacturing-centric, high willingness to pay for quality",
+    "Korean supplier presence"
+   ],
+   "weaknesses": [
+    "Local-language and partner-led sales",
+    "Conservative pilots"
+   ],
+   "best_fit": "First overseas market after domestic references (2027–2028)",
+   "sources": [
+    "https://www.meti.go.jp",
+    "https://www.kotra.or.kr"
+   ]
+  },
+  {
+   "name": "Middle East / Southeast Asia routes (Saudi HUMAIN, NEOM, MOMRAH; UAE G42 / Stargate UAE; Vietnam and Singapore)",
+   "category": "Overseas market",
+   "status_as_of_2026": "Saudi HUMAIN (PIF, May 2025) and UAE Stargate (about 1 GW) are building large NVIDIA clusters (medium). Precedent: Naver won a Saudi 5-city digital-twin platform contract with MOMRAH in 2024 (medium).",
+   "license_and_cost": "G2G and large-project contracts.",
+   "strengths": [
+    "Big budgets, smart-city and industrial twins, sovereign-data needs",
+    "Korean G2G channels"
+   ],
+   "weaknesses": [
+    "Long cycles, local-partner requirements",
+    "Less robot-learning demand than Japan or the US"
+   ],
+   "best_fit": "Phase 3 (2028+) via Korean prime contractors or G2G",
+   "sources": [
+    "https://www.kotra.or.kr",
+    "https://www.navercorp.com"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "No live verification was possible in this run. WebSearch returned 'web search budget is used up (limit 200 calls per turn, shared by every agent)'. WebFetch to nvidianews.nvidia.com, www.korea.kr and www.msit.go.kr returned EGRESS_BLOCKED. All other facts come from model knowledge and must be re-verified.",
+   "source": "Tool errors in this run",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA and Korea announced (31 Oct 2025, APEC Gyeongju) supply of 260,000+ Blackwell GPUs: government about 50k (sovereign AI / national compute), Samsung about 50k, SK Group about 50k, Hyundai Motor Group about 50k, Naver Cloud about 60k.",
+   "source": "https://nvidianews.nvidia.com/news/south-korea-ai-infrastructure (URL from memory; fetch blocked)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Commercial uses in that deal center on physical AI and digital twins: the Samsung 'AI Megafactory' with Omniverse fab twins, Hyundai's physical-AI cluster (about USD 3B, including an NVIDIA AI Technology Center and a Physical AI Application Center), and SK's manufacturing AI cloud with Omniverse for Korean manufacturers.",
+   "source": "Same NVIDIA newsroom release; Korean press Oct–Nov 2025",
+   "confidence": "medium"
+  },
+  {
+   "claim": "2026 national budget: government proposal about KRW 728.0T (29 Aug 2025), passed by the National Assembly at about KRW 727.9T on 2 Dec 2025. AI budget about KRW 10.1T, roughly 3x 2025's about 3.3T. R&D about KRW 35.3T (+19.3%).",
+   "source": "https://www.moef.go.kr (2026 budget press materials; not fetched)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "R&D budget history: about KRW 31.1T (2023) → cut to about 26.5T (2024) → about 29.6T (2025) → about 35.3T (2026 proposal). This volatility is a policy-cycle risk.",
+   "source": "https://www.msit.go.kr / https://www.iris.go.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "The Framework Act on AI Development and Trust (AI Basic Act) was passed 26 Dec 2024, promulgated 21 Jan 2025 and effective 22 Jan 2026, with high-impact AI and generative-AI labeling obligations and a grace period for fines.",
+   "source": "https://www.law.go.kr",
+   "confidence": "high"
+  },
+  {
+   "claim": "2025 government restructuring: the MSIT minister was elevated to a Deputy Prime Minister for science/AI, and MOEF was split into a finance/economy ministry and a separate budget office (기획예산처) from 2026, so the 2027 budget is compiled by the new budget office.",
+   "source": "https://www.mois.go.kr (Government Organization Act amendment, Sept–Oct 2025)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "The 2025 1st supplementary budget allotted about KRW 1.46T to secure about 10k advanced GPUs. In Aug 2025 MSIT selected NHN Cloud (about 7,656 B200), Naver Cloud (about 3,056 H200) and Kakao (about 2,424 B200), about 13.1k in total, for distribution to industry, academia and research from late 2025, with priority to national projects such as the sovereign foundation-model program.",
+   "source": "https://www.msit.go.kr press releases (Aug 2025)",
+   "confidence": "low"
+  },
+  {
+   "claim": "Sovereign AI foundation-model project (독자 AI 파운데이션 모델): 5 teams selected Aug 2025 (Naver Cloud, SK Telecom, LG AI Research, NC AI, Upstage), with staged eliminations and government GPU, data and talent support. This is the main competing claimant on government GPUs.",
+   "source": "https://www.msit.go.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "National AI Computing Center: a Samsung SDS-led consortium was selected in 2025 for a site in Jeonnam (Haenam/Solaseado), as a public–private SPC, with service opening targeted around 2028.",
+   "source": "https://www.msit.go.kr",
+   "confidence": "low"
+  },
+  {
+   "claim": "MOTIE launched the K-Humanoid Alliance on 10 Apr 2025 with robot OEMs, AI software firms, component makers, universities and institutes, targeting a robot AI foundation model and competitive humanoid hardware or components by 2030.",
+   "source": "https://www.motie.go.kr (Apr 2025 press release)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "MOTIE launched an M.AX (Manufacturing AX) Alliance around Sept 2025 grouping large firms and SMEs by domain (AI factory, autonomous vehicles, shipbuilding, humanoids, drones, appliances, semiconductors), building on the 2024 AI Autonomous Manufacturing strategy.",
+   "source": "https://www.motie.go.kr",
+   "confidence": "low"
+  },
+  {
+   "claim": "I could not confirm that a 'Physical AI Global Alliance' (피지컬AI 글로벌 얼라이언스) exists under that name. Verify before citing it in proposals.",
+   "source": "Not found in model knowledge",
+   "confidence": "low"
+  },
+  {
+   "claim": "The Autonomous Driving Technology Innovation Program runs 2021–2027 with about KRW 1.1T (about 1.0974T) across MOTIE, MSIT, MOLIT and police. National target: Level-4 commercialization by 2027. K-City (Hwaseong) is the national AV testbed.",
+   "source": "https://www.molit.go.kr ; https://www.kotsa.or.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Deep-tech TIPS gives up to about KRW 1.5B R&D over 3 years and requires operator investment of at least about KRW 0.3B. General TIPS gives up to about KRW 0.5B R&D over 2 years.",
+   "source": "https://www.jointips.or.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Super-Gap Startup 1000+ (2023–2027) selects about 200 deep-tech startups per year across 10 fields including big data/AI, robotics and future mobility, with up to about KRW 0.6B commercialization funding over up to 3 years.",
+   "source": "https://www.k-startup.go.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "National R&D matching rules: government share is generally at most 75% of project cost for SMEs, at most about 70% for mid-caps and at most 50% for large firms. Most MSS/MOTIE R&D requires a KOITA-recognized corporate R&D lab or dedicated R&D department. Calls for most ministries are posted on IRIS; MSS R&D is on SMTECH.",
+   "source": "https://www.iris.go.kr ; https://www.smtech.go.kr ; https://www.rnd.or.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Omniverse/Isaac Sim RTX rendering (camera, RTX LiDAR and radar sensors) requires RT-core GPUs (RTX/RTX PRO/L40S class). A100/H100/H200/B200 datacenter GPUs lack RT cores and are not supported for RTX sensor rendering, so government B200/H200 allocations suit training, not sensor-realistic simulation.",
+   "source": "https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "Digital-twin international standards: ISO/IEC 30173:2023 (concepts and terminology), ISO/IEC 30172:2023 (use cases), ISO 23247-1..4:2021 (digital twin framework for manufacturing), with further SC 41 work items (reference architecture) in progress. Korea participates actively via TTA.",
+   "source": "https://www.iso.org/committee/6483279.html ; https://www.tta.or.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "PIPC published a synthetic-data generation reference model (합성데이터 생성 참조모델) in 2024. It is useful for the 'privacy-safe' claim in proposals.",
+   "source": "https://www.pipc.go.kr",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Korea–US trade deal (30 Jul 2025): Korea committed about USD 350B of US investment, including about USD 150B for shipbuilding cooperation (MASGA). This creates US yard-modernization and digital-twin demand linked to Korean yards (Hanwha Philly Shipyard, HD Hyundai partnerships).",
+   "source": "https://www.motie.go.kr ; https://www.whitehouse.gov",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Precedent for Korean digital-twin export: Naver won a Saudi MOMRAH 5-city digital-twin platform project in 2024 (reported at about KRW 100B / USD ~100M scale).",
+   "source": "https://www.navercorp.com (press 2024)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Korea became an associated country to Horizon Europe (Pillar II) from 2025, allowing Korean entities to receive EU funding in collaborative projects.",
+   "source": "https://research-and-innovation.ec.europa.eu",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Domestic competitors and partners: MORAI (AV simulator, K-City twin, overseas sales), CyLab/씨이랩 (synthetic data, XAIVA, NVIDIA partner), E8/이에이트 (NDX PRO digital-twin platform), VIRNECT (XR twin). Samsung became Rainbow Robotics' largest shareholder (about 35%) at end-2024.",
+   "source": "Company websites / DART filings (https://dart.fss.or.kr)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Annual timing pattern: ministries publish unified annual R&D and startup-support announcements around Dec–Jan. Most new-task calls run Jan–Apr, with second rounds Jun–Aug. The government budget proposal is published late Aug and the National Assembly passes it by 2 Dec. So the 2027 proposal is already public but unverified here.",
+   "source": "https://www.iris.go.kr ; https://www.k-startup.go.kr",
+   "confidence": "high"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "NVIDIA Blackwell GPUs committed to Korea (Oct 2025)",
+   "value": "260,000+ (Gov ~50k, Samsung ~50k, SK ~50k, Hyundai MG ~50k, Naver Cloud ~60k)",
+   "source": "https://nvidianews.nvidia.com/news/south-korea-ai-infrastructure (unverified this run)"
+  },
+  {
+   "metric": "Hyundai Motor Group physical-AI investment with NVIDIA",
+   "value": "~USD 3B (physical AI cluster, AI Technology Center, Physical AI Application Center)",
+   "source": "NVIDIA/Hyundai Oct 2025 announcements (unverified; medium-low)"
+  },
+  {
+   "metric": "2026 Korean national budget (final)",
+   "value": "~KRW 727.9T (passed 2 Dec 2025; proposal 728.0T)",
+   "source": "https://www.moef.go.kr (medium)"
+  },
+  {
+   "metric": "2026 AI budget (proposal)",
+   "value": "~KRW 10.1T vs ~3.3T in 2025 (~3x)",
+   "source": "2026 budget proposal, Aug 2025 (medium)"
+  },
+  {
+   "metric": "2026 national R&D budget (proposal)",
+   "value": "~KRW 35.3T (+19.3% YoY); 2025 ~29.6T; 2024 ~26.5T",
+   "source": "MSIT/MOEF (medium)"
+  },
+  {
+   "metric": "2025 supplementary budget for advanced GPUs",
+   "value": "~KRW 1.46T for ~10k+ GPUs; ~13.1k selected (NHN ~7,656 B200; Naver ~3,056 H200; Kakao ~2,424 B200)",
+   "source": "MSIT Aug 2025 (low)"
+  },
+  {
+   "metric": "Autonomous Driving Tech Innovation Program",
+   "value": "~KRW 1.1T, 2021–2027; L4 commercialization target 2027",
+   "source": "MOLIT/MOTIE (medium)"
+  },
+  {
+   "metric": "Autonomous ship R&D program",
+   "value": "~KRW 160B, 2020–2025 (MOTIE + MOF)",
+   "source": "MOTIE/MOF (medium-low)"
+  },
+  {
+   "metric": "Deep-tech TIPS cap",
+   "value": "≤ ~KRW 1.5B R&D / 3 yrs; operator investment ≥ ~KRW 0.3B",
+   "source": "https://www.jointips.or.kr (medium)"
+  },
+  {
+   "metric": "General TIPS cap",
+   "value": "≤ ~KRW 0.5B R&D / 2 yrs (+ follow-on commercialization/overseas marketing add-ons)",
+   "source": "https://www.jointips.or.kr (medium)"
+  },
+  {
+   "metric": "Super-Gap Startup 1000+",
+   "value": "~200 firms/yr, 1,000 over 2023–2027; ≤ ~KRW 0.6B over ≤3 yrs",
+   "source": "https://www.k-startup.go.kr (medium)"
+  },
+  {
+   "metric": "Data Voucher per-task caps (recent years)",
+   "value": "AI processing ~KRW 70M; general processing ~45M; purchase ~18M",
+   "source": "https://kdata.or.kr/datavoucher (low)"
+  },
+  {
+   "metric": "AI Voucher per-demand-company cap",
+   "value": "~KRW 0.2–0.3B (varies by track/firm size)",
+   "source": "https://www.nipa.kr (low)"
+  },
+  {
+   "metric": "Export Voucher cap",
+   "value": "≤ ~KRW 100M per firm per year (company co-pay ~30%)",
+   "source": "https://www.exportvoucher.com (medium)"
+  },
+  {
+   "metric": "Government share limit in national R&D",
+   "value": "SME ≤75%, mid-cap ≤~70%, large firm ≤50% of total project cost",
+   "source": "National R&D Innovation Act rules via https://www.iris.go.kr (medium)"
+  },
+  {
+   "metric": "Korea–US investment package / shipbuilding (MASGA)",
+   "value": "~USD 350B total; ~USD 150B shipbuilding",
+   "source": "Jul 2025 trade deal (medium)"
+  },
+  {
+   "metric": "Naver Saudi digital-twin contract",
+   "value": "5 cities, ~KRW 100B scale (2024)",
+   "source": "Naver press (medium)"
+  },
+  {
+   "metric": "National AI Computing Center opening target",
+   "value": "~2028 (Jeonnam, Samsung SDS consortium)",
+   "source": "MSIT 2025 (low)"
+  },
+  {
+   "metric": "Realistic non-dilutive intake for AICHEMIST Q4 2026–2027 (estimate)",
+   "value": "~KRW 3–6B cash + in-kind GPUs if 4–6 applications succeed (TIPS-class 1.5B, Super-Gap 0.6B, 2–3 consortium work packages 0.3–1B/yr each, voucher revenue 0.5–1.5B)",
+   "source": "Analyst estimate (not a sourced figure)"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "TOP TARGET 1 – Deep-tech TIPS. Size: up to about KRW 1.5B of R&D over 3 years, plus at least about KRW 0.3B of operator equity. Timing: recommendation is rolling; aim to secure an operator (a deep-tech AC/VC, ideally one that also has robotics or automotive LPs) in Q4 2026 and submit in Q1 2027. Scope: 'physics- and sensor-fidelity sim + synthetic-data engine + robot-learning pipeline'. This funds the core platform.",
+  "TOP TARGET 2 – Super-Gap Startup 1000+. Size: up to about KRW 0.6B over 3 years. Timing: expected call around Feb–Mar 2027. Apply under the big data/AI field (or robotics if the humanoid/robot-learning angle is stronger). Use its global track for the Japan/US launch.",
+  "TOP TARGET 3 – NIPA AI Voucher, as supplier. Size: about KRW 0.2–0.3B per voucher; target 3–5 vouchers, worth about KRW 0.6–1.5B. Timing: register as a supplier and line up demand companies (SME factories, AMR/logistics robot makers, inspection users) in Dec 2026; the call runs around Jan–Mar 2027. Every voucher should end with a named reference and a measured synthetic-to-real result.",
+  "TOP TARGET 4 – K-DATA Data Voucher, as synthetic-data supplier. Size: up to about KRW 70M per task; target 5–10 tasks, worth about KRW 0.35–0.7B. Timing: supplier registration around Dec 2026–Jan 2027. These are low-effort recurring wins that also seed the CEN marketplace.",
+  "TOP TARGET 5 – Government GPU allocations (MSIT/NIPA advanced-GPU program; plus AICA Gwangju and KISTI). These are in kind. Ask for B200/H200 time for VLA, perception and RL training. Do not plan RTX sensor rendering on these GPUs, because they lack RT cores. Get RTX PRO 6000 / L40S capacity separately: domestic cloud providers, NVIDIA Inception preferred pricing, and Hyundai/SK/Naver physical-AI clouds.",
+  "TOP TARGET 6 – K-Humanoid Alliance plus MOTIE/KEIT robot R&D. Join as a member now. Pitch a 'simulation and synthetic-demonstration data factory' work package for the robot-foundation-model effort, serving Rainbow Robotics/Samsung, Doosan, LG and others. Expected sub-award: about KRW 0.3–1B per year (estimate). Calls come around Q1–Q2 2027.",
+  "TOP TARGET 7 – MOTIE M.AX Alliance / AI-factory lighthouse projects, as the digital-twin and synthetic-vision supplier to one lead manufacturer (automotive tier-1, battery, or electronics). Expected size: about KRW 0.3–3B per project (estimate). Timing: rolling through 2026–2027. Partner with an integrator (LG CNS, SK AX, Samsung SDS, Doosan Digital Innovation) rather than competing with it.",
+  "TOP TARGET 8 – MSIT/IITP physical-AI, digital-twin and synthetic-data R&D as co-performer with ETRI, KAIST or SNU. Expected share: about KRW 0.2–1B per year over 3–5 years. Timing: new tasks Jan–Apr 2027 on IRIS. Use it for frontier pieces (sensor physics, world models / Cosmos-style augmentation, LLM-to-scene generation) without paying for them alone.",
+  "TOP TARGET 9 – NIA AI training-data construction, as lead or member of a physical-AI / robot-manipulation synthetic dataset consortium. Size: about KRW 1–5B per consortium per year. Timing: around Q1–Q2 2027. Accept the open-data condition in exchange for scale and visibility; keep the generators proprietary.",
+  "TOP TARGET 10 – Defense synthetic data and M&S: DAPA innovative-SME program, rapid prototyping, defense AI data projects. Size: tens of KRW billions at program level. Timing: plan for 2027 H2. Prerequisites: an on-prem or air-gapped CEN edition, and avoiding non-exportable components.",
+  "TOP TARGET 11 – Mobility follow-on. Supply synthetic sensor data and scenario validation to remaining 2021–2027 AV program tasks, and position for the post-2027 successor program and for K-City digital-twin upgrades. Do not fight MORAI head-on; partner with it or specialize in perception data and sensor realism.",
+  "TOP TARGET 12 – Global programs. Join NVIDIA Inception immediately (free) and apply for the Omniverse/Isaac ecosystem listing. Use KIAT international joint R&D (about a few hundred million KRW per year) with one Japanese partner and one US partner. Use the Export Voucher (up to about KRW 100M per year) for GTC, iREX Tokyo, Automatica and CES, and NIPA KIC Silicon Valley / KISED KSC for US landing.",
+  "Eligibility and paperwork, Q4 2026: establish a KOITA-recognized corporate R&D lab, venture certification, and IRIS and SMTECH accounts. Plan around the 3책5공 limit on concurrent projects per researcher, and draft a module-by-module duplication map so one platform is not double-funded. Start GS certification (TTA) for a frozen CEN release. Start ISO 27001, and CSAP if public SaaS sales are planned.",
+  "Proposal kit and KPI template, reusable across programs: TRL from 4 to 7. Sim-to-real policy success gap of at most 10 percentage points on 3 robot tasks. A synthetic-only-trained detector reaching at least 90–95% of real-data mAP, and synthetic plus 10% real data at least matching 100% real. Sensor-model error, e.g. LiDAR range error of at most 2 cm and camera ISP/noise matched on a calibration chart. Throughput of at least N thousand labeled frames per GPU-hour, and parallel RL environments of at least 4,096 per GPU. Real-time factor of at least 1.0 for a multi-robot factory scene. Third-party test reports (TTA/KTL/KOLAS) for 3+ indicators. Commercial KPIs: paying customers, revenue, export contracts, patents (filed and registered), papers (CoRL/ICRA/RSS), hires.",
+  "Typical Korean R&D scoring to design for (approximate; varies by agency): technical merit and novelty about 40–60, commercialization plan and market about 20–40, team capability and infrastructure about 20. Bonuses exist for job creation, standards contribution, international collaboration, and prior TIPS/venture status. Written review is followed by a presentation; a score of about 70+ is commonly the cutoff. Show demand-side letters of intent (LOIs) from Hyundai, Samsung, SK, HD Hyundai or a robot OEM, plus measurable, third-party-verifiable KPIs.",
+  "Sequencing domestic wins into overseas sales. Phase 1 (2026 Q4 – 2027 H1): vouchers plus one chaebol or robot-OEM PoC, published as quantified case studies. Phase 2 (2027 H2): GS certification, NVIDIA ecosystem listing, a public benchmark (sim-to-real or synthetic-to-real), and a Japan PoC via KIAT/KOTRA or a Korean supplier's Japanese customer. Phase 3 (2028): a US entity, following Korean OEMs into HMGMA Georgia, Samsung Taylor and Hanwha Philly (MASGA), plus a self-serve CEN tier for US robotics startups. Middle East via G2G smart-city and defense packages with a Korean prime.",
+  "Architectural implication of the policy environment: build CEN on the open NVIDIA stack (Isaac Sim/Lab, Newton or MuJoCo-Warp, Cosmos, OpenUSD) rather than a proprietary engine. Government and chaebol buyers are standardizing on it, so compatibility is a scored and procurement advantage. Differentiate on Korean-domain assets and data (factories, shipyards, Korean roads and signage), sensor-fidelity calibration, LLM-driven scene control and the marketplace, which NVIDIA does not provide.",
+  "Immediate verification to-dos (blocked in this run): the 2027 budget proposal (published around late Aug 2026) lines for physical AI, AI factory, humanoid and GPU programs; 2026–2027 GPU allocation rules and whether RTX PRO GPUs are included; the existence, scope and membership of any 'Physical AI Global Alliance'; IITP/KEIT 2026 physical-AI new-task lists on IRIS; 2026 caps for the Data Voucher and AI Voucher; 2026 TIPS and Super-Gap reforms; the National AI Computing Center schedule; GTC 2026 Korea announcements."
+ ],
+ "risks": [
+  "Verification risk: every number here is from model knowledge with no 2026 web confirmation (search budget exhausted, fetch egress blocked). Program caps, call dates and the 2027 budget must be re-checked before committing proposal effort.",
+  "Policy-cycle risk: Korean R&D budgets swing sharply (2024's about 15% cut, then the 2026 surge). Physical-AI programs announced in 2025–2026 could be reorganized, delayed or merged after the 2027 budget review.",
+  "Chaebol in-house substitution: Samsung, SK, Hyundai and Naver are building their own Omniverse-based twins directly with NVIDIA (260k-GPU deal). AICHEMIST could be confined to low-margin data-contractor work unless it owns a differentiated layer (sensor fidelity, Korean-domain assets, LLM scene control, marketplace).",
+  "NVIDIA commoditization: open-source Isaac Sim/Lab, free Omniverse Blueprints (factory, AV), Cosmos WFMs and NVIDIA's own synthetic-data workflows lower barriers for every competitor and for customers' in-house teams.",
+  "Domestic competition: MORAI (AV sim), CyLab/씨이랩 (synthetic data), E8 (digital-twin platform), plus large SIs (Samsung SDS, LG CNS, SK AX) that win prime roles.",
+  "Compute mismatch: public GPU allocations are mostly B200/H200 with no RT cores, so they are unusable for RTX sensor rendering. Self-funded RTX capacity can dominate burn.",
+  "Matching-fund and cash-flow burden: a 25%+ private share, cash contributions, delayed grant disbursement, and post-project royalty (기술료) obligations can strain a startup's runway.",
+  "IP and consortium terms: results of national R&D generally belong to the performing organization, but consortium agreements, open-data conditions (NIA) and defense rules can restrict reuse in CEN commercial products.",
+  "Researcher concurrency (3책5공) and duplication review: the same platform modules cannot be funded twice, and key engineers are capped on concurrent projects.",
+  "Regulatory: AI Basic Act obligations (effective Jan 2026) for high-impact AI, transparency and labeling of generated content; privacy rules for real-data marketplace items (PIPC); defense security; US export controls on advanced GPUs or software when serving the Middle East or China-adjacent customers.",
+  "Overseas execution: long Japanese enterprise sales cycles, US competition (Applied Intuition, Duality, Parallel Domain, Bifrost and others), local-partner requirements in the Middle East, and FX exposure.",
+  "Over-dependence on vouchers: voucher revenue is subsidized, small-ticket and annual. Investors may discount it unless it converts into recurring subscriptions."
+ ],
+ "open_questions": [
+  "What does the 2027 government budget proposal (published around late Aug–Sep 2026) allocate to physical AI, AI factory/M.AX, humanoids, the GPU 'AI highway' and data vouchers? This could not be retrieved in this run.",
+  "Does a 'Physical AI Global Alliance' (피지컬AI 글로벌 얼라이언스) exist under that name, who leads it (MSIT or MOTIE), and can startups join?",
+  "What are the 2026–2027 rules for public GPU allocation: application windows, per-startup caps, cost share, and whether RTX PRO 6000 / L40S rendering-capable GPUs are included in the government's ~50k Blackwell share?",
+  "What is the National AI Computing Center's current timeline and startup access model (pricing, quotas)?",
+  "Which 2026–2027 IITP/KEIT new tasks explicitly cover simulation, synthetic data, world models or robot-data factories (task titles and budgets on IRIS)?",
+  "Has the K-Humanoid Alliance already chosen its robot-foundation-model prime and data/sim partners, and are work packages still open?",
+  "What are the 2026 caps and tracks for the AI Voucher and Data Voucher? Is there a physical-AI or synthetic-data track?",
+  "Were TIPS, Deep-tech TIPS or Super-Gap 1000+ restructured in 2026 (for example scale-up TIPS caps or new global tracks)?",
+  "What did GTC 2026, SIGGRAPH 2026 and NVIDIA AI Day Seoul announce for Korea-specific startup or physical-AI programs (for example an Inception Korea expansion or Omniverse partner programs)?",
+  "AICHEMIST's eligibility facts: founding date (under 7 or under 10 years), headcount, existing R&D lab and venture certification, prior national R&D record, and current investors. Is there a TIPS operator relationship?",
+  "What is the status of the Hyundai, SK and Naver physical-AI clouds? Will they host third-party ISV platforms like CEN, and on what revenue-share terms?"
+ ]
+}

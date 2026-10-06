@@ -1,0 +1,156 @@
+{
+  "lens": "Lead investor, top Korean/global deeptech VC (Series A/B). Judged on: moat against NVIDIA commoditisation and chaebol in-housing; realism of market size; capital efficiency and revenue ramp; story clarity; path to USD 100M+ ARR and valuation logic. Vague moats and inflated TAM are penalised. All three plans pick the same engines (Newton/MJWarp, MuJoCo, PhysX, Isaac Lab, Chrono, Cosmos, 3DGUT) and correctly refuse to build an engine, so engine choice does not decide this panel; the business model does.",
+  "evaluations": [
+    {
+      "proposal_key": "A",
+      "scores": {
+        "physics_power": 8,
+        "realism": 8,
+        "convenience": 7.5,
+        "training_capability": 8.5,
+        "time_to_revenue": 8,
+        "moat_defensibility": 3.5,
+        "capital_efficiency": 4.5,
+        "license_legal_safety": 5,
+        "cen_synergy": 7,
+        "korea_market_fit": 7.5,
+        "global_scalability": 3.5,
+        "execution_risk_inverse": 5.5
+      },
+      "weighted_total": 5.76,
+      "strongest_ideas": [
+        "Fixed-price 12-week 'Cell-to-Policy' PoC (KRW 150-250M, 30% upfront) delivered as outputs only (twin, dataset, policy, sim-to-real report). This starts revenue before NVIDIA hosting terms are signed, and it is the fastest credible first invoice of the three plans (target M4).",
+        "A hard M10 gate (>=3 paid PoCs, 2 converted to annual contracts, written NVIDIA hosting/OEM terms, PoC gross margin >=40%) with a pre-costed failure branch: headcount freezes at 27, the SaaS core moves to Kit-less Newton/mjlab, and 24-month spend falls to about KRW 120억. This is the best capital-discipline mechanism in any of the three plans.",
+        "A distribution thesis of NVIDIA Inception/NPN co-sell plus chaebol SI arms as resellers is a realistic route into HMG, Samsung, SK and HD Hyundai procurement.",
+        "Half-year release trains pinned to GA builds, a 20% upgrade reserve and a cross-backend conformance suite. This is a sober answer to verified API churn (Isaac Lab 3.0 quaternion and ProxyArray breaks, Kit majors).",
+        "Token prices are set at about 2x the research cost floors (raster KRW 0.3, RTX KRW 1.5, path-traced KRW 15 per image), and storage and egress are metered separately. This avoids the unit-economics trap the research flagged."
+      ],
+      "fatal_flaws_or_gaps": [
+        "The proposal says it has no technology moat ('None of these is a technology moat ... it decays if we are slow'). The value accrues to NVIDIA, and NVIDIA can appoint other Korean last-mile partners (Samsung SDS, Naver Cloud, and CyLab, which is already an NVIDIA partner). An investor will underwrite this as an NVIDIA system integrator at services multiples, not as a platform.",
+        "Chaebol in-housing exposure is the worst of the three. The buyers A targets already hold NVIDIA clusters and Omniverse relationships, so an Isaac-centric delivery layer is the easiest thing for their SI arms to absorb after the PoC.",
+        "Revenue depends on unverified NVIDIA terms. Hosted GA (M10-18) needs NVAIE hosting rights, and the 'Twin Sovereign' on-prem SKU (KRW 14억 in FY2028, KRW 40억 sovereign/defence in FY2029) needs Kit/Isaac Sim OEM redistribution rights. The research marks these as the single most decision-critical unknown, yet they sit in the plan-of-record revenue.",
+        "It is the least capital-efficient plan: about KRW 158억 (USD 11.3M) over 24 months, 16 to 52 FTE, an equity raise of KRW 100억+ by M9-12, and about 30% of effort on customer delivery. The FY2027 recurring share is only 20%.",
+        "There is no TAM/SAM sizing, no valuation logic and no path to USD 100M ARR. FY2029 revenue of KRW 190억 (about USD 13.6M) is almost entirely Korean enterprise accounts, and the global 'self-serve tier' in P4 competes with free Isaac Lab.",
+        "Scope sprawl: manipulation, AMR/humanoid, shipyard/port, defence/drones and Japan, all within 36 months."
+      ],
+      "factual_errors": [
+        "'Isaac Lab Mimic turns 10 demos into 1,000 in 18-40 minutes' holds only for state-based generation. The research gives about 10 h per 1,000 demos for visuomotor (camera) data, which is what real-cell PoCs need, and generation success of about 50% for Franka.",
+        "'Rainbow Robotics (about 35% Samsung-owned)' is stated without a (U) tag. The research rates it medium-confidence prior knowledge, with conflicting dates (end-2024 vs 2025).",
+        "The self-rescoring of 'B+' to about 4.1 raises licence safety from 2 to 4 'once the terms are in writing' and physics to 4.5 'because Newton runs inside Isaac Lab'. This scores an event that has not happened. The research says Isaac Lab 3.0's Newton backend is beta with a focused set of environments.",
+        "The token margin claim of 50-75% on an RT-GPU-hour at KRW 6,000 uses a USD 1.1-2.3 cost base, which is RunPod/neocloud pricing. A's own latency-critical Seoul path is AWS Seoul RTX PRO 6000 at USD 4.135/h. At that cost KRW 6,000 (about USD 4.29) gives roughly 4% gross margin."
+      ]
+    },
+    {
+      "proposal_key": "B",
+      "scores": {
+        "physics_power": 8,
+        "realism": 6,
+        "convenience": 6,
+        "training_capability": 7,
+        "time_to_revenue": 5.5,
+        "moat_defensibility": 5,
+        "capital_efficiency": 5,
+        "license_legal_safety": 8.5,
+        "cen_synergy": 6,
+        "korea_market_fit": 7,
+        "global_scalability": 4,
+        "execution_risk_inverse": 4
+      },
+      "weighted_total": 5.6,
+      "strongest_ideas": [
+        "The physics and training path is 100% permissive: Newton/MJWarp, MuJoCo CPU, the PhysX SDK built from source and Isaac Lab built from GitHub source, with an SBOM gate that blocks proprietary, AGPL and BSL code. This is the strongest legal position at M&A, in enterprise security review and in defence accreditation, and it is correct on the verified licence facts (ovphysx/ovrtx/isaacsim wheels are proprietary; lakeFS is BSL; MinIO is AGPL).",
+        "Phase-0 verification gates V1-V8 plus a 7-task bake-off on the company's own RTX PRO 6000 + H100 before money is committed. This follows the research's benchmark-misuse warning exactly.",
+        "One Helm bundle produces four editions (Global SaaS, Korean sovereign cloud, on-prem, air-gapped). The Defense/Air-gapped Edition at KRW 8-15억/yr is the highest-ACV, highest-margin SKU proposed by any of the three plans.",
+        "AICHEMIST builds its own ROS 2 bridge, so ROS 2 Lyrical (LTS to 2031) is supported on day one, avoiding Isaac Sim's Humble/Jazzy-only workspaces. A clean-room marine module avoids GPL Stonefish. Both are concrete differentiators for shipyard and defence buyers.",
+        "The plan states its weaknesses openly: sovereignty stops at CUDA, open sensor models trail RTX, and 'anyone can assemble the same permissive core'."
+      ],
+      "fatal_flaws_or_gaps": [
+        "The moat is replicable, and the proposal says so. A licence-clean assembly of free engines is a feature, not a moat. Accreditation and installed base take 12-24 months to accumulate, and the moat is thin until then.",
+        "The strategic premise is fragile in both directions. If NVIDIA keeps opening its stack (PhysX SDK is already Apache-2.0 and the ovphysx source is Apache-2.0), the sovereignty premium disappears. If it does not, B's premium RTX tier is weak. Meanwhile the chaebol buyers are standardising on Omniverse, and the research notes that compatibility is a scored procurement advantage.",
+        "It has the most in-house engineering and so the highest execution risk: its own PhysX-SDK USD adapter, its own Warp sensor library including FMCW radar, a renderer abstraction, air-gap packaging and a marine module, all with a team of 14 to 36. Its own sensor realism will trail RTX by 12-18 months, which weakens hard requirement (2) on the very defence and maritime perception use cases B targets.",
+        "The sales-cycle timing does not fit. Sovereign and defence deals run 12-24 months, yet B books 3 Sovereign Edition contracts by M18 and KRW 21억 of sovereign and defence revenue in PY2.",
+        "There is no TAM/SAM and no USD 100M ARR path. Sovereign software is local by design, and Japan/US entry only follows Korean OEMs. PY3 revenue is KRW 135억 (about USD 9.6M), and exit ARR is KRW 90억.",
+        "The story is defensive ('license-clean, air-gap-ready'). It answers a risk question, not a growth question."
+      ],
+      "factual_errors": [
+        "'Sim2real record: Unitree G1, Skild rack assembly, Samsung cable insertion' is presented as verified fact. The research lists these as NVIDIA/partner-announced uses and flags independent sim2real evidence for Newton as an open question.",
+        "'It costs about 15% more than an Isaac-first hybrid.' The KRW 19억 sovereignty premium is about 15% of B's own KRW 129.7억, but B's total is about 55-60% above the research's ramped hybrid (KRW 80-85억). The framing understates the gap.",
+        "'Net equity need about KRW 45-65억' nets out KRW 30-60억 of grants, while B's own risk table says to 'count grants only once awarded'. That range is the researcher's unsourced estimate and already includes vouchers that B also books as revenue, so there is a double-count risk.",
+        "'If the Series B has not closed by M9': a Series B at M9 with KRW 5억 exit ARR in PY1 is not a realistic round label or timing. It would be a Series A or an A-extension.",
+        "Saying the T0-T2 path can run on government B200/H200 allocations is untested. The research clears H100/H200/B200 only for physics-only RL and training, says startup access to the government GPU programmes is unverified, and gives no measured economics for path-traced Cycles SDG on these GPUs.",
+        "Isaac Lab 3.0 GA is 'expected around Nov 2026', but the research says GA is targeted for the end of Oct 2026. This is minor."
+      ]
+    },
+    {
+      "proposal_key": "C",
+      "scores": {
+        "physics_power": 7,
+        "realism": 8,
+        "convenience": 6.5,
+        "training_capability": 7.5,
+        "time_to_revenue": 7.5,
+        "moat_defensibility": 6,
+        "capital_efficiency": 6,
+        "license_legal_safety": 7.5,
+        "cen_synergy": 8.5,
+        "korea_market_fit": 7.5,
+        "global_scalability": 5.5,
+        "execution_risk_inverse": 5
+      },
+      "weighted_total": 6.62,
+      "strongest_ideas": [
+        "It has the clearest investor story: 'NVIDIA gives the simulator away; AICHEMIST sells what comes out of it (twins, data and skills, each with a measured sim-to-real score).' NVIDIA commoditisation becomes a COGS tailwind instead of an existential threat, which matches the research's verdict that the value sits in workflow, data, assets, evaluation and measurement.",
+        "The paired real/sim measurement corpus and Bronze/Silver/Gold certificate tiers on Forge assets are a concrete, measurable compounding mechanism with KPIs (1k to 10k to 50k to 200k trials; mass/friction error targets). This is the only plan whose moat can be audited by an investor quarter by quarter.",
+        "A productization gate (>=80% zero-touch jobs, >=60% line gross margin, written licence basis for tenant use) with 'engineer-hours per outcome' as a board KPI. This is an explicit anti-body-shop mechanism.",
+        "Outcome credit issues 30% of every outcome contract as CEN tokens valid for 12 months. This is an inside-out conversion mechanism from services to self-serve, and it uses CEN's existing token model.",
+        "The K-Physical AI Arena has a third-party co-signer (KTL/KIRIA/TTA). Neutral certification is a role a chaebol cannot play for its rivals and that NVIDIA does not want, so it is the best answer to chaebol in-housing.",
+        "Staged capital: Phase 0 is about KRW 10억 as a real option, with a KRW 60억 raise and a lean variant at about KRW 105억. It has the highest CEN synergy, since SDG data is CEN's existing business and the NeRF pipeline becomes the Forge.",
+        "Certificates are replayed on MuJoCo CPU or Newton's deterministic paths, never on MJWarp. This handles the verified GPU non-determinism correctly and keeps CEN's 'reproducible' promise honest."
+      ],
+      "fatal_flaws_or_gaps": [
+        "Services gravity is real. Year 1 has about 45% gross margin, about 10% recurring revenue and about 60% voucher/government-funded revenue. At Series A this prices as a services company unless the productization gate is visibly met. The research warns that investors discount voucher revenue that does not convert.",
+        "The moat depends on customers granting measurement and data rights, which is unvalidated. The proposal admits moats 1-3 are weak until about M18. Lightwheel already sells NVIDIA-aligned calibrated SimReady assets plus LW-BenchHub (268 tasks), and NVIDIA open-sources usd-content-agents, so the window is short.",
+        "There is an Arena conflict of interest: AICHEMIST grades policies it also sells. Credibility depends on a co-signer that has not been signed.",
+        "The plan is Korea-centric (Korean SKUs, K-Pick, K-Arena) and has no explicit go-to-market for the global robot foundation-model and humanoid companies, where the research says private capital is concentrated. Without them there is no USD 100M ARR path. Y3 revenue is KRW 95억 (about USD 6.8M).",
+        "It under-delivers the CEO's literal ask, a general-purpose, easy-to-use twin platform. Multi-tenant self-serve comes at M13+, and vehicles, ships and drones at M25+. NVIDIA or Lightwheel hosted SimReady tooling could arrive first.",
+        "The KPIs are aggressive: 300 Silver/Gold Korean SKUs by M4 with a single capture technician, and 2,000/10,000/50,000 certified assets by M12/M24/M36. Logistics demand (CJ, Coupang, Glovis) is explicitly not validated.",
+        "There is no TAM/SAM sizing and no valuation logic."
+      ],
+      "factual_errors": [
+        "'Datasets sell in M2-M4 (voucher-funded)': the research puts voucher supplier registration in Dec 2026-Jan 2027 and calls in about Jan-Mar 2027. Voucher-funded revenue before about M5-M6 (Mar-Apr 2027) is unlikely.",
+        "The equity need of about KRW 34억 nets KRW 57억 of gross revenue (much of it voucher-funded) and KRW 30억 of non-dilutive funding. The research's KRW 30-60억 non-dilutive estimate (unsourced) already includes the AI and Data vouchers, so voucher money is likely counted twice.",
+        "'Lightwheel's ... footprint is US/China' is stated as fact in the wave-1 competition analysis. The research does not establish it; B tags the same point as an assumption.",
+        "The 'worst case' NVAIE cost of KRW 1-2억/yr assumes 16-32 licensed GPUs. C's own RT pool averages 32 GPUs in P2 plus cloud burst, and the outputs-only exemption is itself unverified, so this is not a worst case."
+      ]
+    }
+  ],
+  "criteria_weights": {
+    "physics_power": 0.04,
+    "realism": 0.05,
+    "convenience": 0.04,
+    "training_capability": 0.05,
+    "time_to_revenue": 0.11,
+    "moat_defensibility": 0.16,
+    "capital_efficiency": 0.12,
+    "license_legal_safety": 0.07,
+    "cen_synergy": 0.07,
+    "korea_market_fit": 0.07,
+    "global_scalability": 0.12,
+    "execution_risk_inverse": 0.1
+  },
+  "winner": "C",
+  "recommended_hybrid": "Use C as the spine, B's licence architecture as the chassis, and A's go-to-market speed as the engine. (1) BUSINESS: run C's outcome-led Data & Evaluation Factory (Forge with Bronze/Silver/Gold certificates, a Fidelity Lab paired real/sim corpus, a K-Physical AI Arena with a signed third-party co-signer), C's productization gate, and C's outcome credit into CEN tokens. (2) FIRST REVENUE: A's fixed-price 12-week Cell-to-Policy PoC (outputs only, 30% upfront) plus C's dataset SKUs with mAP acceptance tests. Distribution through NVIDIA Inception/co-sell and chaebol SI resale (A). Sell to supplier tiers and robot OEMs, not chaebol HQ. (3) TECHNOLOGY: B's rule that every tenant-facing, self-serve and on-prem path is 100% permissive (Newton/MJWarp, MuJoCo CPU for certificate replay, PhysX SDK from source, Isaac Lab from source, mjlab, LeRobot), with an SBOM gate. Isaac Sim RTX/NuRec runs only inside the factory for outputs, and for tenants only as bring-your-own-licence or after written NVIDIA terms. Run B's P0 gates V1-V8 and the 7-task bake-off. (4) GATE AT M10-12 before scaling past about 25 FTE: >=3 paid outcome customers including >=1 production contract, written NVIDIA terms, line gross margin >=50%, >=2 customers granting measurement rights, and the Arena co-signer signed. If the gate fails, use A's pre-costed fallback. (5) SEQUENCE: manipulation only (factory cell plus picking) for 18 months; then humanoid/dual-arm VLA data plus the Arena; shipyard/maritime and B's Air-gapped Defense Edition (KRW 8-15억 ACV) only after KRW 30억 ARR. (6) THE PIECE ALL THREE MISS, THE USD 100M ARR PATH: Korea alone caps out at roughly USD 20-30M ARR for one vendor (my estimate: about 50-100 reachable enterprise accounts x USD 0.3-0.6M ACV, unverified). The other 70%+ must come from (a) data and evaluation supply to global robot foundation-model and humanoid companies, where the research shows the capital is going (multi-account USD 1-3M/yr contracts), (b) self-serve Forge and a certified-asset/dataset marketplace sold globally, and (c) sovereign/defence editions in allied markets through Korean primes. Open a US data/eval GTM by M12-18, not M27+. (7) CAPITAL: about KRW 110-125억 over 24 months, Phase 0 about KRW 10억, Series A about KRW 60-80억 by M9-12 raised on corpus, certificate and gross-margin KPIs. Grants are upside only and vouchers are never double-counted. (8) VALUATION LOGIC to present: the company earns software or data-infrastructure multiples only if it reaches >=60% gross margin, >=50% recurring revenue and >=120% NRR by Y3, with engineer-hours per outcome falling about 50% a year. Otherwise it prices at services multiples (low single-digit times revenue). Comparables such as Applied Intuition (USD 15B, about USD 830M ARR estimate) and Scale AI are unverified prior knowledge and must be labelled that way.",
+  "must_fix_before_final": [
+    "Add a bottom-up TAM/SAM/SOM for every plan: reachable Korean accounts x realistic ACV, then the global robot-data and evaluation spend. Do not size from the USD 21-25B digital-twin top line or the USD 150B 2030 forecast (scope varies 3-10x). Label all market figures low-confidence and to be verified (검증 필요). The synthetic-data tools market is only about USD 0.3-0.6B.",
+    "Show an explicit USD 100M+ ARR path with timeline and per-round milestones. This requires >=70% non-Korean revenue, so name the global buyer segment (robot foundation-model and humanoid companies) and the GTM start date.",
+    "State the valuation logic: which metrics move the company from services to software multiples (gross margin, recurring share, NRR, engineer-hours per outcome), and the round sizes and timing (Series A at about M9-12, not a 'Series B by M9').",
+    "Fix the funding math. Do not net unawarded grants against equity need. Do not count vouchers both as revenue and inside the KRW 30-60억 non-dilutive estimate. Report government-funded revenue separately from commercial ARR.",
+    "Tie every revenue line that touches Kit, Isaac Sim, ovrtx or NuRec (hosted SaaS, on-prem, Sovereign SKUs) to a written NVIDIA terms milestone. The outputs-only exemption and the USD 4,500/GPU/yr NVAIE price are unverified.",
+    "Make the moat auditable: corpus size, % of assets reused across customers, number of customers granting measurement rights, certificate acceptance in at least one procurement, Arena co-signer signed, and quarterly targets for each.",
+    "Validate demand before the raise: name the wave-1 anchor pair with LOIs. Demand from CJ, Coupang and Glovis is explicitly unvalidated. Test data-rights clauses in the first 3 contracts.",
+    "Correct the specific errors: the Mimic 18-40 min figure is state-only (about 10 h visuomotor); GPU margin claims must use Seoul-hosted cost (AWS Seoul RTX PRO 6000 USD 4.135/h), not RunPod; Newton sim2real cases are partner claims; voucher timing is calls in about Jan-Mar 2027; Isaac Lab 3.0 GA is targeted for end of Oct 2026.",
+    "Narrow scope: one beachhead for 18 months. Vehicles, marine, drones and defence come only after a stated ARR threshold, and AV stays partner-only via MORAI.",
+    "Specify the chaebol-in-housing countermeasure contractually: Forge, Kernel and certificate IP stay licensed after a PoC, and the plan focuses on supplier tiers that cannot build in-house.",
+    "Re-verify before any board or IR use every item the research could not check: the 260k-GPU deal split, the Rainbow/Samsung stake, Korean programme caps, competitor valuations (Applied Intuition USD 15B / USD 830M ARR estimate) and GAUGE/GPUSimBench results."
+  ]
+}

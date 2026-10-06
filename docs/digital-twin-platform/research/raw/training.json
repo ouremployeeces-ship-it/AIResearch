@@ -1,0 +1,1079 @@
+{
+ "key": "training",
+ "topic": "Model-training layer of a general-purpose digital twin / physical-AI platform (AICHEMIST CEN): RL, imitation learning/teleop, VLA foundation models, world models, synthetic perception data, evaluation, sim2real, MLOps and compute budgets (status as of 2026-10-06)",
+ "executive_summary": "Method note: the shared WebSearch budget (200 calls per turn across all agents) was already used up when this agent started, so I could not run any searches. I also could not reach arxiv.org, huggingface.co, nvidia.com, deepmind.google, pi.website or wikipedia (the network proxy blocked them). Everything marked high confidence was checked against primary sources I could reach: GitHub repos, release pages, raw docs and the PyPI JSON API. Facts about Gemini Robotics, pi*0.6, Figure Helix, Genie 3, DreamerV4, Jetson Thor specs and GTC/CoRL 2026 keynotes come from memory and are marked medium or low confidence.\n\nBottom line: do not build an RL/IL/VLA training engine. Integrate the open stack that is settling in 2026 and put AICHEMIST's engineering into orchestration, usability, data, evaluation and sim2real tooling. (1) Isaac Lab 3.0 shipped Early Access on 2026-09-16, with GA targeted for end of October 2026. It brings multi-backend physics (PhysX, OVPhysX, Newton/MuJoCo-Warp), a 'Kit-less' mode that runs without the Isaac Sim installation, one `isaaclab` training command over RSL-RL, skrl, RL-Games, SB3 and RLinf (for VLA post-training), multi-GPU and multi-node RL, and Isaac Teleop. It also breaks APIs: quaternions change from WXYZ to XYZW and data now comes back as ProxyArray objects. (2) mjlab 1.6.0 (Apache-2.0, 2026-08-09) offers the same manager-based API on MuJoCo Warp 3.15 with no Omniverse dependency. That matters for a multi-tenant SaaS, because Isaac Sim/Kit binaries ship under NVIDIA's proprietary Omniverse terms. (3) For imitation learning and VLAs, LeRobot 0.6.1 (Apache-2.0, 2026-08-03) is the common layer. It provides the LeRobotDataset v3 format (Parquet + MP4 shards, streaming from the Hub) and ready-to-train ACT, Diffusion, pi0, pi0.5, pi0-FAST, SmolVLA, GR00T N1.7, X-VLA, Wall-X and EO-1, plus RoboCasa365, RoboTwin 2.0, LIBERO-plus and Isaac Lab Arena environments. (4) Default VLA bases with commercial-friendly licenses are NVIDIA GR00T N1.7 (3B, Cosmos-Reason2-2B backbone, code Apache-2.0, weights under the NVIDIA Open Model License), openpi pi0.5 (code Apache-2.0; weight terms still to be confirmed) and SmolVLA (450M, Apache-2.0). Gate out non-commercial weights such as AgiBot GO-1 (CC BY-NC-SA) and RLWRLD RLDX-1 (a non-commercial model license). (5) World models are now practical tools for training and data. NVIDIA Cosmos 3 (May/June 2026, OpenMDW-1.1) comes as Super 64B, Nano 16B and Edge 4B and includes robot policy variants; Cosmos-Predict2.5 and Transfer2.5 are no longer actively developed. (6) Training compute is modest for RL controllers and large for foundation models. The Isaac Lab benchmark on one RTX 4090 is about 82k env-steps/s for G1 rough-terrain locomotion including training, and about 170k for Shadow-hand in-hand cube reorientation. In practice a quadruped policy takes under an hour on one GPU, a humanoid velocity controller 1–2 h, and a generalist humanoid tracking teacher 23.3 h on a 4090 (HOVER). SONIC-scale humanoid foundation controllers need 64+ GPUs just for fine-tuning. VLA fine-tunes run from about 4 A100-hours (SmolVLA, 20k steps) to hundreds of GPU-hours (OpenVLA-OFT: 8 GPUs, 150k steps). (7) Plan two GPU pools. Isaac Sim RTX rendering and synthetic-data generation need GPUs with RT cores (L40S, RTX PRO 6000, RTX 4090/5090), while VLA and world-model training needs H100/H200/B200; the RT-core requirement is from memory, medium confidence. (8) AICHEMIST's moat should be: a no-code/LLM-driven task, reward and domain-randomization editor on CEN's browser workspace; a Real2Sim asset pipeline (from its NeRF work to SimReady USD with physics parameters); a LeRobot-v3 dataset and synthetic-data marketplace with lineage; one-click Mimic data multiplication; a sim2real toolkit (system ID, actuator nets, sim2sim gates); closed-loop regression evaluation; ONNX/TensorRT packaging for Jetson; and a deployment→failure-mining→re-simulation data flywheel. (9) Licensing traps to design around: the Omniverse EULA for cloud hosting, the cuRobo license inside SkillGen, the NVIDIA Source Code License on MimicGen and DexMimicGen, GPL-3.0 BlenderProc, AGPL-3.0 Ultralytics, CC BY-NC assets in ManiSkill, and the Llama 2 license on OpenVLA weights. (10) Suggested team for the training module: 8–12 FTE. A credible first release fits in 6 months on 1 H100/H200 node plus 2 RT-GPU nodes, or the cloud equivalent.",
+ "options": [
+  {
+   "name": "NVIDIA Isaac Lab 3.0 (EA) / 2.3.2 (stable)",
+   "category": "RL/IL training framework + simulator integration",
+   "status_as_of_2026": "v3.0.0-EA released 2026-09-16 (Isaac Sim 6.1, Python 3.12, PyTorch 2.11, Warp 1.16, Newton 1.5.2), GA targeted end of Oct 2026; v3.0.0-beta ~2026-03-17 (GTC week), beta2 2026-06-17; last 2.x = v2.3.2 (2026-02-02), PyPI isaaclab 2.3.2.post1 (2026-02-11); isaacsim 6.1.0.0 on PyPI 2026-09-09. Owner: NVIDIA, open source on GitHub.",
+   "license_and_cost": "Isaac Lab framework BSD-3; isaaclab_mimic Apache-2.0; full workflows need Isaac Sim, whose source is Apache-2.0 but whose Kit/Omniverse binaries require accepting the proprietary Omniverse license terms (the PyPI wheel says 'NVIDIA Proprietary Software'). Kit-less Newton workflows do not need Isaac Sim. Free to use; check the terms for multi-tenant cloud hosting with NVIDIA.",
+   "strengths": [
+    "Multi-backend physics (PhysX, OVPhysX, Newton MuJoCo-Warp/VBD/MPM) with guidance on moving policies between PhysX and Newton in both directions",
+    "Kit-less mode; zero-copy Warp/PyTorch data; 5 pluggable visualizers (Newton GL/RTX, Kit, Viser, Rerun), browser-friendly",
+    "One `isaaclab` training command over RSL-RL, skrl, RL-Games, SB3, plus RLinf for VLA post-training; multi-GPU and multi-node",
+    "30+ ready-to-train environments, 16+ robots, tiled cameras, IMU, contact and ray-caster sensors, deformables",
+    "Mimic data generation, SkillGen (cuRobo), DexSuite with ADR/PBT, Isaac Teleop (CloudXR, MCAP record/replay), 17 agent skills for LLM-driven environment authoring",
+    "Published benchmark on one RTX 4090: G1 rough 82k steps/s and Shadow cube 170k steps/s including training; 4 nodes × 4 L40: 960k and 1.8M"
+   ],
+   "weaknesses": [
+    "Breaking 3.0 changes (quaternion WXYZ→XYZW, ProxyArray returns, actuator API move, built-in teleop deprecated)",
+    "3.0 is EA, not GA, as of 2026-10-06",
+    "Rendering paths depend on proprietary Omniverse; heavy install; NVIDIA lock-in",
+    "cuRobo (used by SkillGen) has proprietary license terms"
+   ],
+   "best_fit": "Default RL/IL training and synthetic-data backbone for CEN: robots, humanoids, dexterous hands, AMRs, drones (multirotor/thruster actuators added in 2.3.2)",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+    "https://github.com/isaac-sim/IsaacLab/releases",
+    "https://github.com/isaac-sim/IsaacLab",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst",
+    "https://pypi.org/project/isaaclab/",
+    "https://pypi.org/project/isaacsim/",
+    "https://github.com/isaac-sim/IsaacSim"
+   ]
+  },
+  {
+   "name": "mjlab (MuJoCo Warp + Isaac-Lab-style manager API)",
+   "category": "RL training framework (lightweight, MuJoCo-native)",
+   "status_as_of_2026": "v1.6.0 on PyPI 2026-08-09; MuJoCo/MuJoCo-Warp 3.15.0 released 2026-10-05; paper arXiv 2601.22074 (Zakka, Liao, Yi, Le Lay, Sreenath, Abbeel, 2026). Maintained by mujocolab (UC Berkeley/DeepMind-affiliated researchers).",
+   "license_and_cost": "Apache-2.0 (some utilities forked from Isaac Lab under BSD-3). Free; no proprietary runtime.",
+   "strengths": [
+    "Same manager-based environment design as Isaac Lab, so skills and configs transfer",
+    "Minimal dependencies (uv), direct access to MuJoCo data structures, multi-GPU (--gpu-ids)",
+    "No Omniverse EULA, which suits multi-tenant SaaS and on-prem customers",
+    "G1 velocity and motion-imitation (BeyondMimic-style) tasks built in; W&B integration"
+   ],
+   "weaknesses": [
+    "NVIDIA GPU needed for training (macOS only for evaluation)",
+    "Fewer photoreal sensors and less synthetic-data tooling than Isaac Sim RTX",
+    "Smaller task zoo"
+   ],
+   "best_fit": "Second, license-clean backend for locomotion and whole-body control jobs, and the CPU/macOS-friendly evaluation path",
+   "sources": [
+    "https://github.com/mujocolab/mjlab",
+    "https://raw.githubusercontent.com/mujocolab/mjlab/main/README.md",
+    "https://pypi.org/project/mjlab/",
+    "https://pypi.org/project/mujoco-warp/"
+   ]
+  },
+  {
+   "name": "Newton physics engine (Linux Foundation)",
+   "category": "GPU physics backend for training",
+   "status_as_of_2026": "v1.6.1 on 2026-10-05; v1.0 early 2026 (PyPI newton-physics 1.0.0, 2026-02-27); started by Disney Research, Google DeepMind and NVIDIA; ships with Isaac Lab 3.0 (Newton 1.5.2).",
+   "license_and_cost": "Apache-2.0 (docs CC-BY-4.0). Free.",
+   "strengths": [
+    "Several solvers in one engine: MuJoCo-Warp, VBD (cloth/deformables), MPM, Style3D cloth, IPC, experimental Kamino; solvers can be coupled",
+    "Differentiable; CUDA-graph deterministic replay; OpenUSD/MJCF import; RL solver-reset APIs (1.3.0)",
+    "Vendor-neutral governance lowers lock-in risk"
+   ],
+   "weaknesses": [
+    "Fast-moving 1.x API (monthly releases)",
+    "Contact-rich fidelity versus PhysX still needs per-task validation"
+   ],
+   "best_fit": "Physics backend for RL in Isaac Lab 3.0 Kit-less mode; deformables and cloth tasks",
+   "sources": [
+    "https://github.com/newton-physics/newton",
+    "https://github.com/newton-physics/newton/releases",
+    "https://pypi.org/project/newton-physics/"
+   ]
+  },
+  {
+   "name": "rsl_rl (ETH RSL)",
+   "category": "RL algorithm library",
+   "status_as_of_2026": "v5.5.1 on 2026-09-09 (bf16 mixed precision in 5.5.0; torch.compile in 5.1; Beta distribution 5.3; LogWriter 5.4; better multi-GPU gradient reduction).",
+   "license_and_cost": "BSD-3-Clause. Free.",
+   "strengths": [
+    "De facto PPO for legged and humanoid robots; distillation (teacher→student), symmetry, RND",
+    "Fastest in Isaac Lab comparison: Isaac-Humanoid-v0, 4096 envs × 32 × 500 iterations in 198 s on RTX 4090",
+    "Multi-GPU; default in Isaac Lab and mjlab"
+   ],
+   "weaknesses": [
+    "Narrow algorithm set (PPO + distillation)",
+    "Sparse docs, per Isaac Lab's own comparison"
+   ],
+   "best_fit": "Default for locomotion, whole-body control and dexterous PPO jobs",
+   "sources": [
+    "https://github.com/leggedrobotics/rsl_rl/releases",
+    "https://pypi.org/project/rsl-rl-lib/",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/rl_frameworks.rst"
+   ]
+  },
+  {
+   "name": "skrl",
+   "category": "RL algorithm library",
+   "status_as_of_2026": "v2.1.0 on 2026-05-10; actively developed.",
+   "license_and_cost": "MIT. Free.",
+   "strengths": [
+    "PyTorch, JAX and NVIDIA Warp implementations",
+    "Many algorithms, including multi-agent (IPPO/MAPPO)",
+    "Supports Isaac Lab, MuJoCo Playground, ManiSkill, Gymnasium, PettingZoo; good docs; 201 s on the Isaac Lab humanoid benchmark"
+   ],
+   "weaknesses": [
+    "Smaller community"
+   ],
+   "best_fit": "Multi-agent (fleets, multi-robot), off-policy (SAC/TD3) and JAX users",
+   "sources": [
+    "https://github.com/Toni-SM/skrl",
+    "https://pypi.org/project/skrl/"
+   ]
+  },
+  {
+   "name": "RL-Games",
+   "category": "RL algorithm library",
+   "status_as_of_2026": "v1.6.5 on 2026-02-20; low release cadence.",
+   "license_and_cost": "MIT.",
+   "strengths": [
+    "Highly optimized PPO/SAC; history of dexterous work (IsaacGymEnvs, DexPBT, DextrAH); 201 s on the Isaac Lab humanoid benchmark"
+   ],
+   "weaknesses": [
+    "Low documentation; slowing maintenance"
+   ],
+   "best_fit": "Legacy dexterous recipes, population-based training (PBT)",
+   "sources": [
+    "https://pypi.org/project/rl-games/",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/rl_frameworks.rst"
+   ]
+  },
+  {
+   "name": "Stable-Baselines3",
+   "category": "RL algorithm library",
+   "status_as_of_2026": "v2.9.0 on 2026-06-15.",
+   "license_and_cost": "MIT.",
+   "strengths": [
+    "Largest community, extensive docs, many algorithms; good for teaching and non-vectorized custom envs"
+   ],
+   "weaknesses": [
+    "No GPU-vectorized or distributed training: 287 s vs 198 s (rsl_rl) on the Isaac Lab benchmark; not for 4096+ env scale"
+   ],
+   "best_fit": "Education tier, small custom tasks, baseline sanity checks",
+   "sources": [
+    "https://pypi.org/project/stable-baselines3/",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/rl_frameworks.rst"
+   ]
+  },
+  {
+   "name": "TorchRL (PyTorch)",
+   "category": "RL library / building blocks",
+   "status_as_of_2026": "v0.14.0 on 2026-09-10.",
+   "license_and_cost": "MIT (Meta / PyTorch Foundation).",
+   "strengths": [
+    "TensorDict-based modular components, offline RL, replay buffers, LLM-RL utilities; first-party PyTorch"
+   ],
+   "weaknesses": [
+    "Still 0.x; fewer robotics recipes than rsl_rl"
+   ],
+   "best_fit": "Research users building custom algorithms (offline RL, model-based)",
+   "sources": [
+    "https://pypi.org/project/torchrl/"
+   ]
+  },
+  {
+   "name": "Brax training / MuJoCo Playground",
+   "category": "JAX RL stack + GPU env suite",
+   "status_as_of_2026": "brax 0.14.2 (2026-03-15); MuJoCo Playground (pip 'playground') 0.2.0 on 2026-03-16 (package identity medium confidence); supports MJX (JAX) and MuJoCo Warp.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Locomotion, manipulation and dexterous sim2real environments (Menagerie robots); fast JAX PPO/SAC"
+   ],
+   "weaknesses": [
+    "JAX ecosystem split from the PyTorch-centric VLA world; TF32 reproducibility caveat on Ampere"
+   ],
+   "best_fit": "Optional JAX backend for research customers",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco_playground",
+    "https://pypi.org/project/brax/",
+    "https://pypi.org/project/playground/"
+   ]
+  },
+  {
+   "name": "PufferLib",
+   "category": "High-throughput RL library",
+   "status_as_of_2026": "PyPI 3.0.0 (2025-06-23); GitHub default branch '5.0'.",
+   "license_and_cost": "MIT.",
+   "strengths": [
+    "Very fast PPO for small and fast environments; trains 'tiny super-human models in seconds'"
+   ],
+   "weaknesses": [
+    "Focus is games and C environments; no robotics-simulator integrations found"
+   ],
+   "best_fit": "Not a default for robotics; consider for fast agent-based or logistics simulations",
+   "sources": [
+    "https://github.com/PufferAI/PufferLib",
+    "https://pypi.org/project/pufferlib/"
+   ]
+  },
+  {
+   "name": "LeanRL",
+   "category": "Optimized single-file RL scripts",
+   "status_as_of_2026": "Archived 2026-10-01 (read-only).",
+   "license_and_cost": "MIT.",
+   "strengths": [
+    "Shows torch.compile + CUDA-graph speedups: PPO-Atari 6.8x, SAC 5.7x, TD3 3.4x, PPO-continuous 2.7x"
+   ],
+   "weaknesses": [
+    "Archived; unmaintained"
+   ],
+   "best_fit": "Reference only (techniques now in rsl_rl via torch.compile)",
+   "sources": [
+    "https://github.com/meta-pytorch/LeanRL"
+   ]
+  },
+  {
+   "name": "RLinf",
+   "category": "RL infrastructure for VLA / embodied post-training",
+   "status_as_of_2026": "v0.3 (PyPI 2026-07-15); v0.1 Dec 2025; integrated as an Isaac Lab 3.0 training backend.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "RL fine-tuning of OpenVLA, pi0/pi0.5, GR00T N1.5–N1.7, StarVLA, Dexbotic",
+    "Simulators: ManiSkill, LIBERO(-Pro/-Plus), Isaac Lab, BEHAVIOR, MetaWorld, CALVIN, RoboCasa, RoboTwin",
+    "Claims 2.434x embodied-RL throughput over other frameworks and a 25x end-to-end speedup for the BEHAVIOR simulator; used by AgiBot, X Square, Dexmal"
+   ],
+   "weaknesses": [
+    "Young project; heavy multi-GPU systems setup"
+   ],
+   "best_fit": "Phase-2 VLA RL post-training service",
+   "sources": [
+    "https://github.com/RLinf/RLinf",
+    "https://pypi.org/project/rlinf/",
+    "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA"
+   ]
+  },
+  {
+   "name": "Hugging Face LeRobot (+ LeRobotDataset v3, ACT, Diffusion Policy)",
+   "category": "Imitation learning / VLA training library + dataset standard",
+   "status_as_of_2026": "v0.6.1 on 2026-08-03 (v0.6.0 Jul 2026 minimal-install refactor, Python 3.12+, PyTorch 2.7+, 2x faster dataloader; v0.5.0 Mar 2026 added Unitree G1 whole-body control and an Isaac Lab Arena integration).",
+   "license_and_cost": "Apache-2.0. Free.",
+   "strengths": [
+    "Policies: ACT, Diffusion, VQ-BeT, Pi0, Pi0.5, Pi0-FAST, SmolVLA, GR00T N1.7, X-VLA, Wall-X, EO-1; HIL-SERL and TD-MPC for RL; reward models",
+    "LeRobotDataset v3: episodes aggregated into Parquet + MP4 shards, metadata-based episode reconstruction, StreamingLeRobotDataset (--dataset.streaming=true), v2.1→v3 converter",
+    "Benchmarks: LIBERO, Meta-World, RoboCasa365, RoboTwin 2.0, RoboCerebra, RoboMME, LIBERO-plus, VLABench",
+    "Async inference, plugin system, low-cost hardware (SO-100/101, LeKiwi, Koch, Reachy2), DAgger/HIL collection, VLM subtask annotation"
+   ],
+   "weaknesses": [
+    "Frequent breaking changes (e.g., lerobot.types renamed in 0.6.1)",
+    "Large-scale multi-node VLA pretraining is not its focus"
+   ],
+   "best_fit": "Default data format and imitation-learning/VLA fine-tuning engine for CEN; marketplace dataset interchange format",
+   "sources": [
+    "https://github.com/huggingface/lerobot/releases",
+    "https://pypi.org/project/lerobot/",
+    "https://raw.githubusercontent.com/huggingface/lerobot/main/README.md",
+    "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/lerobot-dataset-v3.mdx"
+   ]
+  },
+  {
+   "name": "Isaac Lab Mimic / SkillGen (SkillMimicGen) / GR00T-Mimic blueprint",
+   "category": "Synthetic demonstration generation (data multiplication)",
+   "status_as_of_2026": "isaaclab_mimic extension v1.0.16 in Isaac Lab; SkillGen with cuRobo added in v2.3.0; GR1 humanoid locomanipulation environments.",
+   "license_and_cost": "isaaclab_mimic Apache-2.0; cuRobo (needed by SkillGen) proprietary license.",
+   "strengths": [
+    "10 human demos (Franka stack) or 5 (GR1 pick-place) → 1,000 generated demos",
+    "State-based generation takes 18–40 min; visuomotor about 10 h per 1,000 demos",
+    "BC-RNN training: about 30 min state-based / about 6 h visuomotor (Franka); GR1 pick-place about 29 min on RTX 6000 Ada; policy success 40–60% (Franka), 75–86% (GR1)"
+   ],
+   "weaknesses": [
+    "Generation success rate only about 50% (Franka) and 65–82% (GR1)",
+    "Needs subtask annotation",
+    "Visuomotor generation is slow"
+   ],
+   "best_fit": "One-click 'multiply my teleop demos' feature (key product differentiator on top of CEN synthetic data)",
+   "sources": [
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/imitation-learning/teleop_imitation.rst",
+    "https://github.com/isaac-sim/IsaacLab/blob/main/source/isaaclab_mimic/config/extension.toml",
+    "https://github.com/isaac-sim/IsaacLab/releases"
+   ]
+  },
+  {
+   "name": "MimicGen / DexMimicGen (NVlabs research code)",
+   "category": "Synthetic demonstration generation (research)",
+   "status_as_of_2026": "MimicGen v1.0.1 (Sep 2024; CoRL 2023), 48k+ released demos across 12 tasks; DexMimicGen (ICRA 2025) bimanual dexterous, robosuite-based.",
+   "license_and_cost": "Code: NVIDIA Source Code License (non-commercial research); datasets CC-BY-4.0.",
+   "strengths": [
+    "Original algorithms and datasets; robomimic integration"
+   ],
+   "weaknesses": [
+    "Code license blocks commercial SaaS use; stale"
+   ],
+   "best_fit": "Use the released datasets only; use Isaac Lab Mimic (Apache-2.0) for the product",
+   "sources": [
+    "https://github.com/NVlabs/mimicgen",
+    "https://github.com/NVlabs/dexmimicgen"
+   ]
+  },
+  {
+   "name": "Teleoperation: NVIDIA Isaac Teleop (CloudXR: Apple Vision Pro / XR headsets) + GELLO + SpaceMouse",
+   "category": "Teleop / demonstration capture",
+   "status_as_of_2026": "Isaac Teleop (NVIDIA/IsaacTeleop) works with Isaac Lab 3.0 beta+, replacing Isaac Lab's built-in teleop; GELLO actively maintained (I2RT YAM, Franka FR3/FER, UR, xArm; bimanual; FACTR gravity compensation; MuJoCo sim).",
+   "license_and_cost": "GELLO MIT (3D-printed + Dynamixel hardware, low cost); Isaac Teleop open source (license not verified); XR headset hardware cost extra.",
+   "strengths": [
+    "Isaac Teleop: XR gripper and dexterous-hand teleop, full-body loco-manipulation (Homie), egocentric robot-free capture, retargeting pipeline, MCAP record/replay",
+    "Isaac Lab Mimic docs confirm keyboard, SpaceMouse and Apple Vision Pro hand tracking",
+    "GELLO: intuitive joint-space puppeteering for arms"
+   ],
+   "weaknesses": [
+    "XR streaming needs low-latency network/CloudXR; Quest/Pico support not verified"
+   ],
+   "best_fit": "Browser + XR teleop into sim twins (CEN workspace), and real-robot capture straight into LeRobotDataset v3",
+   "sources": [
+    "https://github.com/NVIDIA/IsaacTeleop",
+    "https://github.com/wuphilipp/gello_software",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/imitation-learning/teleop_imitation.rst"
+   ]
+  },
+  {
+   "name": "NVIDIA Isaac GR00T N1.7 (N1.5/N1.6 legacy)",
+   "category": "VLA / humanoid & multi-embodiment foundation model",
+   "status_as_of_2026": "N1.7 is General Availability in the repo (early access tag about Apr 2026); 3B parameters; Cosmos-Reason2-2B (Qwen3-VL) backbone + 16-layer flow-matching DiT action head; relative end-effector action space shared across robot and human; pretrained with 20K hours of EgoScale human video plus robot data. N2 not found in primary sources.",
+   "license_and_cost": "Code Apache-2.0; weights NVIDIA Open Model License (commercial use allowed under its terms).",
+   "strengths": [
+    "Fine-tune on 1+ GPUs with 40 GB+ (H100/L40); example: 2,000 steps, global batch 32, 1 or 8 GPUs",
+    "Inference on 16 GB+ GPUs, including Jetson AGX Thor/Orin (JetPack 7.2, CUDA 13.2)",
+    "Checkpoints for LIBERO Panda, DROID, SimplerEnv WidowX/Google, Unitree G1 SONIC whole-body; NEW_EMBODIMENT recipe; native in LeRobot and RLinf"
+   ],
+   "weaknesses": [
+    "NVIDIA-centric; license is not OSI",
+    "Repo gives no published latency numbers"
+   ],
+   "best_fit": "Default VLA base for humanoids and bimanual robots on CEN; pairs with Isaac Lab Mimic data",
+   "sources": [
+    "https://github.com/NVIDIA/Isaac-GR00T",
+    "https://github.com/NVIDIA/Isaac-GR00T/blob/main/README.md",
+    "https://github.com/NVIDIA/Isaac-GR00T/tree/main/examples"
+   ]
+  },
+  {
+   "name": "Physical Intelligence openpi (pi0, pi0-FAST, pi0.5); pi*0.6 (closed)",
+   "category": "VLA foundation model",
+   "status_as_of_2026": "openpi: pi0, pi0-FAST, pi0.5 (pi0.5 + PyTorch support Sept 2025); base checkpoints pretrained on 10k+ hours of robot data; pi0.5-LIBERO at 30k steps: 98.8 / 98.2 / 98.0 / 92.4 (Spatial/Object/Goal/10), average 96.85%. pi*0.6 (RECAP RL-from-experience, about Nov 2025) not released in openpi (medium confidence).",
+   "license_and_cost": "Code Apache-2.0 (Gemma components under separate terms); weight license not explicitly stated in the README (open question).",
+   "strengths": [
+    "Strong generalist manipulation; DROID/ALOHA/LIBERO checkpoints",
+    "Inference >8 GB; LoRA fine-tune >22.5 GB (RTX 4090); full fine-tune >70 GB (A100/H100 80 GB)",
+    "Supported in LeRobot, RLinf, Isaac Lab Arena, RoboArena"
+   ],
+   "weaknesses": [
+    "PyTorch path lacks mixed precision, FSDP and LoRA (JAX path has them)",
+    "Newest pi*0.6 is not open"
+   ],
+   "best_fit": "Default VLA for single and bimanual arm manipulation fine-tunes",
+   "sources": [
+    "https://github.com/Physical-Intelligence/openpi",
+    "https://github.com/Physical-Intelligence/openpi/blob/main/examples/libero/README.md"
+   ]
+  },
+  {
+   "name": "Google DeepMind Gemini Robotics 1.5 / ER 1.5 / On-Device (+ Safari SDK)",
+   "category": "VLA + embodied-reasoning model (closed)",
+   "status_as_of_2026": "Verified: Gemini Robotics SDK ('Safari') supports Gemini Robotics On-Device from SDK v2.4.1 for Trusted Testers only, with tools for serving, robot/sim evaluation, data upload and fine-tuning. Not verified (memory, medium): Gemini Robotics 1.5 and ER 1.5 announced Sep 2025, with ER 1.5 available via the Gemini API; 2026 successors unknown.",
+   "license_and_cost": "SDK Apache-2.0; models proprietary; access gated (Trusted Tester / API pricing).",
+   "strengths": [
+    "Strongest embodied reasoning and planning; ER model usable as a high-level planner over CEN scenes via API"
+   ],
+   "weaknesses": [
+    "Closed weights; trusted-tester gating; data leaves premises"
+   ],
+   "best_fit": "Optional high-level planner/LLM-command layer; not a trainable core",
+   "sources": [
+    "https://github.com/google-deepmind/gemini-robotics-sdk"
+   ]
+  },
+  {
+   "name": "SmolVLA (Hugging Face)",
+   "category": "Small VLA",
+   "status_as_of_2026": "450M-parameter smolvla_base in LeRobot; fine-tuning 20k steps takes about 4 h on one A100; recommended 50+ episodes (25 too few); batch 64.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Cheapest VLA to fine-tune and serve (consumer GPU, edge); async inference"
+   ],
+   "weaknesses": [
+    "Lower ceiling than 3B+ VLAs on long-horizon and generalization"
+   ],
+   "best_fit": "Free/entry tier of CEN; education; low-cost arms (SO-101)",
+   "sources": [
+    "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/smolvla.mdx"
+   ]
+  },
+  {
+   "name": "OpenVLA / OpenVLA-OFT",
+   "category": "VLA (7B) + optimized fine-tuning recipe",
+   "status_as_of_2026": "OpenVLA 7B trained on 970K OXE trajectories; OFT recipe reaches about 97% average on LIBERO (combined model 96.8%).",
+   "license_and_cost": "Code MIT; OpenVLA weights under Llama 2 Community License terms.",
+   "strengths": [
+    "Well-documented recipe; parallel decoding + action chunking + L1 regression"
+   ],
+   "weaknesses": [
+    "Expensive fine-tune: 8 GPUs (A100/H100), about 62 GB/GPU, 150k steps; LoRA on OpenVLA uses about 72 GB on one A100",
+    "Older backbone; overtaken by pi0.5 / GR00T"
+   ],
+   "best_fit": "Benchmark baseline only",
+   "sources": [
+    "https://github.com/openvla/openvla",
+    "https://github.com/moojink/openvla-oft",
+    "https://raw.githubusercontent.com/moojink/openvla-oft/main/LIBERO.md"
+   ]
+  },
+  {
+   "name": "RDT2 (Tsinghua; successor to RDT-1B)",
+   "category": "VLA / cross-embodiment",
+   "status_as_of_2026": "RDT2-VQ / RDT2-FM released Sep 2025, paper Feb 2026; built on Qwen2.5-VL-7B; 10,000+ hours of UMI human manipulation video across 100+ scenes; zero-shot on unseen embodiments (bimanual UR5e, Franka FR3).",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Learns from UMI handheld-gripper data (no robot needed)",
+    "RDT2-FM fine-tunes in about 16 GB"
+   ],
+   "weaknesses": [
+    "Full RDT2-VQ fine-tune needs >80 GB",
+    "Gripper-centric"
+   ],
+   "best_fit": "UMI-style data collection products; cross-embodiment experiments",
+   "sources": [
+    "https://github.com/thu-ml/RDT2"
+   ]
+  },
+  {
+   "name": "AgiBot GO-1 / AgiBot World",
+   "category": "VLA + large real dataset",
+   "status_as_of_2026": "AgiBot World Beta: 1,003,672 trajectories (about 43.8T tokens) from 100 robots; GO-1 (latent planner, ViLLA) and GO-1 Air; released early 2025.",
+   "license_and_cost": "CC BY-NC-SA 4.0 (non-commercial).",
+   "strengths": [
+    "Huge real dataset; LeRobot dataloader; inference about 7 GB; action-expert-only fine-tune about 24 GB (RTX 4090)"
+   ],
+   "weaknesses": [
+    "Non-commercial license blocks product use; full fine-tune about 70 GB"
+   ],
+   "best_fit": "Internal research and pretraining experiments only (license gate)",
+   "sources": [
+    "https://github.com/OpenDriveLab/AgiBot-World"
+   ]
+  },
+  {
+   "name": "Figure Helix (closed)",
+   "category": "Proprietary humanoid VLA",
+   "status_as_of_2026": "Not verified (memory, medium): announced Feb 2025; System 2 7B VLM at 7–9 Hz + System 1 80M visuomotor policy at 200 Hz; full upper-body humanoid control; later Helix updates in 2025–26 not verified.",
+   "license_and_cost": "Proprietary; not available.",
+   "strengths": [
+    "Reference architecture for dual-system (slow VLM / fast controller) design"
+   ],
+   "weaknesses": [
+    "Not accessible"
+   ],
+   "best_fit": "Design reference only",
+   "sources": [
+    "https://www.figure.ai/news/helix (not fetched – blocked)"
+   ]
+  },
+  {
+   "name": "RLWRLD RLDX-1 (Korea)",
+   "category": "VLA for dexterous manipulation (Korean startup)",
+   "status_as_of_2026": "Released 2026-05-06 (technical report, code, checkpoints); image-only RLDX-1-PT-IMG 2026-06-16; 6.9B pretrained / 8.1B mid-trained; Qwen3-VL + Multi-Stream Action Transformer; LIBERO 97.8%, LIBERO-Plus 86.7%, SIMPLER Google-VM 81.5%; LeRobot v2.1 data; synthetic-augmented training pipeline.",
+   "license_and_cost": "Code Apache-2.0; weights 'RLWRLD Model License v1.0' (non-commercial, attribution/share-alike).",
+   "strengths": [
+    "Domestic partner candidate; dexterous focus; uses synthetic augmentation, which aligns with CEN"
+   ],
+   "weaknesses": [
+    "Non-commercial weights"
+   ],
+   "best_fit": "Korean partnership / co-marketing; synthetic-data supply deal",
+   "sources": [
+    "https://github.com/RLWRLD/RLDX-1",
+    "https://github.com/RLWRLD"
+   ]
+  },
+  {
+   "name": "NVIDIA Cosmos 3 (Super 64B / Nano 16B / Edge 4B); legacy Cosmos-Predict2.5, Transfer2.5, Reason2; cosmos-rl",
+   "category": "World foundation models (prediction, transfer, reasoning, policy)",
+   "status_as_of_2026": "Cosmos 3 released May 2026 (tech report; Transfer2.5 README says launched 2026-06-01); Cosmos3-Edge 4B July 2026; post-trained Cosmos3-Nano/Edge-Policy-DROID. Predict2.5 (Oct 6, 2025; 14B Dec 2025; robot policy models Feb 23, 2026) and Transfer2.5 (2B; RGB/depth/seg/edge/blur/HD-map/LiDAR controls) are no longer actively developed. cosmos-rl updated 2026-09-24.",
+   "license_and_cost": "Cosmos 3: OpenMDW-1.1 (code + models). Predict/Transfer 2.5: code Apache-2.0, weights NVIDIA Open Model License.",
+   "strengths": [
+    "One model can reason, predict, transfer and output actions/policies",
+    "Sim2real visual augmentation of Isaac renders (Transfer); synthetic trajectory generation (DreamGen-style)",
+    "Edge variant targets Jetson Thor/Orin; Nano targets RTX PRO 6000/H100"
+   ],
+   "weaknesses": [
+    "Super needs H200/B200/GB200; video generation is costly",
+    "Physics consistency not guaranteed, so it does not replace physics simulation for RL"
+   ],
+   "best_fit": "Phase-2 'photoreal booster' for CEN synthetic datasets and world-model-based policy evaluation",
+   "sources": [
+    "https://github.com/NVIDIA/Cosmos",
+    "https://github.com/NVIDIA/Cosmos/blob/main/README.md",
+    "https://github.com/nvidia-cosmos/cosmos-predict2.5",
+    "https://github.com/nvidia-cosmos/cosmos-transfer2.5",
+    "https://github.com/orgs/nvidia-cosmos/repositories"
+   ]
+  },
+  {
+   "name": "Google DeepMind Genie 3",
+   "category": "Interactive world model",
+   "status_as_of_2026": "Not verified (memory, medium-low): announced Aug 2025, real-time 720p/24 fps, multi-minute consistency, promptable world events; research preview; consumer 'Project Genie' access in 2026 (low).",
+   "license_and_cost": "Proprietary; no training API.",
+   "strengths": [
+    "Interactive generated environments for agent training research"
+   ],
+   "weaknesses": [
+    "No access for third-party robot training; no physical ground truth"
+   ],
+   "best_fit": "Watch only",
+   "sources": [
+    "https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/ (not fetched – blocked)"
+   ]
+  },
+  {
+   "name": "Meta V-JEPA 2 / 2-AC / 2.1",
+   "category": "Self-supervised video world model / planning",
+   "status_as_of_2026": "V-JEPA 2 released 2025-06-25 (300M–1B, ViT-L/H/g); V-JEPA 2.1 released 2026-03-16 (up to 2B ViT-G, dense features); 2-AC zero-shot Franka planning: reach 100%, grasp cup 60%, pick-and-place 80%.",
+   "license_and_cost": "Mostly MIT (parts Apache-2.0).",
+   "strengths": [
+    "Open, commercial-friendly; strong visual encoder for perception and action-conditioned planning"
+   ],
+   "weaknesses": [
+    "Model-predictive planning is slow and success is modest; research-grade"
+   ],
+   "best_fit": "Visual encoder backbone / world-model research track",
+   "sources": [
+    "https://github.com/facebookresearch/vjepa2"
+   ]
+  },
+  {
+   "name": "DreamerV3 / DreamerV4",
+   "category": "Model-based RL (learned world model)",
+   "status_as_of_2026": "DreamerV3 repo maintained (Nature 2025, JAX, MIT). Not verified (memory, medium): DreamerV4 (Hafner et al., Sep 2025, 'Training Agents Inside of Scalable World Models', offline Minecraft diamonds); the repo does not mention V4.",
+   "license_and_cost": "MIT (V3).",
+   "strengths": [
+    "Sample-efficient; fixed hyperparameters across domains"
+   ],
+   "weaknesses": [
+    "Not the standard for massively parallel sim RL; JAX"
+   ],
+   "best_fit": "Research option for data-scarce real-robot RL",
+   "sources": [
+    "https://github.com/danijar/dreamerv3"
+   ]
+  },
+  {
+   "name": "Omniverse Replicator (Isaac Sim 6.x) SDG",
+   "category": "Synthetic perception data generation",
+   "status_as_of_2026": "Part of Isaac Sim 6.1 (2026-09-09); NVIDIA examples: pallet / pallet-jack detection with domain randomization (lighting, texture, pose, material), KITTI output, TAO training, Jetson deployment.",
+   "license_and_cost": "Omniverse license terms; needs RT-core GPUs for RTX rendering (memory, medium).",
+   "strengths": [
+    "Physically based RTX rendering; annotators (bbox, seg, depth, normals, keypoints); SimReady assets; same scenes as the RL twins"
+   ],
+   "weaknesses": [
+    "Proprietary runtime; heavy GPU and VRAM use; slower than rasterizers"
+   ],
+   "best_fit": "Default perception SDG engine for CEN (fits its existing 3D-simulation synthetic-data business)",
+   "sources": [
+    "https://github.com/NVIDIA-Omniverse/synthetic-data-examples",
+    "https://github.com/NVIDIA-AI-IOT/synthetic_data_generation_training_workflow",
+    "https://pypi.org/project/isaacsim/"
+   ]
+  },
+  {
+   "name": "BlenderProc 2",
+   "category": "Synthetic perception data (Blender)",
+   "status_as_of_2026": "PyPI 2.8.0 (2024-10-22); repo active but release cadence slow.",
+   "license_and_cost": "GPL-3.0.",
+   "strengths": [
+    "BOP/COCO export; Cycles path tracing; easy pose sampling"
+   ],
+   "weaknesses": [
+    "GPL-3.0 (fine as a server-side tool, risky if distributed)",
+    "Not GPU-batched; separate from the physics twin"
+   ],
+   "best_fit": "Optional renderer for object-pose (BOP) datasets",
+   "sources": [
+    "https://github.com/DLR-RM/BlenderProc",
+    "https://pypi.org/project/blenderproc/"
+   ]
+  },
+  {
+   "name": "Kubric",
+   "category": "Synthetic video data (Blender + PyBullet)",
+   "status_as_of_2026": "PyPI 0.1.1 (2021); pinned to Blender 2.93.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Rich annotations (flow, point tracks)"
+   ],
+   "weaknesses": [
+    "Stale stack"
+   ],
+   "best_fit": "Do not adopt; reference only",
+   "sources": [
+    "https://github.com/google-research/kubric",
+    "https://pypi.org/project/kubric/"
+   ]
+  },
+  {
+   "name": "Auto-labeling: Meta SAM 3 / SAM 3.1 (+ VLM annotators such as Cosmos Reason2 and LeRobot VLM subtask annotation)",
+   "category": "Auto-labeling",
+   "status_as_of_2026": "SAM 3 (2025, 848M, text/visual-prompt concept segmentation + tracking, 75–80% of human on SA-CO); SAM 3.1 Object Multiplex 2026-03-27 (faster multi-object tracking).",
+   "license_and_cost": "SAM License (custom; gated checkpoints).",
+   "strengths": [
+    "Open-vocabulary detect/segment/track for labeling real data to close the sim2real loop"
+   ],
+   "weaknesses": [
+    "Custom license needs legal review for SaaS"
+   ],
+   "best_fit": "Real-data auto-labeling inside the CEN marketplace pipeline",
+   "sources": [
+    "https://github.com/facebookresearch/sam3",
+    "https://github.com/huggingface/lerobot/releases"
+   ]
+  },
+  {
+   "name": "Detectors for synthetic-data training: RF-DETR vs Ultralytics YOLO26",
+   "category": "Perception model training",
+   "status_as_of_2026": "RF-DETR N–L Apache-2.0 (COCO AP50:95 48.4–56.5 at 2.3–6.8 ms on T4 TensorRT FP16); XL/2XL under PML 1.0. Ultralytics YOLO26 current, YOLO27 in preview.",
+   "license_and_cost": "RF-DETR N–L Apache-2.0; Ultralytics AGPL-3.0 or paid Enterprise license.",
+   "strengths": [
+    "Both export to ONNX/TensorRT for Jetson"
+   ],
+   "weaknesses": [
+    "Ultralytics AGPL is incompatible with closed SaaS unless an enterprise license is bought"
+   ],
+   "best_fit": "RF-DETR (and RT-DETR/D-FINE-class Apache models) as CEN default detectors",
+   "sources": [
+    "https://github.com/roboflow/rf-detr",
+    "https://github.com/ultralytics/ultralytics"
+   ]
+  },
+  {
+   "name": "Evaluation suites: Isaac Lab Arena, LIBERO/LIBERO-plus, RoboCasa365, SimplerEnv, BEHAVIOR-1K, ManiSkill3, RoboTwin 2.0, RoboArena",
+   "category": "Benchmarks / closed-loop evaluation",
+   "status_as_of_2026": "Isaac Lab Arena v0.3 alpha (Apache-2.0; GPU-parallel heterogeneous evaluation; GR00T/pi0.5/DreamZero via client-server; RoboFinals, RoboCasa 138+, LIBERO, RoboTwin 2.0; LeRobot EnvHub). RoboCasa365 v1.0 2026-02-18 / v1.0.1 2026-05-12: 365 tasks, 2,500+ scenes, 3,200+ objects, 600+ h human + 1,600+ h robot data, MIT/CC-BY-4.0. SimplerEnv (MIT; real2sim correlation via MMRV/Pearson). BEHAVIOR-1K (1,000 activities, OmniGibson on Isaac Sim, MIT). ManiSkill3 3.0.1 (2026-04-21; RGBD+seg at 30,000+ FPS on a 4090; assets CC BY-NC). RoboArena (MIT; distributed real-world DROID evaluation). libero 0.1.1 (2025-11).",
+   "license_and_cost": "Mostly MIT/Apache; check asset licenses (ManiSkill CC BY-NC 4.0).",
+   "strengths": [
+    "Standard comparability; Arena enables CEN-hosted leaderboards"
+   ],
+   "weaknesses": [
+    "LIBERO is saturated (about 97–99%), so harder suites are needed (LIBERO-plus, RoboCasa365, BEHAVIOR) plus real-world evaluation",
+    "Arena still alpha"
+   ],
+   "best_fit": "Day-1 evaluation harness = Arena + LIBERO-plus + RoboCasa365; marketplace leaderboards later",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacLab-Arena",
+    "https://github.com/robocasa/robocasa",
+    "https://github.com/simpler-env/SimplerEnv",
+    "https://github.com/StanfordVL/BEHAVIOR-1K",
+    "https://github.com/haosulab/ManiSkill",
+    "https://github.com/robo-arena/roboarena",
+    "https://pypi.org/project/mani-skill/",
+    "https://pypi.org/project/libero/"
+   ]
+  },
+  {
+   "name": "Humanoid whole-body controller references: NVIDIA GR00T-WholeBodyControl (GEAR-SONIC, Decoupled WBC), NVlabs HOVER, BeyondMimic",
+   "category": "Reference training recipes (humanoid WBC)",
+   "status_as_of_2026": "GEAR-SONIC: motion-tracking foundation controller, Bones-SEED 142K+ motions (~288 h), 64+ GPUs recommended for fine-tuning, ONNX/TensorRT C++ on Jetson, 50 Hz latent tokens; first release Nov 2025, updated Aug 2026. HOVER: Isaac Lab 2.0 extension, teacher 100k iterations = 23.3 h on RTX 4090 / 44.6 h L40 / 52.8 h A6000, student 10k iterations = 0.27 h on 4090, 4096+ envs. BeyondMimic: Isaac Lab, LAFAN1, ONNX CPU inference in ROS 2 Jazzy on G1.",
+   "license_and_cost": "SONIC code Apache-2.0, weights NVIDIA Open Model License; HOVER Apache-2.0; BeyondMimic MIT.",
+   "strengths": [
+    "Proven sim2real recipes (teacher-student, motion tracking) to package as templates"
+   ],
+   "weaknesses": [
+    "G1/H1-specific; foundation-scale training is expensive"
+   ],
+   "best_fit": "Humanoid WBC templates in CEN's training catalog",
+   "sources": [
+    "https://github.com/NVlabs/GR00T-WholeBodyControl",
+    "https://github.com/NVlabs/HOVER",
+    "https://github.com/HybridRobotics/whole_body_tracking",
+    "https://github.com/HybridRobotics/motion_tracking_controller"
+   ]
+  },
+  {
+   "name": "Dexterous references: NVlabs DextrAH (G/RGB), Isaac Lab DexSuite",
+   "category": "Reference training recipes (dexterous)",
+   "status_as_of_2026": "DextrAH: Kuka-Allegro; privileged RL teacher (4096 envs) → online distillation to camera student (256 envs) with torch.distributed multi-GPU; geometric fabrics. DexSuite with ADR/PBT in Isaac Lab 2.3.",
+   "license_and_cost": "DextrAH license not verified; DexSuite inside Isaac Lab (BSD-3).",
+   "strengths": [
+    "End-to-end pixels-to-action dexterous recipe"
+   ],
+   "weaknesses": [
+    "Multi-GPU, multi-day compute; rendering-bound student"
+   ],
+   "best_fit": "Dexterous-hand template (tier-2 jobs)",
+   "sources": [
+    "https://github.com/NVlabs/DEXTRAH",
+    "https://github.com/isaac-sim/IsaacLab/releases"
+   ]
+  },
+  {
+   "name": "Genesis World",
+   "category": "Alternative multi-physics simulator with RL",
+   "status_as_of_2026": "genesis-world 1.4.3 (PyPI 2026-09-30); 'Genesis World 1.0' blog May 2026; backed by Genesis AI; 30k+ stars.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Rigid/FEM/MPM/fluid in one engine; CUDA/ROCm/Metal/Vulkan/CPU backends"
+   ],
+   "weaknesses": [
+    "Smaller sim2real track record than Isaac Lab/MuJoCo; ecosystem (VLA, teleop, Mimic) thinner"
+   ],
+   "best_fit": "Watch / optional backend for AMD or Apple customers",
+   "sources": [
+    "https://github.com/Genesis-Embodied-AI/Genesis",
+    "https://pypi.org/project/genesis-world/"
+   ]
+  },
+  {
+   "name": "MLOps & deployment stack: MLflow / W&B / ClearML; Ray; Hydra; DVC; ONNX Runtime; TensorRT; Jetson AGX Thor/Orin",
+   "category": "Experiment tracking, orchestration, export, edge",
+   "status_as_of_2026": "PyPI: mlflow 3.16.1 (2026-09-16), wandb 0.30.0 (2026-09-09), clearml 2.1.12, ray 2.59.0 (2026-10-02), hydra-core 1.3.7, dvc 3.67.1, onnxruntime 1.30.0 (2026-09-10), tensorrt 11.3.0.99 (2026-09-09), torch 2.14.1, jax 0.11.2, rerun-sdk 0.38.1, viser 1.1.1. Jetson: GR00T supports AGX Thor/Orin on JetPack 7.2/CUDA 13.2. Not verified (memory, medium): Thor GA Aug 2025, dev kit about US$3,499, up to 2,070 FP4 TFLOPS, 128 GB, 40–130 W.",
+   "license_and_cost": "MLflow Apache-2.0 (self-host free); W&B MIT client + SaaS fees; Ray Apache-2.0; ONNX Runtime MIT; TensorRT proprietary (free to use).",
+   "strengths": [
+    "Mature; self-hostable for Korean data-sovereignty customers"
+   ],
+   "weaknesses": [
+    "Integration glue (lineage between sim config ↔ dataset ↔ checkpoint ↔ evaluation) must be built"
+   ],
+   "best_fit": "MLflow (self-host) as registry + optional W&B; Ray/KubeRay + torchrun; ONNX→TensorRT packager for Jetson",
+   "sources": [
+    "https://pypi.org/project/mlflow/",
+    "https://pypi.org/project/wandb/",
+    "https://pypi.org/project/ray/",
+    "https://pypi.org/project/onnxruntime/",
+    "https://pypi.org/project/tensorrt/",
+    "https://github.com/NVIDIA/Isaac-GR00T"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "Isaac Lab 3.0.0 Early Access was released 2026-09-16 for Isaac Sim 6.1 / Python 3.12 / PyTorch 2.11 / Warp 1.16 / Newton 1.5.2; GA is targeted for end of October 2026.",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab 3.0 has a unified `isaaclab` training command supporting RSL-RL, skrl, RL-Games, Stable-Baselines3 and RLinf (VLA post-training), multi-GPU and multi-node RL, Kit-less Newton workflows, and 17 agent skills; breaking changes include quaternion WXYZ→XYZW and ProxyArray data returns.",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab framework is BSD-3, isaaclab_mimic is Apache-2.0; full workflows need Isaac Sim, whose binaries carry the proprietary Omniverse license terms (PyPI isaacsim/isaaclab wheels are labeled 'NVIDIA Proprietary Software'); Kit-less Newton workflows do not need Isaac Sim.",
+   "source": "https://github.com/isaac-sim/IsaacLab ; https://github.com/isaac-sim/IsaacSim ; https://pypi.org/project/isaacsim/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Latest stable PyPI isaaclab is 2.3.2.post1 (2026-02-11); isaacsim 6.1.0.0 published 2026-09-09.",
+   "source": "https://pypi.org/project/isaaclab/ ; https://pypi.org/project/isaacsim/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab RTX 4090 benchmark (step+inference+train FPS): Cartpole 510k; Cartpole RGB camera 32k; G1 rough velocity 82k (4096 envs); Shadow cube repose 170k (8192 envs). On 4 nodes × 4 L40: 3.5M / 260k / 960k / 1.8M.",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac-Humanoid-v0 (4096 envs × 32 steps × 500 iterations) on RTX 4090: RSL-RL 198 s, RL-Games 201 s, skrl 201 s, SB3 287 s (SB3 lacks vectorized/distributed training).",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/rl_frameworks.rst",
+   "confidence": "high"
+  },
+  {
+   "claim": "mjlab 1.6.0 (Apache-2.0) released 2026-08-09; MuJoCo and MuJoCo-Warp 3.15.0 released 2026-10-05; Newton reached v1.6.1 on 2026-10-05 (Linux Foundation, Apache-2.0, initiated by Disney Research, Google DeepMind, NVIDIA).",
+   "source": "https://pypi.org/project/mjlab/ ; https://pypi.org/project/mujoco-warp/ ; https://github.com/newton-physics/newton/releases ; https://github.com/newton-physics/newton",
+   "confidence": "high"
+  },
+  {
+   "claim": "Current versions: rsl_rl 5.5.1 (2026-09-09, BSD-3), skrl 2.1.0 (2026-05-10, MIT; PyTorch/JAX/Warp), RL-Games 1.6.5 (2026-02-20), SB3 2.9.0 (2026-06-15), TorchRL 0.14.0 (2026-09-10), Brax 0.14.2 (2026-03-15), RLinf 0.3.0 (2026-07-15), PufferLib 3.0.0 on PyPI (GitHub branch 5.0).",
+   "source": "https://pypi.org/project/rsl-rl-lib/ ; https://pypi.org/project/skrl/ ; https://pypi.org/project/torchrl/ ; https://pypi.org/project/rlinf/ ; https://github.com/PufferAI/PufferLib",
+   "confidence": "high"
+  },
+  {
+   "claim": "LeanRL was archived on 2026-10-01 (read-only).",
+   "source": "https://github.com/meta-pytorch/LeanRL",
+   "confidence": "high"
+  },
+  {
+   "claim": "LeRobot 0.6.1 (Apache-2.0) released 2026-08-03; supports ACT, Diffusion, Pi0, Pi0.5, Pi0-Fast, SmolVLA, GR00T N1.7, X-VLA, Wall-X, EO-1, HIL-SERL; benchmarks include RoboCasa365, RoboTwin 2.0, LIBERO-plus, VLABench and Isaac Lab Arena integration.",
+   "source": "https://pypi.org/project/lerobot/ ; https://github.com/huggingface/lerobot/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "LeRobotDataset v3.0 aggregates many episodes into Parquet (state/action) and MP4 (per-camera) shards with metadata-driven episode reconstruction and Hub streaming (StreamingLeRobotDataset).",
+   "source": "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/lerobot-dataset-v3.mdx",
+   "confidence": "high"
+  },
+  {
+   "claim": "GR00T N1.7 is GA: 3B parameters, Cosmos-Reason2-2B (Qwen3-VL) backbone, flow-matching DiT action head, 20K hours of EgoScale human video in pretraining; fine-tune on 40 GB+ GPUs; inference on 16 GB+ including Jetson AGX Thor/Orin (JetPack 7.2); code Apache-2.0, weights NVIDIA Open Model License.",
+   "source": "https://github.com/NVIDIA/Isaac-GR00T",
+   "confidence": "high"
+  },
+  {
+   "claim": "openpi releases pi0, pi0-FAST and pi0.5 (pi0.5 + PyTorch in Sept 2025); inference >8 GB, LoRA >22.5 GB, full fine-tune >70 GB; pi0.5-LIBERO (30k steps) averages 96.85%. No pi0.6 / pi*0.6 weights in the repo.",
+   "source": "https://github.com/Physical-Intelligence/openpi ; https://github.com/Physical-Intelligence/openpi/blob/main/examples/libero/README.md",
+   "confidence": "high"
+  },
+  {
+   "claim": "SmolVLA (450M) fine-tuning for 20k steps takes about 4 hours on one A100; recommended 50+ episodes.",
+   "source": "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/smolvla.mdx",
+   "confidence": "high"
+  },
+  {
+   "claim": "OpenVLA-OFT LIBERO fine-tuning uses 8 GPUs (A100/H100), batch 8/GPU (~62 GB), 150k steps, LoRA rank 32; about 97% average success (combined model 96.8%). OpenVLA LoRA uses about 72 GB on one A100.",
+   "source": "https://raw.githubusercontent.com/moojink/openvla-oft/main/LIBERO.md ; https://github.com/openvla/openvla",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab Mimic: 10 human demos (Franka) / 5 (GR1) → 1,000 generated demos in 18–40 min (state) or about 10 h (visuomotor); BC-RNN training about 30 min (state) / about 6 h (visuomotor); Apple Vision Pro hand tracking supported as a teleop device.",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/imitation-learning/teleop_imitation.rst",
+   "confidence": "high"
+  },
+  {
+   "claim": "MimicGen and DexMimicGen code is under the NVIDIA Source Code License (datasets CC-BY-4.0); SkillGen in Isaac Lab depends on cuRobo, which has proprietary license terms.",
+   "source": "https://github.com/NVlabs/mimicgen ; https://github.com/NVlabs/dexmimicgen ; https://github.com/isaac-sim/IsaacLab/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "HOVER humanoid teacher (100k iterations) takes 23.3 h on RTX 4090 / 44.6 h on L40 / 52.8 h on RTX A6000; student distillation (10k iterations) 0.27 h on RTX 4090; 4096+ envs on a single GPU.",
+   "source": "https://github.com/NVlabs/HOVER",
+   "confidence": "high"
+  },
+  {
+   "claim": "GEAR-SONIC (GR00T whole-body control) recommends 64+ GPUs for fine-tuning from released checkpoints; data: Bones-SEED 142K+ motions (~288 h); deployment ONNX + TensorRT on Jetson at 50 Hz.",
+   "source": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+   "confidence": "high"
+  },
+  {
+   "claim": "Cosmos 3 (released May 2026; Transfer2.5 README says launched June 1, 2026) has Super 64B (H200/B200/GB200), Nano 16B (RTX PRO 6000/H100/B200) and Edge 4B (Jetson Orin/Thor, July 2026) under OpenMDW-1.1, plus DROID policy variants; Cosmos-Predict2.5 and Transfer2.5 are no longer actively developed.",
+   "source": "https://github.com/NVIDIA/Cosmos ; https://github.com/nvidia-cosmos/cosmos-predict2.5 ; https://github.com/nvidia-cosmos/cosmos-transfer2.5",
+   "confidence": "high"
+  },
+  {
+   "claim": "V-JEPA 2 was released 2025-06-25 and V-JEPA 2.1 on 2026-03-16 (up to 2B); V-JEPA 2-AC zero-shot Franka: reach 100%, grasp 60%, pick-and-place 80%; mostly MIT.",
+   "source": "https://github.com/facebookresearch/vjepa2",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab Arena is alpha v0.3 (Apache-2.0), evaluates GR00T, pi0.5 and DreamZero via client-server, and integrates the LeRobot Environment Hub; published benchmarks: RoboFinals, RoboCasa (138+ tasks), LIBERO, RoboTwin 2.0.",
+   "source": "https://github.com/isaac-sim/IsaacLab-Arena",
+   "confidence": "high"
+  },
+  {
+   "claim": "RoboCasa365 (v1.0 2026-02-18): 365 tasks, 2,500+ scenes, 3,200+ objects, 600+ h human demos, 1,600+ h robot data; code MIT, assets CC-BY-4.0.",
+   "source": "https://github.com/robocasa/robocasa",
+   "confidence": "high"
+  },
+  {
+   "claim": "Korean startup RLWRLD released RLDX-1 (6.9B/8.1B VLA, Qwen3-VL + MSAT) on 2026-05-06 with LIBERO 97.8% / LIBERO-Plus 86.7% / SIMPLER Google-VM 81.5%; weights are non-commercial.",
+   "source": "https://github.com/RLWRLD/RLDX-1",
+   "confidence": "high"
+  },
+  {
+   "claim": "AgiBot World Beta has 1,003,672 trajectories; GO-1 is CC BY-NC-SA 4.0 (non-commercial); full fine-tune about 70 GB, action-expert-only about 24 GB.",
+   "source": "https://github.com/OpenDriveLab/AgiBot-World",
+   "confidence": "high"
+  },
+  {
+   "claim": "Gemini Robotics On-Device is available via the Safari SDK (v2.4.1+) to Trusted Testers only; the SDK covers serving, evaluation, data upload and fine-tuning.",
+   "source": "https://github.com/google-deepmind/gemini-robotics-sdk",
+   "confidence": "high"
+  },
+  {
+   "claim": "Gemini Robotics 1.5 and ER 1.5 were announced in Sep 2025, with ER 1.5 offered through the Gemini API; pi*0.6 (RECAP) was announced about Nov 2025 without open weights; Figure Helix (Feb 2025) uses a 7B System-2 VLM + 80M 200 Hz System-1; Genie 3 announced Aug 2025 (720p/24 fps real-time).",
+   "source": "From memory; deepmind.google, pi.website and figure.ai were blocked by the network proxy",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Jetson AGX Thor became generally available in Aug 2025 (dev kit about US$3,499; up to 2,070 FP4 TFLOPS; 128 GB; 40–130 W).",
+   "source": "From memory; nvidia.com blocked. GR00T repo confirms Thor support on JetPack 7.2/CUDA 13.2: https://github.com/NVIDIA/Isaac-GR00T",
+   "confidence": "medium"
+  },
+  {
+   "claim": "legged_gym trains ANYmal flat-terrain locomotion in under 4 min and rough terrain in about 20 min on one workstation GPU with 4096 envs (Rudin et al., CoRL 2021); the repo is now deprecated in favor of Isaac Lab.",
+   "source": "https://arxiv.org/abs/2109.11978 (blocked; from memory) ; https://github.com/leggedrobotics/legged_gym (deprecation verified)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim RTX rendering requires GPUs with RT cores; A100/H100-class data-center GPUs without RT cores are not supported for rendering workloads.",
+   "source": "From memory of Isaac Sim system requirements (docs blocked)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "ManiSkill3 renders RGBD + segmentation at 30,000+ FPS on an RTX 4090; ManiSkill assets are CC BY-NC 4.0.",
+   "source": "https://github.com/haosulab/ManiSkill",
+   "confidence": "high"
+  },
+  {
+   "claim": "Ultralytics YOLO is AGPL-3.0 (enterprise license needed for closed commercial use); RF-DETR N–L are Apache-2.0 (XL/2XL under PML 1.0); BlenderProc is GPL-3.0; Kubric is stale (Blender 2.93, PyPI 2021).",
+   "source": "https://github.com/ultralytics/ultralytics ; https://github.com/roboflow/rf-detr ; https://github.com/DLR-RM/BlenderProc ; https://github.com/google-research/kubric",
+   "confidence": "high"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "Isaac Lab G1 rough-terrain velocity, RTX 4090, 4096 envs: env-step / step+inference / step+inference+train FPS",
+   "value": "94,000 / 88,000 / 82,000",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "Isaac Lab Shadow-hand cube repose, RTX 4090, 8192 envs: train FPS (single) vs 4 nodes × 4 L40",
+   "value": "170,000 vs 1,800,000",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "Isaac Lab camera-based task penalty (Cartpole state vs RGB camera, train FPS, RTX 4090)",
+   "value": "510,000 vs 32,000 (~16x slower with cameras)",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "RL library wall-clock, Isaac-Humanoid-v0, 4096×32×500, RTX 4090",
+   "value": "RSL-RL 198 s; RL-Games 201 s; skrl 201 s; SB3 287 s",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/rl_frameworks.rst"
+  },
+  {
+   "metric": "Quadruped locomotion policy (ANYmal, 4096 envs, single GPU)",
+   "value": "<4 min flat, ~20 min rough terrain (legged_gym); my estimate for Isaac Lab 3.0 on RTX 4090/L40S: 0.3–1 GPU-h per run, 20–60 GPU-h per project including sweeps (~US$20–60 at ~$1/GPU-h)",
+   "source": "https://arxiv.org/abs/2109.11978 (memory, medium) + derived from Isaac Lab benchmark"
+  },
+  {
+   "metric": "Humanoid velocity-tracking controller (G1 rough, PPO)",
+   "value": "Estimate: 300–500M samples at 82k FPS ≈ 1–1.7 h on one RTX 4090; 50–150 GPU-h per project with DR/reward sweeps",
+   "source": "Derived from the Isaac Lab performance benchmark (estimate)"
+  },
+  {
+   "metric": "Humanoid generalist motion-tracking WBC (HOVER, H1)",
+   "value": "Teacher 100k iterations: 23.3 h RTX 4090 / 44.6 h L40 / 52.8 h A6000; student 10k iterations: 0.27 h RTX 4090",
+   "source": "https://github.com/NVlabs/HOVER"
+  },
+  {
+   "metric": "Humanoid foundation WBC fine-tuning (GEAR-SONIC)",
+   "value": "64+ GPUs recommended; data 142K+ motions (~288 h); my estimate for full pretraining: ≥10,000 GPU-h (low confidence)",
+   "source": "https://github.com/NVlabs/GR00T-WholeBodyControl"
+  },
+  {
+   "metric": "Dexterous in-hand reorientation (state-based)",
+   "value": "Estimate: 2–5B samples at ~170k FPS ≈ 3–8 h on one RTX 4090; vision-based teacher→student (DextrAH-style, 4096-env teacher, 256-env camera student, multi-GPU) ≈ 200–600 GPU-h (low-medium confidence)",
+   "source": "Derived from https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst and https://github.com/NVlabs/DEXTRAH"
+  },
+  {
+   "metric": "Isaac Lab Mimic data multiplication",
+   "value": "10 human demos → 1,000 demos in 18–40 min (state) / ~10 h (visuomotor); generation success ~50% (Franka), 65–82% (GR1)",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/imitation-learning/teleop_imitation.rst"
+  },
+  {
+   "metric": "BC policy training on Mimic data (robomimic BC-RNN)",
+   "value": "~30 min state-based, ~6 h visuomotor (Franka stack); ~29 min GR1 pick-place on RTX 6000 Ada; success 40–60% (Franka), 75–86% (GR1)",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/imitation-learning/teleop_imitation.rst"
+  },
+  {
+   "metric": "SmolVLA fine-tune",
+   "value": "20k steps ≈ 4 h on 1× A100 (≈4 A100-h); 450M params; ≥50 episodes",
+   "source": "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/smolvla.mdx"
+  },
+  {
+   "metric": "pi0 / pi0.5 memory (openpi)",
+   "value": "Inference >8 GB; LoRA fine-tune >22.5 GB (RTX 4090); full fine-tune >70 GB (A100/H100 80GB); LIBERO config 30k steps → 96.85% average",
+   "source": "https://github.com/Physical-Intelligence/openpi"
+  },
+  {
+   "metric": "pi0.5 fine-tune compute (estimate)",
+   "value": "~10–40 H100-h for a 30k-step full fine-tune; LoRA on 1× RTX 4090 over ~1–2 days (low-medium confidence)",
+   "source": "Estimate based on openpi requirements"
+  },
+  {
+   "metric": "GR00T N1.7 fine-tune",
+   "value": "1+ GPUs with ≥40 GB; example 2,000 steps, global batch 32 on 1 or 8 GPUs; inference ≥16 GB incl. Jetson Thor/Orin; my estimate: 2–16 GPU-h per task",
+   "source": "https://github.com/NVIDIA/Isaac-GR00T"
+  },
+  {
+   "metric": "OpenVLA-OFT LIBERO fine-tune",
+   "value": "8× A100/H100, ~62 GB/GPU, 150k steps; my estimate ≈ 200–400 GPU-h; ~97% LIBERO average",
+   "source": "https://raw.githubusercontent.com/moojink/openvla-oft/main/LIBERO.md"
+  },
+  {
+   "metric": "VLA pretraining from scratch (reference; not recommended)",
+   "value": "OpenVLA: 970K trajectories, ~64 A100 × ~14 days (~21.5k A100-h, memory/medium); openpi bases pretrained on 10k+ h of robot data; GR00T N1.7 on 20K h of human video plus robot data",
+   "source": "https://github.com/openvla/openvla ; https://github.com/Physical-Intelligence/openpi ; https://github.com/NVIDIA/Isaac-GR00T"
+  },
+  {
+   "metric": "Perception detector on synthetic data (estimate)",
+   "value": "Replicator SDG of 50k labeled RTX images ≈ 5–30 RT-GPU-h; RF-DETR-S/M training on 50k images × 50 epochs ≈ 10–40 A100-h; real-data fine-tune <2 GPU-h; deploy RF-DETR-N/S at 2.3–3.5 ms (T4, TensorRT FP16)",
+   "source": "Estimate; latencies from https://github.com/roboflow/rf-detr"
+  },
+  {
+   "metric": "ManiSkill3 GPU-parallel rendering",
+   "value": "RGBD + segmentation at 30,000+ FPS on RTX 4090",
+   "source": "https://github.com/haosulab/ManiSkill"
+  },
+  {
+   "metric": "RLinf throughput claims",
+   "value": "2.434x embodied-RL throughput vs existing frameworks; 25x end-to-end speedup for BEHAVIOR; ~4x DreamZero SFT throughput",
+   "source": "https://github.com/RLinf/RLinf"
+  },
+  {
+   "metric": "LeanRL torch.compile + cudagraph speedups",
+   "value": "PPO-Atari 6.8x, SAC 5.7x, TD3 3.4x, PPO-continuous 2.7x",
+   "source": "https://github.com/meta-pytorch/LeanRL"
+  },
+  {
+   "metric": "Cosmos 3 model tiers",
+   "value": "Super 64B (H200/B200/GB200), Nano 16B (RTX PRO 6000/H100/B200), Edge 4B (Jetson Orin/Thor)",
+   "source": "https://github.com/NVIDIA/Cosmos"
+  },
+  {
+   "metric": "RoboCasa365 scale",
+   "value": "365 tasks, 2,500+ scenes, 3,200+ objects, 600+ h human demos, 1,600+ h robot data",
+   "source": "https://github.com/robocasa/robocasa"
+  },
+  {
+   "metric": "AgiBot World Beta scale",
+   "value": "1,003,672 trajectories (~43.8T tokens) from 100 robots",
+   "source": "https://github.com/OpenDriveLab/AgiBot-World"
+  },
+  {
+   "metric": "RDT2 data scale",
+   "value": "10,000+ h of UMI human manipulation video, 100+ scenes",
+   "source": "https://github.com/thu-ml/RDT2"
+  },
+  {
+   "metric": "Indicative Day-1 training cluster (estimate, low confidence)",
+   "value": "1× 8-GPU H100/H200 node (VLA/world-model training; ~US$15–25k/month cloud or ~US$250–400k capex) + 2× 8-GPU RT-core nodes (L40S/RTX PRO 6000) for sim/SDG/RL (~US$8–15k/month each cloud). Total ≈ US$30–55k/month cloud-equivalent",
+   "source": "Estimate (cloud prices not verified)"
+  },
+  {
+   "metric": "Training-module team (estimate)",
+   "value": "8–12 FTE ≈ ₩1.2–1.8B/yr fully loaded in Korea (low confidence)",
+   "source": "Estimate"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "DECISION, build vs adopt: do not build physics, RL algorithms, VLA architectures or world models. Adopt Isaac Lab 3.0 (start on 3.0 EA now, pin to GA in Nov 2026) as the primary training runtime, with mjlab/MuJoCo-Warp (Apache-2.0) as the license-clean second backend behind one AICHEMIST task-spec abstraction. Build the product layer on top: orchestration, UX, data, evaluation, sim2real and deployment.",
+  "DEFAULT STACK, RL: Isaac Lab 3.0 (PhysX for contact-rich manipulation, Newton/MuJoCo-Warp for locomotion and Kit-less jobs) + rsl_rl 5.5.x (PPO, distillation, symmetry, RND, bf16) as default; skrl 2.1 for multi-agent and off-policy; SB3 2.9 for the education tier; RLinf 0.3 for VLA RL post-training (phase 2). Skip PufferLib and LeanRL (archived) for robotics.",
+  "DEFAULT STACK, imitation learning and VLA: LeRobot 0.6.x as the training engine and LeRobotDataset v3 as the single dataset format for CEN's marketplace (real, synthetic and teleop data). Offer three VLA tiers: SmolVLA (450M, Apache-2.0, ~4 A100-h fine-tune) for low cost; pi0.5 via openpi/LeRobot for arm manipulation (confirm weight terms with PI); GR00T N1.7 (NVIDIA Open Model License) for humanoids and bimanual robots. Keep ACT and Diffusion Policy as fast single-task baselines.",
+  "DEFAULT STACK, data generation: Isaac Teleop (XR/Apple Vision Pro via CloudXR, MCAP) + GELLO/SpaceMouse for capture; Isaac Lab Mimic (Apache-2.0) to multiply 5–10 demos into ~1,000. Avoid the MimicGen/DexMimicGen code (NVIDIA Source Code License). Use SkillGen only after reviewing the cuRobo license.",
+  "DEFAULT STACK, perception SDG: Isaac Sim 6.x Replicator with SimReady assets and domain randomization → COCO/KITTI; Cosmos 3 (OpenMDW-1.1) or Transfer-class augmentation for photoreal variation in phase 2; train RF-DETR (Apache-2.0 N–L) or other Apache detectors, not Ultralytics (AGPL), unless you buy an enterprise license; SAM 3.1 + VLM captioning for auto-labeling real data (legal review of the SAM License).",
+  "DEFAULT STACK, MLOps: Kubernetes + KubeRay/Kueue job scheduler bound to CEN tokens; torchrun DDP and Isaac Lab multi-node; Hydra configs with full sim-config hashing; MLflow 3.x self-hosted as tracking and model registry (W&B optional connector); DVC or lakeFS + HF-Hub-compatible storage for datasets; Rerun/Viser in-browser rollout viewers; ONNX (opset-pinned) → TensorRT engine builder per JetPack version (Jetson Thor/Orin) with latency profiling; MCAP logs from the field.",
+  "DAY-1 MUST-HAVES (MVP in about 6 months): (1) task template catalog: quadruped and humanoid velocity locomotion, humanoid motion tracking (BeyondMimic/HOVER-style), arm reach/pick/place, Mimic-based imitation learning, VLA fine-tune, synthetic-data detector; (2) GUI + YAML editors for rewards, observations, domain randomization (mass, friction, motor strength/latency, sensor noise, visuals) and curricula; (3) one-click RL training on 1–8 GPUs with live video rollouts and metrics; (4) teleop-to-dataset (LeRobot v3) + Mimic generation + imitation/VLA fine-tuning; (5) closed-loop evaluation harness (Isaac Lab Arena + LIBERO-plus/RoboCasa365 + customer scenario suites) with success-rate confidence intervals and regression gates; (6) automatic sim2sim gate (PhysX↔Newton/MuJoCo) before export; (7) ONNX/TorchScript/TensorRT export with a Jetson packaging recipe; (8) experiment tracking, model registry and lineage (assets → scene → dataset → checkpoint → evaluation); (9) license gating that blocks non-commercial weights and assets in commercial workspaces.",
+  "PHASE 2 (6–12 months): multi-node RL and population-based training (PBT)/automatic domain randomization (ADR) sweeps; RLinf VLA RL post-training; HIL-SERL real-world RL and residual RL on top of VLAs; system-identification wizard (fit actuator nets and friction/mass/latency from real logs; ASAP-style delta-action correction); Real2Sim pipeline turning CEN NeRF/3DGS captures into SimReady USD with collision and physics parameters; Cosmos-based photoreal augmentation and world-model-based policy pre-screening; LLM text-to-environment/reward agent built on Isaac Lab 3.0 agent skills and CEN's LLM command interface.",
+  "PHASE 3 (12–24 months): fleet data flywheel (field telemetry → failure mining with VLM/SAM → automatic scenario regeneration in sim → retrain → gated redeploy); hosted public leaderboards (Arena-based) in the marketplace; humanoid foundation-WBC fine-tuning service (SONIC-class, 64+ GPU jobs); vehicle/AV and drone training tracks (AV mostly perception and closed-loop scenario evaluation; drones via Isaac Lab multirotor/thruster actuators).",
+  "SIM2REAL TOOLKIT to ship as productized defaults: domain randomization presets per robot class; actuator-network training from motor logs; privileged teacher → student distillation (rsl_rl distillation); observation-latency and noise injection; sim2sim cross-engine check; real2sim2real loop with Real2Sim scans; residual RL; systematic real-vs-sim evaluation correlation in the style of SimplerEnv MMRV/Pearson.",
+  "COMPUTE PLAN: split pools. RT-core GPUs (L40S / RTX PRO 6000 / RTX 4090-5090) for Isaac Sim rendering, synthetic data and RL; H100/H200/B200 for VLA, Cosmos and large fine-tunes. Typical budgets: quadruped 0.3–1 GPU-h per run; humanoid velocity 1–2 GPU-h per run; humanoid generalist tracking teacher ~23 h on one RTX 4090 (HOVER); state-based dexterous 3–8 GPU-h; vision dexterous 200–600 GPU-h; SmolVLA ~4 A100-h; GR00T/pi0.5 single-task 2–40 H100-h; OpenVLA-OFT ~200–400 GPU-h; detector on 50k synthetic images ~15–70 GPU-h end-to-end. Price CEN tokens on GPU-hour × pool type.",
+  "TEAM (training module, 8–12 FTE): 2 RL/sim2real engineers (locomotion, WBC, dexterous), 2 imitation-learning/VLA engineers, 1 synthetic-data/perception engineer, 1 world-model/Cosmos engineer (phase 2), 2–3 MLOps/platform engineers (K8s, Ray, registry, billing hooks), 1 robotics deployment engineer (ROS 2, Jetson, TensorRT), 1 product/UX lead for the no-code editors. Add part-time legal for model and asset licensing.",
+  "PARTNERSHIPS: join NVIDIA Inception/Omniverse partner programs early to settle the Isaac Sim/Omniverse terms for multi-tenant cloud hosting; explore Korean VLA partners (RLWRLD RLDX-1 uses a synthetic-augmented pipeline, so CEN can sell data to them); contribute Newton/mjlab integrations to stay engine-neutral.",
+  "GO-TO-MARKET FIT: position the training module as 'synthetic data + training + evaluation in one place'. CEN's marketplace of assets, datasets and benchmarks plus one-click Mimic data multiplication and closed-loop evaluation is the differentiator; raw training throughput is a commodity."
+ ],
+ "risks": [
+  "Isaac Lab 3.0 is Early Access with heavy breaking changes (quaternion order, ProxyArray, actuator API, teleop moved to Isaac Teleop). Wrap it behind an internal task-spec/adapter layer and pin versions per workspace.",
+  "Licensing for multi-tenant SaaS: Isaac Sim/Kit binaries are under the proprietary Omniverse terms. Cloud-hosting rights for third-party users must be confirmed with NVIDIA, which is why a license-clean MuJoCo-Warp/mjlab/Newton backend should exist.",
+  "Model and asset license contamination: GO-1 (CC BY-NC-SA), RLDX-1 (non-commercial), ManiSkill assets (CC BY-NC), MimicGen code (NVIDIA Source Code License), cuRobo (proprietary), Ultralytics (AGPL), BlenderProc (GPL-3.0), OpenVLA (Llama 2 terms), SAM License, unclear openpi weight terms. The platform needs automatic license tagging and gating.",
+  "NVIDIA ecosystem lock-in (Isaac, GR00T, Cosmos, Jetson, TensorRT). Mitigate with Newton (Linux Foundation), MuJoCo-Warp, LeRobot format and ONNX export.",
+  "Fast obsolescence: Cosmos-Predict2.5 and Transfer2.5 already superseded by Cosmos 3 within about 8 months; LeanRL archived; GR00T moved N1.5→N1.7 within about a year. Design model integrations as plugins.",
+  "Benchmark saturation (LIBERO ~97–99%) can mislead customers. Needs harder suites (LIBERO-plus, RoboCasa365, BEHAVIOR-1K), customer-specific scenario suites and real-world validation.",
+  "Sim2real gap remains largest for contact-rich dexterous work, deformables and vision. Camera-based RL is about 16x slower than state-based in Isaac Lab, so vision-policy jobs get expensive.",
+  "GPU supply and cost: RT-core GPUs are needed for rendering while H100-class GPUs are needed for VLAs, so poor pool planning will waste capacity. Data-sovereignty demands from Korean customers may require on-prem deployments.",
+  "Real-robot data and evaluation remain essential. Without partner labs or customer fleets, the flywheel (failure mining → re-simulation) cannot be closed.",
+  "Information risk for this report: web search was exhausted and many vendor sites were blocked, so claims about Gemini Robotics, pi*0.6, Figure Helix, Genie 3, DreamerV4, Jetson Thor specs, cloud GPU prices and GTC/CoRL 2026 announcements are unverified (medium or low confidence)."
+ ],
+ "open_questions": [
+  "What are the exact Omniverse/Isaac Sim license terms (and cost) for hosting Isaac Sim-based training for third-party users in a multi-tenant cloud (CEN)? Is an Omniverse Enterprise or OVX agreement required?",
+  "What license covers the openpi checkpoints (pi0/pi0.5 base weights) for commercial fine-tuning and redistribution of fine-tuned weights?",
+  "Is there a GR00T N2 or DreamZero public release (referenced by Isaac Lab Arena and RLinf), and what are its license and compute needs?",
+  "What is the current state (Oct 2026) of Gemini Robotics: any 2.x models, API availability for VLA fine-tuning, and pricing? Not verifiable here (deepmind.google blocked).",
+  "Did Physical Intelligence open-source any pi0.6 / pi*0.6 / RECAP components in 2026?",
+  "What did GTC 2026 (March), SIGGRAPH 2026, RSS 2026, ICRA 2026 and CoRL 2026 announce beyond what GitHub releases show (Isaac Lab 3.0 beta in GTC week, Cosmos 3 in May/June 2026)? Web search was exhausted, so this needs a follow-up search.",
+  "What are the exact Jetson AGX Thor / T4000 specs and 2026 pricing, and measured GR00T N1.7 / pi0.5 inference latency on Thor?",
+  "What do H100/H200/B200 and L40S/RTX PRO 6000 GPU-hours cost from Korean clouds (Naver Cloud, KT, NHN) versus global neoclouds in 2026, and are there national GPU-support programs AICHEMIST qualifies for?",
+  "Which Korean physical-AI programs (e.g., K-Humanoid Alliance, government Physical AI initiatives, Samsung/Rainbow Robotics, LG, NAVER LABS) could be data or compute partners? Only RLWRLD RLDX-1 was verified here.",
+  "What is Isaac Lab 3.0 GA's final API surface and its performance with Newton versus PhysX on contact-rich manipulation (to decide default backend per task class)?"
+ ]
+}

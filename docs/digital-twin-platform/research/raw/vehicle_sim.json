@@ -1,0 +1,1037 @@
+{
+ "key": "vehicle_sim",
+ "topic": "Vehicle, autonomous-driving, drone and marine simulation: engines, neural/generative simulators, vehicle dynamics, sensor physics, standards and regulation, and what AICHEMIST should build vs integrate (as of 2026-10-06)",
+ "executive_summary": "1) In 2026 the AV simulation market has split into two layers. One is engineering-grade, standards-based toolchains sold to OEMs and Tier-1s: IPG CarMaker 15.0 (Nov 2025), CarSim/TruckSim (owned by Applied Intuition since Mar 2022), dSPACE AURELION, Hexagon VTD/VTDx, aiSim 5/6, rFpro AV elevate and Ansys/Synopsys AVxcelerate 2026 R1. These sell on HIL/SIL integration, ASAM OpenX support, determinism and tool qualification (aiSim 5 holds an ISO 26262 ASIL-D certificate). The other is neural/generative simulation for training and evaluating end-to-end driving policies: NVIDIA NuRec (GA at GTC 2026), Instant NuRec (~1.5 s feed-forward reconstruction of a 10–20 s multi-camera clip), Cosmos 3 (1 Jun 2026), OmniDreams, AlpaSim and AlpaGym, the Waymo World Model (built on Genie 3, Feb 2026), Wayve GAIA-3 (15B, Dec 2025), Tesla's neural world simulator and Waabi World.\n2) NVIDIA has largely given away the neural AV stack. AlpaSim code is Apache-2.0. Alpamayo weights and Cosmos 3 (Nano 16B / Super 64B / Edge 4B) are under OpenMDW-1.1, which allows commercial use. Cosmos Predict/Transfer 2.5 code is Apache-2.0, and 3DGRUT (the Gaussian ray-tracing/unscented-transform renderer) is Apache-2.0. A startup should not try to build its own neural reconstruction or world model from scratch; it should integrate these and differentiate on data, workflow and vertical content.\n3) NVIDIA DRIVE Sim never became generally available. It was effectively replaced by the Omniverse Blueprint for AV simulation, Sensor RTX APIs, NuRec and Cosmos, delivered through partners: Foretellix, CARLA, Applied Intuition, Mcity and 51Sim in China.\n4) CARLA is still the default open AV simulator. Code is MIT and assets CC-BY. The latest tag is still 0.10.0 (UE 5.5, Chaos physics, Dec 2024). The 0.9.16 release (Sep 2025, UE4) added Cosmos Transfer1, NuRec, native ROS 2 and a SimReady/OpenUSD converter. The ue5-dev branch is active (last push 2026-10-02), but the leaderboard and most research still target 0.9.x. The UE5 build needs 16 GB+ VRAM and 32 GB+ RAM. Governance is led by CVC Barcelona with a small team.\n5) For vehicle dynamics the open-source choice is Project Chrono 10.0 (Mar/Apr 2026, BSD-3). It offers Pacejka 89/2002, TMeasy, Fiala and FEA/ANCF tires, SCM deformable terrain, and GPU SPH \"CRM\" terrain (29 km of terrain on one H100) for off-road. CarSim and CarMaker remain the commercial reference for real-time HIL with Magic Formula 6.x, MF-Swift or FTire tire models. BeamNG.tech v0.39 (summer 2026; 2 kHz soft-body physics, native C++ ROS 2, MCP) is a strong crash and soft-body niche tool, licensed by quote.\n6) Regulation is starting to require simulation credibility, not just simulation:\n   - The UN ADS regulation was adopted by GRVA in Jan 2026 and approved by WP.29 in late June 2026. It requires evidence that virtual-testing toolchains are credible.\n   - ISO 34505:2025 (Jun 2025) standardises scenario evaluation and test-case generation.\n   - ISO/PAS 8800:2024 covers AI safety. ISO 26262 Ed. 3 is expected in 2027. UL 4600 Ed. 3 was published 17 Mar 2023.\n   - Euro NCAP's 2026 protocols expand crash-avoidance scenario variants and add simulation-supported assessment.\n7) Korea:\n   - Level-4 performance certification became law on 20 Mar 2025.\n   - MOLIT opened the Hwaseong \"AI Autonomous Driving Hub\" on 20 Mar 2026.\n   - KATRI's K-City (360,000 m²) has a virtual twin that agreed with the real route 92.5% of the time within 0.288 m.\n   - The Autonomous Ship Act took effect on 3 Jan 2025.\n   - MORAI (100+ customers, Series B) is the domestic incumbent for HD-map-to-digital-twin AV simulation.\n8) Drones are well served by open source: Pegasus Simulator v5.1.0 (Isaac Sim 5.1, PX4, BSD-3), Project AirSim (MIT, maintained by IAMAI), Aerial Gym (BSD-3, massively parallel RL), Gazebo Jetty LTS (supported to May 2031) and PX4 1.16/1.17 SITL with ArduPilot. Flightmare is effectively dormant.\n9) Marine is the most fragmented area. Stonefish is GPL-3.0. HoloOcean 2.0 (UE 5.3, Fossen dynamics) is a preview, and the pip package is still 0.5.8. DAVE and VRX run on Gazebo. OceanSim is Isaac Sim-based. No commercial leader serves autonomous ships, ports and shipyards, while HD Hyundai (Omniverse/Siemens/Palantir; Avikus on ~350 vessels) and Samsung Heavy (SAS; autonomous trans-Pacific crossing in 2025) are investing heavily.\n10) Recommendation: integrate the engines and build the workflow.\n   - **Integrate:** OpenUSD/Isaac Sim as the scene core, NuRec/3DGRUT and Cosmos as the neural layer, AlpaSim/AlpaGym and Isaac Lab for training, Chrono for off-road and terramechanics, PX4/ArduPilot SITL for drones, an esmini/CARLA path for OpenSCENARIO, and FMI/OSI adapters to customers' CarSim or CarMaker.\n   - **Build:** LLM text-to-scenario generation, Korean digital-twin content and a marketplace, sensor calibration and credibility evidence packs, and synthetic-dataset export.\n   - **Most winnable niches:** maritime/port/shipyard autonomy first, then dual-use off-road UGV and drone perception. Do not compete head-on in OEM ADAS HIL validation (dSPACE, IPG, Applied Intuition at an estimated ~$830M ARR) or in generic neural driving simulation, where NVIDIA gives the stack away.\n11) Licensing constraints to check before committing:\n   - Offering Omniverse Kit or Isaac Sim as a service to third parties requires NVIDIA AI Enterprise (list price $4,500/GPU/yr; 75% Inception discount).\n   - Unreal Engine charges non-game companies with more than $1M revenue $1,850 per seat per year.\n   - Waymax and the Waymo Open Dataset are non-commercial.\n   - Ray-traced sensor rendering needs RTX-class GPUs (L40S or RTX PRO 6000), not H100/B200.",
+ "options": [
+  {
+   "name": "CARLA",
+   "category": "Open-source AV simulator (Unreal Engine)",
+   "status_as_of_2026": "Latest tag is 0.10.0 (19 Dec 2024): UE4.26 to UE5.5 migration, Lumen/Nanite, PhysX replaced by Chaos, native ROS 2, InvertedAI traffic. 0.9.16 (16 Sep 2025, UE4 line) added Cosmos Transfer1, NVIDIA NuRec, a SimReady OpenUSD/MDL converter, left-hand traffic and V2X. No 0.10.1 tag found. The ue5-dev branch is active (last push 2026-10-02). Directed by the Computer Vision Center (UAB Barcelona). Neya Systems partnered on the UE5 port. ~14.5k GitHub stars.",
+   "license_and_cost": "Code MIT; assets CC-BY. Free. Commercial products built on the UE fork carry Epic EULA obligations (non-game seat fee of $1,850/seat/yr for companies over $1M revenue applies to UE use).",
+   "strengths": [
+    "De facto research standard, with a leaderboard, ScenarioRunner (OpenSCENARIO) and a huge community",
+    "Official NVIDIA integration of NuRec and Cosmos Transfer for neural and augmentation workflows",
+    "Native ROS 2 and OpenDRIVE maps; permissive license allows a white-label fork"
+   ],
+   "weaknesses": [
+    "Small team; split between UE4 (0.9.x) and UE5 lines, and the leaderboard and most papers stay on 0.9.x",
+    "UE5 build is heavy (RTX 3070+ with 16 GB+ VRAM, 32 GB+ RAM, Ubuntu 22.04/24.04 or Windows 11 only)",
+    "Vehicle dynamics (Chaos) and sensor physics are not engineering-grade; no ISO 26262 tool qualification"
+   ],
+   "best_fit": "Open front-end for academic and startup customers, OpenSCENARIO/leaderboard compatibility, and fast Korean-road perception-data PoCs",
+   "sources": [
+    "https://github.com/carla-simulator/carla",
+    "https://github.com/carla-simulator/carla/releases",
+    "https://carla.org/2024/12/19/release-0.10.0",
+    "https://carla.org/2025/09/16/release-0.9.16",
+    "https://radiancefields.com/carla-adds-nurec-support-with-v0-9-16"
+   ]
+  },
+  {
+   "name": "NVIDIA Omniverse AV stack (Blueprint for AV Simulation + Sensor RTX + NuRec); legacy DRIVE Sim",
+   "category": "Physically based sensor simulation and neural reconstruction platform",
+   "status_as_of_2026": "DRIVE Sim (Omniverse-based) was never made generally available. NVIDIA now ships the Omniverse Blueprint for AV simulation, Sensor RTX APIs (early access via partners Foretellix, Mcity, MITRE, Accenture) and Omniverse NuRec, which was declared GA on NGC at GTC 2026. NuRec uses 3DGUT Gaussians that handle fisheye and rolling shutter; NuRec Fixer is a transformer that repairs reconstruction artifacts. Instant NuRec (Jul 2026) reconstructs a 10–20 s multi-camera clip feed-forward in ~1.5 s. Partners include CARLA, Foretellix, Applied Intuition and 51Sim (China, exclusive).",
+   "license_and_cost": "NuRec libraries are on NGC; enterprise use is likely tied to NVIDIA AI Enterprise (exact terms unverified). 3DGRUT reference code is Apache-2.0. Offering Kit-based apps as a service requires NVAIE: $4,500/GPU/yr list, $1,125 with the 75% Inception discount.",
+   "strengths": [
+    "Best-in-class RTX ray-traced camera, lidar and radar plus Gaussian neural rendering in one OpenUSD pipeline",
+    "Real logs can become closed-loop scenes in seconds (Instant NuRec), which helps cover the long tail",
+    "Large ecosystem; integration with Cosmos for appearance augmentation"
+   ],
+   "weaknesses": [
+    "Vendor lock-in to NVIDIA RTX GPUs and Omniverse licensing for SaaS",
+    "Neural scenes degrade off the recorded trajectory; physical guarantees are weak for safety arguments",
+    "Sensor RTX access has been partner and early-access based"
+   ],
+   "best_fit": "Core rendering and neural-reconstruction layer of AICHEMIST's platform (integrate, do not rebuild)",
+   "sources": [
+    "https://radiancefields.com/nvidia-omniverse-nurec-reaches-general-availability",
+    "https://github.com/nv-tlabs/3dgrut",
+    "https://www.alphaxiv.org/abs/2607.14203",
+    "https://blogs.nvidia.com/blog/drive-sim-nvidia-omniverse",
+    "https://www.nvidia.com/en-sg/use-cases/autonomous-vehicle-simulation/",
+    "https://winbuzzer.com/2026/03/17/nvidia-gtc-2026-uber-robotaxi-physical-ai-drive-hyperion-xcxwbn/"
+   ]
+  },
+  {
+   "name": "NVIDIA Cosmos (Predict 2.5 / Transfer 2.5 / Reason 2 / Cosmos 3 / Cosmos-Drive-Dreams)",
+   "category": "World foundation models for synthetic data and augmentation",
+   "status_as_of_2026": "Cosmos-Predict2.5 (2B/14B) and Transfer2.5 were released 6 Oct 2025. Cosmos 3 launched 1 Jun 2026 at GTC Taipei: a two-tower mixture-of-transformers 'omnimodel' covering reasoning, generation and action, in Nano (16B), Super (64B, H200/B200) and Edge (4B, Jetson Orin; July 2026). Cosmos-Drive-Dreams released 81,802 synthetic clips with HDMap and LiDAR; its RDS training set is ~3.6M 20-second 6-view clips (~20k hours).",
+   "license_and_cost": "Cosmos 3 weights, code and data are under OpenMDW-1.1 (commercial use and derivatives allowed with attribution). Cosmos 2.5 code is Apache-2.0. Earlier models use the NVIDIA Open Model License: commercial use allowed, 'Built on NVIDIA Cosmos' attribution required, and rights terminate if guardrails are bypassed.",
+   "strengths": [
+    "Free, commercially usable generative augmentation for weather, lighting and geography from one simulation run",
+    "Multi-view and LiDAR-conditioned AV variants exist; post-training recipes are public",
+    "Fits AICHEMIST's synthetic-data business directly"
+   ],
+   "weaknesses": [
+    "Heavy GPU requirements (Super needs H200/B200)",
+    "Generated pixels have no guaranteed physical or label consistency; labels must come from conditioning inputs",
+    "Guardrail and attribution clauses must be honoured in a SaaS product"
+   ],
+   "best_fit": "Domain-gap closing and long-tail augmentation of AICHEMIST's 3D-rendered synthetic datasets (vehicles, drones, ships)",
+   "sources": [
+    "https://github.com/NVIDIA/Cosmos",
+    "https://github.com/nvidia-cosmos",
+    "https://research.nvidia.com/labs/cosmos-lab/cosmos-predict2.5",
+    "https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license",
+    "https://arxiv.org/pdf/2506.09042",
+    "https://www.axios.com/2026/06/01/nvidia-ai-push-cosmos-3-world-model"
+   ]
+  },
+  {
+   "name": "NVIDIA AlpaSim + AlpaGym + OmniDreams + Alpamayo models",
+   "category": "Open closed-loop AV policy simulation and RL training",
+   "status_as_of_2026": "Alpamayo 1 (10B VLA, formerly R1) at CES Jan 2026; Alpamayo 1.5 in Mar 2026; Alpamayo 2 Super (32B) on 1 Jun 2026. AlpaSim is a gRPC microservice simulator with a pluggable NuRec renderer or an OmniDreams video-model renderer. Press reports ~900 reconstructed scenes and a 1,700+ hour dataset. AlpaGym (Jun 2026) is high-throughput closed-loop RL on AlpaSim. OmniDreams (Jun 2026) is a real-time autoregressive generative world model post-trained from Cosmos on 21k hours of driving.",
+   "license_and_cost": "AlpaSim is Apache-2.0. Alpamayo inference code is Apache-2.0 and weights are OpenMDW-1.1 (the GitHub README says commercial use is permitted; an older HF card said non-commercial, so verify). The PhysicalAI-AV dataset uses NVIDIA's AV Dataset License (internal AV development).",
+   "strengths": [
+    "Complete open reference stack for training and evaluating end-to-end driving policies",
+    "Pluggable driver interface (Alpamayo, Transfuser, VaVAM) and evaluation module",
+    "Generative closed loop covers events that reconstruction cannot (weather, novel agents)"
+   ],
+   "weaknesses": [
+    "Very new (2026); APIs churning; the alpamayo repo is already 'no longer under active development'",
+    "Requires a large GPU fleet",
+    "Generative closed-loop results are not yet accepted as homologation evidence"
+   ],
+   "best_fit": "AICHEMIST's 'model training' feature for driving policies: wrap AlpaSim/AlpaGym as a managed service in the GPU cloud workspace",
+   "sources": [
+    "https://github.com/NVlabs/alpasim",
+    "https://github.com/NVlabs/alpamayo",
+    "https://research.nvidia.com/labs/sil/projects/omnidreams-blog/",
+    "https://www.automotiveworld.com/news/nvidia-launches-alpamayo-2-super-open-reasoning-model/",
+    "https://techcrunch.com/?p=3079883"
+   ]
+  },
+  {
+   "name": "NVIDIA Isaac Sim 5.1 / 6.0 (+ Isaac Lab, Newton)",
+   "category": "General robotics simulator (OpenUSD/PhysX/Newton); base for drone, UGV and marine extensions",
+   "status_as_of_2026": "Isaac Sim 6.0 GA on 8 Jun 2026, with expanded Newton physics backend, URDF/MJCF Importer 3.0, an Isaac Sim MCP server and agent skills, and teleoperation. Isaac Lab 3.0 is in early access. Isaac Sim source on GitHub is Apache-2.0.",
+   "license_and_cost": "Source is Apache-2.0. Kit SDK and assets are under NVIDIA terms: free for internal R&D, but redistribution or service delivery to third parties needs NVIDIA AI Enterprise.",
+   "strengths": [
+    "OpenUSD scene core shared with the AV stack; RTX sensors; massive-parallel RL via Isaac Lab",
+    "Hosts Pegasus (drones), OceanSim/MarineGym (underwater) and custom vehicles",
+    "MCP and agent tooling fits AICHEMIST's LLM-command interface"
+   ],
+   "weaknesses": [
+    "SaaS licensing cost",
+    "Vehicle-dynamics fidelity below CarSim/Chrono without co-simulation",
+    "Fast API churn between major versions"
+   ],
+   "best_fit": "Unified scene and runtime core for AICHEMIST across robots, drones, marine and custom vehicles",
+   "sources": [
+    "https://forums.developer.nvidia.com/t/isaac-sim-6-0-general-availability/372621",
+    "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/overview/release_notes.html",
+    "https://docs.isaacsim.omniverse.nvidia.com/latest/common/license-faq.html"
+   ]
+  },
+  {
+   "name": "Project Chrono (Chrono::Vehicle, SCM, CRM, Chrono::Sensor)",
+   "category": "Open-source multibody, vehicle-dynamics and terramechanics engine",
+   "status_as_of_2026": "Chrono 10.0.0 was released ~27 Mar 2026 (GitHub tag dated 7 Apr): refactored Chrono::FSI with SPH and TDPF solvers, a new Peridynamics module, new camera-sensor features, checkpointing for Chrono and Chrono::Vehicle, VSG visualization plugins, modern CMake. Chrono::CRM (SPH, GPU) simulates up to 29 km of deformable terrain on one H100 at SCM-comparable speed (SBEL, Oct 2025). Maintained by UW-Madison SBEL.",
+   "license_and_cost": "BSD-3-Clause; free.",
+   "strengths": [
+    "Templated wheeled and tracked vehicles; Pac89/Pac02, TMeasy, Fiala, rigid and FEA/ANCF tires",
+    "SCM, CRM/SPH and DEM deformable terrain, which is unique for off-road, defense and planetary use",
+    "Permissive license allows embedding in a commercial SaaS"
+   ],
+   "weaknesses": [
+    "Academic UX; rendering and sensors weak compared with RTX engines",
+    "No native FTire or MF 6.2 licensing; HIL real-time requires tuning",
+    "Small core team"
+   ],
+   "best_fit": "Physics back-end for off-road UGV, construction/mining and tracked vehicles, co-simulated with an Omniverse renderer",
+   "sources": [
+    "https://projectchrono.org/news/",
+    "https://github.com/projectchrono/chrono/releases/tag/10.0.0",
+    "https://api.projectchrono.org/wheeled_tire.html",
+    "https://sbel.wisc.edu/2025/10/04/sbel-researchers-develop-chronocrm-simulator-for-fast-and-scalable-rover-terrain-interaction/",
+    "https://api.chrono.projectchrono.org/vehicle_terrain_crm_api_.html"
+   ]
+  },
+  {
+   "name": "BeamNG.tech",
+   "category": "Soft-body vehicle physics simulator for ADAS, testing and research",
+   "status_as_of_2026": "v0.39 '2026 Summer Release': native C++ ROS 2 integration, MCP support for LLM agents, rebuilt ACC/platooning, Traffic Signals API, Vehicle Signal Logger. BeamNGpy 1.36. Physics runs at 2,000 Hz.",
+   "license_and_cost": "BeamNG.tech is free for academic use on request; commercial license by quote (licensing@beamng.gmbh). BeamNGpy is MIT.",
+   "strengths": [
+    "Unique node-beam soft-body physics for crashes, deformation and damage",
+    "Strong in software-testing research (ICST/SBFT tool competitions)",
+    "MCP hook aligns with LLM-controlled scenes"
+   ],
+   "weaknesses": [
+    "Proprietary closed engine; commercial pricing opaque",
+    "Sensor physics basic (ideal sensors plus optional noise)",
+    "Not an OEM homologation tool"
+   ],
+   "best_fit": "Partner or plug-in for crash, damage and edge-case datasets; not a core engine",
+   "sources": [
+    "https://beamng.tech/blog/beamng-tech-039/",
+    "https://listmonk.beamng.com/archive/2026-tech-fourth-newsletter-6236",
+    "https://github.com/BeamNG/BeamNGpy",
+    "https://documentation.beamng.com/beamng_tech/"
+   ]
+  },
+  {
+   "name": "Applied Intuition (Simian/ADP, Sensor Sim, Neural Sim, CarSim/TruckSim/BikeSim)",
+   "category": "Commercial end-to-end AV toolchain and vehicle dynamics",
+   "status_as_of_2026": "Acquired Mechanical Simulation (CarSim) on 14 Mar 2022, EpiSci in Feb 2025 (defense; launched Axion) and Reblika in Jul 2025 (digital humans). Series F of $600M at a $15B valuation (Jun 2025). Sacra estimates ~$830M ARR in 2025, 2x year on year. NVIDIA collaboration on L2+ and Cosmos (GTC Mar 2026).",
+   "license_and_cost": "Proprietary enterprise licenses, price on request (CarSim seats historically sold separately; unverified).",
+   "strengths": [
+    "CarSim/TruckSim are the HIL vehicle-dynamics reference used by 200+ OEMs and Tier-1s",
+    "Full stack: scenarios, sensor sim, neural sim, validation, data engine, defense",
+    "Huge revenue and sales reach"
+   ],
+   "weaknesses": [
+    "Expensive and enterprise-only; not open",
+    "Direct competitor to any generic AV-sim startup"
+   ],
+   "best_fit": "Integrate via FMI/co-sim adapters for customers who already own CarSim; avoid competing head-on",
+   "sources": [
+    "https://www.appliedintuition.com/news/mechanical-simulation-corporation",
+    "https://sacra.com/research/applied-intuition-at-830m-year/",
+    "https://www.cimdata.com/en/industry-summary-articles/item/26787-applied-intuition-acquires-episci-strengthening-position-as-leader-in-all-domain-autonomy-software-for-national-security",
+    "https://finder.techleap.nl/news/feed/applied-intuition-raises-600m-at-15b-valuation"
+   ]
+  },
+  {
+   "name": "IPG Automotive CarMaker / TruckerMaker 15.0",
+   "category": "Commercial vehicle-dynamics and ADAS virtual test driving (MIL/SIL/HIL/VIL)",
+   "status_as_of_2026": "CarMaker 15.0 released Nov 2025: virtual ECU integration with Synopsys Silver (SVB), ground-truth sensor data with glare and rain, improved junction and traffic models for endurance testing; Euro NCAP 2026 virtual-test webinars and packages.",
+   "license_and_cost": "Proprietary seat and node licenses, price on request.",
+   "strengths": [
+    "Industry-standard real-time vehicle models and HIL integration",
+    "Strong Euro NCAP scenario coverage; Korean MOLIT VIL reference project"
+   ],
+   "weaknesses": [
+    "Visual and sensor realism behind RTX/UE engines",
+    "Closed, expensive, not cloud-native ML-training oriented"
+   ],
+   "best_fit": "Interop target (OSI/FMI/OpenSCENARIO export) rather than competitor",
+   "sources": [
+    "https://www.ipg-automotive.com/press/press-detail/ipg-automotive-sets-new-standards-in-virtual-vehicle-development-with-carmaker-150",
+    "https://www.vehicledynamicsinternational.com/news/simulation/ipg-automotive-releases-carmaker-15-0-for-virtual-vehicle-development.html",
+    "https://ipg-automotive.com/fileadmin/data/applications/autonmous_vehicles/references/MOLIT_Autonomous_Vehicle-in-the-Loop.pdf"
+   ]
+  },
+  {
+   "name": "dSPACE AURELION (+ SIMPHERA, ModelDesk, HIL)",
+   "category": "Commercial physics-based sensor simulation integrated with HIL",
+   "status_as_of_2026": "AURELION 25.x line. Migration to Unreal Engine 5 announced, with a UE plugin for OpenDRIVE import. OMNIVISION image-sensor models integrated (Nov 2025). Supports camera, radar and lidar in HIL, SIL and cloud.",
+   "license_and_cost": "Proprietary; price on request.",
+   "strengths": [
+    "Tight coupling with dSPACE HIL rigs, which dominate OEM labs",
+    "Image-sensor-vendor-validated camera models"
+   ],
+   "weaknesses": [
+    "Closed; UE5 migration timeline unverified",
+    "Not oriented to ML training or synthetic-data markets"
+   ],
+   "best_fit": "HIL partner channel for AICHEMIST synthetic sensor data and digital-twin assets",
+   "sources": [
+    "https://www.unrealengine.com/spotlights/dspace-drives-advancements-in-autonomous-vehicle-testing",
+    "https://www.dspace.com/en/pub/home/news/dspace_pressroom/press/dspace-omnivision-2025.cfm"
+   ]
+  },
+  {
+   "name": "Hexagon Virtual Test Drive (VTD) / VTDx",
+   "category": "Commercial OpenX-native scenario and sensor simulation",
+   "status_as_of_2026": "VTD is widely used and natively supports OpenDRIVE, OpenCRG and OpenSCENARIO. VTDx, a cloud-native SaaS on Hexagon Nexus/Azure with Unreal Engine visuals and consumption-based pricing, launched 15 Jan 2025.",
+   "license_and_cost": "Proprietary; consumption-based SaaS for VTDx.",
+   "strengths": [
+    "OpenX heritage and reference implementations",
+    "Cloud SaaS with pay-per-use"
+   ],
+   "weaknesses": [
+    "Corporate restructuring risk at Hexagon; less neural-sim innovation"
+   ],
+   "best_fit": "Benchmark for OpenX compliance and consumption pricing models",
+   "sources": [
+    "https://itbrief.co.uk/story/hexagon-launches-cloud-based-test-drive-software-vtdx",
+    "https://hexagon.com/company/newsroom/press-releases/2025/hexagon-ramps-up-adas-software-innovation-with-cloud-native-quality-test-automation-solution",
+    "https://nexus.hexagon.com/home/product/virtual-test-drive"
+   ]
+  },
+  {
+   "name": "aiSim 5 / aiSim 6 (aiMotive, a Stellantis subsidiary)",
+   "category": "Commercial deterministic sensor simulator with neural rendering",
+   "status_as_of_2026": "aiSim 5 is re-certified ISO 26262 ASIL-D by TÜV Nord (determinism, physics-based). aiSim 6 adds relightable 'PBR splatting' Gaussians. A hybrid neural plus physics renderer was shown at CVPR 2025. aiMotive was acquired by Stellantis (deal announced Nov 2022).",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Only simulator with ASIL-D tool certification",
+    "Own engine (not UE), deterministic, with neural reconstruction"
+   ],
+   "weaknesses": [
+    "Captive to Stellantis strategy; limited openness"
+   ],
+   "best_fit": "Reference for tool-qualification approach; not a likely partner",
+   "sources": [
+    "https://www.aap.com.au/aapreleases/globenewswire1000969676/",
+    "https://radiancefields.com/aimotive-brings-relightable-gaussian-splatting-to-aisim-6-with-pbr-splatting",
+    "https://aimotive.com/w/aimotive-unveils-aisim-5-pioneering-next-gen-autogi-for-adas/ad-simulation"
+   ]
+  },
+  {
+   "name": "rFpro AV elevate",
+   "category": "Commercial high-fidelity ray-traced sensor simulation and digital twins",
+   "status_as_of_2026": "Multi-path ray tracing for camera, lidar and radar (motion blur, rolling shutter); Sony image-sensor models; 180+ real-world digital twins with road surfaces accurate to 1 mm; HPC/cloud Simulation Manager. Owned by AB Dynamics.",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Engineering-grade sensor realism and survey-grade tracks"
+   ],
+   "weaknesses": [
+    "Costly; narrow OEM focus"
+   ],
+   "best_fit": "Benchmark for sensor-fidelity claims; possible content partner",
+   "sources": [
+    "https://www.eenewseurope.com/en/rfpro-launches-simulator-for-autonomous-vehicle-development/",
+    "https://www.autonomousvehicleinternational.com/news/simulation/sony-uses-rfpros-av-elevate-simulation-platform-to-demonstrate-next-gen-camera-technology.html"
+   ]
+  },
+  {
+   "name": "Ansys AVxcelerate Sensors 2026 R1 (Synopsys)",
+   "category": "Commercial GPU physics-based camera, radar, lidar and thermal simulation",
+   "status_as_of_2026": "2026 R1 integrates NVIDIA Omniverse: multispectral Light Propagation Engine (8-Mpix imagers), physics-based radar, NCAP 2026 virtual-test module (2,000+ auto-generated test combinations, 1,200+ scenarios).",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Multiphysics material models (SPEOS, HFSS heritage); Omniverse interop"
+   ],
+   "weaknesses": [
+    "Expensive; enterprise sales cycle"
+   ],
+   "best_fit": "Sensor-model plug-in for premium customers via Omniverse",
+   "sources": [
+    "https://www.ansys.com/blog/2026-r1-avxcelerate-sensors-software",
+    "https://www.ansys.com/products/av-simulation/ansys-avxcelerate-sensors",
+    "https://www.ansys.com/resource-center/webinar/leveraging-virtual-testing-for-ncap-2026-crash-avoidance-and-beyond"
+   ]
+  },
+  {
+   "name": "Foretellix Foretify",
+   "category": "Scenario-based V&V and coverage platform (OpenSCENARIO DSL)",
+   "status_as_of_2026": "Co-author of OpenSCENARIO 2.x/DSL. Integrated with the Omniverse AV Blueprint and Cosmos Transfer; NVIDIA DRIVE AV integration (Oct 2025); Parallel Domain partnership (Nov 2025); MathWorks/Mazda (Feb 2025). Raised $135M in total (Series C closed Dec 2023, NVIDIA among investors). Cut 29 staff in Jan 2026.",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Coverage-driven verification and the DSL abstraction layer; strong safety-case story"
+   ],
+   "weaknesses": [
+    "Relies on third-party simulators; financial pressure signals"
+   ],
+   "best_fit": "Model for AICHEMIST's LLM-to-OpenSCENARIO-DSL scenario generator; potential partner",
+   "sources": [
+    "https://www.foretellix.com/foretellix-raises-85-million-in-series-c-closing/",
+    "https://www.autonomousvehicleinternational.com/news/testing/foretellix-integrates-foretify-data-automation-toolchain-with-nvidia-omniverse-blueprint-and-cosmos.html",
+    "https://www.foretellix.com/what-is-asam-openscenario-dsl"
+   ]
+  },
+  {
+   "name": "MORAI SIM (Korea)",
+   "category": "Commercial AV/UAM/robot/ship simulator, HD-map-to-digital-twin",
+   "status_as_of_2026": "Founded 2018 by KAIST researchers. Series B of KRW 25B (~$20.8M, Feb 2022), ~$24.9M raised in total. 100+ customers (Hyundai Mobis, Hyundai AutoEver, Naver Labs, 42dot). Subsidiaries in the US and Germany. Chosen by KATRI as the virtual evaluation platform in the KATRI–Mcity agreement (May 2023). Expanding into defense (Korea Military Academy MOU) and unmanned systems. Hiring Omniverse developers. No 2025–26 funding round verified.",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Domestic incumbent; automatic HD map to digital twin; government relationships"
+   ],
+   "weaknesses": [
+    "Unreal-based classical sim; limited neural or world-model capability publicly"
+   ],
+   "best_fit": "Main Korean competitor, or a partner for HD-map content; differentiate on neural, synthetic-data and marine work",
+   "sources": [
+    "https://www.therobotreport.com/morai-raises-208m-autonomous-driving-simulation/",
+    "https://koreatechdesk.com/morai-an-autonomous-driving-simulation-technology-will-cooperate-with-m-city-an-experimental-city-dedicated-to-self-driving-in-the-u-s-to-verify-and-research-autonomous-driving-technology",
+    "https://www.tech42.co.kr/?p=85819",
+    "https://thevc.kr/morai"
+   ]
+  },
+  {
+   "name": "Waymax (Waymo Research)",
+   "category": "JAX data-driven multi-agent behavior simulator",
+   "status_as_of_2026": "Lightweight JAX simulator on the Waymo Open Motion Dataset for planning and sim-agent research (WOSAC).",
+   "license_and_cost": "Waymax License Agreement for Non-Commercial Use; WOD is also non-commercial.",
+   "strengths": [
+    "Accelerator-native, fast RL and planning benchmarks"
+   ],
+   "weaknesses": [
+    "Non-commercial, so it cannot be embedded in a paid product"
+   ],
+   "best_fit": "Research and benchmark only",
+   "sources": [
+    "https://github.com/waymo-research/waymax",
+    "https://waymo.com/open/about"
+   ]
+  },
+  {
+   "name": "Waymo World Model (built on DeepMind Genie 3)",
+   "category": "Proprietary generative multi-sensor world model",
+   "status_as_of_2026": "Announced 6 Feb 2026. Generates camera and lidar; controllable by driving actions, scene layout and text. Waymo had logged ~200M fully autonomous miles.",
+   "license_and_cost": "Internal only.",
+   "strengths": [
+    "Proof that generative camera+lidar simulation is production-relevant"
+   ],
+   "weaknesses": [
+    "Not available"
+   ],
+   "best_fit": "Market signal; sets the bar for neural sensor sim",
+   "sources": [
+    "https://waymo.com/blog/2026/02/the-waymo-world-model-a-new-frontier-for-autonomous-driving-simulation",
+    "https://the-decoder.com/waymo-taps-google-deepminds-genie-3-to-simulate-driving-scenarios-its-cars-have-never-seen/"
+   ]
+  },
+  {
+   "name": "Wayve GAIA-2 / GAIA-3 / PRISM-1",
+   "category": "Proprietary generative world models and 4D reconstruction",
+   "status_as_of_2026": "GAIA-2: 8.4B latent video diffusion, up to 5 cameras (26 Mar 2025). GAIA-3: 15B (2 Dec 2025), ~5x compute and ~10x data of GAIA-2 across 9 countries, positioned for offline evaluation of driving software. PRISM-1: camera-only 4D reconstruction plus the WayveScenes101 dataset (Jul 2024).",
+   "license_and_cost": "Proprietary (WayveScenes101 dataset public).",
+   "strengths": [
+    "Evaluation-grade counterfactual generation"
+   ],
+   "weaknesses": [
+    "Not available as a product"
+   ],
+   "best_fit": "Market signal",
+   "sources": [
+    "https://www.automotiveworld.com/news/wayve-unveils-gaia-3-for-autonomous-driving-tests/",
+    "https://www.automotiveworld.com/news/wayve-unveils-gaia-2-cutting-edge-scalable-video-generation-for-assisted-and-automated-driving/",
+    "https://radiancefields.com/wayve-announces-prism-1"
+   ]
+  },
+  {
+   "name": "Waabi World",
+   "category": "Proprietary neural closed-loop simulator (trucking, robotaxi)",
+   "status_as_of_2026": "The Waabi Driver is trained mostly in Waabi World. Volvo VNL Autonomous truck (Oct 2025). Series C of $750M (Jan/Feb 2026), plus up to $250M milestone money from Uber for a 25,000-robotaxi target.",
+   "license_and_cost": "Internal only.",
+   "strengths": [
+    "Strongest 'simulation-first' commercial validation story"
+   ],
+   "weaknesses": [
+    "Not sold as a tool"
+   ],
+   "best_fit": "Market signal for simulation-first training",
+   "sources": [
+    "https://www.electrive.com/2026/02/02/autonomy-startup-waabi-secures-750-million-and-partners-with-uber/",
+    "https://www.freightwaves.com/news/waabi-750m-series-c-unicorn",
+    "https://en.wikipedia.org/wiki/Waabi"
+   ]
+  },
+  {
+   "name": "Tesla neural world simulator",
+   "category": "Proprietary learned world simulator",
+   "status_as_of_2026": "Presented by Ashok Elluswamy at ICCV 2025 (Oct 2025). Generates multi-camera video conditioned on actions for closed-loop FSD evaluation; claims '500 years of driving per day'; shared with Optimus.",
+   "license_and_cost": "Internal only.",
+   "strengths": [
+    "Fleet-scale data moat"
+   ],
+   "weaknesses": [
+    "Not available"
+   ],
+   "best_fit": "Market signal",
+   "sources": [
+    "https://www.humanoidsdaily.com/news/tesla-ai-chief-details-unified-world-simulator-for-fsd-and-optimus"
+   ]
+  },
+  {
+   "name": "Cognata (SimCloud, DriveMatriX, AVBox)",
+   "category": "Commercial AV and defense simulation with gen-AI augmentation",
+   "status_as_of_2026": "~$27.8M raised. Growing off-road and defense AVBox demand; new capabilities at CES 2026.",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Off-road and defense pivot shows where demand is"
+   ],
+   "weaknesses": [
+    "Small; limited funding"
+   ],
+   "best_fit": "Competitor reference in defense/off-road",
+   "sources": [
+    "https://www.cbinsights.com/company/cognata",
+    "https://techcrunch.com/?p=1733822"
+   ]
+  },
+  {
+   "name": "Duality AI Falcon",
+   "category": "Commercial UE-based digital-twin sim for off-road, drones and defense synthetic data",
+   "status_as_of_2026": "FALCON 5.4 (Feb 2026, new sensors and 'living datasets'). Used by NASA JPL for DARPA RACER off-road. US Army anti-drone synthetic-data contract.",
+   "license_and_cost": "Proprietary (free tier for some uses; unverified).",
+   "strengths": [
+    "Proven synthetic-data-for-defense business model, close to AICHEMIST's"
+   ],
+   "weaknesses": [
+    "US defense focus"
+   ],
+   "best_fit": "Closest analogue and competitor for AICHEMIST's defense/off-road and drone niche",
+   "sources": [
+    "https://www.therobotreport.com/duality-ai-continues-work-with-nasa-jpl-darpa-racer-program/",
+    "https://www.carahsoft.com/duality-ai"
+   ]
+  },
+  {
+   "name": "Inverted AI (DRIVE/INITIALIZE/BLAME APIs)",
+   "category": "Generative traffic-agent behavior as a service",
+   "status_as_of_2026": "ITRA/Control-ITRA models. Integrated in CARLA 0.10.0. $4M+ seed.",
+   "license_and_cost": "Commercial API; free tier for research.",
+   "strengths": [
+    "Realistic reactive NPCs without building behavior models"
+   ],
+   "weaknesses": [
+    "External API dependency; small vendor"
+   ],
+   "best_fit": "Plug-in for traffic realism in AV scenes",
+   "sources": [
+    "https://www.newswire.ca/news-releases/inverted-ai-secures-seed-round-for-generative-ai-in-av-adas-development-845079282.html",
+    "https://arxiv.org/html/2501.12408v1"
+   ]
+  },
+  {
+   "name": "Pegasus Simulator",
+   "category": "Open-source multirotor simulation on Isaac Sim",
+   "status_as_of_2026": "v5.1.0 (26 Oct 2025) for Isaac Sim 5.1. PX4 1.14.3 supported; ArduPilot 4.4 Copter experimental; new isaac_run launcher. Maintainer expects maintenance at least to 2027.",
+   "license_and_cost": "BSD-3-Clause; free (Isaac Sim terms apply).",
+   "strengths": [
+    "Photoreal RTX sensors plus PX4/ROS 2 SITL in the same USD world as the rest of the platform"
+   ],
+   "weaknesses": [
+    "Single-maintainer (PhD) project; lags Isaac versions"
+   ],
+   "best_fit": "Drone module of the AICHEMIST platform (fork or extend)",
+   "sources": [
+    "https://github.com/PegasusSimulator/PegasusSimulator",
+    "https://arxiv.org/pdf/2307.05263"
+   ]
+  },
+  {
+   "name": "Project AirSim (IAMAI)",
+   "category": "Open-source UE5 aerial-autonomy simulator",
+   "status_as_of_2026": "Successor to Microsoft AirSim (archived 2022). Project AirSim 1.0.0 on main. UE 5.x. PX4/ArduPilot SITL/HITL; Fast Physics, JSBSim and Simulink physics; camera, lidar, radar, IMU, GPS; headless runtime; ROS 2 C++ bridge. IAMAI sells enterprise support.",
+   "license_and_cost": "MIT; free (UE EULA applies).",
+   "strengths": [
+    "Fixed-wing (JSBSim) plus multirotor plus UGV; permissive license"
+   ],
+   "weaknesses": [
+    "Small vendor; UE seat-fee exposure"
+   ],
+   "best_fit": "Alternative drone back-end, especially fixed-wing and UAM",
+   "sources": [
+    "https://github.com/iamaisim/ProjectAirSim",
+    "https://microsoft.github.io/AirSim/"
+   ]
+  },
+  {
+   "name": "Aerial Gym Simulator (NTNU ARL)",
+   "category": "GPU-massive-parallel multirotor RL simulator",
+   "status_as_of_2026": "Isaac Gym based; Isaac Lab/Isaac Sim port in development. Simulates millions of multirotors with SE(3) geometric controllers; custom GPU ray-cast depth/segmentation/lidar; sim-to-real demonstrated (2025 paper).",
+   "license_and_cost": "BSD-3-Clause.",
+   "strengths": [
+    "State-based policies train in under a minute; vision navigation in under an hour"
+   ],
+   "weaknesses": [
+    "Depends on deprecated Isaac Gym until the port lands"
+   ],
+   "best_fit": "Drone RL training back-end in AICHEMIST's 'model training' feature",
+   "sources": [
+    "https://github.com/ntnu-arl/aerial_gym_simulator",
+    "https://arxiv.org/html/2503.01471v1"
+   ]
+  },
+  {
+   "name": "Flightmare (UZH RPG)",
+   "category": "Unity-based quadrotor simulator",
+   "status_as_of_2026": "Released Sep 2020 (CoRL 2020). Effectively dormant (118 open issues; no recent releases).",
+   "license_and_cost": "MIT.",
+   "strengths": [
+    "Decoupled physics and rendering; parallel quadrotors"
+   ],
+   "weaknesses": [
+    "Unmaintained; Unity dependency"
+   ],
+   "best_fit": "Do not adopt",
+   "sources": [
+    "https://github.com/uzh-rpg/flightmare"
+   ]
+  },
+  {
+   "name": "Gazebo (Jetty LTS) + PX4 / ArduPilot SITL",
+   "category": "Open-source robotics simulator plus autopilot SITL",
+   "status_as_of_2026": "Gazebo Jetty (10th release, LTS, Sep 2025, supported to May 2031): Zenoh transport, Qt6, LookupWheelSlip. PX4 1.16 moved to Gazebo Harmonic LTS; PX4 1.17 adds Jetty support and Ackermann SIH. ArduPilot uses the ardupilot_gazebo plugin.",
+   "license_and_cost": "Apache-2.0 (Gazebo); BSD-3 (PX4); GPL-3 (ArduPilot).",
+   "strengths": [
+    "Reference SITL path for flight-stack certification workflows; huge community; VRX/DAVE marine built on it"
+   ],
+   "weaknesses": [
+    "Low visual realism; not suited to perception synthetic data"
+   ],
+   "best_fit": "Flight-control SITL and CI layer beneath the photoreal layer",
+   "sources": [
+    "https://discourse.openrobotics.org/t/ros-news-for-the-week-of-september-29th-2025/50409",
+    "https://docs.px4.io/v1.17/en/releases/1.16",
+    "https://docs.px4.io/v1.17/en/releases/1.17",
+    "https://ardupilot.org/dev/docs/sitl-with-gazebo.html"
+   ]
+  },
+  {
+   "name": "Stonefish",
+   "category": "Open-source marine robotics simulator (C++)",
+   "status_as_of_2026": "Active single-author project (P. Cieślak). Bullet-based with geometry-based hydrodynamics, OpenGL 4.3 renderer with wavelength-dependent underwater light absorption and scattering, sonar/DVL sensors, stonefish_ros. Linux only.",
+   "license_and_cost": "GPL-3.0. Copyleft is a risk if you distribute; serving it as SaaS is generally not distribution, but obtain legal review.",
+   "strengths": [
+    "Best open hydrodynamics plus underwater optics"
+   ],
+   "weaknesses": [
+    "GPL; single maintainer; no RTX/USD"
+   ],
+   "best_fit": "Reference physics for re-implementing marine dynamics (clean-room) or for internal research",
+   "sources": [
+    "https://github.com/patrykcieslak/stonefish"
+   ]
+  },
+  {
+   "name": "HoloOcean",
+   "category": "Open-source UE underwater simulator (BYU FRoSt Lab)",
+   "status_as_of_2026": "pip release 0.5.8 (Apr 2024). HoloOcean 2.0 preview paper (Oct 2025): UE 5.3, Fossen vehicle dynamics, ROS 2 bridge; ray-traced side-scan, FLS and bathymetric sonar plus waves in development; 2.0-dev Docker images; HIL use demonstrated (Nov 2025).",
+   "license_and_cost": "Open source (MIT believed; not verified). UE EULA applies.",
+   "strengths": [
+    "Strong sonar and acoustic-comms modelling"
+   ],
+   "weaknesses": [
+    "2.0 not formally released; UE dependency"
+   ],
+   "best_fit": "Sonar and acoustic reference; candidate integration for AUV customers",
+   "sources": [
+    "https://arxiv.org/html/2510.06160v1",
+    "https://holoocean.readthedocs.io/en/latest/changelog/changelog.html",
+    "https://arxiv.org/html/2511.07687v1"
+   ]
+  },
+  {
+   "name": "DAVE and VRX (Gazebo maritime)",
+   "category": "Open-source underwater (DAVE) and surface-vessel (VRX) simulators",
+   "status_as_of_2026": "DAVE: Apache-2.0, Gazebo based, ROS-2 migration status unverified. VRX 2.0 runs on Gazebo Sim plus ROS 2 (ONR/RoboNation competition).",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "USV competition ecosystem; permissive license"
+   ],
+   "weaknesses": [
+    "Low visual realism"
+   ],
+   "best_fit": "Control and SITL layer for USV/AUV customers",
+   "sources": [
+    "https://github.com/Field-Robotics-Lab/dave",
+    "https://github.com/osrf/vrx"
+   ]
+  },
+  {
+   "name": "OceanSim / MarineGym (Isaac Sim based)",
+   "category": "GPU underwater perception and RL simulation",
+   "status_as_of_2026": "OceanSim (2025, to be open-sourced): RTX ray-traced imaging sonar, underwater camera models, fast synthetic data. MarineGym: Isaac Sim underwater RL, not open-sourced.",
+   "license_and_cost": "OceanSim open source (license unverified); MarineGym closed.",
+   "strengths": [
+    "Same Isaac/USD stack as the rest of the platform"
+   ],
+   "weaknesses": [
+    "Research-grade"
+   ],
+   "best_fit": "Starting point for AICHEMIST's marine perception synthetic-data module",
+   "sources": [
+    "https://arxiv.org/pdf/2503.01074"
+   ]
+  },
+  {
+   "name": "Remcom WaveFarer / RadaRays (radar physics)",
+   "category": "Specialized radar simulation",
+   "status_as_of_2026": "WaveFarer: commercial near-field ray tracing with multipath, diffuse scattering and micro-Doppler. RadaRays: open-source FMCW radar ray tracing with a Gazebo plugin.",
+   "license_and_cost": "WaveFarer proprietary; RadaRays open source (license unverified).",
+   "strengths": [
+    "Radar realism beyond ray-cast approximations"
+   ],
+   "weaknesses": [
+    "Slow (WaveFarer); research code (RadaRays)"
+   ],
+   "best_fit": "Radar-fidelity add-on for automotive and maritime radar datasets",
+   "sources": [
+    "https://www.remcom.com/articles-and-papers/auto-radar-drive-scenario-simulation-increasing-realism-with-multipath-diffuse-scattering-and-micro-doppler",
+    "https://github.com/uos/radarays"
+   ]
+  },
+  {
+   "name": "Korean ship digital twins (HD Hyundai / Avikus; Samsung Heavy SAS)",
+   "category": "Market and customer reference (marine)",
+   "status_as_of_2026": "HD Hyundai: Blackwell-GPU Omniverse plus Siemens digital twin at the Samho shipyard, Palantir partnership, cited by Jensen Huang at CES 2026; 'Future of Shipyard' aims for 30% shorter production time by 2030; Avikus HiNAS on ~350 vessels, HiNAS Control on 40 HMM ships. Samsung Heavy: SAS autonomous navigation steered a 15,000 TEU Evergreen ship ~10,000 km Oakland to Kaohsiung (25 Aug–6 Sep 2025) without crew intervention; NAPA voyage-optimization digital twin.",
+   "license_and_cost": "N/A (potential customers).",
+   "strengths": [
+    "Deep-pocketed domestic buyers; Autonomous Ship Act in force since 3 Jan 2025 needs simulation-based performance verification"
+   ],
+   "weaknesses": [
+    "Large incumbents build in-house with NVIDIA/Siemens; long sales cycles"
+   ],
+   "best_fit": "Primary target customers for AICHEMIST's marine and port synthetic-data and digital-twin niche",
+   "sources": [
+    "https://www.hellenicshippingnews.com/hd-hyundai-drives-koreas-shipbuilding-future-with-digital-twins-autonomy-ai-robots/",
+    "https://www.koreatimes.co.kr/business/companies/20250228/hd-hyundai-collaborates-with-palantir-siemens-for-ai-based-shipbuilding",
+    "https://thedigitalship.com/news/electronics-navigation/samsung-ai-ship-crosses-pacific-on-its-own/",
+    "https://www.newsseoul.co.kr/news/view/1065579620501557"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "CARLA 0.10.0 (19 Dec 2024) migrated to UE 5.5 with Lumen/Nanite, swapped PhysX for Chaos, and added native ROS 2 and InvertedAI traffic. No 0.10.x follow-up tag exists as of Oct 2026, but the ue5-dev branch was pushed 2026-10-02.",
+   "source": "https://github.com/carla-simulator/carla/releases ; https://carla.org/2024/12/19/release-0.10.0",
+   "confidence": "high"
+  },
+  {
+   "claim": "CARLA 0.9.16 (16 Sep 2025) integrated NVIDIA Cosmos Transfer1, NuRec neural reconstruction, a SimReady OpenUSD/MDL converter, native ROS 2 and left-hand traffic.",
+   "source": "https://carla.org/2025/09/16/release-0.9.16",
+   "confidence": "high"
+  },
+  {
+   "claim": "CARLA code is MIT and assets are CC-BY. The UE5 build needs an RTX 3070-class GPU with 16 GB+ VRAM and 32 GB+ RAM.",
+   "source": "https://github.com/carla-simulator/carla",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA DRIVE Sim was never made generally available. AV simulation is now delivered via the Omniverse Blueprint for AV simulation, Sensor RTX APIs (early access via partners such as Foretellix and Mcity), NuRec and Cosmos.",
+   "source": "https://forums.developer.nvidia.com/t/drive-sim-access-or-omniverse-truck-sim/289147 ; https://blogs.nvidia.com/?p=76844",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Omniverse NuRec was declared generally available at GTC 2026 via NGC. Its 3DGUT Gaussians support fisheye and rolling-shutter cameras.",
+   "source": "https://radiancefields.com/nvidia-omniverse-nurec-reaches-general-availability",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Instant NuRec (Jul 2026) reconstructs a 10–20 s multi-camera driving clip into a simulatable 3DGS world in ~1.5 s, versus hours of per-scene optimization, and is compatible with AlpaSim.",
+   "source": "https://www.alphaxiv.org/abs/2607.14203",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Cosmos 3 (announced 1 Jun 2026 at GTC Taipei) comes in Nano 16B, Super 64B and Edge 4B variants and is released under OpenMDW-1.1.",
+   "source": "https://github.com/NVIDIA/Cosmos ; https://www.axios.com/2026/06/01/nvidia-ai-push-cosmos-3-world-model",
+   "confidence": "high"
+  },
+  {
+   "claim": "Cosmos-Predict2.5 and Transfer2.5 were released 6 Oct 2025; their GitHub code is Apache-2.0. Earlier Cosmos weights use the NVIDIA Open Model License (commercial use allowed, attribution required, guardrail clause).",
+   "source": "https://github.com/nvidia-cosmos ; https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license",
+   "confidence": "high"
+  },
+  {
+   "claim": "AlpaSim is Apache-2.0, built from gRPC microservices, and supports NuRec or OmniDreams rendering plus Alpamayo, Transfuser and VaVAM drivers. Alpamayo weights are OpenMDW-1.1; Alpamayo 1.5 came out Mar 2026 and Alpamayo 2 Super (32B) on 1 Jun 2026.",
+   "source": "https://github.com/NVlabs/alpasim ; https://github.com/NVlabs/alpamayo ; https://www.automotiveworld.com/news/nvidia-launches-alpamayo-2-super-open-reasoning-model/",
+   "confidence": "high"
+  },
+  {
+   "claim": "OmniDreams is a real-time, action-conditioned, autoregressive multi-view generative world model post-trained from Cosmos on 21k hours of driving and used closed-loop with AlpaSim. AlpaGym is open-source closed-loop RL on AlpaSim.",
+   "source": "https://research.nvidia.com/labs/sil/projects/omnidreams-blog/ ; https://www.autonomousvehicleinternational.com/news/software/nvidia-launches-alpamayo-2-super-for-reasoning-based-autonomous-driving.html",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Project Chrono 10.0.0 (~27 Mar 2026) adds checkpointing, a refactored FSI (SPH and TDPF), Peridynamics and new camera-sensor features. Chrono::Vehicle tire models include Pac89/Pac02, TMeasy, Fiala and FEA/ANCF.",
+   "source": "https://projectchrono.org/news/ ; https://api.projectchrono.org/wheeled_tire.html",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Chrono::CRM (GPU SPH terrain) handles up to 29 km of terrain on a single H100 at performance comparable to SCM.",
+   "source": "https://sbel.wisc.edu/2025/10/04/sbel-researchers-develop-chronocrm-simulator-for-fast-and-scalable-rover-terrain-interaction/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Applied Intuition acquired Mechanical Simulation (CarSim, TruckSim, BikeSim) on 14 Mar 2022 and EpiSci in Feb 2025. It raised $600M at a $15B valuation in Jun 2025.",
+   "source": "https://www.appliedintuition.com/news/mechanical-simulation-corporation ; https://finder.techleap.nl/news/feed/applied-intuition-raises-600m-at-15b-valuation",
+   "confidence": "high"
+  },
+  {
+   "claim": "BeamNG.tech v0.39 (2026 summer release) adds native C++ ROS 2 and MCP support; physics runs at 2,000 Hz. It is free for academia, with commercial licenses by quote.",
+   "source": "https://beamng.tech/blog/beamng-tech-039/ ; https://github.com/BeamNG/BeamNGpy",
+   "confidence": "high"
+  },
+  {
+   "claim": "aiSim 5 holds an ISO 26262:2018 ASIL-D certificate (TÜV Nord) for its development process and determinism. aiSim 6 adds relightable PBR Gaussian splatting.",
+   "source": "https://www.aap.com.au/aapreleases/globenewswire1000969676/ ; https://radiancefields.com/aimotive-brings-relightable-gaussian-splatting-to-aisim-6-with-pbr-splatting",
+   "confidence": "high"
+  },
+  {
+   "claim": "Current ASAM versions: OpenSCENARIO DSL 2.1.0 (Mar 2024), OpenSCENARIO XML 1.3.0, OpenDRIVE 1.8.0, OSI 3.7.0 (3 Jul 2024), OpenLABEL 1.0.0 (Nov 2021), OpenMATERIAL 3D 1.0.0 (3 Apr 2025; 1.1.0 targeted Oct 2026).",
+   "source": "https://openscenario.asam.net/ASAM_OpenSCENARIO_DSL/latest/introduction.html ; https://www.asam.net/standards/detail/openmaterial/ ; https://www.asam.net/standards/detail/openlabel/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "The UN ADS regulation was adopted by GRVA (19–23 Jan 2026) and approved by WP.29 in late June 2026. It requires a safety management system, a safety case, and credibility of validation methods including virtual-testing toolchains.",
+   "source": "https://news.un.org/en/story/2026/06/1167797 ; https://www.globalpolicywatch.com/2026/05/un-regulation-and-gtr-on-automated-driving-systems-current-state-of-play/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "ISO 34505:2025 (scenario evaluation and test-case generation for L3+ ADS) was published 11 Jun 2025. ISO/PAS 8800:2024 covers AI safety in road vehicles. ISO 26262 Ed. 3 is expected around 2027 with ML alignment. UL 4600 Ed. 3 was published 17 Mar 2023 and adds autonomous trucking.",
+   "source": "https://www.iso.org/standard/78954.html ; https://www.iso.org/standard/83303.html ; https://www.kuglermaag.com/news/iso-26262-v3/ ; https://www.ul.com/news/ul-4600-edition-3-updates-incorporate-autonomous-trucking",
+   "confidence": "high"
+  },
+  {
+   "claim": "Euro NCAP's 2026 protocols restructure ratings into four stages (safe driving, crash avoidance, crash protection, post-crash), each scored out of 100, with expanded crash-avoidance scenario variants and simulation-supported assessment.",
+   "source": "https://thebrakereport.com/euro-ncap-unveils-major-2026-safety-testing-protocols/ ; https://www.ansys.com/resource-center/webinar/leveraging-virtual-testing-for-ncap-2026-crash-avoidance-and-beyond",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Korea's amended Autonomous Vehicle Act creates a Level-4 performance-certification route (in force 20 Mar 2025). MOLIT opened the Hwaseong AI Autonomous Driving Hub on 20 Mar 2026. Korea's Autonomous Ship Act took effect 3 Jan 2025.",
+   "source": "https://www.newsseoul.co.kr/news/view/1065579017176859 ; https://news.mtn.co.kr/news-detail/2026031917191428069 ; https://www.newsseoul.co.kr/news/view/1065579620501557",
+   "confidence": "medium"
+  },
+  {
+   "claim": "K-City (KATRI, Hwaseong) covers 360,000 m² with 5G and a weather facility. Its virtual twin agreed with real driving 92.5% of the time within a 0.288 m error band.",
+   "source": "https://dgist.elsevierpure.com/en/publications/ ; https://www.dt.co.kr/article/11034257",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Offering Isaac Sim or Omniverse Kit to third parties as a service or redistributed app requires an NVIDIA AI Enterprise license, priced at $4,500/GPU/yr list and $1,125 for Inception startups at 75% off.",
+   "source": "https://docs.isaacsim.omniverse.nvidia.com/latest/common/license-faq.html ; https://pi3g.com/nvidia-ai-enterprise-subscription-cost-in-2026/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Unreal Engine charges non-game companies with more than $1M annual revenue $1,850 per seat per year (since UE 5.4, Apr 2024).",
+   "source": "https://www.unrealengine.com/en-US/blog/we-are-updating-unreal-engine-twinmotion-and-realitycapture-pricing-in-late-april",
+   "confidence": "high"
+  },
+  {
+   "claim": "Waymax and the Waymo Open Dataset are licensed for non-commercial use only.",
+   "source": "https://github.com/waymo-research/waymax ; https://waymo.com/open/about",
+   "confidence": "high"
+  },
+  {
+   "claim": "Pegasus Simulator v5.1.0 (26 Oct 2025) targets Isaac Sim 5.1 and PX4 1.14.3 (ArduPilot experimental) under BSD-3.",
+   "source": "https://github.com/PegasusSimulator/PegasusSimulator",
+   "confidence": "high"
+  },
+  {
+   "claim": "Project AirSim is MIT-licensed, maintained by IAMAI with enterprise support, and supports PX4/ArduPilot and JSBSim fixed-wing.",
+   "source": "https://github.com/iamaisim/ProjectAirSim",
+   "confidence": "high"
+  },
+  {
+   "claim": "Gazebo Jetty (LTS, Sep 2025) is supported until May 2031. PX4 1.16 uses Gazebo Harmonic and PX4 1.17 adds Jetty support.",
+   "source": "https://discourse.openrobotics.org/t/ros-news-for-the-week-of-september-29th-2025/50409 ; https://docs.px4.io/v1.17/en/releases/1.17",
+   "confidence": "high"
+  },
+  {
+   "claim": "Stonefish is GPL-3.0 (Bullet plus OpenGL 4.3, geometry-based hydrodynamics). HoloOcean 2.0 (UE 5.3, Fossen dynamics, ROS 2) is a preview; the latest pip release is 0.5.8 (Apr 2024).",
+   "source": "https://github.com/patrykcieslak/stonefish ; https://arxiv.org/html/2510.06160v1 ; https://holoocean.readthedocs.io/en/latest/changelog/changelog.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "The Waymo World Model (6 Feb 2026), built on DeepMind Genie 3, generates both camera and lidar and is controllable via actions, layout and text.",
+   "source": "https://waymo.com/blog/2026/02/the-waymo-world-model-a-new-frontier-for-autonomous-driving-simulation",
+   "confidence": "high"
+  },
+  {
+   "claim": "Wayve GAIA-3 (2 Dec 2025) is a 15B-parameter model used as an offline evaluation pipeline. GAIA-2 (26 Mar 2025) is 8.4B and covers up to 5 cameras.",
+   "source": "https://www.automotiveworld.com/news/wayve-unveils-gaia-3-for-autonomous-driving-tests/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim 6.0 reached GA on 8 Jun 2026 with Newton physics support, an MCP server and agent skills, and Isaac Lab 3.0 EA.",
+   "source": "https://forums.developer.nvidia.com/t/isaac-sim-6-0-general-availability/372621",
+   "confidence": "medium"
+  },
+  {
+   "claim": "FTire models tire dynamics up to ~100 Hz including short-wavelength obstacles. MF-Swift (rigid ring) is valid to ~60–100 Hz. Magic Formula 6.2 is the steady-state empirical standard.",
+   "source": "https://functionbay.com/documentation/onlinehelp/Documents/mfswift.htm ; https://www.mathworks.com/help/vdynblks/ref/combinedslipwheelcpi.html",
+   "confidence": "medium"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "Applied Intuition valuation / Series F",
+   "value": "$15B / $600M (Jun 2025)",
+   "source": "https://finder.techleap.nl/news/feed/applied-intuition-raises-600m-at-15b-valuation"
+  },
+  {
+   "metric": "Applied Intuition ARR (estimate)",
+   "value": "~$830M in 2025 (from ~$415M in 2024)",
+   "source": "https://sacra.com/research/applied-intuition-at-830m-year/"
+  },
+  {
+   "metric": "Waabi Series C",
+   "value": "$750M, plus up to $250M from Uber tied to a 25,000-robotaxi target",
+   "source": "https://www.electrive.com/2026/02/02/autonomy-startup-waabi-secures-750-million-and-partners-with-uber/"
+  },
+  {
+   "metric": "Foretellix total funding / layoffs",
+   "value": "$135M total (Series C closed Dec 2023); 29 staff cut Jan 2026",
+   "source": "https://www.foretellix.com/foretellix-raises-85-million-in-series-c-closing/"
+  },
+  {
+   "metric": "MORAI funding / customers",
+   "value": "Series B KRW 25B (~$20.8M, Feb 2022); ~$24.9M total; 100+ customers",
+   "source": "https://www.therobotreport.com/morai-raises-208m-autonomous-driving-simulation/"
+  },
+  {
+   "metric": "Cosmos 3 model sizes",
+   "value": "Nano 16B (RTX PRO 6000/H100), Super 64B (H200/B200), Edge 4B (Jetson AGX Orin)",
+   "source": "https://github.com/NVIDIA/Cosmos"
+  },
+  {
+   "metric": "Cosmos-Predict2.5 sizes",
+   "value": "2B and 14B (released 6 Oct 2025)",
+   "source": "https://github.com/nvidia-cosmos/cosmos-predict2.5"
+  },
+  {
+   "metric": "Cosmos-Drive-Dreams released dataset / training data",
+   "value": "81,802 synthetic clips with HDMap and LiDAR; RDS ~3.6M 20-s 6-view clips (~20,000 h)",
+   "source": "https://arxiv.org/pdf/2506.09042"
+  },
+  {
+   "metric": "Alpamayo model sizes",
+   "value": "Alpamayo 1 / 1.5: 10B; Alpamayo 2 Super: 32B",
+   "source": "https://github.com/NVlabs/alpamayo ; https://www.automotiveworld.com/news/nvidia-launches-alpamayo-2-super-open-reasoning-model/"
+  },
+  {
+   "metric": "AlpaSim bundled scenes / NVIDIA AV dataset",
+   "value": "~900 reconstructed scenes; 1,700+ hours of driving data (press reports)",
+   "source": "https://techcrunch.com/?p=3079883"
+  },
+  {
+   "metric": "OmniDreams training data",
+   "value": "21k hours of driving scenarios",
+   "source": "https://www.emergentmind.com/papers/2606.03159"
+  },
+  {
+   "metric": "Instant NuRec reconstruction time",
+   "value": "~1.5 s for a 10–20 s multi-camera clip (vs hours of per-scene optimization)",
+   "source": "https://www.alphaxiv.org/abs/2607.14203"
+  },
+  {
+   "metric": "NVIDIA Physical AI dataset (Cosmos clips)",
+   "value": "40,000 Cosmos-generated clips",
+   "source": "https://developer.nvidia.com/blog/accelerating-av-simulation-with-neural-reconstruction-and-world-foundation-models/"
+  },
+  {
+   "metric": "Wayve GAIA-3 / GAIA-2 parameters",
+   "value": "15B (Dec 2025) / 8.4B (Mar 2025)",
+   "source": "https://www.automotiveworld.com/news/wayve-unveils-gaia-3-for-autonomous-driving-tests/"
+  },
+  {
+   "metric": "Waymo autonomous miles (Feb 2026)",
+   "value": "~200M fully autonomous miles; billions of simulated miles",
+   "source": "https://waymo.com/blog/2026/02/the-waymo-world-model-a-new-frontier-for-autonomous-driving-simulation"
+  },
+  {
+   "metric": "Tesla world-simulator claim",
+   "value": "'500 years of human driving experience per day'",
+   "source": "https://www.humanoidsdaily.com/news/tesla-ai-chief-details-unified-world-simulator-for-fsd-and-optimus"
+  },
+  {
+   "metric": "Chrono::CRM scale",
+   "value": "29 km of deformable terrain on 1x H100",
+   "source": "https://sbel.wisc.edu/2025/10/04/sbel-researchers-develop-chronocrm-simulator-for-fast-and-scalable-rover-terrain-interaction/"
+  },
+  {
+   "metric": "BeamNG physics rate",
+   "value": "2,000 Hz",
+   "source": "https://documentation.beamng.com/beamng_tech/"
+  },
+  {
+   "metric": "rFpro digital-twin library",
+   "value": "180+ real-world locations; road surface accurate to 1 mm",
+   "source": "https://www.eenewseurope.com/en/rfpro-launches-simulator-for-autonomous-vehicle-development/"
+  },
+  {
+   "metric": "Ansys AVxcelerate NCAP 2026 module",
+   "value": "2,000+ auto-generated test combinations; 1,200+ scenarios; 8-Mpix imager support",
+   "source": "https://www.ansys.com/resource-center/webinar/leveraging-virtual-testing-for-ncap-2026-crash-avoidance-and-beyond"
+  },
+  {
+   "metric": "CARLA GitHub adoption",
+   "value": "~14.5k stars, ~4.7k forks; CARLA cited as used by 150,000+ developers",
+   "source": "https://github.com/carla-simulator/carla ; https://radiancefields.com/nvidia-omniverse-nurec-reaches-general-availability"
+  },
+  {
+   "metric": "CARLA UE5 minimum hardware",
+   "value": "RTX 3070+ with 16 GB+ VRAM, 32 GB+ RAM, 9th-gen i7 / Ryzen 7+",
+   "source": "https://github.com/carla-simulator/carla"
+  },
+  {
+   "metric": "K-City size / virtual-real agreement",
+   "value": "360,000 m²; 92.5% agreement within 0.288 m",
+   "source": "https://www.dt.co.kr/article/11034257 ; https://dgist.elsevierpure.com/"
+  },
+  {
+   "metric": "NVIDIA AI Enterprise price",
+   "value": "$4,500/GPU/yr list; $18,000 for 5 years; $1,125/GPU/yr with Inception 75% discount; NVIDIA Enterprise bundle ~EUR 5,800/GPU/yr",
+   "source": "https://pi3g.com/nvidia-ai-enterprise-subscription-cost-in-2026/"
+  },
+  {
+   "metric": "Unreal Engine non-game seat fee",
+   "value": "$1,850/seat/yr for companies over $1M revenue",
+   "source": "https://www.unrealengine.com/en-US/blog/we-are-updating-unreal-engine-twinmotion-and-realitycapture-pricing-in-late-april"
+  },
+  {
+   "metric": "Gazebo Jetty LTS support window",
+   "value": "Sep 2025 to May 2031",
+   "source": "https://discourse.openrobotics.org/t/ros-news-for-the-week-of-september-29th-2025/50409"
+  },
+  {
+   "metric": "Avikus deployments",
+   "value": "~350 vessels; HiNAS Control on 40 HMM ships, 100+ large retrofits",
+   "source": "https://www.hellenicshippingnews.com/hd-hyundai-drives-koreas-shipbuilding-future-with-digital-twins-autonomy-ai-robots/"
+  },
+  {
+   "metric": "Samsung Heavy SAS autonomous voyage",
+   "value": "15,000 TEU ship, ~10,000 km, 25 Aug–6 Sep 2025, no crew intervention",
+   "source": "https://thedigitalship.com/news/electronics-navigation/samsung-ai-ship-crosses-pacific-on-its-own/"
+  },
+  {
+   "metric": "HD Hyundai shipyard target",
+   "value": "30% production-time reduction by 2030 (Future of Shipyard)",
+   "source": "https://www.koreatimes.co.kr/business/companies/20250228/hd-hyundai-collaborates-with-palantir-siemens-for-ai-based-shipbuilding"
+  },
+  {
+   "metric": "Tire-model frequency validity",
+   "value": "FTire up to ~100 Hz; MF-Swift ~60–100 Hz",
+   "source": "https://functionbay.com/documentation/onlinehelp/Documents/mfswift.htm"
+  },
+  {
+   "metric": "Euro NCAP 2026 rating structure",
+   "value": "4 stages x 100 points each",
+   "source": "https://thebrakereport.com/euro-ncap-unveils-major-2026-safety-testing-protocols/"
+  },
+  {
+   "metric": "Proposed AICHEMIST vehicle/drone/marine vertical team (estimate)",
+   "value": "12–18 FTE by month 12; ~KRW 1.8–2.5B/yr personnel plus ~$0.5–1.0M/yr GPU (L40S/RTX PRO 6000 for RTX sensors, burst H100/H200 for Cosmos fine-tuning). Low-confidence planning estimate.",
+   "source": "Analyst estimate (no external source)"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "BUILD vs INTEGRATE. Do not build a physics engine, renderer, neural reconstructor or world model for vehicles, drones or ships. NVIDIA (NuRec GA, 3DGRUT Apache-2.0, Cosmos 3 under OpenMDW-1.1, AlpaSim Apache-2.0) and the open-source community (Chrono BSD-3, CARLA MIT, PX4/Gazebo) already give these away. Build the layers they lack: (a) LLM text-to-scenario generation targeting ASAM OpenSCENARIO DSL 2.1/XML 1.3 plus OpenDRIVE 1.8; (b) a Korean digital-twin content pipeline from HD map/OpenDRIVE and drone or vehicle logs to OpenUSD plus NuRec scenes; (c) sensor calibration, sim-to-real KPIs and credibility evidence packs; (d) dataset export and labeling (OpenLABEL, COCO, nuScenes/Waymo formats) and the marketplace; (e) managed training jobs in the GPU cloud workspace.",
+  "REFERENCE ARCHITECTURE for the mobility vertical:\n- Scene core: OpenUSD on Isaac Sim 6.x / Omniverse Kit, shared with the robot platform.\n- Rendering: RTX sensors for camera, lidar and radar, with OSI 3.7 output.\n- Neural layer: NuRec/Instant NuRec for log replay; Cosmos Transfer 2.5 / Cosmos 3 Nano for appearance augmentation; OmniDreams-style generative closed loop as an advanced option.\n- Vehicle dynamics, three plug-in levels: PhysX vehicle (kinematic or dynamic bicycle, L1–L2); Chrono::Vehicle co-simulation with Pac02/TMeasy tires and SCM/CRM terrain for off-road (L3–L5); FMI 2.0/3.0 FMU adapter so customers can bring licensed CarSim, CarMaker or MF-Tyre/FTire models.\n- Drones: Pegasus-style PX4/ArduPilot SITL in Isaac, plus Gazebo Jetty for flight-stack CI.\n- Marine: clean-room Fossen 6-DOF plus wave-spectrum module and OceanSim-style RTX sonar. Avoid copying GPL Stonefish code.\n- Training: AlpaSim/AlpaGym gRPC interface for driving policies, Isaac Lab and Aerial Gym for drone/UGV RL, Cosmos post-training recipes for perception.",
+  "OPEN-STANDARD BACKBONE. Make ASAM OpenX first-class: OpenDRIVE import/export, OpenSCENARIO XML (via esmini or CARLA ScenarioRunner) and DSL, OSI sensor-data interfaces, OpenLABEL annotations and OpenMATERIAL 3D material properties for lidar and radar reflectance. This is what lets OEMs and Tier-1s plug AICHEMIST into dSPACE, IPG and Applied pipelines instead of replacing them.",
+  "LICENSING DUE DILIGENCE before month 1:\n- Join NVIDIA Inception and price NVIDIA AI Enterprise for every GPU that serves Kit or Isaac Sim to customers (~$1,125/GPU/yr discounted vs $4,500 list).\n- Keep Unreal-based components (CARLA, Project AirSim, HoloOcean) out of the commercial runtime, or budget $1,850/seat/yr once revenue exceeds $1M.\n- Exclude non-commercial assets (Waymax, Waymo Open Dataset) from paid products.\n- Honour 'Built on NVIDIA Cosmos' attribution and guardrail clauses.\n- Get legal review of GPL-3 (Stonefish, ArduPilot) for any on-prem distribution.",
+  "GPU PLANNING. Ray-traced sensor simulation and NuRec rendering need RT-core GPUs (L40S, RTX PRO 6000 Blackwell). Cosmos 3 Super fine-tuning needs H200/B200, and Nano runs on RTX PRO 6000/H100. Design the cloud workspace with two pools: an RTX pool for simulation and rendering, and an HGX pool for training and world models.",
+  "MOST WINNABLE NICHE #1 – MARITIME / PORT / SHIPYARD AUTONOMY.\n- Why: the open-source marine sims are fragmented and research-grade (Stonefish GPL, HoloOcean 2.0 unreleased, DAVE/VRX low-fidelity), and there is no dominant commercial vendor.\n- Demand: Korea's Autonomous Ship Act (in force 3 Jan 2025) requires performance verification, and HD Hyundai (Avikus on ~350 vessels), Samsung Heavy (SAS) and Hanwha Ocean are spending heavily.\n- Offer: synthetic perception datasets (EO/IR camera, marine radar, AIS-consistent traffic, fog, sea-state, night), port and shipyard digital twins, and collision-avoidance (COLREG) scenario libraries. Start with a co-development PoC with Avikus or SHI's SAS team.",
+  "MOST WINNABLE NICHE #2 – DUAL-USE OFF-ROAD UGV AND DRONE PERCEPTION.\n- Build on Chrono SCM/CRM terrain, Pegasus/PX4 and Cosmos augmentation to sell synthetic data plus closed-loop RL for Korean defense (unmanned ground vehicles, counter-drone detection, ISR drones) and agriculture/construction.\n- Duality Falcon (US Army counter-drone contract) and Cognata's defense pivot validate the market. MORAI is also moving into defense, so differentiate with neural reconstruction and synthetic-data quality metrics rather than a classical simulator.",
+  "NICHE #3 (secondary) – KOREAN ROAD PERCEPTION DATA-AS-A-SERVICE.\n- Use NuRec/Instant NuRec reconstructions of Korean roads (Hangul signage, two-wheelers, local vehicle fleet, Hwaseong hub and K-City) plus Cosmos weather/lighting variation to sell long-tail perception datasets and closed-loop evaluation to Korean OEMs/Tier-1s, robotaxi startups and Level-4 performance-certification applicants.\n- Partner with KATRI/K-City and the Hwaseong AI Autonomous Driving Hub for sim-to-real correlation studies; K-City already publishes a 92.5%-within-0.288 m benchmark.",
+  "DO NOT COMPETE HEAD-ON in OEM ADAS SIL/HIL homologation tooling (dSPACE, IPG CarMaker 15, Applied/CarSim, aiSim ASIL-D, VTD) or in generic neural driving simulators (NVIDIA AlpaSim/OmniDreams are free). Position AICHEMIST as the synthetic-data and digital-twin content layer that feeds those tools via OSI, FMI and OpenSCENARIO.",
+  "CREDIBILITY AS A PRODUCT. From day one, generate a credibility dossier per scenario and sensor model:\n- validation data;\n- sim-vs-real metrics, e.g. detection-mAP gap and lidar point-distribution distances;\n- scenario coverage per ISO 34505;\n- a traceable safety-case fragment in UL 4600 / UNECE ADS format.\nThe UN ADS regulation (WP.29, Jun 2026) now requires demonstrating toolchain credibility, so this is a monetizable differentiator rather than overhead.",
+  "LLM COMMAND INTERFACE. Expose the simulator through an MCP server (Isaac Sim 6.0 and BeamNG v0.39 already ship MCP) so CEN's LLM layer can author scenes, place agents, set weather and sea-state, and launch training. Constrain outputs to validated OpenSCENARIO DSL so generated scenarios are reproducible and exportable.",
+  "ROADMAP for this vertical.\n- Months 0–3: license due diligence; CARLA 0.9.16 + Cosmos Transfer PoC for Korean roads; Pegasus drone PoC on Isaac Sim 5.1/6.0; marine PoC with OceanSim plus a Fossen model.\n- Months 3–9: USD scene pipeline; NuRec ingestion of customer logs; OpenSCENARIO runtime; RTX sensor calibration; first paid synthetic-dataset contracts (marine plus defense).\n- Months 9–18: closed-loop training (AlpaGym/Isaac Lab/Aerial Gym); Chrono off-road co-simulation; credibility dossiers; K-City / Hwaseong correlation study.\n- Months 18–30: marketplace of Korean road, port and shipyard twins; HIL partner bridges (dSPACE/IPG via OSI/FMI); generative closed-loop module.",
+  "TEAM for this vertical (by month 12, ~12–18 FTE):\n- 2 vehicle-dynamics/multibody engineers (Chrono, FMI, tire models)\n- 2 sensor-physics engineers (RTX camera ISP, lidar/radar, sonar)\n- 3 neural rendering / world-model engineers (3DGS/3DGUT, Cosmos post-training)\n- 2 scenario and standards engineers (OpenSCENARIO/OpenDRIVE/OSI)\n- 2 autonomy-stack engineers (PX4/ArduPilot, ROS 2, maritime COLREG)\n- 3 platform/cloud engineers (Kit streaming, Kubernetes GPU scheduling)\n- 1 functional-safety/credibility engineer (ISO 26262/21448/34505, UL 4600)\n- 1–2 technical artists for digital-twin content"
+ ],
+ "risks": [
+  "NVIDIA platform dependency: licensing (NVAIE for SaaS), API churn (Isaac Sim 5.x to 6.0, Alpamayo repo already 'not under active development') and NVIDIA giving away competing features (AlpaSim, OmniDreams, NuRec) can erase differentiation overnight.",
+  "Neural and generative simulation lacks physical guarantees. Off-trajectory artifacts in NuRec and hallucinations in Cosmos/OmniDreams can make data or evaluations unusable as safety evidence; regulators (UN ADS, ISO 34505) require demonstrated credibility.",
+  "Incumbent lock-in: OEMs and Tier-1s are standardized on dSPACE/IPG/Applied/VTD HIL chains with ISO 26262 tool qualification (aiSim ASIL-D). A startup tool will not be accepted for homologation evidence without years of validation.",
+  "Domestic competition: MORAI is the incumbent with government ties and is expanding into defense, UAM and ships; HD Hyundai and Samsung Heavy may build marine twins in-house with NVIDIA, Siemens and Palantir.",
+  "Unreal Engine exposure: CARLA, Project AirSim and HoloOcean are UE-based. Seat fees ($1,850/seat/yr above $1M revenue) and EULA constraints apply if they are embedded commercially.",
+  "License contamination: non-commercial assets (Waymax, Waymo Open Dataset), GPL-3 code (Stonefish, ArduPilot), NVIDIA dataset licenses limited to internal AV development, and Cosmos guardrail clauses.",
+  "Open-source maintenance risk: CARLA's small team and UE4/UE5 split, single-maintainer projects (Pegasus, Stonefish), Flightmare dormant, Aerial Gym still on deprecated Isaac Gym, HoloOcean 2.0 unreleased.",
+  "GPU cost and supply: RTX-class GPUs are needed for sensor ray tracing, and H200/B200 for Cosmos 3 Super. Cloud margins on a token/subscription model can be negative for closed-loop neural simulation.",
+  "Market timing: Korean Level-4 commercialization and autonomous-ship certification procedures are still being detailed. Demand for simulation-based certification evidence may lag the roadmap.",
+  "Vehicle-dynamics fidelity gap: without licensed MF 6.x/FTire tire data and validated CarSim-class models, AICHEMIST cannot credibly serve chassis-control or ADAS longitudinal/lateral validation customers.",
+  "Funding signals in the sector are mixed: Foretellix layoffs in Jan 2026 vs a $750M Waabi round. Tool vendors without a data or vertical moat are being squeezed."
+ ],
+ "open_questions": [
+  "Exact NuRec GA licensing: is NuRec included in NVIDIA AI Enterprise, separately priced, or free on NGC for commercial SaaS? (Primary NVIDIA pages were blocked from this environment.)",
+  "The precise Isaac Sim 6.x / Omniverse Kit terms for multi-tenant cloud workspaces such as CEN: per-GPU NVAIE, Inception pricing in Korea, and whether streaming to end users counts as 'service delivery'.",
+  "Alpamayo weight licensing conflict: the GitHub README says OpenMDW-1.1 permits commercial use, while an earlier Hugging Face card said non-commercial with commercial use on request. Which applies to Alpamayo 1.5 and 2 Super?",
+  "Full OpenMDW-1.1 terms for Cosmos 3: attribution, guardrail and acceptable-use clauses and any field-of-use limits.",
+  "CARLA governance and roadmap: will a 0.10.x/1.0 release ship on UE5, and will the leaderboard move to UE5? What role do NVIDIA and Neya Systems play in maintenance funding?",
+  "How much simulation evidence will Korea's Level-4 performance certification and the Autonomous Ship Act performance verification accept, and which bodies (KATRI/TS, KRISO, KR) will define simulation-credibility criteria?",
+  "The exact Euro NCAP 2026 virtual-testing acceptance procedure (manufacturer-submitted simulation vs lab-run), and whether K-NCAP will follow.",
+  "dSPACE AURELION UE5 general-availability date, and whether dSPACE, IPG or Applied will license third-party neural or synthetic assets via OSI/OpenMATERIAL.",
+  "HoloOcean license and 2.0 release date; OceanSim actual open-source license; DAVE ROS 2/Gazebo Harmonic migration status.",
+  "MORAI's 2025–2026 financing, product roadmap (neural/Omniverse) and defense contracts, which determine whether it is a partner or a direct competitor.",
+  "Commercial pricing for CarSim, CarMaker and BeamNG.tech seats, needed to design FMI bring-your-own-model bundles and price comparisons.",
+  "GPU-hour cost per closed-loop neural-simulation kilometre (NuRec vs OmniDreams vs classic RTX), needed to set token pricing."
+ ]
+}

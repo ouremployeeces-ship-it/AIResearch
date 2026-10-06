@@ -1,0 +1,1100 @@
+{
+ "key": "market_competition",
+ "topic": "Global market and competitive landscape for digital twin, robotics/AV simulation and physical-AI data platforms (as of 2026-10-06), with a Korea deep dive and defensible positioning options for AICHEMIST",
+ "executive_summary": "RESEARCH CAVEAT: the shared web-search budget for this run was already used up (0 of the planned 15+ searches ran), and the egress proxy blocked every news, analyst, vendor and Korean media domain tried (nvidianews, appliedintuition, marketsandmarkets, globenewswire, prnewswire, techcrunch, wikipedia, arxiv, huggingface, etnews, morai.ai, dart.fss.or.kr). Only github.com and pypi.org could be fetched. Facts checked there are marked HIGH confidence. Market sizes, funding rounds and incumbent M&A come from the model's prior knowledge and are marked MEDIUM (well-known events up to 2025) or LOW (2026 events, prices, small companies); every one of these should be checked again before it goes into a board deck. (1) Market size: analysts put digital twins at roughly USD 21-25B in 2024/25, growing 34-48% a year to about USD 150B by 2030 (MarketsandMarkets, Grand View). Estimates differ by 3-10x because firms define the scope differently (IIoT, PLM, BIM). The narrower markets are much smaller: synthetic-data tools are about USD 0.3-0.6B (35-46% CAGR), and robotics or AV simulation software is about USD 1-3B each (low confidence). (2) Where the money goes: private capital is flowing to autonomy stacks and robot foundation models, not to standalone simulators. Examples are Applied Intuition (USD 15B, Jun 2025), Figure (USD 39B, Sep 2025), Physical Intelligence (USD 5.6B, Nov 2025), a reported Skild AI round at about USD 14B (Jan 2026, low), Field AI (USD 2B) and Genesis AI (USD 105M seed). For these firms the simulator is an internal tool or a data engine, not the product. (3) NVIDIA is turning the simulation layer into a free commodity, and this is verified on GitHub. The Isaac Sim repo is Apache-2.0, but the PyPI runtime is NVIDIA Proprietary; the latest stable is 6.1.0 (Sep 10, 2026), with 7.0 alpha out Sep 18, 2026. Isaac Lab 3.0 (beta at GTC on Mar 17, 2026) supports several physics backends (PhysX plus Newton/MuJoCo-Warp) and can run without Omniverse Kit. Newton 1.0 shipped Apr 13, 2026 under the Linux Foundation, co-founded with DeepMind and Disney. GR00T N1.7 has open weights, Cosmos 2.5 code is Apache-2.0, and NVIDIA now even automates SimReady asset authoring (usd-content-agents, Apache-2.0). Building your own physics engine or generic simulator is therefore not defensible. The value sits in workflow, data, assets, vertical scenarios, evaluation and sovereign deployment. (4) Incumbents and AV simulation: the industrial vendors (Siemens with Altair, Synopsys with Ansys, Dassault, PTC, Bentley with Cesium, AVEVA, Cognite) own engineering and operations twins sold per seat or by enterprise license, and they bolt on NVIDIA for rendering and AI. None of them produces policies that can learn from the twin, and the gap between a PLM twin and a learnable simulator is the largest white space. The hyperscalers have stepped back from generic twin PaaS: Microsoft Fabric digital twin builder was still in preview in May 2026 and is separate from Azure Digital Twins, and the AWS IoT TwinMaker status is unverified. AV simulation is crowded (Applied Intuition, Foretellix, dSPACE, IPG, Siemens Prescan, Ansys, rFpro, Cognata, free CARLA on UE5.5, MORAI in Korea), and neural/world-model simulation (Waabi World, Wayve GAIA, Cosmos) is overtaking hand-built scenes, so a generic AV-sim entry would be late. Synthetic-data specialists (Parallel Domain, Rendered.ai, Bifrost, Duality) stayed small and survive mainly through defense and aerospace. (5) Korea: MORAI is the only scaled domestic simulator vendor (AV, UAM, maritime; GitHub active through Sep 2026). E8 (NDX PRO) and VIRNECT are listed but small industrial/urban twin players. NAVER LABS (ALIKE mapping, ARC robots, 60k-GPU NVIDIA deal) could be a partner or a competitor, and the chaebol IT-services arms build NVIDIA- or Siemens-based twins in house. Korean robot makers (Boston Dynamics/HMG, Rainbow/Samsung, Doosan Robotics, HD Hyundai Robotics, LG/Bear, Holiday, Aidin, RLWRLD) need training data and simulation but have thin RL/sim teams. Tailwinds include about 260k NVIDIA GPUs allocated to Korea (Oct 2025), HMG's roughly USD 3B physical-AI cluster, the K-Humanoid Alliance, the AI Basic Act (in force Jan 2026) and MASGA-driven shipyard automation. (6) Most defensible positions for AICHEMIST: (a) a sovereign, NVIDIA-compatible physical-AI data factory for Korean conglomerates; (b) a shipbuilding and heavy-industry vertical twin with robot-policy training; (c) air-gapped defense sensor synthetic data; (d) Real2Sim assets with measured physics and commercial licences, sold through the CEN marketplace; (e) a neutral policy-evaluation and benchmark service for Korean humanoids. Pricing would be hybrid: subscription, GPU-hour metering, data packs, on-prem licence and NRE.",
+ "options": [
+  {
+   "name": "NVIDIA Isaac Sim / Isaac Lab / Omniverse stack (incl. Cosmos, GR00T, ovphysx/ovrtx, blueprints)",
+   "category": "Platform substrate / dominant ecosystem",
+   "status_as_of_2026": "Isaac Sim 6.1.0 latest stable (GitHub tag Sep 10, 2026; PyPI 6.1.0.0 Sep 9, 2026); 7.0.0a1 alpha Sep 18, 2026; 6.0.0 GA Jun 4, 2026. Isaac Lab 3.0.0-beta Mar 17, 2026 (GTC 2026) -> 3.0.0-EA Sep 2026: multi-backend physics (PhysX default + Newton/MuJoCo-Warp), kit-less install, pluggable renderers (Isaac RTX, OVRTX, Newton Warp), visualizers (Kit, Newton, Rerun, Viser). GR00T N1.7 GA VLA. Cosmos Predict2.5/Transfer2.5/Reason2. New Kit-less libs ovphysx, ovrtx (updated Oct 2026). usd-content-agents automates material/physics/articulation authoring.",
+   "license_and_cost": "Isaac Sim GitHub repo Apache-2.0 but PyPI isaacsim metapackage labelled NVIDIA Proprietary (binary Kit/RTX deps). Isaac Lab, Newton, Cosmos code Apache-2.0; GR00T/Cosmos weights under NVIDIA Open Model License. Free to use; enterprise support via Omniverse Enterprise / NVIDIA AI Enterprise (list ~USD 4,500 per GPU per year; prior knowledge, low). Hardware: RTX 4080 min workstation; A40 min, L40S or RTX PRO 6000 Blackwell recommended in datacenter (needs RT cores, not H100).",
+   "strengths": [
+    "De facto standard for robot learning + RTX sensor simulation; OpenUSD native",
+    "Free, open code, huge ecosystem (GR00T 8.2k stars, Isaac Sim 4.2k stars)",
+    "Rapid cadence; now modular/kit-less so it can be embedded in third-party products",
+    "World-model augmentation (Cosmos Transfer) and VLA models (GR00T) in the same stack"
+   ],
+   "weaknesses": [
+    "NVIDIA GPU lock-in; requires RT-core GPUs for rendering (raises cloud cost)",
+    "Researcher-oriented UX; heavy breaking changes (Lab 3.0 quaternion WXYZ->XYZW, Warp arrays instead of torch tensors)",
+    "Mixed licensing (Apache code, proprietary runtime) complicates on-prem resale",
+    "NVIDIA keeps moving up-stack (blueprints, content agents) and competes with its own ecosystem"
+   ],
+   "best_fit": "AICHEMIST's runtime substrate. Build on it and stay compatible; differentiate above it. Do not compete with it.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacSim/releases",
+    "https://github.com/isaac-sim/IsaacSim",
+    "https://pypi.org/project/isaacsim/",
+    "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-beta",
+    "https://github.com/NVIDIA/Isaac-GR00T",
+    "https://github.com/nvidia-cosmos",
+    "https://github.com/NVIDIA-Omniverse",
+    "https://github.com/NVIDIA-Omniverse/usd-content-agents"
+   ]
+  },
+  {
+   "name": "Newton physics engine (Linux Foundation)",
+   "category": "Open-source GPU physics engine",
+   "status_as_of_2026": "v1.0.0 Apr 13, 2026; v1.5.0 Aug 11, 2026; v1.6.0 Sep 10, 2026; v1.6.1 Oct 5, 2026. 5.7k stars. Built on NVIDIA Warp; MuJoCo Warp primary backend; VBD and other solvers; OpenUSD particle workflows, Kamino solver, cable mechanics. Integrated as Isaac Lab 3.0 backend.",
+   "license_and_cost": "Apache-2.0, free. Linux Foundation governance; founding contributors Disney Research, Google DeepMind, NVIDIA.",
+   "strengths": [
+    "Neutral open governance; differentiable; GPU-batched many-world simulation",
+    "Backed by the three most credible robotics-sim organizations",
+    "Fast release cadence (6 minor releases in ~6 months)"
+   ],
+   "weaknesses": [
+    "NVIDIA GPU required (CPU only on macOS)",
+    "Young API, frequent changes; deformables/fluids still maturing"
+   ],
+   "best_fit": "Default physics backend for AICHEMIST alongside PhysX; removes any reason to write an in-house engine.",
+   "sources": [
+    "https://github.com/newton-physics/newton",
+    "https://github.com/newton-physics/newton/releases",
+    "https://github.com/newton-physics/newton/releases?page=2"
+   ]
+  },
+  {
+   "name": "Google DeepMind MuJoCo / MJX / MuJoCo Warp / Playground",
+   "category": "Open-source physics engine",
+   "status_as_of_2026": "MuJoCo 3.15.0 Oct 5, 2026 (Stable Neo-Hookean flex); 3.14.0 Sep 22, 2026 (experimental IPC penetration-free flex contact); 3.13.0 (discrete integrator, Python 3.15 free-threading); 3.12.0 (pid actuator); 3.11.0 Jul 27, 2026 (conveyor surface velocity, adhesion).",
+   "license_and_cost": "Apache-2.0, free.",
+   "strengths": [
+    "Most-cited contact physics for locomotion/manipulation RL",
+    "MJCF is a lingua franca; MuJoCo Warp powers Newton",
+    "Rapid feature growth into deformables and industrial features (conveyors, PID actuators)"
+   ],
+   "weaknesses": [
+    "No photoreal rendering or physically-based sensor simulation",
+    "Not an end-user platform; no asset/scene tooling"
+   ],
+   "best_fit": "Training backend and import format (MJCF) that AICHEMIST must support; pair it with an RTX/3DGS renderer for perception data.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco/releases"
+   ]
+  },
+  {
+   "name": "Genesis AI / Genesis World",
+   "category": "Open-source multi-physics simulator + physical-AI company",
+   "status_as_of_2026": "~30k GitHub stars; Genesis World 1.0 blog May 2026; v1.4.x releases through Sep 30, 2026 (scene export/replay, deterministic mode, tactile sensors, differentiable rigid body). Solvers: rigid, FEM, MPM, SPH/particles, IPC, SAP; Nyx photoreal renderer; Quadrants compiler (Taichi fork, Jun 2025). Company raised USD 105M seed (Jul 2025, Eclipse and Khosla; prior knowledge, medium).",
+   "license_and_cost": "Apache-2.0, free.",
+   "strengths": [
+    "Broadest multi-physics (soft bodies, fluids) in one Python API",
+    "Strong community traction; well funded"
+   ],
+   "weaknesses": [
+    "Company's commercial focus is its own robot models/data, so it may compete with data vendors",
+    "Smaller industrial ecosystem than Isaac; OpenUSD/enterprise tooling weaker"
+   ],
+   "best_fit": "Optional backend for deformables and fluids; a competitor to watch in synthetic robot-training data.",
+   "sources": [
+    "https://github.com/Genesis-Embodied-AI/Genesis",
+    "https://github.com/Genesis-Embodied-AI/Genesis/releases"
+   ]
+  },
+  {
+   "name": "Hillbot / ManiSkill3 (SAPIEN)",
+   "category": "Sim-first robot-learning startup + open benchmark",
+   "status_as_of_2026": "ManiSkill3: 3.4k stars, published at RSS 2025, GPU-parallel simulation and rendering for manipulation (RL/IL/VLA). Hillbot (co-founded by UCSD Prof. Hao Su): funding and product status unverified (low).",
+   "license_and_cost": "ManiSkill code Apache-2.0; assets CC BY-NC 4.0 (non-commercial).",
+   "strengths": [
+    "Fast GPU-parallel visual RL for manipulation; real2sim research pedigree"
+   ],
+   "weaknesses": [
+    "Non-commercial asset licence; small company; commercial traction unknown"
+   ],
+   "best_fit": "Benchmark-compatibility target. The non-commercial asset licence is an opening for commercially licensed asset packs.",
+   "sources": [
+    "https://github.com/haosulab/ManiSkill"
+   ]
+  },
+  {
+   "name": "Lightwheel",
+   "category": "SimReady assets / synthetic data / benchmarks for embodied AI",
+   "status_as_of_2026": "GitHub org active: LW-BenchHub (unified benchmark on Isaac Lab-Arena, 268 tasks), Lightwheel-simready-asset (free for non-commercial), leisaac (SO101 teleop in Isaac Lab, 741 stars), mjcf2usd/usd2mjcf converters, Newton fork. Founded ~2023 by ex-NVIDIA/Cruise simulation leaders; funding and customer list (claimed top humanoid labs) unverified (low).",
+   "license_and_cost": "Open repos Apache-2.0; assets free for non-commercial use; commercial assets and data services priced privately (unverified).",
+   "strengths": [
+    "Closest analogue to AICHEMIST's asset + sim-data play; tight NVIDIA alignment (Isaac Lab-Arena)",
+    "Bridges MuJoCo and USD ecosystems"
+   ],
+   "weaknesses": [
+    "The asset business is being commoditized by NVIDIA usd-content-agents and generative 3D",
+    "US/China dual footprint may limit Korean defense/chaebol trust (low)"
+   ],
+   "best_fit": "Primary global benchmark for AICHEMIST's asset/data offer; possible partner or reseller, or a head-on rival in Korea.",
+   "sources": [
+    "https://github.com/lightwheelai"
+   ]
+  },
+  {
+   "name": "CARLA",
+   "category": "Open-source AV simulator",
+   "status_as_of_2026": "0.10.0 (Dec 19, 2024) migrated to Unreal Engine 5.5 (Nanite/Lumen, native ROS2, CMake); 0.9.16 (2025) added NVIDIA integrations. Slow release cadence.",
+   "license_and_cost": "MIT code; assets CC-BY (prior knowledge); free.",
+   "strengths": [
+    "Free academic and AV-startup standard; UE5 visuals"
+   ],
+   "weaknesses": [
+    "Limited commercial support; sensor/physics fidelity below commercial tools; slow releases"
+   ],
+   "best_fit": "Free baseline for Korean academia. Not a commercial differentiator.",
+   "sources": [
+    "https://github.com/carla-simulator/carla/releases"
+   ]
+  },
+  {
+   "name": "Epic Games Unreal Engine (+ Cesium for Unreal, RealityScan, Twinmotion)",
+   "category": "Real-time 3D engine used by many sims",
+   "status_as_of_2026": "UE5.x (5.6/5.7 released 2025; prior knowledge). Underpins CARLA, Duality Falcon and many defense/AV sims.",
+   "license_and_cost": "Free under USD 1M annual revenue; non-game companies above that pay ~USD 1,850 per seat per year (since 2024; prior knowledge, medium).",
+   "strengths": [
+    "Best-in-class photorealism; large talent pool; geospatial via Cesium"
+   ],
+   "weaknesses": [
+    "Chaos physics not robot-grade; no GPU-batched RL; seat licensing for enterprise users"
+   ],
+   "best_fit": "Visual front-end or renderer for AV/drone/defense scenes when photorealism dominates.",
+   "sources": [
+    "Prior knowledge (Epic Unreal Engine licensing page), not re-verified this session"
+   ]
+  },
+  {
+   "name": "Unity (Unity 6 / Unity Industry)",
+   "category": "Real-time 3D engine",
+   "status_as_of_2026": "Unity 6 line; robotics tooling (Unity Robotics Hub) de-emphasized since 2023-24 layoffs (prior knowledge, low).",
+   "license_and_cost": "Per-seat subscriptions (Unity Industry historically ~USD 4,950 per seat per year; low confidence).",
+   "strengths": [
+    "Huge developer base; easy browser/mobile deployment"
+   ],
+   "weaknesses": [
+    "PhysX-4-era physics; weak robot-learning investment; corporate instability"
+   ],
+   "best_fit": "Lightweight visualization/browser clients only. Some Korean sims (reportedly MORAI) build on it.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "World-model simulators (NVIDIA Cosmos, Wayve GAIA-2/3, Waabi World, Google Genie 3, World Labs Marble, 1X world model)",
+   "category": "Generative/neural simulation",
+   "status_as_of_2026": "Cosmos-Predict2.5 / Transfer2.5 / Reason2 repos updated Jun 2026 (Apache-2.0 code); Cosmos-RL and Cosmos-Xenna pipelines. GAIA-2 (Mar 2025), Genie 3 (Aug 2025), World Labs Marble (Nov 2025): prior knowledge, medium/low.",
+   "license_and_cost": "Cosmos code Apache-2.0, weights NVIDIA Open Model License; others proprietary or API.",
+   "strengths": [
+    "Photoreal diversity without manual asset building; closes the visual sim-to-real gap",
+    "Fast-growing; heavily funded"
+   ],
+   "weaknesses": [
+    "No guaranteed physical correctness or exact controllability; expensive inference; validation unsolved"
+   ],
+   "best_fit": "Augmentation layer on top of physics sims (sim-to-real style transfer, long-tail variation) inside AICHEMIST's pipeline.",
+   "sources": [
+    "https://github.com/nvidia-cosmos",
+    "https://github.com/wayveai"
+   ]
+  },
+  {
+   "name": "Applied Intuition",
+   "category": "AV/defense autonomy toolchain + simulation",
+   "status_as_of_2026": "USD 600M Series F at USD 15B valuation (Jun 2025, co-led BlackRock and Kleiner Perkins; prior knowledge, medium). Products: Simian, Spectral (sensor sim), Neural Sim, Data Explorer, Vehicle OS, defense autonomy (EpiSci acquisition 2024). Claims most top-20 OEMs as customers (prior, low).",
+   "license_and_cost": "Enterprise licences, typically multi-million USD per OEM per year (unverified, low).",
+   "strengths": [
+    "Category leader; full autonomy and software-defined-vehicle stack; defense expansion"
+   ],
+   "weaknesses": [
+    "AV/defense focus; premium price; less strength in manipulation/humanoids"
+   ],
+   "best_fit": "Do not attack AV simulation head-on. Sell complementary data into Applied-using OEMs instead.",
+   "sources": [
+    "Prior knowledge (Applied Intuition press release, Jun 2025), not re-verified"
+   ]
+  },
+  {
+   "name": "Foretellix",
+   "category": "AV scenario coverage / V&V",
+   "status_as_of_2026": "Foretify platform; ASAM OpenSCENARIO 2.0 (M-SDL) leadership; partner in NVIDIA's Omniverse AV-simulation blueprint (CES 2025; prior, low). Funding roughly USD 100M+ total (low).",
+   "license_and_cost": "Enterprise licence (unpublished).",
+   "strengths": [
+    "Coverage-driven safety argument; standards influence"
+   ],
+   "weaknesses": [
+    "Niche; depends on third-party simulators for rendering"
+   ],
+   "best_fit": "Reference for scenario-coverage metrics; integrate OpenSCENARIO export.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Waabi",
+   "category": "Autonomous trucking/robotaxi with generative sim (Waabi World)",
+   "status_as_of_2026": "USD 200M Series B (Jun 2024; prior, medium); Volvo autonomous trucking partnership; a reported large 2026 raise tied to Uber robotaxis is unverified (low).",
+   "license_and_cost": "Simulator not sold; internal.",
+   "strengths": [
+    "Strongest public proof of sim-first autonomy development"
+   ],
+   "weaknesses": [
+    "Not a vendor"
+   ],
+   "best_fit": "Evidence that leading autonomy firms keep simulation in house, which shrinks the generic sim-vendor market.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Wayve",
+   "category": "End-to-end AV AI + GAIA world models",
+   "status_as_of_2026": "USD 1.05B Series C (May 2024); NVIDIA letter of intent to invest up to USD 500M (Sep 2025); Nissan ProPilot deal; Uber London L4 pilot planned for 2026 (prior, medium/low). GitHub wayveai: 69 repos (FIERY, LingoQA, WayveScenes101).",
+   "license_and_cost": "Licenses AI driver to OEMs; GAIA not sold as a sim product (low).",
+   "strengths": [
+    "World-model simulation and data at scale"
+   ],
+   "weaknesses": [
+    "Not a sim vendor"
+   ],
+   "best_fit": "Competitor for Korean OEM autonomy licensing; reference design for neural simulation.",
+   "sources": [
+    "https://github.com/wayveai",
+    "Prior knowledge for funding"
+   ]
+  },
+  {
+   "name": "Traditional AV/ADAS sim vendors (dSPACE AURELION, IPG CarMaker, Siemens Simcenter Prescan, Ansys AVxcelerate, Hexagon VTD, MathWorks RoadRunner, rFpro, Cognata, aiMotive aiSim)",
+   "category": "AV/ADAS simulation and HIL",
+   "status_as_of_2026": "Mature, entrenched at OEMs/Tier-1s (prior knowledge).",
+   "license_and_cost": "Per-seat or node-locked licences plus HIL hardware; typically five-figure USD per seat per year (low).",
+   "strengths": [
+    "Homologation/HIL workflows; OEM trust; standards (OpenDRIVE/OpenSCENARIO/FMI)"
+   ],
+   "weaknesses": [
+    "Not ML-native; little GPU-batched training; dated UX"
+   ],
+   "best_fit": "Coexist: AICHEMIST should export ASAM formats and feed synthetic sensor data into these pipelines.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Duality AI (Falcon)",
+   "category": "Digital-twin simulator + synthetic data (defense/off-road)",
+   "status_as_of_2026": "Unreal-based Falcon; DARPA RACER and defense work; free FalconEDU tier (prior knowledge, low/medium). Funding modest.",
+   "license_and_cost": "FalconEDU free; enterprise and government contracts priced privately.",
+   "strengths": [
+    "Geo-specific twins; defense credibility; synthetic-data workflows"
+   ],
+   "weaknesses": [
+    "Small; Unreal physics limits for manipulation"
+   ],
+   "best_fit": "Template for AICHEMIST's defense vertical (Korean equivalent).",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Parallel Domain",
+   "category": "Synthetic sensor data for AV/ADAS",
+   "status_as_of_2026": "USD 30M Series B (2022) and PD Replica real2sim (2024) per prior knowledge. GitHub shows no product SDK activity: step-sdk archived Oct 2023; recent repos are forks (depth-anything-3, colmap). Status uncertain (low).",
+   "license_and_cost": "Data/API subscriptions (unpublished).",
+   "strengths": [
+    "Early leader in procedural plus real2sim AV data"
+   ],
+   "weaknesses": [
+    "Signs of stalled public development; AV customers internalizing simulation"
+   ],
+   "best_fit": "Cautionary case: horizontal synthetic data for AV is hard to sustain.",
+   "sources": [
+    "https://github.com/parallel-domain"
+   ]
+  },
+  {
+   "name": "Bifrost",
+   "category": "Synthetic data for defense, aerial, maritime and space",
+   "status_as_of_2026": "Series A ~USD 8M (2023) and DoD work per prior knowledge (low).",
+   "license_and_cost": "Per-dataset / enterprise (unpublished).",
+   "strengths": [
+    "Defense niche with sticky contracts"
+   ],
+   "weaknesses": [
+    "Small scale"
+   ],
+   "best_fit": "Analogue for a Korean defense synthetic-data SKU.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Rendered.ai",
+   "category": "Synthetic-data PaaS (anatools SDK)",
+   "status_as_of_2026": "Remote sensing/SAR/defense focus, listed on cloud marketplaces (prior, low). PyPI page fetch failed.",
+   "license_and_cost": "Subscription PaaS (unpublished).",
+   "strengths": [
+    "Developer-friendly synthetic-data PaaS"
+   ],
+   "weaknesses": [
+    "Small; generic tooling"
+   ],
+   "best_fit": "Feature benchmark for CEN's synthetic-data workflow.",
+   "sources": [
+    "Prior knowledge; https://pypi.org/project/anatools/ (fetch failed)"
+   ]
+  },
+  {
+   "name": "Scale AI / Surge AI and other human-data vendors",
+   "category": "Data-as-a-service (incl. physical-AI teleoperation/annotation)",
+   "status_as_of_2026": "Meta bought 49% of Scale for ~USD 14.3B (Jun 2025; prior, medium); Scale has expanded into robotics/physical-AI data collection (low). Surge reportedly had >USD 1B revenue in 2024 (low).",
+   "license_and_cost": "Per-task or per-hour data services; projects from USD 100k to tens of millions (low).",
+   "strengths": [
+    "Labour scale; relationships with frontier labs"
+   ],
+   "weaknesses": [
+    "Human data is costly and slow; Meta ownership pushed some customers away from Scale"
+   ],
+   "best_fit": "The competitor for robot-training budgets. AICHEMIST's angle is to amplify a few teleop demos with simulation.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Physical Intelligence (pi)",
+   "category": "Robot foundation-model company (data/sim consumer)",
+   "status_as_of_2026": "USD 400M at USD 2.4B (Nov 2024) and USD 600M at USD 5.6B (Nov 2025, CapitalG-led) per prior knowledge (medium). openpi: 14.1k stars; pi0, pi0-FAST, pi0.5 open weights (pi0.5 and PyTorch support Sep 2025).",
+   "license_and_cost": "openpi Apache-2.0 (plus Gemma licence for some weights).",
+   "strengths": [
+    "Best-known open VLA baselines"
+   ],
+   "weaknesses": [
+    "Relies on real teleop data; simulation is secondary"
+   ],
+   "best_fit": "Open base model AICHEMIST can fine-tune for customers (pi0.5); possible data customer.",
+   "sources": [
+    "https://github.com/Physical-Intelligence/openpi",
+    "Prior knowledge for funding"
+   ]
+  },
+  {
+   "name": "Skild AI",
+   "category": "Robot foundation model (Skild Brain)",
+   "status_as_of_2026": "USD 300M Series A at USD 1.5B (Jul 2024); Skild Brain launched Jul 2025; reported ~USD 4.5B (2025) and ~USD 14B (Jan 2026, SoftBank/NVIDIA) valuations (low).",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Heavy use of simulation and human video at scale"
+   ],
+   "weaknesses": [
+    "Not a platform vendor"
+   ],
+   "best_fit": "Potential buyer of synthetic data; shows the sim-heavy training thesis.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Figure AI",
+   "category": "Humanoid OEM + Helix VLA",
+   "status_as_of_2026": "Series C over USD 1B at USD 39B post-money (Sep 2025; investors include NVIDIA and LG Technology Ventures; prior, medium). Figure 03 unveiled Oct 2025.",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Capital; vertical integration"
+   ],
+   "weaknesses": [
+    "Runs simulation in house"
+   ],
+   "best_fit": "Signals humanoid capital intensity; LG link is a Korean angle.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Other physical-AI model/robot companies (Field AI, Dyna Robotics, 1X, Apptronik, Agility, K-Scale, AgiBot)",
+   "category": "Data/sim consumers and potential competitors",
+   "status_as_of_2026": "Field AI USD 405M at USD 2B (Aug 2025); Dyna Robotics USD 120M Series A (2025); 1X NEO preorders at USD 20,000 or USD 499/month (Oct 2025) with a reported raise at USD 10B+. All from prior knowledge (medium/low).",
+   "license_and_cost": "Proprietary.",
+   "strengths": [
+    "Fast-growing budget pool for training data and evaluation"
+   ],
+   "weaknesses": [
+    "Most build sim/data pipelines in house"
+   ],
+   "best_fit": "Target customers for licensed SimReady assets and evaluation, not for platform seats.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Siemens Xcelerator (Tecnomatix Process Simulate, Simcenter, Teamcenter, Altair)",
+   "category": "Industrial PLM / factory digital-twin incumbent",
+   "status_as_of_2026": "Acquired Altair (~USD 10B, closed Mar 2025) and Dotmatics (2025) per prior knowledge (medium). Deep NVIDIA Omniverse tie-ups (Teamcenter Digital Reality Viewer); a CES 2026 'Digital Twin Composer' built on Omniverse is reported (low).",
+   "license_and_cost": "Per-seat and Xcelerator-as-a-Service subscriptions; Altair units-based licensing.",
+   "strengths": [
+    "Owns factory and line engineering data; global OEM installed base including Korean shipyards and automakers"
+   ],
+   "weaknesses": [
+    "Kinematic/PLC-centric twins, not learnable; costly; slow innovation in robot learning"
+   ],
+   "best_fit": "Integration partner: import Process Simulate/Teamcenter lines into Isaac Lab training environments. AICHEMIST becomes the AI training layer on top.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Dassault Systemes 3DEXPERIENCE (CATIA, DELMIA, SIMULIA)",
+   "category": "PLM / virtual twin incumbent",
+   "status_as_of_2026": "3D UNIV+RSES generative AI strategy (2025); strong in aerospace and shipbuilding (prior, medium/low).",
+   "license_and_cost": "Per-role/per-seat 3DEXPERIENCE licences, on-prem or cloud.",
+   "strengths": [
+    "CATIA/DELMIA entrenched in Korean shipbuilding and aerospace design"
+   ],
+   "weaknesses": [
+    "Not robot-learning native; closed ecosystem"
+   ],
+   "best_fit": "Connector target (CATIA/DELMIA to USD) for the shipyard vertical.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Synopsys + Ansys",
+   "category": "Physics/EM/CFD/sensor-simulation incumbent",
+   "status_as_of_2026": "Synopsys closed its Ansys acquisition (~USD 35B) on Jul 17, 2025 (prior, medium); a reported NVIDIA USD 2B investment in Synopsys (Dec 2025) is low confidence. Products: AVxcelerate sensors, Fluent, Mechanical, SimAI.",
+   "license_and_cost": "Enterprise/seat licences, high price.",
+   "strengths": [
+    "Gold-standard solver fidelity (radar/EM/CFD); AI surrogates (SimAI)"
+   ],
+   "weaknesses": [
+    "Not real-time/batched RL; expensive"
+   ],
+   "best_fit": "Fidelity partner for sensor physics (radar/LiDAR) in AV/defense SKUs.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "PTC (Creo, Windchill, Vuforia; ThingWorx/Kepware)",
+   "category": "PLM/IoT incumbent",
+   "status_as_of_2026": "Reported agreement in 2025 to divest ThingWorx and Kepware to TPG (low), signalling retreat from IoT twins.",
+   "license_and_cost": "Per-seat subscriptions.",
+   "strengths": [
+    "CAD/PLM base"
+   ],
+   "weaknesses": [
+    "Exiting IoT-twin platform business"
+   ],
+   "best_fit": "Minor connector target only.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Bentley Systems iTwin (+ Cesium)",
+   "category": "Infrastructure / geospatial twin incumbent",
+   "status_as_of_2026": "Acquired Cesium (Sep 2024; prior, medium); iTwin.js open source; 3D Tiles standard.",
+   "license_and_cost": "Consumption-based iTwin platform; Cesium ion subscriptions.",
+   "strengths": [
+    "City and infrastructure-scale geospatial streaming"
+   ],
+   "weaknesses": [
+    "No robot/vehicle physics training"
+   ],
+   "best_fit": "Geospatial base layer for drone/AV/urban scenes (3D Tiles import).",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Autodesk (Tandem, Revit/BIM, Fusion)",
+   "category": "AEC/BIM and facility twin",
+   "status_as_of_2026": "Tandem facility twin; founding member of Alliance for OpenUSD (prior, medium).",
+   "license_and_cost": "Per-seat; Tandem per facility (low).",
+   "strengths": [
+    "BIM data source for buildings, warehouses and fabs"
+   ],
+   "weaknesses": [
+    "Operations twins, not simulation for learning"
+   ],
+   "best_fit": "BIM-to-SimReady pipeline that fits CEN's BIM marketplace.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "AVEVA (Schneider Electric)",
+   "category": "Process/marine engineering and operations twin",
+   "status_as_of_2026": "AVEVA Marine/E3D, PI System, CONNECT (prior knowledge).",
+   "license_and_cost": "Enterprise subscription.",
+   "strengths": [
+    "Shipbuilding and process-plant engineering data"
+   ],
+   "weaknesses": [
+    "No robot learning"
+   ],
+   "best_fit": "Data connector for the shipyard vertical.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Cognite (Cognite Data Fusion, Atlas AI)",
+   "category": "Industrial DataOps / operations twin",
+   "status_as_of_2026": "Industrial knowledge graph plus AI agents (prior knowledge).",
+   "license_and_cost": "Enterprise SaaS.",
+   "strengths": [
+    "Contextualized OT/IT data"
+   ],
+   "weaknesses": [
+    "No physics/robot simulation"
+   ],
+   "best_fit": "Not a direct competitor; possible data source in energy/heavy industry.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Microsoft (Azure Digital Twins, Fabric Digital Twin Builder)",
+   "category": "Hyperscaler twin PaaS",
+   "status_as_of_2026": "Azure Digital Twins overview doc carries no retirement notice (ms.date 2025-01-27). Fabric Real-Time Intelligence 'digital twin builder' still marked preview (doc dated 2026-05-18) and explicitly 'different from the Azure Digital Twins service'. AirSim archived in 2022 and Project AirSim discontinued in 2023 (prior).",
+   "license_and_cost": "ADT metered per operation/message/query; Fabric capacity units.",
+   "strengths": [
+    "Enterprise data integration (Power BI, Fabric)"
+   ],
+   "weaknesses": [
+    "Graph/IoT twin only; no physics; product direction split"
+   ],
+   "best_fit": "Enterprise data sink for KPIs from AICHEMIST twins; not a competitor in physics or training.",
+   "sources": [
+    "https://github.com/MicrosoftDocs/fabric-docs/blob/main/docs/real-time-intelligence/digital-twin-builder/overview.md",
+    "https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/digital-twins/overview.md"
+   ]
+  },
+  {
+   "name": "AWS IoT TwinMaker",
+   "category": "Hyperscaler twin PaaS",
+   "status_as_of_2026": "Samples repo shows no deprecation notice (last dated note 2023-11-28). Current service status unverified (low); AWS retired adjacent IoT Analytics/IoT Events services (prior, low).",
+   "license_and_cost": "Metered per entity/API (low).",
+   "strengths": [
+    "AWS integration"
+   ],
+   "weaknesses": [
+    "Stagnant; no robot learning"
+   ],
+   "best_fit": "Ignore as a competitor; use AWS only as GPU infrastructure (L40S G6e instances for Isaac Sim).",
+   "sources": [
+    "https://github.com/aws-samples/aws-iot-twinmaker-samples"
+   ]
+  },
+  {
+   "name": "Google / Alphabet (DeepMind, Intrinsic)",
+   "category": "Open physics + robot foundation models",
+   "status_as_of_2026": "MuJoCo 3.15 (Oct 2026) and Newton co-founder (verified). Gemini Robotics 1.5 (Sep 2025), Genie 3 world model (Aug 2025), Intrinsic Flowstate, and a reported Boston Dynamics partnership for Atlas (CES 2026): prior, low/medium.",
+   "license_and_cost": "MuJoCo Apache-2.0; Gemini Robotics via API/partners.",
+   "strengths": [
+    "Open physics plus frontier models"
+   ],
+   "weaknesses": [
+    "No commercial twin platform"
+   ],
+   "best_fit": "Model and physics supplier; relevant to HMG/Boston Dynamics accounts.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco/releases",
+    "https://github.com/newton-physics/newton"
+   ]
+  },
+  {
+   "name": "Chinese competitors (51WORLD, Manycore/Kujiale SpatialVerse, AgiBot Genie Sim/AgiBot World, Galbot, Unitree)",
+   "category": "Low-cost digital twin, AV sim and embodied-data factories",
+   "status_as_of_2026": "51WORLD digital twin/AV sim pursued a Hong Kong IPO in 2025; Manycore offers sim-ready indoor scene datasets; AgiBot publishes large real/synthetic datasets (all prior, low).",
+   "license_and_cost": "Aggressive pricing; many open datasets.",
+   "strengths": [
+    "Scale, cost, government-backed data factories"
+   ],
+   "weaknesses": [
+    "Trust and geopolitics barriers for Korean defense, chaebols and US-linked customers"
+   ],
+   "best_fit": "Price pressure on generic assets and data. Supports a 'trusted non-China vendor' position.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "MORAI (Korea)",
+   "category": "AV / UAM / maritime simulation (domestic leader)",
+   "status_as_of_2026": "GitHub org 'MORAI OSS' active: 20 repos; ROS2 msgs updated Aug 2026; SimControl for MORAI SIM v2.1 updated Sep 2026. Founded 2018 (KAIST spin-off); MORAI SIM Drive/Sky; government K-City and defense projects; dSPACE and NVIDIA partnerships. Funding/IPO status unverified (low).",
+   "license_and_cost": "Commercial licences (unpublished); ROS bridges open source.",
+   "strengths": [
+    "Korean OEM, government and defense relationships; HD-map-based road twins; UAM/drone and maritime extensions"
+   ],
+   "weaknesses": [
+    "Limited manipulation/humanoid RL; scale far below Applied Intuition; engine reportedly Unity-based (low)"
+   ],
+   "best_fit": "Partner, not target: AICHEMIST supplies sensor-realistic synthetic data, assets and robot-learning modules; MORAI keeps AV/UAM scenarios.",
+   "sources": [
+    "https://github.com/MORAI-Autonomous"
+   ]
+  },
+  {
+   "name": "42dot (Hyundai Motor Group)",
+   "category": "Captive SDV/autonomy software unit",
+   "status_as_of_2026": "HMG subsidiary since 2022; leadership changes and AVP reorganization reported in late 2025 (low).",
+   "license_and_cost": "Captive.",
+   "strengths": [
+    "Access to HMG vehicles and data"
+   ],
+   "weaknesses": [
+    "Builds simulation in house; not a vendor"
+   ],
+   "best_fit": "Customer channel inside HMG for AV synthetic data; unlikely competitor.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "NAVER LABS / NAVER Cloud",
+   "category": "Mapping digital twin + robotics + sovereign GPU cloud",
+   "status_as_of_2026": "ALIKE aerial-ground HD mapping twin; ARC brainless-robot cloud; 1784 HQ robot building; Saudi national digital twin contract (2023); NVIDIA partnership with ~60k GPUs announced Oct 2025 (prior, medium/low).",
+   "license_and_cost": "Project-based / cloud.",
+   "strengths": [
+    "City-scale twins; sovereign cloud; robotics operations"
+   ],
+   "weaknesses": [
+    "Focus on mapping/services rather than selling a sim/training platform"
+   ],
+   "best_fit": "Strategic partner: host AICHEMIST on NAVER Cloud GPUs; co-sell urban/building twins. Possible competitor in urban twins.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "VIRNECT (KOSDAQ)",
+   "category": "XR industrial twin",
+   "status_as_of_2026": "Listed Jul 2023; XR authoring, tracking and twin products; loss-making (prior, low).",
+   "license_and_cost": "SaaS/enterprise.",
+   "strengths": [
+    "Industrial XR customers in Korea"
+   ],
+   "weaknesses": [
+    "No physics/robot learning; financial constraints"
+   ],
+   "best_fit": "Possible XR channel partner; not a core competitor.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "E8 / 이에이트 (KOSDAQ) - NDX PRO",
+   "category": "Urban / industrial digital twin platform with in-house solvers",
+   "status_as_of_2026": "Listed 2023; NDX PRO platform; in-house SPH/CFD (NFLOW); public-sector smart-city and factory twins (prior, low).",
+   "license_and_cost": "Project/licence based (public procurement).",
+   "strengths": [
+    "Public-sector references; own physics/CFD IP"
+   ],
+   "weaknesses": [
+    "Small scale; little robot or ML training capability"
+   ],
+   "best_fit": "Competes for 'Korean digital twin platform' public budgets. AICHEMIST should differentiate on AI training rather than city twins.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Korean group IT-services arms (Samsung SDS, LG CNS, Hyundai AutoEver, POSCO DX, SK AX, HD Hyundai IT)",
+   "category": "System integrators building captive twins",
+   "status_as_of_2026": "Implement Siemens/Dassault/NVIDIA-based factory twins for their groups (prior knowledge).",
+   "license_and_cost": "Internal transfer pricing / SI projects.",
+   "strengths": [
+    "Own the customer relationship and procurement"
+   ],
+   "weaknesses": [
+    "Limited robot-learning and synthetic-data depth"
+   ],
+   "best_fit": "Channel partners or subcontract route into chaebols; risk that they build it in house.",
+   "sources": [
+    "Prior knowledge, not re-verified"
+   ]
+  },
+  {
+   "name": "Korean anchor-customer pool (HMG/Boston Dynamics, Samsung/Rainbow Robotics, LG/Bear Robotics, Doosan Robotics, HD Hyundai/HD Hyundai Robotics, Hanwha, Naver, CJ Logistics, Coupang, defense primes and ADD)",
+   "category": "Potential anchor customers",
+   "status_as_of_2026": "Doosan Robotics GitHub has an Isaac driver (cuRobo), a cuMotion driver and a Docker 'Dart robot simulator' (updated Sep 2026), so it is already on the NVIDIA stack (verified). Prior knowledge (medium/low): Samsung became Rainbow's largest shareholder (~35%, 2025); LG took a majority of Bear Robotics (2025); production Atlas shown at CES 2026 for HMG plants; HMG-NVIDIA ~USD 3B physical-AI cluster; Samsung/SK/HMG/Naver Blackwell allocations; HD Hyundai FOS intelligent-shipyard programme; MASGA shipbuilding cooperation.",
+   "license_and_cost": "Typical entry via paid PoC/NRE, then enterprise or on-prem licence.",
+   "strengths": [
+    "Concentrated, well-funded, government-aligned buyers with GPUs already allocated"
+   ],
+   "weaknesses": [
+    "Long sales cycles; preference for in-house or global brands; strict on-prem/security demands"
+   ],
+   "best_fit": "Pick 2-3 anchors: HD Hyundai (shipyard robots), Doosan or Rainbow (manipulation data factory), and one defense prime.",
+   "sources": [
+    "https://github.com/DoosanRobotics",
+    "Prior knowledge for the rest"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "Isaac Sim latest stable is 6.1.0 (GitHub release Sep 10, 2026); 7.0.0 Alpha 1 was released Sep 18, 2026; 6.0.0 GA was Jun 4, 2026; 6.0.0-dev2 coincided with GTC 2026 (Mar 16, 2026).",
+   "source": "https://github.com/isaac-sim/IsaacSim/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "The Isaac Sim GitHub repo is Apache-2.0, but the PyPI 'isaacsim' metapackage (6.1.0.0, Sep 9, 2026) is labelled 'Other/Proprietary License (NVIDIA Proprietary Software)'. The code is open, the runtime is proprietary.",
+   "source": "https://github.com/isaac-sim/IsaacSim ; https://pypi.org/project/isaacsim/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Sim GPU requirements: workstation RTX 4080 minimum (RTX 5080+ recommended); datacenter A40 minimum, L40S or RTX PRO 6000 Blackwell recommended. Rendering needs RT-core GPUs, which drives cloud cost structure.",
+   "source": "https://github.com/isaac-sim/IsaacSim",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab 3.0 beta (Mar 17, 2026, GTC 2026 week) introduced multi-backend physics (PhysX default; Newton/MuJoCo-Warp backend that runs without Isaac Sim), pluggable renderers (Isaac RTX, OVRTX, Newton Warp), four visualizers (Kit, Newton, Rerun, Viser), Warp-native data, and breaking changes (quaternion WXYZ to XYZW). 3.0.0-EA followed in Sep 2026 for Isaac Sim 6.1.",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-beta ; https://github.com/isaac-sim/IsaacLab/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "Newton physics engine: Apache-2.0, Linux Foundation project, founding contributors Disney Research, Google DeepMind and NVIDIA; built on Warp with MuJoCo Warp as primary backend; v1.0.0 released Apr 13, 2026; v1.6.1 on Oct 5, 2026; ~5.7k stars.",
+   "source": "https://github.com/newton-physics/newton ; https://github.com/newton-physics/newton/releases ; https://github.com/newton-physics/newton/releases?page=2",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo 3.15.0 released Oct 5, 2026. Recent releases added an experimental IPC penetration-free flex contact (3.14), a discrete integrator (3.13), a PID actuator (3.12) and conveyor surface velocity/adhesion (3.11).",
+   "source": "https://github.com/google-deepmind/mujoco/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "Genesis World has ~30k stars, is Apache-2.0, is officially supported by Genesis AI, published a 'Genesis World 1.0' blog in May 2026 and integrates rigid/FEM/MPM/particle/IPC solvers with the Nyx renderer.",
+   "source": "https://github.com/Genesis-Embodied-AI/Genesis",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA GR00T N1.7 is the current GA open VLA (Cosmos-Reason2-2B/Qwen3-VL backbone, relative end-effector action space, pretraining including 20K hours of EgoScale human video). Code is Apache-2.0; weights are under the NVIDIA Open Model License.",
+   "source": "https://github.com/NVIDIA/Isaac-GR00T",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA Cosmos world foundation models: Predict2.5, Transfer2.5 and Reason2 repos are Apache-2.0 and were updated Jun 2026; the org also ships Cosmos-RL and Cosmos-Xenna data pipelines.",
+   "source": "https://github.com/nvidia-cosmos",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA's open-source usd-content-agents (Apache-2.0) automates material assignment, physics-property classification, articulation inference, texture and geometry generation, and validation for USD assets. This directly commoditizes manual SimReady asset conversion.",
+   "source": "https://github.com/NVIDIA-Omniverse/usd-content-agents",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA is modularizing Omniverse into Kit-less libraries (ovphysx physics; ovrtx real-time sensor simulation and rendering) and CAD-to-USD virtual-facility samples (vfi-samples), all updated Oct 2026.",
+   "source": "https://github.com/NVIDIA-Omniverse",
+   "confidence": "high"
+  },
+  {
+   "claim": "Current NVIDIA Omniverse blueprints on GitHub: Cosmos Dataset Search, digital twins for fluid simulation (CFD), DSX blueprint for AI factories, Earth-2 weather analytics, and synthetic manipulation motion generation.",
+   "source": "https://github.com/NVIDIA-Omniverse-blueprints",
+   "confidence": "high"
+  },
+  {
+   "claim": "Physical Intelligence openpi (14.1k stars, Apache-2.0) offers pi0, pi0-FAST and pi0.5 open weights; pi0.5 and PyTorch support landed Sep 2025.",
+   "source": "https://github.com/Physical-Intelligence/openpi",
+   "confidence": "high"
+  },
+  {
+   "claim": "Lightwheel publishes LW-BenchHub (Isaac Lab-Arena based, 268 tasks), SimReady assets free for non-commercial use, leisaac teleoperation (741 stars) and MJCF/USD converters.",
+   "source": "https://github.com/lightwheelai",
+   "confidence": "high"
+  },
+  {
+   "claim": "ManiSkill3 (Hao Su lab, linked to Hillbot) code is Apache-2.0 but its assets are CC BY-NC 4.0 (non-commercial); it was published at RSS 2025.",
+   "source": "https://github.com/haosulab/ManiSkill",
+   "confidence": "high"
+  },
+  {
+   "claim": "MORAI's open-source GitHub org is active in 2026: ROS2 message set updated Aug 2026 and a MORAI SIM v2.1 control example updated Sep 2026.",
+   "source": "https://github.com/MORAI-Autonomous",
+   "confidence": "high"
+  },
+  {
+   "claim": "Doosan Robotics already integrates with the NVIDIA stack (Isaac driver with cuRobo, cuMotion driver) and ships a Docker Compose 'Dart robot simulator' (updated Sep 2026).",
+   "source": "https://github.com/DoosanRobotics",
+   "confidence": "high"
+  },
+  {
+   "claim": "Microsoft Fabric 'digital twin builder' was still in preview as of its doc dated 2026-05-18 and is explicitly 'different from the Azure Digital Twins service'. No ADT retirement notice was found in the docs.",
+   "source": "https://github.com/MicrosoftDocs/fabric-docs/blob/main/docs/real-time-intelligence/digital-twin-builder/overview.md ; https://github.com/MicrosoftDocs/azure-docs/tree/main/articles/digital-twins",
+   "confidence": "high"
+  },
+  {
+   "claim": "Parallel Domain's public GitHub shows no active product SDK (step-sdk archived Oct 2023; recent repos are forks), so its product momentum is uncertain.",
+   "source": "https://github.com/parallel-domain",
+   "confidence": "medium"
+  },
+  {
+   "claim": "CARLA 0.10.0 (Dec 19, 2024) moved to Unreal Engine 5.5 with native ROS2; no newer major release is listed.",
+   "source": "https://github.com/carla-simulator/carla/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "Digital twin market: MarketsandMarkets ~USD 21.1B (2025) to ~USD 149.8B (2030), CAGR ~47.9%; Grand View Research ~USD 25.0B (2024) to ~USD 155.8B (2030), CAGR ~34.2%. Earlier MnM edition: USD 10.1B (2023) to USD 110.1B (2028), 61.3%. Scope differences explain the gap.",
+   "source": "Prior knowledge of MarketsandMarkets and Grand View Research press releases (https://www.marketsandmarkets.com/Market-Reports/digital-twin-market-225269522.html blocked this session)",
+   "confidence": "low"
+  },
+  {
+   "claim": "Synthetic data generation market: MarketsandMarkets USD 0.3B (2023) to USD 2.1B (2028), CAGR 45.7%; Grand View ~USD 218M (2023), ~35% CAGR. These figures count tools only and exclude physical-AI data services.",
+   "source": "Prior knowledge (MarketsandMarkets, Grand View Research); not re-verified",
+   "confidence": "low"
+  },
+  {
+   "claim": "Applied Intuition raised USD 600M Series F at a USD 15B valuation (Jun 2025).",
+   "source": "Prior knowledge (Applied Intuition press release Jun 2025); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Figure raised over USD 1B Series C at USD 39B post-money (Sep 2025); investors included NVIDIA and LG Technology Ventures.",
+   "source": "Prior knowledge (Figure press release Sep 2025); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Physical Intelligence raised USD 600M at USD 5.6B (Nov 2025) after USD 400M at USD 2.4B (Nov 2024).",
+   "source": "Prior knowledge (press coverage); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Skild AI: USD 300M Series A at USD 1.5B (Jul 2024); reported ~USD 4.5B in 2025 and ~USD 14B (Jan 2026, SoftBank/NVIDIA).",
+   "source": "Prior knowledge (Bloomberg/press); 2026 figure unverified",
+   "confidence": "low"
+  },
+  {
+   "claim": "Field AI raised USD 405M at USD 2B (Aug 2025); Genesis AI raised a USD 105M seed (Jul 2025, Eclipse and Khosla); Dyna Robotics raised a USD 120M Series A (2025).",
+   "source": "Prior knowledge (company announcements); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Meta acquired 49% of Scale AI for ~USD 14.3B (Jun 2025).",
+   "source": "Prior knowledge (Meta/Scale announcements); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Synopsys completed its ~USD 35B Ansys acquisition on Jul 17, 2025; Siemens completed its ~USD 10B Altair acquisition in Mar 2025.",
+   "source": "Prior knowledge (company press releases); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "In Oct 2025 (APEC Gyeongju), NVIDIA announced ~260,000 Blackwell GPUs for Korea: government ~50k, Samsung ~50k, SK ~50k, Hyundai Motor Group ~50k, Naver ~60k. HMG and NVIDIA announced a ~USD 3B physical-AI cluster/centre.",
+   "source": "Prior knowledge (NVIDIA newsroom Oct 31, 2025; blocked this session)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Korea's AI Basic Act took effect Jan 22, 2026; MOTIE launched the K-Humanoid Alliance in Apr 2025.",
+   "source": "Prior knowledge (Korean government announcements); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Unreal Engine charges ~USD 1,850 per seat per year for non-game companies with over USD 1M revenue; Omniverse Enterprise / NVIDIA AI Enterprise list at ~USD 4,500 per GPU per year.",
+   "source": "Prior knowledge (Epic and NVIDIA pricing pages); not re-verified",
+   "confidence": "low"
+  },
+  {
+   "claim": "1X opened NEO home-humanoid preorders at USD 20,000 or USD 499/month (Oct 2025).",
+   "source": "Prior knowledge (1X announcement); not re-verified",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Specific GTC 2026 (Mar 16-19, 2026), Computex 2026, SIGGRAPH 2026, ICRA/RSS/CoRL 2026 announcements beyond the GitHub release dates above could not be verified.",
+   "source": "Web search budget exhausted; nvidianews.nvidia.com blocked",
+   "confidence": "low"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "Digital twin market (MarketsandMarkets, 2025 edition)",
+   "value": "~USD 21.14B (2025) to ~USD 149.81B (2030); CAGR ~47.9% (LOW confidence, prior knowledge)",
+   "source": "MarketsandMarkets press release (not re-verified)"
+  },
+  {
+   "metric": "Digital twin market (Grand View Research)",
+   "value": "~USD 24.97B (2024) to ~USD 155.84B (2030); CAGR ~34.2% 2025-2030 (LOW)",
+   "source": "Grand View Research (not re-verified)"
+  },
+  {
+   "metric": "Digital twin market (MarketsandMarkets, 2023 edition) - shows how much forecasts get revised",
+   "value": "USD 10.1B (2023) to USD 110.1B (2028); CAGR 61.3% (LOW)",
+   "source": "MarketsandMarkets (not re-verified)"
+  },
+  {
+   "metric": "Synthetic data generation market (MarketsandMarkets)",
+   "value": "USD 0.3B (2023) to USD 2.1B (2028); CAGR 45.7% (LOW)",
+   "source": "MarketsandMarkets (not re-verified)"
+  },
+  {
+   "metric": "Synthetic data generation market (Grand View Research)",
+   "value": "~USD 218M (2023); ~35.3% CAGR 2024-2030 (LOW)",
+   "source": "Grand View Research (not re-verified)"
+  },
+  {
+   "metric": "Robotics simulation software market (various houses)",
+   "value": "~USD 1-3B (2024/25), ~15-25% CAGR; wide dispersion (LOW)",
+   "source": "Prior knowledge, aggregated; not re-verified"
+  },
+  {
+   "metric": "AV/ADAS simulation market (various houses)",
+   "value": "~USD 1.5-3B (2024/25), ~10-15% CAGR (LOW). Applied Intuition's USD 15B valuation alone shows these sizings understate the autonomy-toolchain spend.",
+   "source": "Prior knowledge; not re-verified"
+  },
+  {
+   "metric": "Humanoid robot TAM (Goldman Sachs, 2024 update)",
+   "value": "~USD 38B by 2035 (MEDIUM)",
+   "source": "Goldman Sachs Research (not re-verified)"
+  },
+  {
+   "metric": "Humanoid market (Morgan Stanley 'Humanoid 100', 2025)",
+   "value": "~USD 5 trillion by 2050 (MEDIUM)",
+   "source": "Morgan Stanley (not re-verified)"
+  },
+  {
+   "metric": "Applied Intuition valuation",
+   "value": "USD 15B (Series F USD 600M, Jun 2025) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Figure AI valuation",
+   "value": "USD 39B post-money (Series C over USD 1B, Sep 2025) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Physical Intelligence valuation",
+   "value": "USD 5.6B (USD 600M, Nov 2025); USD 2.4B (USD 400M, Nov 2024) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Skild AI valuation path",
+   "value": "USD 1.5B (Jul 2024) to ~USD 4.5B (2025) to reported ~USD 14B (Jan 2026) (LOW)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Field AI",
+   "value": "USD 405M raised, USD 2B valuation (Aug 2025) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Genesis AI seed",
+   "value": "USD 105M (Jul 2025) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Dyna Robotics Series A",
+   "value": "USD 120M (2025) (LOW-MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Meta investment in Scale AI",
+   "value": "~USD 14.3B for 49% (Jun 2025) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Wayve",
+   "value": "USD 1.05B Series C (May 2024); NVIDIA LOI up to USD 500M (Sep 2025) (MEDIUM/LOW)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Waabi",
+   "value": "USD 200M Series B (Jun 2024) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Synopsys-Ansys deal",
+   "value": "~USD 35B, closed Jul 17, 2025 (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Siemens-Altair deal",
+   "value": "~USD 10B, closed Mar 2025 (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "NVIDIA GPUs allocated to Korea (Oct 2025)",
+   "value": "~260,000 Blackwell: Gov 50k, Samsung 50k, SK 50k, HMG 50k, Naver 60k (MEDIUM)",
+   "source": "Prior knowledge (NVIDIA newsroom)"
+  },
+  {
+   "metric": "HMG x NVIDIA physical-AI investment",
+   "value": "~USD 3B (~KRW 4.3T) (LOW-MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Unreal Engine enterprise seat price",
+   "value": "~USD 1,850 per seat per year (non-game, over USD 1M revenue) (LOW-MEDIUM)",
+   "source": "Prior knowledge (Epic)"
+  },
+  {
+   "metric": "NVIDIA Omniverse Enterprise / AI Enterprise list price",
+   "value": "~USD 4,500 per GPU per year (LOW)",
+   "source": "Prior knowledge (NVIDIA)"
+  },
+  {
+   "metric": "1X NEO consumer humanoid price",
+   "value": "USD 20,000 or USD 499/month (Oct 2025) (MEDIUM)",
+   "source": "Prior knowledge"
+  },
+  {
+   "metric": "Isaac Sim minimum/recommended datacenter GPU",
+   "value": "A40 min; L40S or RTX PRO 6000 Blackwell recommended (HIGH)",
+   "source": "https://github.com/isaac-sim/IsaacSim"
+  },
+  {
+   "metric": "GitHub stars (Oct 2026) as an ecosystem-pull proxy",
+   "value": "Genesis ~30k; openpi 14.1k; GR00T 8.2k; Newton 5.7k; Isaac Sim 4.2k; ManiSkill 3.4k; Cosmos-Predict2.5 1.4k (HIGH)",
+   "source": "GitHub repo pages fetched 2026-10-06"
+  },
+  {
+   "metric": "Newton release cadence",
+   "value": "v1.0.0 (Apr 13, 2026) to v1.6.1 (Oct 5, 2026): 6 minor releases in ~6 months (HIGH)",
+   "source": "https://github.com/newton-physics/newton/releases"
+  },
+  {
+   "metric": "MuJoCo release cadence",
+   "value": "5 minor releases (3.11-3.15) between Jul 27 and Oct 5, 2026 (HIGH)",
+   "source": "https://github.com/google-deepmind/mujoco/releases"
+  },
+  {
+   "metric": "Lightwheel LW-BenchHub task count",
+   "value": "268 tasks (HIGH)",
+   "source": "https://github.com/lightwheelai"
+  },
+  {
+   "metric": "GR00T N1.7 human video pretraining",
+   "value": "20K hours EgoScale human video (HIGH)",
+   "source": "https://github.com/NVIDIA/Isaac-GR00T"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "Adopt and extend; do not build an engine. Standardize on OpenUSD plus Isaac Lab 3.x multi-backend (PhysX + Newton/MuJoCo-Warp), with URDF/MJCF/USD round-trip (Lightwheel's mjcf2usd/usd2mjcf show the need). Keep Genesis as an optional backend for deformables and fluids. Newton 1.x (Apache-2.0, Linux Foundation) and MuJoCo 3.15 already provide the physics, and NVIDIA is shipping Kit-less ovphysx/ovrtx libraries that can be embedded. Put engineering into the parts AICHEMIST can own: LLM-driven scene and task authoring, data-generation pipelines, Real2Sim assets, vertical scenario libraries, evaluation, and sovereign/on-prem packaging.",
+  "Sell outcomes, not simulator seats. Productize a 'Physical-AI Data Factory'. Input: CAD/BIM/photos plus 10-100 teleop demos. Output: a validated SimReady twin, synthetic multimodal datasets (RGB-D, segmentation, LiDAR, tactile), fine-tuned policies (GR00T N1.7 / pi0.5 bases) and an evaluation report. The synthetic-data tools market (~USD 0.3-0.6B) is too small to win on tooling alone.",
+  "Lead with one or two verticals where Korea has unique demand and data. First, shipbuilding and heavy industry (HD Hyundai/HD Hyundai Robotics, Hanwha Ocean, Samsung Heavy): welding, painting, block logistics, crane and humanoid tasks, boosted by MASGA. Second, factory and logistics manipulation for Korean robot makers (Doosan Robotics, already on Isaac/cuRobo; Rainbow/Samsung; LG/Bear) and for CJ Logistics and Coupang. Deprioritize generic AV simulation (Applied Intuition, MORAI, NVIDIA blueprints and world models already cover it) and partner with MORAI instead.",
+  "Add a separate air-gapped defense SKU: EO/IR/SAR/radar synthetic data and drone/UGV training twins for ADD, Hanwha Aerospace, LIG Nex1 and KAI. Use Bifrost and Duality as the reference business model. Expect long cycles, so run it as a second-wave line with security certification planned early.",
+  "Build a Real2Sim asset moat on CEN's NeRF/3DGS pipeline. Add physical-parameter identification (mass, friction, articulation and joint limits from video plus a small in-house measurement rig), publish USD+MJCF+URDF with validation certificates, and license commercially. That contrasts with ManiSkill's CC BY-NC assets and Lightwheel's non-commercial free set. Benchmark against and integrate NVIDIA usd-content-agents rather than rebuilding generic auto-annotation. Differentiate on measured physics and Korean/Asian industrial and household SKUs.",
+  "Become the neutral measurement layer. Launch a 'K-Physical AI Arena' that pairs a simulation benchmark with real test cells, standardized for K-Humanoid Alliance members, ideally with KIRIA/KTL. Evaluation is sticky, regulator-friendly under the AI Basic Act, and hard for a single OEM or NVIDIA to own.",
+  "Ride the sovereign-GPU wave. Deploy CEN's workspace on Korean sovereign clouds that received Blackwell allocations (NAVER Cloud, KT, NHN, Samsung SDS) and offer an on-prem appliance for chaebol fabs, shipyards and defense. Join NVIDIA Inception and the Omniverse/Isaac partner programme and co-sell with NVIDIA Korea into the HMG, Samsung, SK and Naver physical-AI programmes.",
+  "Partner with incumbents rather than fight them. Ship connectors from Siemens Process Simulate/Teamcenter, Dassault CATIA/DELMIA, AVEVA Marine and Autodesk Revit/BIM to USD training environments, and market the result as 'the AI training layer for your existing PLM twin'. Use group IT-services arms (Samsung SDS, LG CNS, Hyundai AutoEver, HD Hyundai IT) as resellers to get through procurement.",
+  "Integrate world-model augmentation (Cosmos Transfer2.5-class) for photoreal variation on top of physics ground truth, and report downstream task metrics (sim-to-real success-rate delta, mAP delta) to prove fidelity. This answers the main customer pain point: there is no proof that synthetic data is good enough.",
+  "Pricing (hybrid, anchored to public comps): (a) workspace subscription per seat, referencing the ~USD 1,850/seat/yr Unreal enterprise price point; (b) GPU-hour metering on RT-core GPUs (L40S / RTX PRO 6000) at a 30-60% margin over cloud cost; (c) data and scenario packs, plus per-task policy-training packages; (d) on-prem enterprise licence (indicatively KRW 0.3-1.5B per year), referencing NVIDIA's ~USD 4,500/GPU/yr enterprise list price; (e) NRE for co-development. Target 2-3 paid PoCs of KRW 200-500M each in 2026-27 with HD Hyundai, Doosan or Rainbow, and one defense prime, and use MSIT/MOTIE physical-AI and K-Humanoid programmes for non-dilutive funding.",
+  "Watch-list triggers that should prompt a strategy review: NVIDIA productizing SimReady/content agents or a managed Isaac cloud in Korea; Lightwheel or Applied Intuition opening Korean sales; Chinese data factories (AgiBot, Manycore) pricing assets near zero; HMG/Samsung announcing in-house data factories; world models reaching controllable physics."
+ ],
+ "risks": [
+  "Platform commoditization by NVIDIA: Isaac Sim/Lab, Newton, Cosmos, GR00T and even SimReady asset agents are free or open. Any generic platform or asset feature can be matched by NVIDIA within months, and the proprietary Isaac Sim runtime licence (PyPI) also limits how freely AICHEMIST can redistribute on-prem.",
+  "Market-size illusion: digital-twin forecasts vary 3-10x by scope, and the synthetic-data tools market is only ~USD 0.3-0.6B. Investors and the CEO should not size the opportunity from top-line digital-twin numbers.",
+  "Customer in-housing: leading autonomy and robotics firms (Waabi, Wayve, Figure, Skild, Tesla, HMG/42dot) build simulation internally. Chaebol IT-services arms may capture projects after AICHEMIST's PoC.",
+  "Long enterprise and defense sales cycles (12-24+ months) and procurement bias toward global brands (Siemens, Dassault, NVIDIA) strain a startup's runway.",
+  "World-model disruption: generative simulators may reduce the value of hand-authored assets and scenes. Mitigate by owning physics ground truth, evaluation and data rights.",
+  "GPU economics: Isaac rendering needs RT-core GPUs (L40S / RTX PRO), not H100, and GPU-hour margins compress as cloud prices fall.",
+  "Fast-moving APIs: Isaac Lab 3.0's breaking changes and monthly Newton/MuJoCo releases create a heavy maintenance burden for a small team.",
+  "Competition for scarce Korean talent in USD, RL and sim-to-real against Samsung, HMG, Naver and global labs.",
+  "Fidelity liability: if synthetic data or sim-validated policies fail in the field (shipyard or defense), reputational and contractual exposure is high without validated metrics.",
+  "Geopolitics and compliance: export controls, US connected-vehicle rules and defense security requirements. Chinese low-cost competitors put pressure on generic asset and data pricing.",
+  "Verification gap in this report: most market and funding figures could not be re-checked this session (search budget exhausted, domains blocked), so decisions should not rest on them until they are verified."
+ ],
+ "open_questions": [
+  "What exactly did NVIDIA announce at GTC 2026 (Mar 16-19), Computex 2026 and SIGGRAPH 2026 for Isaac, Newton, Cosmos and Omniverse (e.g., managed cloud offerings, SimReady marketplace, pricing changes)? Only the GitHub release dates were verified.",
+  "Current (2026) funding and valuation for Skild AI, Wayve, Waabi, 1X, Physical Intelligence, Lightwheel, Hillbot, Duality, Bifrost, Rendered.ai and Foretellix.",
+  "Is AWS IoT TwinMaker still open to new customers, and has Microsoft announced any Azure Digital Twins retirement or a migration path to Fabric?",
+  "Updated analyst figures (2025/2026 editions) for robotics simulation, AV simulation and synthetic data, so the dispersion can be quantified properly.",
+  "MORAI's latest funding round, revenue, IPO plans and physical-AI/robotics roadmap; whether it would partner or compete.",
+  "Financials (2025 DART filings) for E8 (NDX PRO) and VIRNECT; identity and relevance of 'Danusys' and '에이딕', which could not be checked.",
+  "Which simulation stacks HMG/Boston Dynamics, Samsung/Rainbow, LG, HD Hyundai and Hanwha use internally, and their budgets for synthetic and robot-training data in 2026-27.",
+  "Korean government 2026-2027 budget lines for physical AI, the K-Humanoid Alliance and defense synthetic data, and the procurement routes AICHEMIST can use.",
+  "Willingness of Korean shipbuilders and defense primes to share CAD, process and sensor data, or to require fully on-prem deployment.",
+  "Public pricing points for Applied Intuition, Lightwheel assets, Duality Falcon and NVIDIA's latest Omniverse/AI Enterprise licences in 2026."
+ ]
+}

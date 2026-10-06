@@ -1,0 +1,158 @@
+{
+  "lens": "Combined panel of Korean enterprise buyers (HD Hyundai, Hyundai Motor Group robotics, Doosan Robotics, Samsung) and a Korean government R&D evaluator (IITP/KEIT/TIPS). Criteria judged: procurement realism (on-prem/VPC, security review, ISMS-P/CSAP/GS, vendor registration, references); buyer ROI clarity and contract acceptance criteria; fit with 2026-2027 programs (Deep-tech TIPS, AI/Data vouchers, K-Humanoid/KEIT, M.AX/AI-factory, IITP, NIA data, government GPU allocations); KPI measurability and third-party verifiability (KTL/KOLAS/TTA); consortium-role fit (supplier inside chaebol/institute consortia rather than prime); and time to the first paid reference. Weighting: korea_market_fit 0.20 carries procurement, program and consortium fit. time_to_revenue 0.15 is time to first paid reference. license_legal_safety 0.12 covers on-prem distribution, SBOM and defense clauses as procurement blockers. execution_risk_inverse 0.11 asks whether the stated KPIs will be hit. realism 0.08 covers measured, verifiable fidelity. training_capability 0.07. cen_synergy and capital_efficiency 0.06 each (matching-fund capacity, staged risk). physics_power, convenience and moat 0.04 each. global_scalability 0.03.",
+  "evaluations": [
+    {
+      "proposal_key": "A",
+      "scores": {
+        "physics_power": 8,
+        "realism": 8,
+        "convenience": 7,
+        "training_capability": 8,
+        "time_to_revenue": 7,
+        "moat_defensibility": 4,
+        "capital_efficiency": 3,
+        "license_legal_safety": 4,
+        "cen_synergy": 7,
+        "korea_market_fit": 6,
+        "global_scalability": 5,
+        "execution_risk_inverse": 4
+      },
+      "weighted_total": 5.88,
+      "strongest_ideas": [
+        "Fixed-price 12-week 'Cell-to-Policy' PoC (KRW 1.5-2.5억, 30% upfront) delivered as outputs only (twin, dataset, policy, sim-to-real report) from AICHEMIST's own GPUs, so the first invoice does not wait on NVIDIA hosting terms.",
+        "Hard M10 gate (written NVIDIA hosting/OEM terms + >=3 paid PoCs + >=40% PoC gross margin) with a named fallback (freeze at 27 FTE, move SaaS core to Kit-less Newton/mjlab). Procurement committees and R&D evaluators can audit this go/no-go rule.",
+        "Matches the chaebol stack: Samsung AI Megafactory, HD Hyundai Samho and the HMG physical-AI cluster all run on Omniverse. 'Omniverse-compatible' with BYO-NVAIE for groups that already hold licences removes a procurement objection, and NVIDIA co-sell plus SI-arm resale (Samsung SDS, Hyundai AutoEver, HD Hyundai IT) is a realistic route through vendor registration.",
+        "CI-enforced deny list (Hunyuan3D, Inria 3DGS family, nvdiffrast, MimicGen code, ManiSkill/GO-1/RLDX-1, AGPL/GPL on-prem, conditional cuRobo) matches the fact-check exactly.",
+        "P0 KPIs are concrete and testable: RTX session start <=90 s, RTT <=80 ms from Seoul, agent completes >=85% of 20 scripted Korean commands, 0 deny-list hits."
+      ],
+      "fatal_flaws_or_gaps": [
+        "The highest-value Korean SKU, 'Twin Sovereign' on-prem/air-gapped at KRW 5-15억/yr, depends on NVIDIA OEM/redistribution rights. These are unverified and may never be granted to a Korean startup. On-prem is the default requirement for HD Hyundai yards, Samsung fabs and defense, so the core enterprise revenue line depends on a third party's signature.",
+        "Program-calendar miss: AI/Data Voucher supplier registration sits in Phase 1 (Feb-Jul 2027), but the research window is Dec 2026-Jan 2027 registration and Jan-Mar 2027 calls. FY2027 revenue still books KRW 3억 of vouchers. Phase 0-1 has no plan for K-Humanoid/KEIT, IITP, NIA or M.AX applications, even though those calls fall in Q1-Q2 2027.",
+        "An 'NVIDIA delivery partner' gives an R&D evaluator little proprietary technology to score (technical merit is 40-60 of 100 points). It also collides with the chaebol SI arms, which are NVIDIA partners themselves, so in a consortium AICHEMIST looks like a subcontractor to its own reseller.",
+        "Highest burn: KRW 158억 over 24 months, 16 to 52 FTE, and KRW 100억+ of equity needed by M9-12. Even if the M10 gate fails, spend is still KRW 120억. Funding the 25%+ private matching share and cash contributions for several concurrent grants is doubtful.",
+        "Government B200/H200 allocations are left unbudgeted ('upside'), which forgoes the cheapest in-kind compute for training.",
+        "Self-admitted 'none of these is a technology moat'. A managed Isaac cloud from NVIDIA with Naver or KT would undercut the hosted tier, which is exactly where the buyer's data-residency demand points.",
+        "The Cell-to-Policy price table has no acceptance criteria. Buyer ROI (engineer-hours saved, real-data collection avoided) is never quantified, so a procurement committee cannot sign off on value."
+      ],
+      "factual_errors": [
+        "'Isaac Lab Mimic turns 10 demos into 1,000 in 18-40 minutes': per the research, 18-40 min holds only for state-based generation. Visuomotor (camera) generation takes about 10 h per 1,000 demos, with about 50% generation success on Franka, and the camera case is the one that matters for a real cobot cell.",
+        "Voucher timing is internally inconsistent: supplier registration is planned for Feb-Jul 2027, while the research puts registration in Dec 2026-Jan 2027 and calls in Jan-Mar 2027, yet FY2027 revenue includes KRW 3억 of vouchers.",
+        "'Rainbow Robotics (about 35% Samsung-owned)' is stated as fact without the (U) tag. The research rates it prior-knowledge medium/low confidence.",
+        "The RT-GPU-hour price of KRW 6,000 claims a 50-75% gross margin at $1.1-2.3 cost. The proposal's own budget uses AWS Seoul RTX PRO 6000 at $4.1/h for latency-critical sessions, and the verified Seoul rate is $4.135/h, which leaves about 4% margin on exactly the Korea-resident sessions that buyers demand.",
+        "NuRec is described as 'GA at GTC 2026 via NGC' with only its terms tagged (U). The fact-check lists NuRec maturity and licensing as missing coverage, so the GA claim is unverified too.",
+        "Kamino is listed as 'beta'. The fact-check calls the Newton Kamino solver experimental (Isaac Lab 3.0 labels it beta), so this is minor."
+      ]
+    },
+    {
+      "proposal_key": "B",
+      "scores": {
+        "physics_power": 7,
+        "realism": 5,
+        "convenience": 5,
+        "training_capability": 6,
+        "time_to_revenue": 5,
+        "moat_defensibility": 6,
+        "capital_efficiency": 5,
+        "license_legal_safety": 9,
+        "cen_synergy": 6,
+        "korea_market_fit": 6.5,
+        "global_scalability": 6,
+        "execution_risk_inverse": 4
+      },
+      "weighted_total": 5.95,
+      "strongest_ideas": [
+        "A license-clean, signed-SBOM, no-telemetry, air-gap-installable physics and training core (Newton/MJWarp, MuJoCo CPU, PhysX SDK from source, Chrono, Isaac Lab from source). This is what a defense accreditation or a Samsung/HD Hyundai security review asks for, and it holds up at M&A.",
+        "The edition structure (Global SaaS / Korean-CSP Sovereign Cloud / On-prem / Air-gapped, with T3 RTX absent by default) maps one-to-one to Korean procurement categories and to CSAP-cloud routing for public buyers.",
+        "Phase-0 verification gates V1-V8 (NVIDIA written terms, GPL/Blender opinion, own benchmarks, Korean-CSP RT/MIG availability, salary, program caps, OpenMDW/GR00T/openpi military clauses, on-prem LLM origin) come before any money is committed. This is the most disciplined handling of the digest's unverified items.",
+        "KPIs mirror the research's government proposal kit and are third-party testable: lidar range error <=2 cm, sim2real <=10 pp, synthetic-only >=90% of real mAP, bit-exact CPU replay, 0 non-commercial/AGPL/BSL/proprietary components in the core SBOM, on-prem install <=3 days.",
+        "Its own ROS 2 bridge supports Lyrical LTS (EOL 2031) from day one; Isaac Sim's workspaces support only Humble and Jazzy. Long-lived industrial buyers care about this.",
+        "Defense license profile excludes the SAM License, VGGT-Commercial and unverified models; PX4 replaces ArduPilot; marine dynamics is clean-room."
+      ],
+      "fatal_flaws_or_gaps": [
+        "Slowest path to a first paid reference. Phase 0 (M0-3) yields only LOIs and a bake-off, the first paid PoC lands around M4-6, KRW 10억 is contracted only by M10, and Sovereign Edition GA is M10-18. A chaebol buyer gets no production on-prem product for about a year, and an evaluator sees no paid reference in a Q1 2027 TIPS application.",
+        "Realism downgrade where B's own targets need it most. B admits its open sensor library trails RTX lidar/radar by 12-18 months, with radar multipath weakest. Shipyard, maritime and defense buyers (B's wave 2) buy precisely EO/IR and marine radar fidelity.",
+        "Wave-1 heavy-industry manipulation rests on Isaac Lab's Kit-less Newton backend, which is beta with a focused set of validated environments. The license-clean PhysX path needs a self-built PhysX-SDK USD adapter (24 head-months) that duplicates NVIDIA's ovphysx, and TacSL tactile is excluded. The validated manipulation templates that customers' engineers know are therefore unavailable in the sovereign core at launch.",
+        "Thin program mapping. IITP, KEIT, NIA and M.AX/AI-factory are never named, and K-Humanoid appears only in wave 3 (M20+), missing the Q1-Q2 2027 calls. The sovereign-AI narrative suits government evaluators, but the proposal does not convert it into named applications.",
+        "Chaebol buyers on my panel have already standardized on Omniverse and largely hold NVIDIA licences. To them the 'license-clean' premium (about KRW 19억 of sovereignty cost) is worth less than RTX parity, and an RTX-optional stack can read as off-stack in a compatibility-scored procurement.",
+        "Execution load is heavy: its own sensor library (camera ISP, lidar, FMCW radar, event, tactile), PhysX adapter, air-gap packaging, marine module and Fidelity Lab, all with 14 to 24 FTE in year 1.",
+        "Using government B200/H200 for Cycles path-traced SDG is presented as an advantage, but allocation workload rules are unverified, and path tracing on non-RT GPUs is the costliest tier ($300-5,000 per 1M frames)."
+      ],
+      "factual_errors": [
+        "Newton's 'sim2real record: Unitree G1, Skild rack assembly, Samsung cable insertion' is stated as untagged fact. The research rates these medium confidence and says they are NVIDIA-partner announcements; independent sim2real evidence is listed as an open question.",
+        "The Isaac Lab 3.0 Kit-less Newton backend is presented as the core training path without disclosing that it is beta with a limited validated task set (fact-check). Readiness for wave-1 manipulation is overstated.",
+        "Government B200/H200 allocations are claimed to be usable for T0-T2 rendering/SDG. The research confirms only that these allocations are training GPUs, and the allocation rules are an open question. The [V] tag covers availability, not permitted workloads.",
+        "'3DGRT on RT-core GPUs only' does not appear in the digest; it is an unverified technical claim (minor)."
+      ]
+    },
+    {
+      "proposal_key": "C",
+      "scores": {
+        "physics_power": 7,
+        "realism": 8,
+        "convenience": 6,
+        "training_capability": 8,
+        "time_to_revenue": 8,
+        "moat_defensibility": 6,
+        "capital_efficiency": 6,
+        "license_legal_safety": 7,
+        "cen_synergy": 9,
+        "korea_market_fit": 8,
+        "global_scalability": 4,
+        "execution_risk_inverse": 6
+      },
+      "weighted_total": 7.28,
+      "strongest_ideas": [
+        "Every SKU carries an acceptance metric (synthetic-only >=90% of real mAP or synthetic+10% real >=100%; real-cell success with a gap <=10-15 pp; Pearson r over >=5 policies). Of the three proposals, only this one lets a Korean buyer's procurement committee write ROI and acceptance into the PO.",
+        "Outputs-only revenue builds on CEN's existing SDG data business. The first contracts (3 datasets, KRW 2억 by M4) need no SaaS security review and no NVIDIA hosting terms, giving the shortest realistic path to a first paid reference. The worst-case licence exposure is quantified (NVAIE on 16-32 internal GPUs, about KRW 1-2억/yr).",
+        "Bronze/Silver/Gold certificate tiers (VLM-estimated, video-identified, lab-measured) and Run Manifests with deterministic MuJoCo CPU/Newton replay produce third-party-verifiable fidelity KPIs that a KTL/KOLAS/TTA test report can certify.",
+        "K-Physical AI Arena with a KTL/KIRIA/TTA co-signer and a governance charter. A neutral evaluation and demonstration-data factory is exactly the consortium work package the research recommends for K-Humanoid/KEIT and NIA, and no chaebol can play that role for its rivals.",
+        "Productization gate (>=80% zero-touch jobs, >=60% line gross margin, written licence basis for tenant use) plus engineer-hours per outcome as a board KPI. This is a measurable guard against becoming a body shop.",
+        "Staged commitment: Phase 0 costs about KRW 10억, which makes the CEO's decision reversible and is the kind of milestone budget a TIPS operator can fund.",
+        "Vouchers are delivered as outcome SKUs, so subsidized work produces both a named reference and marketplace content; customers who grant measurement rights get a discount, which feeds the paired corpus."
+      ],
+      "fatal_flaws_or_gaps": [
+        "Services gravity in the numbers: about 60% of Y1 revenue is voucher- or government-funded at about 45% gross margin. TIPS operators, VCs and R&D evaluators discount this (the research flags voucher over-dependence), and an evaluator may score a 'factory' as an SI/data contractor with low technical novelty unless Forge, the fidelity predictor and the certificate schema are framed as R&D (TRL 4 to 7).",
+        "On-prem 'Factory-in-a-box' and ISMS-P arrive only in P2 (M13-24). Tier-1 chaebol sites (Samsung fabs, HD Hyundai yards, HMG plants) typically ban phones and cameras and will not let site captures leave the premises. The Forge's phone-video capture therefore needs an on-prem capture-and-reconstruct kit in P0-P1, not P2.",
+        "Arena conflict of interest. AICHEMIST sells policies and grades them; chaebol consortium members will not accept grades until an independent co-signer and charter are signed. That must happen before Arena v0 goes external, not by M18.",
+        "Generality gap against the CEO's brief. Vehicles, drones, ships and defense arrive only at M25+, so HD Hyundai/SHI buyers on this panel get manipulation only until 2029.",
+        "The corpus moat is not reconciled with NIA open-data conditions or national-R&D/consortium IP terms. 3책5공 (the limit on concurrent government projects per researcher) and matching-fund cash are not planned, though a grant duplication map is mentioned.",
+        "Asset KPIs (10,000 by M24, 50,000 by M36) mix Bronze VLM-estimated assets with lab-measured Gold. For evaluators the KPI should count Silver/Gold assets with measured error bars.",
+        "Execution depends on a single Head of Fidelity & Evaluation hire, which is a single point of failure in a tight Korean talent market."
+      ],
+      "factual_errors": [
+        "The licence column lists 'PhysX 5.11 via Isaac Lab 3.0' as Apache-2.0. Per the fact-check, the Isaac Lab PhysX path runs through Isaac Sim/Kit or the ovphysx pip binaries, both proprietary; only the PhysX SDK built from source is Apache-2.0. C's own risk table contradicts this column.",
+        "'Datasets sell in M2-M4 (voucher-funded)', i.e. Dec 2026-Feb 2027, conflicts with the research calendar: AI Voucher calls run Jan-Mar, and Data Voucher supplier registration is Dec-Jan with the demand call in Jan-Feb. Selection and contracting follow, so voucher-funded deliveries realistically start around M5-M8.",
+        "The AI Basic Act is listed among regulations 'starting to require simulation credibility'. The research describes the Act's obligations as high-impact AI, transparency and generated-content labeling, not simulation credibility (only the UN ADS regulation and ISO 34505 support that point).",
+        "The claim that Lightwheel's 'footprint is US/China' is untagged and absent from the digest, so it is unverified (minor; B tags the same claim [A])."
+      ]
+    }
+  ],
+  "criteria_weights": {
+    "physics_power": 0.04,
+    "realism": 0.08,
+    "convenience": 0.04,
+    "training_capability": 0.07,
+    "time_to_revenue": 0.15,
+    "moat_defensibility": 0.04,
+    "capital_efficiency": 0.06,
+    "license_legal_safety": 0.12,
+    "cen_synergy": 0.06,
+    "korea_market_fit": 0.2,
+    "global_scalability": 0.03,
+    "execution_risk_inverse": 0.11
+  },
+  "winner": "C",
+  "recommended_hybrid": "Use C's outcome-led factory as the commercial and grant spine, B's license-clean sovereign core as the on-prem/air-gap edition and every tenant-facing path, and A's NVIDIA alignment only where buyers already hold NVIDIA licences. (1) Oct-Dec 2026 (M0-2): register as AI Voucher and Data Voucher supplier in Dec 2026; sign a deep-tech TIPS operator; join the K-Humanoid Alliance; send NVIDIA Korea the written-terms request (outputs-only, hosted, on-prem/OEM, telemetry); get 3 named LOIs (one robot OEM such as Doosan, one shipbuilder such as HD Hyundai Robotics or SHI, one logistics or AI-factory lead); build one reusable proposal kit framed as TRL 4 to 7 with a module duplication map and 3책5공 staffing plan. (2) First paid references: outputs-only dataset contracts with acceptance tests to existing CEN SDG customers (M2-M4); voucher-funded outcome SKUs (M5-M8); A's fixed-price 12-week 'Cell-to-Policy' PoC (KRW 1.5-2.5억) with C's acceptance metrics and a liability cap written into the PO (M5-M9). (3) Program map: Deep-tech TIPS funds Forge + Sim Kernel + Fidelity scorecard. NIA data construction funds K-Pick and humanoid synthetic datasets (accept open data for datasets; keep generators and the paired corpus proprietary). K-Humanoid/KEIT work package: demonstration-data factory plus neutral evaluation. IITP co-performer with ETRI or KAIST funds B's sensor-physics library (lidar/radar/EO-IR profiles) instead of equity. An M.AX/AI-factory lighthouse with an SI arm as prime. DAPA/defense from 2027 H2 on B's air-gapped edition. Government B200/H200 for training only; 16 owned RTX PRO 6000 plus Korean-CSP RT capacity for rendering. (4) Procurement: B's Sovereign Edition (signed SBOM, no telemetry, offline updates, Newton/MuJoCo/PhysX-SDK core) is the on-prem SKU, GA by M15. An on-prem Forge capture kit ships in P1 for camera-restricted sites. BYO-NVAIE RTX premium for chaebol that already hold licences. ISMS-P/ISO 27001 start M6, GS certification on a frozen release by M15, CSAP only through a CSAP-certified Korean CSP if public SaaS is pursued. (5) Verification: KTL/KOLAS/TTA test reports on >=3 KPIs (synthetic-only mAP ratio, sim2real gap in pp, lidar range error, deterministic replay); Arena co-signer and charter signed before any external grading. (6) Money: about KRW 110-120억 over 24 months, released in stages. P0 about KRW 10억. M10 gate: >=3 paid references, written NVIDIA terms, PoC gross margin >=40%. M18 gate: first on-prem install and >=30% recurring revenue. FDE cap of 1 per KRW 8억 of outcome revenue; voucher/government share of revenue capped at <=40% by Y2. (7) Defer: an in-house radar model beyond calibrated profiles (until IITP-funded), marine/Fossen to M18+, and self-serve lines until they pass C's productization gate.",
+  "must_fix_before_final": [
+    "Rebuild the program calendar from the research: voucher supplier registration Dec 2026-Jan 2027 and calls Jan-Mar 2027; K-Humanoid/KEIT, IITP and NIA calls Q1-Q2 2027; TIPS operator Q4 2026 and submission Q1 2027; DAPA 2027 H2. Re-time all voucher revenue (A books it after missing registration; C books it in M2-M4).",
+    "Add an explicit government-program map: name each application, the module it funds, the TRL 4-to-7 claim, the duplication map, 3책5공 staffing limits, the 25%+ private matching cash, post-project royalties (기술료), and the IP/open-data terms of each consortium (especially NIA's open-data condition against a proprietary paired corpus).",
+    "Write the procurement path per anchor buyer: vendor-registration and security-review lead time (1-3 months), default deployment (on-prem/VPC for chaebol, air-gap for defense), customer-site capture restrictions (on-prem capture and reconstruction kit), data residency, and the ISMS-P/GS/CSAP timeline.",
+    "Do not sell an on-prem SKU that embeds Kit/Isaac Sim/ovrtx without NVIDIA OEM/redistribution rights in writing. Make the Newton/MuJoCo/PhysX-SDK core the default on-prem runtime, with RTX as BYO-licence. Fix C's licence label: the PhysX path through Isaac Lab is proprietary unless the PhysX SDK is built from source.",
+    "Quantify buyer ROI per offer (real-data collection and labeling cost avoided, engineer-hours saved, cycle-time or defect-rate impact) and put acceptance criteria and liability caps in every PoC price line.",
+    "Make KPIs third-party verifiable: name the testing body (KTL/KOLAS/TTA) and >=3 certified indicators; count only Silver/Gold assets in asset KPIs; sign the Arena co-signer and governance charter before external grading.",
+    "Make the revenue plan realistic: label all revenue as targets; cap the voucher/government-funded share; reconcile A's KRW 6,000 RT-hour price with the verified AWS Seoul $4.135/h cost; show cash timing including collection lag and the private matching share.",
+    "Correct factual overstatements: Mimic 18-40 min applies to state-based generation only (visuomotor is about 10 h per 1,000 demos); tag Newton's partner sim2real cases and Rainbow's Samsung stake as medium/low confidence; disclose that the Isaac Lab Newton backend is beta; the AI Basic Act does not mandate simulation credibility.",
+    "Treat government B200/H200 allocations as training-only until the allocation rules are verified, and secure RT-core capacity (RTX PRO 6000/L40S) from Korean CSPs, with R580+ driver images checked.",
+    "Get >=3 named LOIs (robot OEM, shipbuilder, logistics or AI-factory) before the TIPS submission, and name the M4 first-reference customer with its budget-cycle timing."
+  ]
+}

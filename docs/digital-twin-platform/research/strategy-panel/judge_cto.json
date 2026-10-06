@@ -1,0 +1,159 @@
+{
+  "lens": "CTO / principal simulation engineer. Judged on technical correctness of engine choices; whether the architecture actually delivers strong physics, sim-to-real realism (visual, physical, sensor), convenience and built-in RL/IL/VLA/perception training; API-churn and maturity exposure (Isaac Lab 3.0 EA, Isaac Sim 7.0 alpha, ovrtx/ovphysx alpha, MJWarp alpha, Newton monthly releases); realism of team skills; and whether timelines survive Korean hiring constraints. Factual errors against the research digest are penalised.",
+  "evaluations": [
+    {
+      "proposal_key": "A",
+      "scores": {
+        "physics_power": 8,
+        "realism": 8,
+        "convenience": 7,
+        "training_capability": 8,
+        "time_to_revenue": 7,
+        "moat_defensibility": 4,
+        "capital_efficiency": 3,
+        "license_legal_safety": 4,
+        "cen_synergy": 7,
+        "korea_market_fit": 7,
+        "global_scalability": 6,
+        "execution_risk_inverse": 4
+      },
+      "weighted_total": 6.22,
+      "strongest_ideas": [
+        "Explicit half-year release trains (Train 1 = Isaac Sim 6.1.x / Isaac Lab 3.0 GA / Kit 110.x); Isaac Sim 7.0 alpha kept on a side branch until GA plus one patch. This is the right answer to Kit/Isaac churn.",
+        "12-week 'Cell-to-Policy' PoC delivered as outputs only from AICHEMIST-owned GPUs, so revenue can start before NVIDIA hosting terms are signed.",
+        "A hard M10 gate (written NVIDIA hosting/OEM terms plus at least 3 paid PoCs and 40% PoC gross margin) that freezes headcount at 27 and names a Kit-less Newton/mjlab fallback.",
+        "Broadest physics and training coverage from day one: PhysX via Isaac Lab for contact-rich manipulation (SDF, TacSL, Mimic, Teleop, Arena), Newton/MJWarp Kit-less for locomotion, MuJoCo CPU reference, Chrono co-sim and an FMI 3.0 adapter.",
+        "Strongest out-of-box realism: RTX camera (PPISP), lidar, radar and ultrasonic in one USD stage, plus NuRec/3DGRUT reconstruction and Cosmos Transfer 2.5 moving to Cosmos 3 Nano with label QA.",
+        "A complete, correct deny list enforced in CI: Hunyuan3D, the Inria 3DGS family, Instant-NGP, nvdiffrast, MimicGen code, ManiSkill/GO-1/RLDX-1, AGPL in SaaS, GPL on-prem, and cuRobo only at a pinned Apache tag.",
+        "Its own authenticated TLS WebRTC gateway in front of Kit App Streaming, no cross-tenant GPU time-slicing, whole-GPU session pricing while RTX PRO 6000 MIG is unverified, and R580+ driver images."
+      ],
+      "fatal_flaws_or_gaps": [
+        "The core runtime is Kit/Isaac Sim, and its multi-tenant SaaS, on-prem/OEM redistribution and telemetry terms are unverified. P1 'CEN Twin beta, hosted for PoC customers ... until NVIDIA's terms are signed' is third-party hosting before written terms, which the digest explicitly warns against ('never ship Omniverse Kit or ovphysx to tenants without a written NVIDIA agreement').",
+        "Highest burn and headcount: 16 to 52 FTE, about KRW 158억 over 24 months, and a KRW 100억+ equity raise by M9-12. Under Korean hiring scarcity this needs an Isaac/Kit/OpenUSD simulation architect at M0 and about 36 net senior hires in 24 months, and hiring slips of 3-6 months are not modelled.",
+        "The M10 fallback to a Kit-less Newton/mjlab core is a re-platform, not a toggle. RTX sensors, Replicator SDG, Kit App Streaming, TacSL and the Twin Studio high-fidelity view all sit on Kit, so 10 months of Kit-coupled work would be largely stranded.",
+        "Highest exposure to API churn: Kit shipped about 3 majors in 12 months, Isaac Lab 3.0 breaks quaternion order and ProxyArray, and Isaac Sim 7.0 is alpha. Only 20% of WS1/WS4 capacity is reserved, while the digest says churn can eat 20-30%.",
+        "The proposal itself admits there is no technology moat; speed decays. If NVIDIA launches a managed Isaac cloud with Naver or KT, the position is absorbed, and channel conflict with NVIDIA's own SI partners is likely.",
+        "Technical KPIs are over-aggressive: a sim-to-real gap of 10 pp or less on 3 manipulation tasks by M10, 70% or better real-world humanoid success on 3 tasks by M18, and phone-to-SimReady in 30 minutes or less with 90% or better QA by M10. Humanoid loco-manipulation on MJWarp also ignores its weakness above about 60 DoF in a single mechanism (body plus two hands).",
+        "The on-prem 'Twin Sovereign' appliance and the defence SKU depend on unverified NVIDIA OEM/redistribution rights and Kit telemetry control, yet the FY2028 plan already books KRW 14억 of on-prem revenue."
+      ],
+      "factual_errors": [
+        "The vehicles row labels PhysX 'BSD-3'. The fact-check corrected the PhysX SDK 5.11 core to Apache-2.0 (the repo root is BSD-3), and A's own robot-physics row says Apache-2.0, so the document is internally inconsistent.",
+        "Release Train 1 pairs Isaac Lab 3.0 GA with Newton 1.6.x, but Isaac Lab 3.0-EA targets Newton 1.5.2 and Warp 1.16, while the current Warp (1.18, Newton's core dependency) needs Turing+ GPUs and R580+ drivers. The version skew is never acknowledged.",
+        "States NuRec as 'GA at GTC 2026 via NGC' as a fact. The digest lists NuRec/3DGUT container maturity and licensing as missing coverage (early access, terms unknown); only the terms are tagged (U).",
+        "Rescores the research matrix to 'B+ about 4.1' by raising licensing safety from 2 to 4 'once the terms are in writing'. That scores an unverified future event as a present fact.",
+        "Omission: 'Mimic turns 10 demos into 1,000 in 18-40 minutes' holds only for state-based data. Visuomotor generation takes about 10 hours per the options digest, and that is the case that matters for VLA/vision policies."
+      ]
+    },
+    {
+      "proposal_key": "B",
+      "scores": {
+        "physics_power": 7,
+        "realism": 5,
+        "convenience": 6,
+        "training_capability": 6,
+        "time_to_revenue": 5,
+        "moat_defensibility": 6,
+        "capital_efficiency": 5,
+        "license_legal_safety": 9,
+        "cen_synergy": 6,
+        "korea_market_fit": 8,
+        "global_scalability": 6,
+        "execution_risk_inverse": 4
+      },
+      "weighted_total": 6.04,
+      "strongest_ideas": [
+        "A 100% permissive physics-and-training core (Newton, MuJoCo, PhysX SDK from source, Isaac Lab from GitHub source, Chrono) with an SPDX/SBOM gate in CI that bans BSL, AGPL and proprietary code. It is the only plan that survives the 'on-prem = distribution' trigger for Korean chaebol, shipyard and defence buyers.",
+        "An owned Sim Kernel API that mirrors Isaac Lab 3.0's factory pattern (load/step/get_state/set_state/render/contacts/snapshot/restore/set_seed/capabilities), with a cross-backend conformance suite, Run Manifest, quarterly pins and 20% of WS1 reserved for maintenance. This is architecturally the most durable answer to API churn.",
+        "Phase-0 verification gates V1-V8 before money is committed: NVIDIA terms, Blender/GPL process isolation and ovstage replaceability, in-house benchmarks, Korean CSP RT-core GPU and MIG availability, salary benchmarks, programme calls, model licences including military clauses, and on-prem LLM origin.",
+        "Drake as the offline contact gold standard, plus MuJoCo CPU bit-exact replay and explicit 'statistically reproducible' labelling for GPU datasets.",
+        "Its own ROS 2 bridge supports Lyrical LTS from day one (the Isaac Sim workspaces cover only Humble and Jazzy). PX4 (BSD-3) replaces GPL ArduPilot, the Fossen marine module is clean-room, and the installer runs a driver-floor preflight (Turing+, R580+).",
+        "Rendering tiers T0-T2 need no RT cores, which in principle lets the sovereign path use government B200/H200 and customer H100 fleets.",
+        "A defence licence profile that excludes the SAM License, VGGT-1B-Commercial and other unverified models, and an honest moat note ('thin for the first 18 months')."
+      ],
+      "fatal_flaws_or_gaps": [
+        "The realism gap lands exactly where it matters. The sovereign and air-gapped editions ship a self-built lidar ray-caster and a 'simplified FMCW radar' with no RTX, yet Wave 2 sells maritime radar/EO-IR and defence sensor data. The verticals that most need high-fidelity radar get the weakest sensors (the proposal itself admits a 12-18 month lag).",
+        "Contact-rich manipulation for the Wave-1 heavy-industry cells rests on two weak legs. (a) Isaac Lab's Kit-less Newton backend is beta, with only MJWarp validated and only classic RL and flat-terrain locomotion covered. (b) The in-house PhysX-SDK USD adapter does not exist yet, and 24 head-months is optimistic for articulation, tensor-API, SDF and drive parity. TacSL is excluded.",
+        "The P0 bake-off (M0-3) lists 'PhysX-SDK (src)' as a benchmarked backend, but the adapter is only built in P1, so the bake-off cannot run as specified without falling back to Kit/Isaac Sim.",
+        "Largest in-house build scope of the three: Kernel, PhysX adapter, Renderer API, Warp sensor library, air-gap packaging, marine module and Forge, with only 14 to 24 people by M10. Warp/CUDA contact-physics engineers able to earn Newton commit rights are extremely scarce in Korea, so schedule risk is high.",
+        "The Teleop-to-Mimic-to-IL/VLA pipeline relies on Isaac Lab Mimic environments and Isaac Teleop (CloudXR). Their Kit-less/Newton support and CloudXR licensing are unverified, which undercuts the '100% permissive core' claim for training.",
+        "Wave-1 anchors are shipbuilders and chaebol plants with 12-24 month procurement cycles, so scoring them 5/5 on time-to-revenue and targeting KRW 10억 contracted by M10 is optimistic.",
+        "Path-traced SDG through Blender Cycles on non-RT GPUs is slow and costly ($300-5,000 per 1M frames per the digest), so sovereign photoreal SDG margins and throughput are weak."
+      ],
+      "factual_errors": [
+        "Presents 'Unitree G1, Skild rack assembly, Samsung cable insertion' as Newton's sim2real record without a caveat. The digest rates these as medium-confidence NVIDIA-partner announcements (Skild's work ran via Isaac Lab) and lists independent Newton sim2real evidence as an open question.",
+        "Calls the research team's KRW 80억 Strategy D an 'Isaac-first hybrid'. D's core is the open Newton/MuJoCo/Isaac Lab Kit-less stack with RTX only as a premium tier; only its Phase 0 rides on Isaac Sim. The KRW 19억 'sovereignty premium' is therefore measured against a mislabelled baseline, and it also counts marine Fossen work (12 head-months) that every plan needs.",
+        "Pins 'Isaac Lab 3.0 ... on the Kit-less Newton backend' alongside Newton 1.6.1, but Isaac Lab 3.0-EA targets Newton 1.5.2 and Warp 1.16. The version skew is not addressed."
+      ]
+    },
+    {
+      "proposal_key": "C",
+      "scores": {
+        "physics_power": 6.5,
+        "realism": 8,
+        "convenience": 5,
+        "training_capability": 7,
+        "time_to_revenue": 8,
+        "moat_defensibility": 7,
+        "capital_efficiency": 6,
+        "license_legal_safety": 7,
+        "cen_synergy": 8,
+        "korea_market_fit": 7,
+        "global_scalability": 5,
+        "execution_risk_inverse": 6
+      },
+      "weighted_total": 6.74,
+      "strongest_ideas": [
+        "An inside-out productization gate: a line goes self-serve only with at least 80% of jobs needing no engineer, at least 60% line gross margin and a written licence basis for tenant use. This is the cleanest technical answer to both the unverified NVIDIA hosting terms and the services trap.",
+        "Certificates replay only on MuJoCo CPU or Newton's deterministic paths, never on MJWarp (float32, non-deterministic on GPU). This handles CEN's 'reproducible' promise correctly and is the most accurate determinism treatment of the three.",
+        "Bronze/Silver/Gold certificate tiers (VLM-estimated, video-identified, lab-measured) carried in a dedicated aic:TwinCertificate USD schema with a JSON sidecar, which turns the Sim2Real Scorecard into a sellable product.",
+        "The moat is a paired real/sim measurement corpus from owned test cells, which NVIDIA does not run. The Arena has a third-party co-signer and a recusal rule.",
+        "Isaac RTX runs only inside the factory (outputs), and tenant-facing lines run on an Apache/BSD stack. Version facts are correct, including Isaac Lab 3.0-EA bundling Newton 1.5.2.",
+        "Phase 0 is sized at about KRW 10억 as the CEO's real decision this quarter. Forge includes an anonymization step (faces, plates, customer IP) for PIPA.",
+        "Wave 1 is object-rich logistics picking because outcomes can be scored in hours (real-image mAP, picks per 1,000) and scanned SKUs compound across customers. That is the fastest sim-to-real feedback loop."
+      ],
+      "fatal_flaws_or_gaps": [
+        "It does not deliver the CEO's general-purpose digital-twin platform for 13-24 months. Self-serve opens only after the gates, the live twin is 'a measurement instrument, not a general IIoT platform', and vehicles, drones and ships are deferred to M25-36 with no marine/vehicle FTE until P3. Hard requirement (3), convenience, is met only for buyers ordering outcomes, not for platform users.",
+        "Physics and platform engineering are thin. One sim-kernel engineer in P0 (rising to 3) must run the 6-8 week multi-backend bake-off, the conformance suite and the adapters, while Forge gets 3-7 people. 'Powerful physics' is delegated entirely to upstream projects with little in-house capacity to absorb Newton or Isaac Lab churn.",
+        "Services gravity: about 60% of Y1 revenue is voucher- or government-funded at about 45% gross margin, the plan carries outcome liability on customer hardware, and the FDE cap is the only brake.",
+        "The plan has a single point of failure: a Head of Fidelity & Evaluation who has run a real-robot lab. That profile is very scarce in Korea, and the proposal says the angle 'stands or falls' on it.",
+        "Asset KPIs are not credible: 300 Silver/Gold SKUs by M4, 2,000 by M12, 10,000 by M24 and 50,000 by M36, with 1-5 capture technicians. Gold (lab-measured) cannot scale that way, and 30% third-party assets by M24 assumes a marketplace that does not exist yet.",
+        "There is a real conflict of interest in selling policies and grading them in the Arena. It is mitigated only on paper until a testing body actually signs.",
+        "The upgrade-tax reserve is 10-15%, while the plan itself cites the research warning that churn eats 20-30%."
+      ],
+      "factual_errors": [
+        "No material factual error against the research digest was found. Versions, licences, GPU classes and determinism claims all match the corrected fact-check.",
+        "Internal inconsistency: the NVAIE reserve covers 16 RT GPUs for 12 months (about KRW 1.0억), while the plan's own worst case is NVAIE on 16-32 internal RT GPUs at KRW 1-2억 a year and the RT pool averages 32 GPUs in P2. It is under-reserved by about KRW 2-3억 if the outputs-only exemption fails.",
+        "Minor: it presents a 10-15% churn reserve as adequate while quoting the research's 20-30% figure."
+      ]
+    }
+  ],
+  "criteria_weights": {
+    "physics_power": 0.12,
+    "realism": 0.11,
+    "convenience": 0.08,
+    "training_capability": 0.12,
+    "time_to_revenue": 0.07,
+    "moat_defensibility": 0.06,
+    "capital_efficiency": 0.06,
+    "license_legal_safety": 0.1,
+    "cen_synergy": 0.06,
+    "korea_market_fit": 0.05,
+    "global_scalability": 0.05,
+    "execution_risk_inverse": 0.12
+  },
+  "winner": "C",
+  "recommended_hybrid": "Use C's inside-out outcome factory as the commercial engine. Run A's full NVIDIA runtime only inside that factory, and build B's permissive Sim Kernel as the tenant-facing core. ENGINES (adopt, never build): Newton 1.6.x (pinned to the Newton/Warp version that the Isaac Lab 3.x GA actually supports, tested on R580+ Korean CSP images) with MJWarp as default, Kamino for closed loops and VBD/ImplicitMPM for cables, polybags and granular media. Add MuJoCo 3.15 CPU as the deterministic certification and replay backend, PhysX via Isaac Lab 3.x for contact-rich manipulation (SDF, TacSL, Mimic) inside the factory, Drake as the offline contact gold standard, Chrono 10 from M12 for vehicles and terrain, and Genesis as a watch-only non-CUDA hedge. RENDERING/REALISM: Isaac Sim 6.1 RTX (camera, lidar, radar) internally for SDG, sold as outputs; tenant-facing default of WebGPU, the Newton Warp renderer and gsplat/3DGRUT 3DGUT. A tenant RTX tier only as BYOL or after written NVIDIA terms, and ovrtx only after GA and terms. Measured sensor profiles with published error bars are mandatory before any maritime or defence radar/EO-IR sale. BUILD (owned IP): B's Sim Kernel API, conformance suite and Run Manifest from M0; C's Forge (NeRF to 3DGUT), Fidelity Lab, Bronze/Silver/Gold certificates, aic:TwinCertificate schema and Scorecard; a licence/provenance registry; the Korean MCP agent with sandbox and validation gates; a control plane with metering into CEN tokens. SEQUENCE: M0-4 covers the licence audit (CEN NeRF/Instant-NGP), NVIDIA written-terms request, a 6-8 week bake-off on RTX PRO 6000 plus H100, Forge v0, Test Cell 1, voucher datasets and 1-2 outputs-only cell-to-policy PoCs (A's 12-week offer). M4-12 brings the DATA/SKILL/PROOF lines, Arena v0 and a tenant core on the permissive stack inside the CEN workspace, with C's productization gate opening self-serve. M12-24 adds the live twin and fork-from-live, A's release-train discipline, a sovereign/on-prem edition only after B's V1/V2 gates clear, and shipyard robot cells. From M24, maritime and defence follow with validated radar/EO-IR. TEAM AND BUDGET: C's ramp (about 14 to 24 to 34), but with B's physics staffing (3-4 sim-kernel/Warp engineers from P0, not 1) and a 20-25% churn reserve. That is about KRW 115-125억 over 24 months, with Phase 0 at about KRW 10억, and hiring gates tied to phase exits. A's KRW 158억 / 52-FTE plan should not be funded before the M10 evidence exists.",
+  "must_fix_before_final": [
+    "Get NVIDIA's written terms (multi-tenant SaaS streaming, on-prem/OEM redistribution, outputs-only dataset sales, NVIDIA asset bundling, telemetry). Until then, keep Kit, Isaac Sim, ovrtx, the ovphysx wheels and the isaacsim/isaaclab PyPI wheels inside an internal outputs-only factory. Remove A's 'hosted beta for PoC customers before terms'.",
+    "Publish one pinned compatibility matrix per release train. Isaac Lab 3.0-EA targets Newton 1.5.2 and Warp 1.16, whereas Newton 1.6.1 and Warp 1.18 need R580+ drivers and Turing+ GPUs. Verify the matrix on the actual Korean CSP GPU images.",
+    "Run the 6-8 week bake-off on identical hardware (RTX PRO 6000 Blackwell plus H100) before freezing the default backend per task class. Replace every vendor throughput figure (MJWarp nightly, Genesis 43M FPS, 252x/475x) with in-house steps/s/$ and wall-clock-to-reward numbers.",
+    "Decide the contact-rich manipulation path explicitly. Isaac Lab's Kit-less Newton backend is beta (MJWarp validated; classic RL and flat-terrain locomotion only). Either accept PhysX through Isaac Lab inside the factory, or fund an ovphysx-from-source/PhysX-SDK adapter with a realistic estimate. Do not promise TacSL, Mimic or Teleop in Kit-less mode until verified.",
+    "Define a sensor-realism validation plan with measured error bars (lidar range/intensity, marine radar, EO/IR) before selling maritime or defence data. A 'simplified FMCW radar' is not sellable as defence evidence.",
+    "Model Korean hiring realistically: assume a 3-6 month slip for the simulation architect, Warp/CUDA physics and RTX sensor engineers. Make the M0 architect hire (and C's Head of Fidelity) a gating precondition, and budget remote or Korean-American senior hires.",
+    "Base reproducibility claims and certificates only on MuJoCo CPU or Newton deterministic mode on pinned hardware and drivers. Label GPU-batched outputs 'statistically reproducible', and test Newton's cross-hardware determinism claim in-house.",
+    "Keep the RT-core pool (L40S/RTX PRO 6000) separate from the training pool (H100/H200/B200). Verify RT-core availability and RTX PRO 6000 MIG on Korean CSPs, and never budget government B200/H200 for RTX sensor rendering.",
+    "Audit CEN's current NeRF pipeline in month 1 (Instant-NGP is non-commercial) and migrate it to gsplat/3DGRUT. Enforce the deny list (Hunyuan3D excludes Korea including outputs; nvdiffrast inside TRELLIS.2; the Inria 3DGS family; MimicGen code; cuRobo only at a pinned Apache tag) through CI and marketplace provenance gates.",
+    "Address MJWarp's weakness with single mechanisms above about 60 DoF before committing humanoid-plus-dexterous-hand templates: use the PhysX path or split the articulation tree.",
+    "Make budgets internally consistent: size the NVAIE reserve to the real RT pool (C), use a 20-30% API-churn reserve rather than 10-15%, and tag every unverified number (NVAIE price, Inception discount, Korean programme caps, market sizes, GAUGE/GPUSimBench results) as an assumption."
+  ]
+}

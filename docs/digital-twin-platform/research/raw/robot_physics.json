@@ -1,0 +1,773 @@
+{
+ "key": "robot_physics",
+ "topic": "Physics engines for robotics and GPU-parallel simulation: which engine(s) should be the primary physics backend for AICHEMIST's digital-twin platform (status as of 2026-10-06)",
+ "executive_summary": "Recommendation: do not write a new physics engine. The field has converged on a small set of permissively licensed GPU engines. Build a backend-agnostic simulation layer on top of them instead. Newton (Apache-2.0, Linux Foundation project, initiated by NVIDIA, Google DeepMind and Disney Research) reached 1.0 GA on 2026-03-10 at GTC 2026 and has shipped monthly since; the current release is v1.6.1 (2026-10-05). It bundles several solvers behind one Warp/OpenUSD API: MuJoCo Warp (MJWarp) for articulated rigid bodies, Kamino (Disney, a nonlinear-complementarity solver for closed kinematic loops), Featherstone, SemiImplicit, XPBD, VBD (cloth, cables, soft bodies), Style3D (cloth), and implicit MPM (granular and fluid), plus SDF collision and Drake-style hydroelastic contact. That covers robots, deformables and granular media in one embeddable package. MJWarp is the throughput leader. Nightly benchmarks on an RTX PRO 6000 Blackwell (2026-10-05) show about 7.9M humanoid steps/s, 37M Franka steps/s, 3.8M Unitree G1 flat-terrain steps/s and 0.46M steps/s for a cluttered ALOHA scene. NVIDIA reports MJWarp up to 252x (locomotion) and 475x (manipulation) faster than MJX. MJWarp has real limits: float32, non-deterministic on GPU (atomics), not differentiable, weak on single mechanisms above about 60 DoF, and its PyPI classifier still says Alpha. MuJoCo 3.15.0 (CPU, float64, deterministic, 2026-10-05) loads the same MJCF and is the natural reference and low-latency backend. Its 2026 releases added an MJWarp official release (3.5), a system-identification toolbox, DC-motor/PID/MIMO actuators, experimental IPC contact and Neo-Hookean flex. NVIDIA's own stack has split into modules. Isaac Sim 6.0 went GA on 2026-06-08 and 6.1 followed in September 2026 with experimental Newton 1.5, VBD, XPBD and hydroelastic contact. Isaac Lab 3.0.0-EA (BSD-3, 2026-09-16) offers one task API over PhysX, Newton/MJWarp and OVPhysX, and the Newton path can run without Kit or Isaac Sim. The PhysX 5 SDK is fully open source including its GPU kernels (BSD-3, since 5.6 in April 2025; now 5.11). The licensing trap is Isaac Sim with Omniverse Kit: the Isaac Sim source is Apache-2.0, but delivering it as a service to third parties requires an NVIDIA AI Enterprise license (list price about $4.5k per GPU per year). The new ovphysx library is under an NVIDIA Omniverse license. So a multi-tenant SaaS should embed Newton, MuJoCo or the PhysX SDK directly and offer Kit-based Isaac Sim only as a separately licensed or bring-your-own-license option. Selling only outputs, such as datasets, needs no AI Enterprise license. Genesis World 1.x (Apache-2.0, v1.4.3 on 2026-09-30, 30k+ stars) is the broadest multi-physics alternative and the only serious one not tied to NVIDIA GPUs: its Quadrants compiler targets CUDA, ROCm, Metal and Vulkan, and it adds IPC, a Drake-derived SAP coupler and tactile sensors. However, its 43M FPS headline was shown to be misleading (about 150x off on realistic settings), and independent 2026 benchmarks (GPUSimBench, GAUGE) find no engine uniformly faithful to reality and real GPU non-determinism. Drake (BSD-3, v1.57.0 on 2026-09-10) still has the most rigorous hydroelastic/SAP contact but is CPU-only, so it suits offline validation, not RL scale. Project Chrono 10.0 (BSD-3) is the best open option for vehicles, terramechanics (SPH/CRM) and fluid-structure interaction. Several options are dead ends as a primary backend: PyBullet (last release 3.2.7, Jan 2025), Brax physics (deprecated; only brax/training is maintained), Dojo (inactive since 2023), RaiSim (v1 repo archived Apr 2026; RaiSim2 is proprietary) and Jolt (a game engine without reduced-coordinate articulations). Recommended primary robot backend: Newton with the MJWarp solver by default, Kamino for closed-loop mechanisms, VBD/MPM for deformables, and hydroelastic/SDF for contact-rich assembly. Pair it with MuJoCo CPU as the bit-reproducible reference and interactive backend, and expose PhysX through Isaac Lab 3.x as a compatibility backend. Use Isaac Lab 3.x running without Kit, or mjlab, as the training front end.",
+ "options": [
+  {
+   "name": "NVIDIA Newton (Linux Foundation)",
+   "category": "GPU multi-solver physics engine (primary candidate)",
+   "status_as_of_2026": "v1.6.1 released 2026-10-05 (v1.0.0 GA 2026-03-10 at GTC 2026; 1.1 Apr, 1.2 May, 1.3 Jun, 1.4 Jul, 1.5 Aug, 1.6.0 Sep 2026). Donated to the Linux Foundation 2025-09-29 (beta at CoRL 2025). Initiated by NVIDIA, Google DeepMind and Disney Research. About 5.7k GitHub stars and 100+ examples. Linux x86/aarch64 and Windows on GPU; macOS CPU only. Requires an NVIDIA GPU (Maxwell or newer, driver 545+).",
+   "license_and_cost": "Apache-2.0 for code, CC-BY-4.0 for docs. Free, and can be embedded and redistributed in a commercial multi-tenant SaaS. Depends on Warp (Apache-2.0) and needs the NVIDIA CUDA driver.",
+   "strengths": [
+    "One API over many solvers: SolverMuJoCo (MJWarp), Featherstone, SemiImplicit, XPBD, Kamino (NCP; closed loops and passive joints), VBD (cloth, cables, soft bodies; opt-in compliant ALM mode in 1.6), Style3D cloth, ImplicitMPM (granular, snow, viscous fluid, two-way rigid coupling).",
+    "Contact options include SDF collision, hydroelastic pressure-field contact (concept from TRI Drake) and a configurable CUDA broad/narrow phase (faster in 1.6).",
+    "OpenUSD-native; imports URDF, MJCF and USD; viewers for GL, USD, RTX, Rerun and Viser; differential-IK and operational-space controllers that work under CUDA-graph capture.",
+    "Speed: MJWarp up to 252x (locomotion) and 475x (manipulation) faster than MJX on RTX PRO 6000 Blackwell; in the beta, up to 65% faster in-hand manipulation than PhysX in Isaac Lab.",
+    "Real deployments: Newton-trained locomotion transferred to a Unitree G1; Skild AI trains GPU-rack assembly (connector insertion, fastening) with SDF and hydroelastic contact; Samsung and Lightwheel use its cable simulation for refrigerator hose insertion. Also used by ETH RSL, TUM, PKU and Style3D.",
+    "Neutral foundation governance, a weekly-to-monthly release cadence, and integration into both Isaac Lab 3.0 and Isaac Sim 6.1."
+   ],
+   "weaknesses": [
+    "Young: 1.0 is only 7 months old, APIs still change monthly, and Isaac Lab's Newton path is beta/early access with a 'focused validated set' of classic RL and flat-terrain locomotion tasks.",
+    "Differentiability is only 'basic' and only in the Featherstone and SemiImplicit solvers; MJWarp is not differentiable.",
+    "GPU path is NVIDIA/CUDA only (vendor lock-in).",
+    "MJWarp is non-deterministic on GPU and runs in float32.",
+    "No built-in tactile sensor model; tactile currently comes via Isaac Lab TacSL or custom code."
+   ],
+   "best_fit": "Primary physics backend for robot RL/IL at scale, contact-rich manipulation and deformables (cloth, cables, granular) inside AICHEMIST's SaaS.",
+   "sources": [
+    "https://github.com/newton-physics/newton",
+    "https://github.com/newton-physics/newton/releases",
+    "https://pypi.org/project/newton/",
+    "https://raw.githubusercontent.com/newton-physics/newton/main/docs/solvers/index.rst",
+    "https://developer.nvidia.com/blog/newton-adds-contact-rich-manipulation-and-locomotion-capabilities-for-industrial-robotics",
+    "https://x.com/linuxfoundation/status/2033674046349713474",
+    "https://dataconomy.com/2026/03/17/nvidia-launches-newton-1-0-physics-engine-for-industrial-robot-training/",
+    "https://blockchain.news/news/nvidia-newton-physics-engine-industrial-robotics-gtc-2026",
+    "https://developer.nvidia.com/blog/train-a-quadruped-locomotion-policy-and-simulate-cloth-manipulation-with-nvidia-isaac-lab-and-newton"
+   ]
+  },
+  {
+   "name": "MuJoCo Warp (MJWarp)",
+   "category": "GPU batched rigid/articulated solver (Warp port of MuJoCo; default Newton solver)",
+   "status_as_of_2026": "mujoco-warp 3.15.0 released 2026-10-05; versions track MuJoCo. Officially released alongside MuJoCo 3.5.0 (Feb 2026) but the PyPI classifier is still 'Alpha'. Maintained by Google DeepMind and NVIDIA as part of Newton. About 1.5k stars. Results are benchmarked nightly.",
+   "license_and_cost": "Apache-2.0; free and embeddable.",
+   "strengths": [
+    "Highest published batched throughput. Nightly RTX PRO 6000 Blackwell figures (PR #1748, 2026-10-05): humanoid 7.95M steps/s, Franka 36.97M, aloha_pot 3.37M, unitree_g1_flat 3.79M, g1_hfield 2.49M, three_humanoids 1.88M, myoarm 2.09M, aloha_clutter 0.46M.",
+    "Uses MuJoCo's convex, soft-constraint contact model with pyramidal or elliptic friction cones and MJCF semantics, so the CPU MuJoCo reference runs the same model.",
+    "Callable from JAX through MJX (impl='warp') and from PyTorch through Newton/Isaac Lab/mjlab; supports multiple GPUs.",
+    "Batch renderer with textures, shadows, heightfields, flex and 3D Gaussian Splatting."
+   ],
+   "weaknesses": [
+    "Not differentiable (tracked in issue #500).",
+    "Non-deterministic on GPU because of atomic operations; float32 rather than MuJoCo's float64.",
+    "Struggles with single connected mechanisms above about 60 DoF; per-world latency is worse than CPU MuJoCo, so it is unsuitable for MPC or interactive use.",
+    "Gaps versus MuJoCo C: PGS and noslip solvers, plugins, some contact override parameters, flex marked experimental."
+   ],
+   "best_fit": "Default rigid/articulated solver for massively parallel RL: locomotion, humanoid whole-body control, dexterous hands.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco_warp",
+    "https://pypi.org/project/mujoco-warp/",
+    "https://github.com/google-deepmind/mujoco_warp/pull/1748",
+    "https://raw.githubusercontent.com/google-deepmind/mujoco/main/doc/mjwarp/index.rst"
+   ]
+  },
+  {
+   "name": "MuJoCo 3.x (C/CPU) + MJX (JAX) + MuJoCo Playground",
+   "category": "Reference articulated-body engine, JAX GPU front end, and RL suite",
+   "status_as_of_2026": "MuJoCo 3.15.0 released 2026-10-05; roughly 3-week cadence (3.5 on 2026-02-12 through 3.15). Recent additions: 3.14 experimental IPC (penetration-free) flex contact and 10x faster procedural model editing; 3.13 a 'discrete' integrator, cylinder multicontact and a rewritten plane-mesh collider; 3.15 experimental Stable Neo-Hookean flex and capsule multicontact; 3.11 conveyor surface velocity and adhesion; 3.12 PID actuator; 3.7 DC-motor model; 3.5 system-identification toolbox. MJX now exposes MJWarp as a backend. MuJoCo Playground won the RSS 2025 Outstanding Demo Paper award.",
+   "license_and_cost": "Apache-2.0; free and embeddable. Playground is also Apache-2.0.",
+   "strengths": [
+    "The contact-fidelity standard for robot learning: convex soft-contact optimization, elliptic or pyramidal cones, float64, deterministic on CPU.",
+    "Strong sim2real record: Playground zero-shot transfer to Go1, Berkeley Humanoid, G1, Booster T1, LEAP hand (state and pixels via the Madrona renderer) and Franka.",
+    "Rich actuator and sensor library, including a touch-grid taxel plugin for tactile arrays.",
+    "MJCF is a de facto robot asset format with large community model zoos."
+   ],
+   "weaknesses": [
+    "CPU single-thread per world, so it does not scale for RL without MJWarp.",
+    "Mesh collisions use convex hulls unless SDF plugins or newer colliders are used.",
+    "Deformables (flex) are less mature than dedicated FEM.",
+    "Rendering is basic (rasterizer), not photoreal."
+   ],
+   "best_fit": "Ground-truth reference backend, interactive/MPC and teleoperation backend, sysid and calibration, and CI regression for MJWarp runs.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco/releases",
+    "https://pypi.org/project/mujoco/",
+    "https://mujoco.readthedocs.io/en/3.7.0/changelog.html",
+    "https://roboticsproceedings.org/rss21/p020.html",
+    "https://arxiv.org/html/2502.08844v1",
+    "https://github.com/google-deepmind/mujoco/tree/main/plugin/sensor"
+   ]
+  },
+  {
+   "name": "mjlab",
+   "category": "Lightweight RL framework (Isaac Lab manager-based API on MuJoCo Warp)",
+   "status_as_of_2026": "Active on PyPI (1.5.x series). arXiv 2601.22074 (2026-01-29) from UC Berkeley and Sorbonne (Zakka, Liao, Yi, Le Lay, Sreenath, Abbeel). About 3.2k stars. Pinned to MuJoCo Warp 3.11 at last check.",
+   "license_and_cost": "Apache-2.0; free.",
+   "strengths": [
+    "Single-command install with minimal dependencies and direct access to native MuJoCo data.",
+    "Same manager-based API as Isaac Lab, so tasks port in either direction.",
+    "Reference tasks for velocity tracking, BeyondMimic motion imitation (Unitree G1 dance) and manipulation; multi-GPU training."
+   ],
+   "weaknesses": [
+    "NVIDIA GPU required for training (macOS evaluation only).",
+    "Smaller ecosystem than Isaac Lab; no photoreal rendering or USD scene tooling."
+   ],
+   "best_fit": "Fast, low-friction humanoid/quadruped RL training front end and a template for AICHEMIST's own training SDK.",
+   "sources": [
+    "https://github.com/mujocolab/mjlab",
+    "https://arxiv.org/abs/2601.22074"
+   ]
+  },
+  {
+   "name": "NVIDIA PhysX 5 SDK (+ ovphysx)",
+   "category": "GPU rigid/articulation/deformable engine",
+   "status_as_of_2026": "PhysX SDK 5.11.0 is the latest. Full GPU source (500+ CUDA kernels) opened in 5.6 (April 2025). ovphysx 0.6.3 (2026-09-16, Alpha) is a pip-installable, Kit-free PhysX runtime with USD stage, DLPack/Warp tensors and environment cloning, early access as part of the 'Omniverse libraries' announced at SIGGRAPH 2026, with production release planned for later in 2026.",
+   "license_and_cost": "The PhysX SDK repo is BSD-3-Clause (embeddable and redistributable). ovphysx's PyPI license is 'LicenseRef-NVIDIA-Omniverse' (proprietary), so its SaaS terms need verification.",
+   "strengths": [
+    "Most proven GPU robotics engine: the Isaac Gym/Isaac Lab lineage behind most published quadruped, humanoid and dexterous sim2real results.",
+    "TGS/PGS solvers, reduced-coordinate (Featherstone) articulations, tendons, GPU SDF collision for non-convex triangle meshes, FEM volume/surface deformables, particles; includes the Vehicle2 SDK.",
+    "Deterministic on identical hardware and PhysX version for rigid and articulated scenes (per Isaac Lab docs).",
+    "Highest independent fidelity on some tasks: GPUSimBench inclined-plane test (ManiSkill/PhysX had the lowest error); GAUGE (Isaac Sim lowest error on slope contact, non-smooth contact and turntable)."
+   ],
+   "weaknesses": [
+    "Friction is patch-based or approximate rather than an exact Coulomb cone.",
+    "No determinism guarantee for non-rigid bodies (cloth, soft bodies); results vary across GPU models.",
+    "Not differentiable.",
+    "The convenient Python and USD layers (Kit, ovphysx) carry proprietary NVIDIA licenses."
+   ],
+   "best_fit": "Compatibility backend for customers on the Isaac/SimReady ecosystem; vehicle dynamics via Vehicle2; validated legacy RL tasks.",
+   "sources": [
+    "https://github.com/NVIDIA-Omniverse/PhysX",
+    "https://github.com/NVIDIA-Omniverse/PhysX/releases",
+    "https://pypi.org/project/ovphysx/",
+    "https://www.cgchannel.com/2025/04/nvidia-open-sources-physxs-gpu-simulation-code",
+    "https://isaac-sim.github.io/IsaacLab/main/source/features/reproducibility.html",
+    "https://developer.nvidia.com/blog/integrate-physical-ai-capabilities-into-existing-apps-with-nvidia-omniverse-libraries/"
+   ]
+  },
+  {
+   "name": "NVIDIA Isaac Sim 5.x/6.x",
+   "category": "Full digital-twin application (Omniverse Kit, RTX rendering, sensors, SDG)",
+   "status_as_of_2026": "Isaac Sim 5.0 source opened on GitHub in 2025 (Computex/SIGGRAPH 2025). 6.0 early developer preview 2026-01-05, GA 2026-06-08 (multi-backend PhysX and Newton physics, pluggable renderers, install without Kit, Isaac Sim MCP and agent skills, NuRec Gaussian splatting). 6.0.1 patch. 6.1.0 September 2026 (experimental Newton 1.5.0 with VBD, XPBD and hydroelastic contacts). About 4.2k stars.",
+   "license_and_cost": "Isaac Sim source is Apache-2.0, but it needs Omniverse Kit SDK and assets under the 'Isaac Sim Additional Software and Materials License'. Free for internal R&D. Redistributing it, or delivering Isaac Sim (with Kit) as a service to third parties (including turnkey installs), requires NVIDIA AI Enterprise. Selling only outputs (videos, reports, datasets) does not. List price about $4,500 per GPU per year for Omniverse/AI Enterprise (EU reseller about EUR 5,800 per GPU per year).",
+   "strengths": [
+    "Best-in-class RTX sensor simulation (camera, lidar, radar) together with PhysX/Newton physics in one USD stage.",
+    "SimReady assets, Replicator synthetic data generation, teleoperation, ROS 2 bridge, NuRec 3DGS scenes.",
+    "Largest industrial ecosystem: ABB, FANUC, KUKA, Universal Robots and others at GTC 2026."
+   ],
+   "weaknesses": [
+    "Heavy (Kit runtime); RTX rendering needs RT-core GPUs.",
+    "Hosting it as a service in a multi-tenant SaaS triggers AI Enterprise licensing.",
+    "Fast-moving major versions (5.0, 6.0, 6.1 within about 15 months)."
+   ],
+   "best_fit": "Optional premium/BYOL workspace and internal synthetic-data factory for CEN (outputs-only use is license-exempt), not the embedded physics core.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacSim",
+    "https://forums.developer.nvidia.com/t/isaac-sim-6-0-general-availability/372621",
+    "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/common/license-faq.html",
+    "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/overview/release_notes.html",
+    "https://radiancefields.com/nvidia-s-isaac-sim-6.0-ships-with-nurec-gaussian-splatting",
+    "https://pi3g.com/nvidia-ai-enterprise-subscription-cost-in-2026/",
+    "https://developer.nvidia.com/blog/announcing-general-availability-for-nvidia-isaac-sim-5-0-and-nvidia-isaac-lab-2-2"
+   ]
+  },
+  {
+   "name": "NVIDIA Isaac Lab 2.x -> 3.0",
+   "category": "Robot-learning framework (RL, imitation learning, Mimic data generation) with multiple physics and render backends",
+   "status_as_of_2026": "v2.3.2 (2026-02-02) was the final 2.x release. 3.0.0-beta at GTC (Mar 2026), beta2 (Jun 2026), beta2.patch1 for Isaac Sim 6.0.1, and v3.0.0-EA (2026-09-16; dates per the GitHub releases page) built for Isaac Sim 6.1. Physics backends: PhysX, Newton (MJWarp validated; Kamino beta; VBD experimental) and OVPhysX. Renderers: Isaac RTX, OVRTX, Newton Warp renderer. The Newton path runs without Kit or Isaac Sim. Production API stability promised for later in 2026. About 8.3k stars. Paper arXiv 2511.04831.",
+   "license_and_cost": "BSD-3-Clause (isaaclab_mimic is Apache-2.0); free. The Kit-less Newton path avoids Omniverse licensing; the PhysX/RTX-via-Kit paths inherit Isaac Sim terms.",
+   "strengths": [
+    "Most complete training feature set: manager and direct task APIs, actuator models, multi-rate sensors, domain randomization, Mimic/teleop demonstration generation, visuo-tactile (TacSL) sensor, multi-GPU and multi-node.",
+    "Published PhysX throughput (RTX 4090): G1 rough terrain 4096 envs at 94k env-steps/s (82k with training); Shadow-hand cube repose 8192 envs at 200k; Cartpole 1.1M; Cartpole with RGB camera 50k; 16x L40 G1 rough at 1.2M.",
+    "Unified Volume/Surface/Cable deformable API across PhysX FEM and Newton VBD."
+   ],
+   "weaknesses": [
+    "3.0 is still early access, with breaking changes on the develop branch.",
+    "The Newton integration is limited to a validated subset of tasks.",
+    "Camera-based environments are memory-hungry (Cartpole-RGB uses 16.7 GB VRAM at 1024 envs)."
+   ],
+   "best_fit": "Primary training front end (run without Kit, on Newton), with PhysX/RTX paths for customers who license Isaac Sim.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacLab",
+    "https://github.com/isaac-sim/IsaacLab/releases",
+    "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst",
+    "https://isaac-sim.github.io/IsaacLab/release/3.0.0-beta2/source/overview/core-concepts/physical-backends/newton/index.html",
+    "https://isaac-sim.github.io/IsaacLab/release/3.0.0/source/concepts/ovphysx.html",
+    "https://isaac-sim.github.io/IsaacLab/release/3.0.0/source/concepts/deformables.html",
+    "https://arxiv.org/abs/2511.04831"
+   ]
+  },
+  {
+   "name": "Kamino (Disney Research Zurich, in Newton)",
+   "category": "GPU constrained multibody solver (maximal coordinates, nonlinear complementarity)",
+   "status_as_of_2026": "Paper arXiv 2603.16536 (2026-03-17). Ships in Newton 1.x (Coulomb friction, joint limits and batched kinematics added in 1.6). Beta support in Isaac Lab 3.0.",
+   "license_and_cost": "Apache-2.0 (part of Newton).",
+   "strengths": [
+    "Native kinematic loops and passive actuation; trained a walking policy for the DR Legs biped (6 nested loops) with 4096 parallel envs on one GPU.",
+    "Complementarity (hard contact) formulation, which complements MuJoCo's soft contact."
+   ],
+   "weaknesses": [
+    "Newest solver with a limited validated task set."
+   ],
+   "best_fit": "Closed-chain mechanisms: parallel grippers, linkage legs, Delta robots, some dexterous hands.",
+   "sources": [
+    "https://arxiv.org/abs/2603.16536",
+    "https://github.com/newton-physics/newton/releases"
+   ]
+  },
+  {
+   "name": "Genesis World (Genesis-Embodied-AI / Genesis AI)",
+   "category": "GPU multi-physics simulator + renderer + compiler",
+   "status_as_of_2026": "genesis-world 1.4.3 released 2026-09-30 (1.4.0 on 2026-09-06; Genesis World 1.0 open-sourced May 2026 together with the Nyx path-tracer and the Quadrants compiler). 30k+ stars. The company (Genesis AI, $105M seed from Eclipse, Khosla and others) went full-stack with the GENE-26.5 manipulation model in May 2026.",
+   "license_and_cost": "Apache-2.0. Nyx ships as a separate gs-nyx package that was on an internal index pending public release, so verify its license before embedding.",
+   "strengths": [
+    "Broadest unified multi-physics: rigid (MuJoCo-style), FEM, MPM, SPH, PBD, IPC (penetration-free, via libuipc) and a SAP coupler derived from Drake with hydroelastic rigid-FEM contact.",
+    "Built-in tactile, IMU, lidar, depth and contact-force sensors.",
+    "Quadrants compiler (forked from Taichi in June 2025) targets CUDA, ROCm, Metal, Vulkan and CPU, the main hedge against NVIDIA lock-in; vendor claims 10x faster launch and up to 4.6x runtime versus the initial release.",
+    "2026 releases added a deterministic GPU rigid mode, contact-patch multicontact, hibernation and trajectory replay."
+   ],
+   "weaknesses": [
+    "Credibility problem with headline speed: the 43M FPS Franka claim (RTX 4090) was static-scene and single-substep; Stone Tao's corrected benchmark was about 150x lower; Genesis later revised to 27M FPS with random actions and published a fuller report.",
+    "Rigid contact solver criticized as simple; accuracy was sensitive to solver tuning; GPUSimBench documents GPU non-determinism across simulators including Genesis.",
+    "Smaller sim2real record than Isaac Lab or MuJoCo; the company's priorities shifted toward its own foundation model."
+   ],
+   "best_fit": "Secondary or experimental backend for multi-physics (fluids, granular, IPC deformables) and tactile research, and an AMD/Apple-GPU hedge.",
+   "sources": [
+    "https://github.com/Genesis-Embodied-AI/Genesis",
+    "https://pypi.org/project/genesis-world/",
+    "https://github.com/Genesis-Embodied-AI/Genesis/releases",
+    "https://stoneztao.substack.com/p/the-new-hyped-genesis-simulator-is",
+    "https://www.marktechpost.com/2026/05/30/genesis-ai-releases-nyx-quadrants-and-genesis-world-1-0-physics-platform-for-scalable-robotics-foundation-model-evaluation/",
+    "https://techcrunch.com/2026/05/06/khosla-backed-robotics-startup-genesis-ai-has-gone-full-stack-demo-shows/",
+    "https://genesis-world.readthedocs.io/en/latest/user_guide/theory/couplers/sap_coupler.html",
+    "https://genesis-world.readthedocs.io/en/latest/user_guide/rendering/nyx_renderer.html"
+   ]
+  },
+  {
+   "name": "Drake (Toyota Research Institute)",
+   "category": "CPU model-based robotics toolbox with high-fidelity contact",
+   "status_as_of_2026": "v1.57.0 released 2026-09-10 (monthly cadence). Python 3.12-3.14 wheels for Linux x86/ARM and macOS ARM. Used by TRI for the LBM Eval (49-task) simulation benchmark.",
+   "license_and_cost": "BSD-3-Clause core. PyPI lists 'BSD and Other/Proprietary', because bundled third-party solvers have their own terms; check before redistribution.",
+   "strengths": [
+    "Hydroelastic (pressure-field) contact with distributed patches for non-convex meshes, which Newton adopted.",
+    "SAP convex compliant contact solver; FEM deformables with rigid-deformable contact.",
+    "Optimization, planning and system-analysis tools; rigorous, well-tested C++."
+   ],
+   "weaknesses": [
+    "CPU only (the SAP/Cholesky parts parallelize poorly); far too slow for 10^4-env RL.",
+    "Steeper learning curve; no GPU rendering pipeline."
+   ],
+   "best_fit": "Offline gold-standard validation of contact-rich assembly and grasping, and reference for calibrating Newton hydroelastic parameters.",
+   "sources": [
+    "https://github.com/RobotLocomotion/drake/releases",
+    "https://pypi.org/project/drake/",
+    "https://drake.mit.edu/doxygen_cxx/group__hydroelastic__user__guide.html"
+   ]
+  },
+  {
+   "name": "ManiSkill3 / SAPIEN 3",
+   "category": "GPU manipulation simulator + benchmark (PhysX 5 backend)",
+   "status_as_of_2026": "mani-skill 3.0.1 released 2026-04-21 (after 3.0.0b22 in Dec 2025); RSS 2025 paper; about 3.4k stars; one listed maintainer on PyPI.",
+   "license_and_cost": "Code Apache-2.0 (SAPIEN is MIT). Some assets are CC BY-NC 4.0, so they cannot ship in a commercial product.",
+   "strengths": [
+    "GPU heterogeneous scenes (different objects per environment); RGBD and segmentation at 30k+ FPS on an RTX 4090; more GPU-memory-efficient than Isaac Lab for camera environments (its own benchmark; rasterizer versus ray tracing, so not apples-to-apples).",
+    "Best fidelity on the GPUSimBench inclined-plane test (lowest error, 2.52 cm); real2sim evaluation of VLA policies."
+   ],
+   "weaknesses": [
+    "Small team and bus-factor risk; inherits PhysX contact limits; limited deformables; NC asset licenses."
+   ],
+   "best_fit": "Reference for manipulation benchmarks and heterogeneous-scene batching; not a platform core.",
+   "sources": [
+    "https://github.com/haosulab/ManiSkill",
+    "https://pypi.org/project/mani-skill/",
+    "https://raw.githubusercontent.com/haosulab/ManiSkill/main/docs/source/user_guide/additional_resources/performance_benchmarking.md",
+    "https://arxiv.org/abs/2607.13059"
+   ]
+  },
+  {
+   "name": "Brax",
+   "category": "JAX RL library (former differentiable physics)",
+   "status_as_of_2026": "v0.14.x. Since 0.13.0 only brax/training is maintained; the physics pipelines are superseded by MJX and MuJoCo Playground. About 3.2k stars.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Mature JAX PPO/SAC training code used by MuJoCo Playground."
+   ],
+   "weaknesses": [
+    "Physics deprecated; do not adopt as an engine."
+   ],
+   "best_fit": "Only as a JAX training library on top of MJX/MJWarp.",
+   "sources": [
+    "https://github.com/google/brax"
+   ]
+  },
+  {
+   "name": "Project Chrono (incl. Chrono::Vehicle, FSI/CRM, Sensor, ROS)",
+   "category": "Multibody + vehicle + terramechanics + FSI engine",
+   "status_as_of_2026": "Chrono 10.0.0 (late March / early April 2026): refactored Chrono::FSI with SPH and TDPF fluid solvers, peridynamics, new camera sensor features, checkpointing for Chrono and Chrono::Vehicle. About 3.1k stars. Developed by the UW-Madison SBEL lab and partners.",
+   "license_and_cost": "BSD-3-Clause; free and embeddable.",
+   "strengths": [
+    "Best open vehicle dynamics: wheeled and tracked vehicles, tires, powertrain.",
+    "Physics-based terramechanics (CRM/SPH), so off-road, excavation and planetary rovers are possible.",
+    "Both NSC (complementarity) and SMC (penalty) contact; FEA and granular DEM on GPU; camera, lidar, GPS and IMU sensors with a ROS 2 bridge."
+   ],
+   "weaknesses": [
+    "Not designed for 10^4-env batched RL; Python ergonomics (PyChrono) weaker; smaller ML community."
+   ],
+   "best_fit": "Vehicle, truck, off-road and marine/FSI twins in the platform (separate from the robot-RL core).",
+   "sources": [
+    "https://github.com/projectchrono/chrono/releases",
+    "https://projectchrono.org/news/",
+    "https://en.wikipedia.org/wiki/Project_Chrono"
+   ]
+  },
+  {
+   "name": "Bullet / PyBullet",
+   "category": "Legacy CPU engine",
+   "status_as_of_2026": "PyBullet 3.2.7 (2025-01-30) is the last release (previous 3.2.6 in Nov 2023). Issue tracker closed. About 14.8k stars.",
+   "license_and_cost": "zlib.",
+   "strengths": [
+    "Simple and ubiquitous; Featherstone multibody plus soft bodies; huge legacy code base."
+   ],
+   "weaknesses": [
+    "Effectively in maintenance only; CPU only; contact fidelity and throughput far behind MuJoCo and MJWarp."
+   ],
+   "best_fit": "Legacy import or compatibility only; do not build on it.",
+   "sources": [
+    "https://pypi.org/project/pybullet/",
+    "https://github.com/bulletphysics/bullet3"
+   ]
+  },
+  {
+   "name": "DART",
+   "category": "CPU articulated-body engine (Gazebo backend)",
+   "status_as_of_2026": "6.19.5 is the latest (Oct 2026 per the GitHub release list; the page showed the year as 2024, so the year is unconfirmed). It made ODE-collider scenes about 2x faster. The dartpy PyPI package is being deprecated in favor of conda/pixi. About 1.2k stars.",
+   "license_and_cost": "BSD-2-Clause.",
+   "strengths": [
+    "Accurate Featherstone/LCP dynamics; Gazebo integration."
+   ],
+   "weaknesses": [
+    "CPU only; small team; no GPU batching."
+   ],
+   "best_fit": "Gazebo/ROS interoperability only.",
+   "sources": [
+    "https://github.com/dartsim/dart",
+    "https://github.com/dartsim/dart/releases"
+   ]
+  },
+  {
+   "name": "RaiSim / RaiSim2",
+   "category": "Proprietary CPU robotics engine",
+   "status_as_of_2026": "raisimLib (v1) repo archived on 2026-04-25 ('We no longer support Raisim'); RaiSim2 is distributed as binaries (35 stars).",
+   "license_and_cost": "Proprietary; needs a license and activation key from RaiSim Tech.",
+   "strengths": [
+    "Historically strong ANYmal legged-locomotion sim2real; RaiSim2 adds deformables, lidar and closed loops."
+   ],
+   "weaknesses": [
+    "Closed source, a licensing barrier for SaaS, a small community, and the v1 discontinuation."
+   ],
+   "best_fit": "Not recommended.",
+   "sources": [
+    "https://github.com/raisimTech/raisimLib",
+    "https://github.com/raisimTech/raisim2Lib"
+   ]
+  },
+  {
+   "name": "Jolt Physics",
+   "category": "Game physics engine",
+   "status_as_of_2026": "v5.6.0 (July 2026 per the release list; the page showed the year as 2024, so the year is unconfirmed) added GPU compute for strand/hair (Cosserat rods) and a 15% faster friction model. About 11.7k stars. Used in Horizon Forbidden West, Death Stranding 2 and Godot.",
+   "license_and_cost": "MIT.",
+   "strengths": [
+    "Deterministic, multi-core, runs on WebAssembly and mobile; soft bodies; good for interactive or browser previews."
+   ],
+   "weaknesses": [
+    "Maximal-coordinate constraints only (no reduced-coordinate articulations), no robot actuator models, no batched GPU RL."
+   ],
+   "best_fit": "Possibly a lightweight in-browser preview physics engine for the CEN web workspace; not for training.",
+   "sources": [
+    "https://github.com/jrouwe/JoltPhysics",
+    "https://github.com/jrouwe/JoltPhysics/releases"
+   ]
+  },
+  {
+   "name": "NVIDIA Warp",
+   "category": "Differentiable GPU kernel framework (substrate for Newton and MJWarp)",
+   "status_as_of_2026": "warp-lang 1.18.0 released 2026-10-05 (1.15 Jul, 1.16 Aug, 1.17 Aug-Sep 2026). warp.sim deprecated and continued as Newton. About 7.2k stars.",
+   "license_and_cost": "Apache-2.0.",
+   "strengths": [
+    "Python-authored CUDA kernels with automatic differentiation (wp.Tape); JAX, PyTorch and Paddle interop; CUDA graphs; CPU fallback.",
+    "AICHEMIST can write custom sensors, actuators and contact models as Warp kernels that plug into Newton."
+   ],
+   "weaknesses": [
+    "CUDA only on GPU (macOS CPU only); requires a Turing-or-newer GPU and an R580+ driver."
+   ],
+   "best_fit": "Language for in-house extensions (custom tactile, sensor and actuator kernels).",
+   "sources": [
+    "https://github.com/NVIDIA/warp",
+    "https://pypi.org/project/warp-lang/"
+   ]
+  },
+  {
+   "name": "Differentiable simulators: Taichi/DiffTaichi, Tiny Differentiable Simulator, Dojo",
+   "category": "Research differentiable physics",
+   "status_as_of_2026": "Taichi upstream activity is low (Genesis forked it into Quadrants in June 2025; maintenance status not directly verified). TDS: Apache-2.0, about 1.4k stars, research-grade, low activity (unverified). Dojo.jl: MIT, 'no longer actively developed' since April 2023.",
+   "license_and_cost": "Taichi Apache-2.0; TDS Apache-2.0; Dojo MIT.",
+   "strengths": [
+    "Gradient-based system identification and design research."
+   ],
+   "weaknesses": [
+    "Not maintained or production-grade; Newton's differentiable Featherstone/SemiImplicit plus Warp autodiff now cover this need."
+   ],
+   "best_fit": "Not recommended; use Newton and Warp for differentiable needs.",
+   "sources": [
+    "https://github.com/dojo-sim/Dojo.jl",
+    "https://github.com/erwincoumans/tiny-differentiable-simulator",
+    "https://github.com/taichi-dev/taichi"
+   ]
+  },
+  {
+   "name": "Tactile simulators: TacSL (Isaac Lab), Taccel, MuJoCo touch grid, Genesis tactile",
+   "category": "Tactile sensing simulation",
+   "status_as_of_2026": "TacSL is integrated into Isaac Lab 3.0-EA as an experimental visuo-tactile sensor. Taccel (IPC + affine body dynamics) at NeurIPS 2025. MuJoCo ships a touch_grid sensor plugin. Genesis 1.2.2+ has a family of high-throughput tactile sensors.",
+   "license_and_cost": "Mostly open source (verify per project).",
+   "strengths": [
+    "TacSL: visuotactile images and force fields more than 200x faster than prior state of the art, with sim2real insertion.",
+    "Taccel: over 900 FPS with 4096 envs on an H100 (peg insertion, dual GelSight-type sensors); sim2real validated."
+   ],
+   "weaknesses": [
+    "Full-hand tactile is still slow: Taccel reaches 12.67 FPS with 256 envs.",
+    "No standard across engines."
+   ],
+   "best_fit": "Tactile module for dexterous-hand twins; wrap behind the platform's sensor API.",
+   "sources": [
+    "https://research.nvidia.com/publication/2025-01_tacsl-library-visuotactile-sensor-simulation-and-learning",
+    "https://isaac-sim.github.io/IsaacLab/v3.0.0-EA/source/experimental-features/visuo_tactile_sensor.html",
+    "https://papers.neurips.cc/paper_files/paper/2025/hash/87d91d52272c3166315ca20b18519b9e-Abstract-Conference.html"
+   ]
+  },
+  {
+   "name": "New 2025-2026 entrants: MotrixSim/MotrixLab (Motphys) + GS-Playground; RoboVerse/MetaSim",
+   "category": "New engines and multi-backend abstraction layers",
+   "status_as_of_2026": "MotrixSim: a Rust generalized-coordinate engine with a proprietary constraint solver; docs and MotrixLab are Apache-2.0 on GitHub, but the core appears to be binary-only (unverified). Huawei Connect 2026 solution on Kunpeng CPUs reached a 362k steps/s peak. GS-Playground (RSS 2026) combines MotrixSim with batched 3D Gaussian Splatting: about 10^4 FPS across 2048 envs at 640x480, with 90% zero-shot real grasp success. RoboVerse/MetaSim (2025) wraps Isaac Sim, Isaac Gym, MuJoCo, SAPIEN 2/3, Genesis, PyBullet and Newton behind one API.",
+   "license_and_cost": "MotrixLab/docs Apache-2.0 (core license unclear); RoboVerse open source.",
+   "strengths": [
+    "GS-Playground validates the 3DGS-plus-physics approach aligned with CEN's NeRF/3DGS asset generation.",
+    "MetaSim shows that a cross-simulator abstraction layer is feasible."
+   ],
+   "weaknesses": [
+    "MotrixSim is immature, China-centric and has no GPU-scale evidence; 3DGS cannot represent deformables or relighting well."
+   ],
+   "best_fit": "Design reference for AICHEMIST's backend abstraction and 3DGS rendering; not a core dependency.",
+   "sources": [
+    "https://motrixsim.readthedocs.io/en/latest/index.html",
+    "https://autonews.gasgoo.com/articles/news/2102741730670886912",
+    "https://roboticsproceedings.org/rss22/p093.html",
+    "https://roboverse.wiki/metasim/features/support_matrix",
+    "https://github.com/motphys"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "Newton 1.0.0 was released 2026-03-10 (GA announced at GTC 2026); the latest release is v1.6.1 on 2026-10-05, with monthly minor releases since.",
+   "source": "https://pypi.org/project/newton/ ; https://github.com/newton-physics/newton/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "Newton is Apache-2.0, a Linux Foundation project initiated by Disney Research, Google DeepMind and NVIDIA; it was donated to the LF on 2025-09-29 as a beta.",
+   "source": "https://github.com/newton-physics/newton ; https://www.therobotreport.com/nvidia-launches-newton-physics-engine-gr00t-ai-corl-2025/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Newton solvers are Featherstone, MuJoCo (MJWarp), SemiImplicit, XPBD, Kamino, VBD, Style3D and ImplicitMPM. Only Featherstone and SemiImplicit have 'basic' differentiability, and only Featherstone and MuJoCo support generalized-coordinate articulations.",
+   "source": "https://raw.githubusercontent.com/newton-physics/newton/main/docs/solvers/index.rst",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo Warp is up to 252x (locomotion) and 475x (manipulation) faster than MJX on RTX PRO 6000 Blackwell (Newton 1.0 blog); the Newton beta figures were 152x and 313x on an RTX 4090.",
+   "source": "https://developer.nvidia.com/blog/newton-adds-contact-rich-manipulation-and-locomotion-capabilities-for-industrial-robotics ; https://developer.nvidia.com/blog/train-a-quadruped-locomotion-policy-and-simulate-cloth-manipulation-with-nvidia-isaac-lab-and-newton",
+   "confidence": "medium"
+  },
+  {
+   "claim": "MJWarp is not differentiable, is non-deterministic on GPU (atomics), uses float32, and struggles with single connected mechanisms above about 60 DoF; MJX exposes it as impl='warp'.",
+   "source": "https://raw.githubusercontent.com/google-deepmind/mujoco/main/doc/mjwarp/index.rst",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo 3.15.0 and mujoco-warp 3.15.0 were released 2026-10-05; MuJoCo 3.14 added experimental IPC flex contact and 3.15 added experimental Stable Neo-Hookean flex elasticity.",
+   "source": "https://github.com/google-deepmind/mujoco/releases ; https://pypi.org/project/mujoco-warp/",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo Warp was officially released with MuJoCo 3.5.0 (2026-02-12), which also added a Python system-identification toolbox.",
+   "source": "https://mujoco.readthedocs.io/en/3.7.0/changelog.html",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim 6.0 reached GA on 2026-06-08 with multi-backend physics (PhysX and Newton), pluggable renderers and Kit-less install; 6.1.0 (September 2026) updated the experimental Newton integration to 1.5.0 with VBD, XPBD and hydroelastic contacts.",
+   "source": "https://forums.developer.nvidia.com/t/isaac-sim-6-0-general-availability/372621 ; https://docs.isaacsim.omniverse.nvidia.com/6.1.0/overview/release_notes.html",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim source is Apache-2.0, but delivering Isaac Sim (with Omniverse Kit) as a service to third parties, or redistributing it, requires an NVIDIA AI Enterprise license. Running it internally and selling only outputs (datasets, videos, reports) does not.",
+   "source": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/common/license-faq.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab is BSD-3-Clause (isaaclab_mimic Apache-2.0). v3.0.0-EA (Sep 2026) supports PhysX, Newton/MJWarp and OVPhysX physics and Isaac RTX, OVRTX and Newton Warp renderers; Kit-less Newton workflows need no Isaac Sim.",
+   "source": "https://github.com/isaac-sim/IsaacLab ; https://github.com/isaac-sim/IsaacLab/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "In Isaac Lab 3.0 the Newton backend's validated solver is MJWarp; Kamino is beta on selected classic tasks and VBD is experimental for cloth and soft bodies. Newton support is described as beta, with a focused set of classic RL and flat-terrain locomotion environments.",
+   "source": "https://isaac-sim.github.io/IsaacLab/release/3.0.0-beta2/source/overview/core-concepts/physical-backends/newton/index.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "The PhysX SDK, including full GPU source (500+ CUDA kernels), has been open source under BSD-3 since PhysX 5.6 (April 2025); the latest SDK is 5.11.0.",
+   "source": "https://www.cgchannel.com/2025/04/nvidia-open-sources-physxs-gpu-simulation-code ; https://github.com/NVIDIA-Omniverse/PhysX",
+   "confidence": "high"
+  },
+  {
+   "claim": "ovphysx (a Kit-free PhysX Python runtime, v0.6.3, 2026-09-16, Alpha) is licensed under 'LicenseRef-NVIDIA-Omniverse', not BSD.",
+   "source": "https://pypi.org/project/ovphysx/",
+   "confidence": "high"
+  },
+  {
+   "claim": "Omniverse libraries (ovrtx, ovphysx, ovstage) were announced at SIGGRAPH 2026 in early access, with production release and API stability planned for later in 2026.",
+   "source": "https://developer.nvidia.com/blog/integrate-physical-ai-capabilities-into-existing-apps-with-nvidia-omniverse-libraries/ ; https://www.uctoday.com/immersive-workplace-xr-tech/nvidia-omniverse-libraries-agent-toolkit-siggraph-2026/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "PhysX GPU simulation is deterministic for rigid and articulated scenes on the same hardware and software version, but not across hardware, and not for cloth or soft bodies.",
+   "source": "https://isaac-sim.github.io/IsaacLab/main/source/features/reproducibility.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "The Genesis 43M FPS claim (Franka, RTX 4090) was criticized as misleading; corrected benchmarks were about 150x lower, and Genesis revised it to 27M FPS with random actions.",
+   "source": "https://stoneztao.substack.com/p/the-new-hyped-genesis-simulator-is",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Genesis World 1.0 was open-sourced in May 2026 together with Nyx (path tracer) and Quadrants (compiler supporting CUDA, ROCm, Metal, Vulkan and CPU); genesis-world 1.4.3 (2026-09-30) is Apache-2.0.",
+   "source": "https://www.marktechpost.com/2026/05/30/genesis-ai-releases-nyx-quadrants-and-genesis-world-1-0-physics-platform-for-scalable-robotics-foundation-model-evaluation/ ; https://pypi.org/project/genesis-world/ ; https://github.com/Genesis-Embodied-AI/Genesis",
+   "confidence": "medium"
+  },
+  {
+   "claim": "GPUSimBench (arXiv 2607.13059, Jul 2026) finds that GPU-batched execution introduces significant run-to-run and inter-environment non-determinism in mainstream simulators (Isaac Lab, Genesis and others). On the inclined-plane fidelity test, ManiSkill (EMD 2.520 cm) and MJX (3.970 cm) were best.",
+   "source": "https://arxiv.org/abs/2607.13059",
+   "confidence": "medium"
+  },
+  {
+   "claim": "GAUGE (arXiv 2608.05948, Aug 2026) benchmarked Isaac Sim 6.0.0, Genesis and Newton 1.3.0 on 14 real-measurement task families and found no uniformly faithful engine; the largest gaps were in impulsive contact, fast textile motion and volumetric deformation.",
+   "source": "https://arxiv.org/abs/2608.05948",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Newton production uses: Skild AI trains GPU-rack assembly RL with SDF and hydroelastic contacts via Isaac Lab; Samsung and Lightwheel use Newton cable simulation for refrigerator hose insertion; a Newton-trained locomotion policy has been deployed on a Unitree G1.",
+   "source": "https://blockchain.news/news/nvidia-newton-physics-engine-industrial-robotics-gtc-2026 ; https://developer.nvidia.com/blog/train-a-quadruped-locomotion-policy-and-simulate-cloth-manipulation-with-nvidia-isaac-lab-and-newton",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Brax physics pipelines are deprecated; only brax/training is maintained since 0.13.0, and users are directed to MJX and MuJoCo Playground.",
+   "source": "https://github.com/google/brax",
+   "confidence": "high"
+  },
+  {
+   "claim": "PyBullet's last release is 3.2.7 (2025-01-30), and the Bullet issue tracker is closed.",
+   "source": "https://pypi.org/project/pybullet/ ; https://github.com/bulletphysics/bullet3",
+   "confidence": "high"
+  },
+  {
+   "claim": "The RaiSim v1 repo was archived on 2026-04-25; RaiSim requires a commercial license and activation key.",
+   "source": "https://github.com/raisimTech/raisimLib",
+   "confidence": "high"
+  },
+  {
+   "claim": "Drake v1.57.0 was released 2026-09-10; it provides hydroelastic contact and the SAP solver, CPU only.",
+   "source": "https://pypi.org/project/drake/ ; https://drake.mit.edu/doxygen_cxx/group__hydroelastic__user__guide.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "Project Chrono 10.0.0 (spring 2026) added a refactored FSI (SPH and TDPF), peridynamics, sensor updates and Chrono::Vehicle checkpointing; BSD-3.",
+   "source": "https://projectchrono.org/news/ ; https://github.com/projectchrono/chrono/releases",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Kamino (Disney Research + NVIDIA, arXiv 2603.16536) solves constrained multibody dynamics as an NCP on GPU in Warp/Newton and trained the DR Legs biped (6 nested kinematic loops) with 4096 envs on one GPU.",
+   "source": "https://arxiv.org/abs/2603.16536",
+   "confidence": "high"
+  },
+  {
+   "claim": "mjlab (Apache-2.0, arXiv 2601.22074) combines the Isaac Lab manager-based API with MuJoCo Warp and ships velocity-tracking, BeyondMimic motion-imitation and manipulation tasks.",
+   "source": "https://github.com/mujocolab/mjlab ; https://arxiv.org/abs/2601.22074",
+   "confidence": "high"
+  },
+  {
+   "claim": "MuJoCo Playground (RSS 2025 Outstanding Demo Paper) achieved zero-shot sim2real on Berkeley Humanoid, Unitree Go1 and G1, Booster T1, LEAP hand and Franka, from state and pixels.",
+   "source": "https://roboticsproceedings.org/rss21/p020.html ; https://arxiv.org/html/2502.08844v1",
+   "confidence": "high"
+  },
+  {
+   "claim": "ManiSkill3 code is Apache-2.0 but some assets are CC BY-NC 4.0; mani-skill 3.0.1 was released 2026-04-21.",
+   "source": "https://github.com/haosulab/ManiSkill ; https://pypi.org/project/mani-skill/",
+   "confidence": "high"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "MJWarp humanoid (dense) throughput, RTX PRO 6000 Blackwell, nightly benchmark",
+   "value": "7,947,604 steps/s (2026-10-05; worlds per scene set by the benchmark config, not stated in the PR)",
+   "source": "https://github.com/google-deepmind/mujoco_warp/pull/1748"
+  },
+  {
+   "metric": "MJWarp Franka Panda (dense) throughput, RTX PRO 6000 Blackwell",
+   "value": "36,965,163 steps/s",
+   "source": "https://github.com/google-deepmind/mujoco_warp/pull/1748"
+  },
+  {
+   "metric": "MJWarp Unitree G1 flat / heightfield throughput, RTX PRO 6000 Blackwell",
+   "value": "3,793,923 / 2,493,617 steps/s",
+   "source": "https://github.com/google-deepmind/mujoco_warp/pull/1748"
+  },
+  {
+   "metric": "MJWarp ALOHA pot / ALOHA clutter / three humanoids / myoarm, RTX PRO 6000 Blackwell",
+   "value": "3.37M / 0.46M / 1.88M / 2.09M steps/s",
+   "source": "https://github.com/google-deepmind/mujoco_warp/pull/1748"
+  },
+  {
+   "metric": "MJWarp sparse humanoid at 8,192 worlds, RTX 5090",
+   "value": "about 6.47M steps/s (from search-result summary of an optimization PR; not directly verified)",
+   "source": "https://github.com/google-deepmind/mujoco_warp (PR discussions via search)"
+  },
+  {
+   "metric": "MJWarp speedup vs MJX (Newton 1.0, RTX PRO 6000 Blackwell)",
+   "value": "up to 252x locomotion, 475x manipulation",
+   "source": "https://developer.nvidia.com/blog/newton-adds-contact-rich-manipulation-and-locomotion-capabilities-for-industrial-robotics"
+  },
+  {
+   "metric": "MJWarp speedup vs MJX (Newton beta, RTX 4090)",
+   "value": "up to 152x locomotion, 313x manipulation",
+   "source": "https://developer.nvidia.com/blog/train-a-quadruped-locomotion-policy-and-simulate-cloth-manipulation-with-nvidia-isaac-lab-and-newton"
+  },
+  {
+   "metric": "Newton (MJWarp) vs PhysX in Isaac Lab, in-hand dexterous manipulation",
+   "value": "up to 65% faster (Newton beta)",
+   "source": "https://developer.nvidia.com/blog/train-a-quadruped-locomotion-policy-and-simulate-cloth-manipulation-with-nvidia-isaac-lab-and-newton"
+  },
+  {
+   "metric": "Isaac Lab (PhysX) Isaac-Velocity-Rough-G1-v0, 4,096 envs, RTX 4090 + Ryzen 9 7950X",
+   "value": "94k env-steps/s (step only); 88k with inference; 82k with training. VRAM 6.1 GB.",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "Isaac Lab (PhysX) Shadow-hand Repose-Cube, 8,192 envs, RTX 4090",
+   "value": "200k env-steps/s (170k with training)",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "Isaac Lab Cartpole state / RGB-camera, RTX 4090",
+   "value": "1.1M env-steps/s (4,096 envs) / 50k (1,024 envs; 16.7 GB VRAM)",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "Isaac Lab G1 rough, multi-GPU scaling",
+   "value": "L40: 72k; 4x L40: 290k; 16x L40 (4 nodes): 1.2M env-steps/s",
+   "source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/main/docs/source/overview/reinforcement-learning/performance_benchmarks.rst"
+  },
+  {
+   "metric": "ManiSkill3 RGBD + segmentation rendering throughput, RTX 4090",
+   "value": "30,000+ FPS",
+   "source": "https://github.com/haosulab/ManiSkill"
+  },
+  {
+   "metric": "Genesis headline claim vs critique",
+   "value": "43M FPS claimed (Franka, RTX 4090, static/self-collision only); 27M FPS with random actions; independent re-run about 150x lower than reported under realistic settings",
+   "source": "https://stoneztao.substack.com/p/the-new-hyped-genesis-simulator-is"
+  },
+  {
+   "metric": "Genesis World 1.0 Quadrants compiler vs initial Genesis",
+   "value": "10x faster launch, up to 4.6x runtime (vendor claim)",
+   "source": "https://www.marktechpost.com/2026/05/30/genesis-ai-releases-nyx-quadrants-and-genesis-world-1-0-physics-platform-for-scalable-robotics-foundation-model-evaluation/"
+  },
+  {
+   "metric": "GPUSimBench inclined-plane fidelity (EMD vs real)",
+   "value": "ManiSkill 2.520 cm; MJX 3.970 cm (best two)",
+   "source": "https://arxiv.org/abs/2607.13059"
+  },
+  {
+   "metric": "GAUGE relative RMSE examples (Isaac Sim vs Genesis)",
+   "value": "Turntable 0.17x vs 0.57x; fabric tension 0.73x vs 1.51x (normalized; lower is better). Newton 1.3.0 also evaluated.",
+   "source": "https://arxiv.org/abs/2608.05948"
+  },
+  {
+   "metric": "Taccel tactile simulation throughput, single H100",
+   "value": "915 FPS total with 4,096 envs (peg insertion, dual sensors; 18x wall-clock); 12.67 FPS with 256 envs for full-hand tactile grasping",
+   "source": "https://papers.neurips.cc/paper_files/paper/2025/hash/87d91d52272c3166315ca20b18519b9e-Abstract-Conference.html"
+  },
+  {
+   "metric": "TacSL visuotactile speedup",
+   "value": ">200x faster than prior state of the art",
+   "source": "https://research.nvidia.com/publication/2025-01_tacsl-library-visuotactile-sensor-simulation-and-learning"
+  },
+  {
+   "metric": "Kamino closed-loop biped RL",
+   "value": "4,096 parallel envs on a single GPU (DR Legs, 6 nested loops)",
+   "source": "https://arxiv.org/abs/2603.16536"
+  },
+  {
+   "metric": "GS-Playground (MotrixSim + batched 3DGS) rendering throughput / sim2real",
+   "value": "about 10^4 FPS aggregate, 2,048 envs at 640x480; 90% zero-shot real grasp success",
+   "source": "https://roboticsproceedings.org/rss22/p093.html"
+  },
+  {
+   "metric": "MotrixSim on Huawei Kunpeng CPU",
+   "value": "362,202 steps/s peak; 345,335 steady state",
+   "source": "https://autonews.gasgoo.com/articles/news/2102741730670886912"
+  },
+  {
+   "metric": "NVIDIA AI Enterprise / Omniverse Enterprise license (needed to serve Isaac Sim with Kit to third parties)",
+   "value": "about $4,500 per GPU per year list; EU reseller about EUR 5,800 per GPU per year",
+   "source": "https://pi3g.com/nvidia-ai-enterprise-subscription-cost-in-2026/ ; https://us.fitgap.com/products/omniverse"
+  },
+  {
+   "metric": "GitHub stars (community momentum, Oct 2026)",
+   "value": "Genesis 30k+; Bullet 14.8k; Jolt 11.7k; Isaac Lab 8.3k; Warp 7.2k; Newton 5.7k; Isaac Sim 4.2k; ManiSkill 3.4k; mjlab 3.2k; Brax 3.2k; Chrono 3.1k; MJWarp 1.5k; DART 1.2k",
+   "source": "respective GitHub repos (fetched 2026-10-06)"
+  },
+  {
+   "metric": "Release cadence 2026",
+   "value": "Newton: 1.0 (Mar 10) to 1.6.1 (Oct 5); MuJoCo: 3.5 (Feb 12) to 3.15 (Oct 5); Warp 1.15 to 1.18 (Jul-Oct); Drake monthly (v1.57 on Sep 10)",
+   "source": "https://pypi.org/project/newton/ ; https://github.com/google-deepmind/mujoco/releases ; https://pypi.org/project/warp-lang/ ; https://pypi.org/project/drake/"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "Build vs adopt: do NOT build a physics engine. Newton is co-built by NVIDIA, DeepMind and Disney with dozens of specialist engineers; a startup cannot match its contact solvers, GPU kernels and validation. Instead, build and own a backend-agnostic 'Physics Abstraction Layer'. Use OpenUSD as the canonical scene format with MJCF/URDF importers. Give it one task/env API following the Isaac Lab manager-based design (which mjlab also follows), shared sensor and actuator interfaces, and per-backend adapters. RoboVerse/MetaSim and Isaac Lab 3.0's multi-backend design prove the pattern.",
+  "Primary robot backend: Newton (pin a minor version such as 1.6.x and upgrade quarterly). Use the MJWarp solver by default for locomotion, humanoid whole-body control and dexterous hands; Kamino for closed-loop linkages; VBD/Style3D for cloth and cables; ImplicitMPM for granular and food; SDF plus hydroelastic contact for assembly and insertion. It is Apache-2.0, so it can be embedded in a multi-tenant SaaS without royalties.",
+  "Reference and interactive backend: MuJoCo 3.15+ on CPU (float64, deterministic) on the same MJCF. Use it for (a) the low-latency interactive editor, teleoperation and MPC in the CEN browser workspace, (b) a 'reproducible mode' for dataset provenance, and (c) nightly cross-checks that MJWarp rollouts stay within tolerance of MuJoCo.",
+  "Compatibility backend: PhysX through Isaac Lab 3.x (PhysX SDK is BSD-3). Offer Kit-based Isaac Sim/RTX only as (i) an internal synthetic-data factory whose outputs CEN sells (license-exempt), or (ii) a customer bring-your-own NVIDIA AI Enterprise / partner-licensed premium workspace. Never ship Omniverse Kit or ovphysx to tenants without a written NVIDIA agreement.",
+  "Training front end: Isaac Lab 3.x running without Kit on the Newton backend, plus mjlab for a lightweight path. Integrate RSL-RL, skrl, rl_games and Brax-training for RL; LeRobot and Isaac Lab Mimic for imitation learning and VLA data generation. Make env count, decimation and domain-randomization presets one-click in the UI, and expose the LLM text-command interface as a layer that edits USD scenes and launches training jobs.",
+  "Vehicles, off-road and marine: add Project Chrono 10 (BSD-3) as a separate backend for vehicle dynamics, tires, CRM/SPH terramechanics and fluid-structure interaction, and PhysX Vehicle2 for light-duty driving. Do not force cars into the robot RL engine.",
+  "Contact-fidelity program, as a differentiator for CEN's 'controllable, reproducible' positioning: build an internal real-measurement benchmark in the style of GAUGE and GPUSimBench (inclined plane, turntable, drop and bounce, cable sag, cloth drape, peg insertion). Calibrate marketplace assets with MuJoCo's sysid toolbox, using Drake hydroelastic as an offline gold standard for contact-rich parts, the way Lightwheel calibrates SimReady assets. Publish a per-asset 'fidelity score'.",
+  "Tactile: expose one tactile sensor API backed by Isaac Lab TacSL (PhysX path), MuJoCo touch_grid (MuJoCo/MJWarp), and custom Warp kernels on Newton hydroelastic pressure fields. Evaluate Taccel or Genesis IPC tactile for high-fidelity dexterous hands.",
+  "Determinism and reproducibility: document that GPU batched runs are statistically, not bitwise, reproducible (MJWarp atomics, PhysX across GPUs). Store seeds, engine and driver versions, GPU SKU and env count in every dataset's metadata. Provide a CPU-MuJoCo replay for audit.",
+  "Hedge against NVIDIA lock-in: keep Genesis World (Apache-2.0; Quadrants runs on CUDA, ROCm, Metal and Vulkan) as an experimental adapter. Also use it for fluid/SPH and IPC demos. Do not use its speed claims in marketing without your own benchmarks.",
+  "Run a 6-8 week bake-off before final commitment, on identical hardware (1x RTX PRO 6000 Blackwell plus 1x H100/H200). Tasks: G1 velocity tracking, a BeyondMimic motion clip, Franka cube lift, LEAP/Allegro in-hand reorientation, cable insertion, cloth folding and a Kamino closed-loop gripper. Measure env-steps/s, wall-clock to reward threshold, VRAM, steps per dollar, cross-backend policy transfer (Newton to PhysX to MuJoCo), and a real-robot transfer on at least one quadruped or humanoid and one arm.",
+  "GPU fleet: RTX PRO 6000 Blackwell / L40S-class (RT cores) for combined physics, rendering and synthetic-data nodes, and H100/H200/B200-class for physics-only RL and VLA training. H100-class GPUs lack RT cores (based on general product knowledge, not checked against NVIDIA's spec pages here), so they are not suited to RTX sensor rendering. Use MIG or MPS to pack small tenant jobs and CUDA-graph capture (supported by Newton/MJWarp) to cut launch overhead.",
+  "Team for the physics layer: about 5-7 engineers in year 1. Roles: 1 lead with contact mechanics and multibody background; 2 Warp/CUDA kernel engineers (custom sensors, actuators, Newton contributions); 1 USD/MJCF/URDF asset-pipeline engineer; 1 sysid and sim2real engineer with lab access to a quadruped or humanoid and a 7-DoF arm; 1 RL infrastructure engineer; plus 0.5 FTE for licensing and partner relations with NVIDIA Inception and the Linux Foundation Newton community. Contribute upstream to Newton (vehicle hooks, tactile, Korean industrial assets) to gain roadmap influence.",
+  "Avoid as primary backends: PyBullet (stagnant since Jan 2025), Brax physics (deprecated), Dojo (inactive), RaiSim (proprietary; v1 archived), Jolt (no reduced-coordinate articulations; at most a browser-preview engine), ManiSkill assets (CC BY-NC) in commercial bundles."
+ ],
+ "risks": [
+  "Newton immaturity: 1.0 only since March 2026, monthly API changes, MJWarp still labelled 'Alpha' on PyPI, and Isaac Lab's Newton integration is beta/early access with a limited validated task set. Expect upgrade churn and regressions; pin versions and keep MuJoCo CPU and PhysX fallbacks.",
+  "NVIDIA dependency: Newton, MJWarp and Warp are CUDA-only on GPU, so pricing, supply and export controls on NVIDIA GPUs (relevant for Korea, and for cloud GPU quotas) directly hit COGS. Genesis/Quadrants is the main non-NVIDIA hedge but is less proven.",
+  "Licensing trap: hosting Isaac Sim with Omniverse Kit for tenants requires NVIDIA AI Enterprise (about $4.5k per GPU per year). ovphysx and ovrtx carry the proprietary 'NVIDIA-Omniverse' license. ManiSkill assets are CC BY-NC. Genesis's Nyx renderer package license was not yet public. Misreading these could create legal exposure for a commercial multi-tenant SaaS.",
+  "Fidelity is not solved: GAUGE (2026) found no uniformly faithful engine, with the worst gaps in impulsive contact, fast cloth and volumetric deformation. Marketing 'high real-world similarity' requires your own measurement-grounded calibration.",
+  "Reproducibility: GPUSimBench shows GPU-batched non-determinism in mainstream simulators, and MJWarp is explicitly non-deterministic in float32. That can undermine CEN's 'reproducible synthetic data' promise unless a deterministic replay path exists.",
+  "Benchmark hype: vendor speedups (252x/475x vs MJX, Genesis 43M FPS) are not comparable across tasks, substeps, decimation and env counts. Isaac Lab 'env-step FPS' includes decimation and RL overhead, while MJWarp numbers are raw physics steps. Capacity planning must come from in-house benchmarks.",
+  "Fragmentation and churn: Isaac Sim 5.0, 6.0 and 6.1 plus Isaac Lab 2.3 and 3.0 within about 15 months, and Omniverse libraries still early access. Integrations built on Kit internals may break.",
+  "Differentiable simulation remains weak in production engines (only Newton's Featherstone and SemiImplicit; MJWarp not differentiable). Gradient-based sysid and design features may need custom Warp work.",
+  "Scale limits: MJWarp struggles with single mechanisms above about 60 DoF (e.g., full humanoid plus two dexterous hands as one tree may underperform). Tactile at full-hand resolution is still orders of magnitude slower than rigid-body RL.",
+  "Ecosystem risk on alternatives: Genesis AI has pivoted to its own foundation model (GENE-26.5), which may deprioritize the open simulator; ManiSkill has a tiny maintainer team; RaiSim and PyBullet show how single-company engines stall."
+ ],
+ "open_questions": [
+  "Does AICHEMIST's browser GPU workspace, if it ever runs Isaac Sim/Kit for tenants, fall under 'delivering as a service', and what NVIDIA AI Enterprise or Inception/partner terms (per-GPU or per-concurrent-user) would NVIDIA Korea offer? Ask for a written opinion.",
+  "What are the exact license terms of ovphysx, ovrtx and ovstage at their production release (late 2026)? Will they permit embedding in third-party SaaS without AI Enterprise?",
+  "Per-engine numeric results in GAUGE (arXiv 2608.05948) and throughput/memory tables in GPUSimBench (arXiv 2607.13059) could not be read directly (arxiv.org was blocked by the egress proxy); verify before citing to investors.",
+  "What are the benchmark configurations (worlds per scene, timestep, solver iterations) behind the MJWarp nightly numbers, so they can be normalized against Isaac Lab env-step FPS?",
+  "Roadmap and timeline for MJWarp differentiability (issue #500), Newton deterministic GPU mode, and production status of Newton in Isaac Lab (task coverage beyond flat-terrain locomotion).",
+  "Does Newton plan native tactile sensors or vehicle/tire models, and could AICHEMIST contribute these upstream for roadmap influence under LF governance?",
+  "How mature is Genesis's Quadrants on AMD ROCm for real RL workloads, and what is the license and availability of the Nyx renderer wheel?",
+  "Real sim2real evidence for Newton beyond NVIDIA-partner announcements (G1 locomotion, Skild rack assembly, Samsung cables): are there independent peer-reviewed results by CoRL 2026 (Nov 2026)?",
+  "Whether Chrono's vehicle and terramechanics stack can be co-simulated with Newton robots (e.g., a mobile manipulator on deformable terrain) through a shared USD stage, or needs a custom co-simulation bridge.",
+  "Exact Isaac Lab 3.0 GA date and API-freeze commitments; the EA release dates shown on GitHub should be re-checked."
+ ]
+}

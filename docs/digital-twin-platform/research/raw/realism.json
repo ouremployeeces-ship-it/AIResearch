@@ -1,0 +1,954 @@
+{
+ "key": "realism",
+ "topic": "Visual and sensor realism, Real2Sim, and neural/generative realism for AICHEMIST's general-purpose digital twin platform (status as of 2026-10-06)",
+ "executive_summary": "Recommendation: do not build a renderer. Build on the NVIDIA OpenUSD/Omniverse RTX stack. Isaac Sim 6.0 went GA in June 2026 and 6.1.0 is out (Sep 2026). Isaac Sim now renders 3D Gaussian splats (3DGS/3DGUT) via the Fabric Scene Delegate, with multi-GPU, light interaction with meshes and MaterialX. Splats are stored in the new OpenUSD 26.03 UsdVolParticleField3DGaussianSplat schema. Real-time path tracing (RTX Real-Time 2.0) is the default render mode, and RTX lidar/radar/ultrasonic sensors sit in the same scene. The neural-reconstruction core has converged on permissively licensed NVIDIA/Berkeley code: gsplat (Apache-2.0, v1.6.0; 3DGUT, spinning-lidar rasterization, NCore v4, multi-GPU) and 3DGRUT (Apache-2.0, v1.1.0 on 2026-06-10, v2.0.0 with Neural Harmonic Textures in June 2026). Both handle fisheye/rolling-shutter cameras, include a physically-plausible ISP, and export NuRec USDZ for Isaac Sim, AlpaSim (Apache-2.0, ~900 reconstructed AV scenes) and CARLA. NeRF is no longer competitive as a simulation runtime: 3DGS/3DGUT is 100-200x faster to render and is now standardized (OpenUSD ParticleField, Khronos KHR_gaussian_splatting RC Feb 2026). NeRF survives only as a niche offline/extrapolation tool. CEN's NeRF-based 2D->3D pipeline should therefore be migrated, and its license checked (Instant-NGP is Nvidia Source Code License-NC). The biggest hidden risk is licensing. The original Inria 3DGS code and most mesh-extraction research code are non-commercial: 2DGS and MILo (Gaussian-Splatting License), PGSR (ZJU non-profit), and Neuralangelo, Instant-NGP and nvdiffrast (NVIDIA NC). TRELLIS.2 is MIT but depends on nvdiffrast. Tencent's Hunyuan3D 2.1 license explicitly excludes South Korea, the EU and the UK, so a Korean company cannot legally use it. Commercially usable building blocks exist and should form the default stack: gsplat, 3DGRUT, fVDB Reality Capture, TRELLIS/TRELLIS.2 (MIT, minus nvdiffrast), SAM 3D Objects (SAM License), VGGT-1B-Commercial, MapAnything-apache, Depth Anything 3 small/base/metric (Apache), CoACD/CuACD (MIT), Articulate-Anything (MIT), Cosmos 3 (OpenMDW-1.1) and Cosmos Transfer 2.5 (NVIDIA Open Model License). Generative world models are now credible tools for appearance-level sim-to-real augmentation and policy evaluation, but they cannot replace physics. Examples: Cosmos Transfer 2.5 (depth/edge/blur/segmentation multi-ControlNet, distilled edge model Feb 2026), Cosmos 3 (omnimodel, May/June 2026), Wayve GAIA-3/4, Runway GWM-1 Robotics, Decart Oasis 3 ($0.02/s API) and Genie 3 (consumer prototype only, no API). Use them as a post-render domain-adaptation layer with label-preserving controls and as an evaluation oracle. Physics, ground-truth labels and sensors stay in the simulator. The strategic move for CEN is to turn 'NeRF photo->3D' into a Real2Sim Asset Factory. The pipeline: phone/robot video -> feed-forward poses/depth -> 3DGUT splat (visual) -> surface mesh plus generative completion -> part segmentation and articulation (URDF/MJCF/USD Physics) -> convex decomposition -> VLM priors for mass/friction refined by video system identification -> automated physics validation -> a SimReady USD with a measured 'sim2real certificate'. This product, sold through the existing marketplace together with Korea-specific captured environments (factories, logistics, Korean roads), is a defensible moat because NVIDIA supplies tools but not curated, validated, domain-specific sim-ready content. Gap measurement must be built in from day 1. FID alone does not predict detector mAP, while newer structure-plus-appearance metrics reach Pearson r≈0.87-0.88 with downstream mAP, and splat-based real-to-sim policy evaluation (PolaRiS, soft-body GS twins) shows strong sim/real success-rate correlation. CEN should ship a Sim2Real Gap Scorecard covering perception mAP-transfer ratio, policy success correlation, physical trajectory error and sensor statistics as a platform feature. Note: the session's web-search budget ran out after ~60 searches. Later verification used primary GitHub sources. Items marked low confidence below were not verifiable with the remaining tools.",
+ "options": [
+  {
+   "name": "NVIDIA Omniverse RTX Renderer inside Isaac Sim 6.x (RTX Real-Time 2.0 + Interactive Path Tracing)",
+   "category": "Simulation renderer (primary)",
+   "status_as_of_2026": "Isaac Sim 6.0 GA ~June 2026 (radiancefields report: June 8, 2026; GitHub tag v6.0.0 June 4), 6.0.1 (June 22), 6.1.0 GA (Sep 10, 2026), 7.0.0a1 pre-release (Sep 18, 2026). The fetch tool printed some GitHub tag years inconsistently, but the sequence matches 2026. RTX Real-Time 2.0 is a path-tracing-based real-time mode using the DLSS suite; Interactive (Path Tracing) mode is available for higher fidelity. Isaac Sim 6.0 adds 3DGS rendering via Fabric Scene Delegate, multi-GPU, light interaction with mesh scenes, and MaterialX.",
+   "license_and_cost": "Isaac Sim source on GitHub is Apache-2.0, but Omniverse Kit/RTX runtime requires accepting the NVIDIA Omniverse License Terms on first launch. Free to use; commercial SaaS redistribution should be confirmed with NVIDIA. Needs RT-core GPUs: datacenter minimum A40, recommended L40S, best RTX PRO 6000 Blackwell Server. H100/A100 are not on the list.",
+   "strengths": [
+    "Physically based path tracing with MDL + MaterialX/OpenPBR materials, fully OpenUSD-native",
+    "Same scene hosts RTX camera, lidar, radar and acoustic/ultrasonic sensors (isaacsim.sensors.experimental.rtx)",
+    "Native Gaussian-splat (NuRec/3DGUT) rendering composited with meshes, and lighting interaction since 6.0",
+    "Direct coupling to Isaac Lab 3.0 (RL/IL), Newton/PhysX physics, Cosmos augmentation, Replicator domain randomization",
+    "Largest robotics ecosystem; NVIDIA is shipping the Real2Sim tooling (NuRec, 3DGRUT, gsplat 3DGUT) into it"
+   ],
+   "weaknesses": [
+    "Vendor lock-in to NVIDIA RTX GPUs and the Omniverse license",
+    "Heavy (Kit) runtime; Isaac Lab 3.0 adds kit-less OVRTX/Newton renderers partly to work around this",
+    "Splats still need proxy meshes for physics; lidar/radar on splat content is less mature than on meshes (gsplat added lidar rasterization separately)",
+    "Fast API churn (e.g., isaacsim.sensors.rtx deprecated for experimental.rtx in 6.0)"
+   ],
+   "best_fit": "Default rendering + sensor + Real2Sim runtime for robots, factories/warehouses, drones and the core of CEN's GPU workspace",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacSim",
+    "https://github.com/isaac-sim/IsaacSim/releases",
+    "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_rt_overview.html",
+    "https://radiancefields.com/nvidia-s-isaac-sim-6.0-ships-with-nurec-gaussian-splatting",
+    "https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.sensors.experimental.rtx/docs/index.html"
+   ]
+  },
+  {
+   "name": "Isaac Lab 3.0 rendering backends (Isaac RTX, OVRTX kit-less, Newton Warp renderer, Newton GL/RTX) + physically-plausible ISP",
+   "category": "Training-time renderer for RL/IL",
+   "status_as_of_2026": "Isaac Lab 3.0 beta at GTC (Mar 17, 2026), beta2 (Jun 17, 2026), 3.0.0-EA (Sep 16, 2026). Built on Newton 1.0 + PhysX, with kit-less Newton backend (MuJoCo-Warp solvers), pluggable visualizers (Kit, Newton, Rerun, Viser), a renderer-neutral physically plausible ISP (HDR->LDR) and a visuo-tactile sensor (TacSL).",
+   "license_and_cost": "Isaac Lab is BSD-3/Apache-style open source. The Isaac RTX backend inherits Omniverse terms. cuRobo-based SkillGen has proprietary terms.",
+   "strengths": [
+    "Massively parallel tiled camera rendering for vision-based RL",
+    "Choice of cheap raster (Newton Warp) vs full RTX per experiment",
+    "ISP model shared across renderers reduces camera-appearance gap"
+   ],
+   "weaknesses": [
+    "Early-access APIs",
+    "TacSL tactile works only with the PhysX backend, not Newton",
+    "Kit-less renderers are lower fidelity than full RTX"
+   ],
+   "best_fit": "CEN 'train' tab: vision-based RL/IL at scale with switchable fidelity",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacLab/releases",
+    "https://www.robotics247.com/article/nvidia-gtc-2026-nvidia-global-robotics-leaders-look-to-take-physical-ai-to-the-real-world"
+   ]
+  },
+  {
+   "name": "Unreal Engine 5.7 / 5.8 (Lumen, Nanite, MegaLights, Substrate), incl. CARLA",
+   "category": "Game-engine renderer (secondary)",
+   "status_as_of_2026": "UE 5.7 (Nov 2025): MegaLights Beta, Substrate Production-Ready, Nanite Foliage (Nanite Voxels) Experimental, PCG Production-Ready. UE 5.8 (June 17, 2026): Lumen Lite (~2x faster GI), MegaLights/Movie Render Graph production-ready, Mesh Terrain. 5.8 is the last UE5. UE6 early access targeted by late 2027. 3DGS via third-party plugins (YaGS open source, UE 5.5-5.7; NanoGS; Volinga 4DGS relighting). CARLA integrates NuRec.",
+   "license_and_cost": "Source-available EULA. Royalty/seat model for non-game commercial use. Exact 2026 terms not verified in this session (low confidence).",
+   "strengths": [
+    "Best-in-class real-time artist-driven visuals, huge environment marketplace",
+    "Strong for AV/off-road/large open worlds (PCG, Nanite foliage)",
+    "CARLA ecosystem for driving"
+   ],
+   "weaknesses": [
+    "Not physically based for sensors (raster/Lumen approximations), weak robotics physics/articulation",
+    "No native USD-physics/Isaac Lab-grade RL tooling",
+    "UE6 transition in 2027 means engine-level rework risk",
+    "Splat support only via plugins"
+   ],
+   "best_fit": "Optional AV/driving and visualization front-end when customers already use UE/CARLA. Not the core.",
+   "sources": [
+    "https://www.unrealengine.com/news/unreal-engine-5-7-is-now-available",
+    "https://gamedev.net/news/3999-unreal-engine-58-released/",
+    "https://labs.invenglobal.com/articles/22900/unreal-engine-6-to-feature-fundamental-overhaul-targeting-early-access-release-by-late-2027",
+    "https://radiancefields.com/yags-yandex-open-sources-a-3dgs-plugin-for-unreal-engine-5.5–5.7"
+   ]
+  },
+  {
+   "name": "Unity 6 HDRP",
+   "category": "Game-engine renderer",
+   "status_as_of_2026": "Unity's 2026 render-pipeline strategy puts HDRP in maintenance (no new features, stability fixes only) and prioritizes URP. Built-in pipeline deprecation starts in 6.5. A unified renderer is a long-term goal only. Splats via XGRIDS LCC Unity SDK 2.2.0 (real-time lights + shadows on splats).",
+   "license_and_cost": "Unity Pro/Industry subscription (per-seat).",
+   "strengths": [
+    "Large dev community, good XR/mobile deployment",
+    "Third-party splat SDKs with lighting"
+   ],
+   "weaknesses": [
+    "HDRP is frozen, so the photoreal path has no roadmap",
+    "Weak robotics physics/sensor ecosystem compared with Isaac"
+   ],
+   "best_fit": "Avoid for new high-fidelity simulation. Acceptable only for XR/mobile viewers.",
+   "sources": [
+    "https://unity.com/topics/render-pipelines-strategy-for-2026",
+    "https://80.lv/articles/unity-unveils-2026-render-pipelines-strategy/",
+    "https://radiancefields.com/xgrids-adds-real-time-lights-and-shadows-to-gaussian-splats-in-lcc-unity-sdk-2.2.0"
+   ]
+  },
+  {
+   "name": "Blender 5.x Cycles / EEVEE (with BlenderProc-style SDG)",
+   "category": "Offline path tracer / asset tool",
+   "status_as_of_2026": "Blender 5.0 (Nov 2025): ACES 1.3/2.0, null-scattering volumes, thin-film. Blender 5.1 (Mar 11, 2026): up to 10% faster GPU Cycles, HIP RT default on AMD.",
+   "license_and_cost": "GPL (free). Rendered outputs are unrestricted.",
+   "strengths": [
+    "Ground-truth-quality path tracing that runs on any CUDA/OptiX/HIP GPU, including non-RT H100s via CUDA",
+    "Excellent for offline image dataset generation (CEN's current core) and asset cleanup/retopology",
+    "Scriptable, huge asset community"
+   ],
+   "weaknesses": [
+    "Not real-time and no robotics physics loop",
+    "GPL constraints if code is linked/distributed"
+   ],
+   "best_fit": "Offline photoreal dataset rendering and the asset-cleanup step in the Real2Sim factory",
+   "sources": [
+    "https://alternativeto.net/news/2025/11/blender-5-0-launches-with-aces-color-enhanced-rendering-and-tighter-vfx-integration/",
+    "https://gamedev.net/news/2274-blender-51-release/"
+   ]
+  },
+  {
+   "name": "Godot 4.5/4.6/4.7",
+   "category": "Open-source game engine",
+   "status_as_of_2026": "4.5 (Sep 2025) and 4.6 (Jan 2026: Jolt physics default, SSR rewrite). 4.7 beta (Apr 2026) adds HDR output and Vulkan ray-tracing work.",
+   "license_and_cost": "MIT, free",
+   "strengths": [
+    "Fully permissive, lightweight, embeddable (LibGodot)"
+   ],
+   "weaknesses": [
+    "SDFGI/raster GI far below path-traced realism",
+    "No sensor-grade simulation or robotics ecosystem"
+   ],
+   "best_fit": "Not recommended for realism. Possibly lightweight embedded viewers.",
+   "sources": [
+    "https://digitalproduction.com/2026/01/28/godot-4-6-arrives-with-major-cg-friendly-updates/",
+    "https://www.phoronix.com/search/Godot%204"
+   ]
+  },
+  {
+   "name": "WebGPU web renderers (PlayCanvas engine + SuperSplat 3.0, World Labs Spark 2.x, Babylon.js, CesiumJS)",
+   "category": "Browser rendering / viewer",
+   "status_as_of_2026": "WebGPU on by default in Chrome, Edge, Firefox (Windows Jul 2025, macOS Nov 2025) and Safari 26 (Sep 2025, incl. iOS/visionOS). SuperSplat 3.0 (June 3, 2026) is WebGPU-only and streams 24M-Gaussian scans at ~60 fps with LOD. Spark 2.x (World Labs, MIT, WebGL2, LoD paging for 100M+ splat worlds). KHR_gaussian_splatting shipped in Cesium, Babylon.js and PlayCanvas.",
+   "license_and_cost": "PlayCanvas engine MIT, Spark MIT. Free.",
+   "strengths": [
+    "Zero-install previews for CEN marketplace and browser workspace",
+    "Splat streaming at world scale on mobile/VR",
+    "Standards-based (glTF KHR_gaussian_splatting, SPZ)"
+   ],
+   "weaknesses": [
+    "No physically based sensor simulation and no ground-truth labels at sensor fidelity",
+    "Browser GPU limits"
+   ],
+   "best_fit": "CEN marketplace asset/scene previews, lightweight annotation/editing, sharing digital-twin views. Heavy simulation stays server-side (Omniverse streaming).",
+   "sources": [
+    "https://app.cinevva.com/news/2026-01-05-webgpu-era",
+    "https://radiancefields.com/playcanvas-releases-supersplat-3.0",
+    "https://github.com/sparkjsdev/spark",
+    "https://aecmag.com/reality-capture-modelling/khronos-announces-gltf-gaussian-splatting-extension/"
+   ]
+  },
+  {
+   "name": "gsplat (nerfstudio-project)",
+   "category": "3DGS training/rendering library",
+   "status_as_of_2026": "v1.6.0 on main (not yet on PyPI). 3DGUT integration (Apr 2025), external distortion + lidar rasterization (Mar 2026), NCore v4 (Apr 2026), fisheye/FTheta/lidar camera models and ~30% faster MCMC (Jun 2026), multi-GPU + PPISP (Jul 2026), SH optimizations (Aug 2026). 5.8k stars.",
+   "license_and_cost": "Apache-2.0, free",
+   "strengths": [
+    "Commercial-safe replacement for the Inria non-commercial code",
+    "Up to 4x less GPU memory and 15% less time than the official implementation",
+    "Rolling-shutter/distortion (3DGUT), lidar, batching across scenes, 2DGS mode",
+    "Used by NVIDIA NuRec as renderer"
+   ],
+   "weaknesses": [
+    "Library only: needs our own pipeline, UI and QA",
+    "No built-in physics/collision geometry"
+   ],
+   "best_fit": "Core reconstruction engine of the CEN Real2Sim factory",
+   "sources": [
+    "https://github.com/nerfstudio-project/gsplat",
+    "https://developer.nvidia.com/blog/revolutionizing-neural-reconstruction-and-rendering-in-gsplat-with-3dgut/"
+   ]
+  },
+  {
+   "name": "NVIDIA 3DGRUT (3DGRT ray-traced + 3DGUT unscented-transform splats)",
+   "category": "Neural reconstruction / renderer",
+   "status_as_of_2026": "v1.0.0 (Apr 3, 2025), PPISP (Jan 2026), NCore v4 (Mar 2026), v1.1.0 (Jun 10, 2026: USD/USDZ/PLY/NuRec export with mesh injection, path-traced playground, Blackwell/CUDA 13, DGX Spark), v2.0.0 (Jun 2026: Neural Harmonic Textures). 3DGUT was a CVPR 2025 oral; 3DGRT was SIGGRAPH Asia 2024.",
+   "license_and_cost": "Apache-2.0, free. Needs RT-core GPU for 3DGRT.",
+   "strengths": [
+    "Handles distorted, fisheye and rolling-shutter cameras, which matters for robots/AVs",
+    "Secondary rays (reflections/refractions, shadows) via ray tracing",
+    "Direct export to Isaac Sim / NuRec USDZ and OpenUSD ParticleField",
+    "RTX 5090: 3DGUT 846 FPS (NeRF-Synthetic), 317 FPS (MipNeRF360)"
+   ],
+   "weaknesses": [
+    "Research-grade tooling",
+    "3DGRT slower (68 FPS on MipNeRF360)"
+   ],
+   "best_fit": "High-fidelity sensor-correct scene reconstruction for robot/AV digital twins",
+   "sources": [
+    "https://github.com/nv-tlabs/3dgrut",
+    "https://github.com/nv-tlabs/3dgrut/releases"
+   ]
+  },
+  {
+   "name": "Omniverse NuRec + AlpaSim (+CARLA integration)",
+   "category": "Neural reconstruction in simulation",
+   "status_as_of_2026": "NuRec is a set of 3DGS libraries that reconstruct camera/lidar data into OpenUSD and render via gsplat inside Isaac Sim, AlpaSim and CARLA (announced Aug 2025). AlpaSim is open source (Apache-2.0, Oct 2025), runs as gRPC microservices, uses NuRec 3DGUT as default renderer (plus OmniDreams video-model rendering), ships PhysicalAI-AV-NuRec 26.01 dataset (~900 x 20 s long-tail scenes) and reports up to 83% variance reduction in real-world metrics.",
+   "license_and_cost": "AlpaSim Apache-2.0. NuRec container/library terms not verified (docs.nvidia.com blocked): low confidence.",
+   "strengths": [
+    "Production path from capture to closed-loop sim",
+    "AV-ready (multi-camera, lidar, trajectories)",
+    "Standardized on OpenUSD ParticleField"
+   ],
+   "weaknesses": [
+    "Reconstructed scenes are mostly static and limited in novel-trajectory extrapolation",
+    "Actors/dynamic objects need insertion and relighting",
+    "NVIDIA-centric"
+   ],
+   "best_fit": "Driving digital twins and site-specific robot test environments",
+   "sources": [
+    "https://developer.nvidia.com/omniverse/nurec",
+    "https://radiancefields.com/nvidia-unveils-alpasim-at-ces",
+    "https://github.com/NVlabs/alpasim",
+    "https://www.edge-ai-vision.com/2025/08/nvidia-opens-portals-to-world-of-robotics-with-new-omniverse-libraries-cosmos-physical-ai-models-and-ai-computing-infrastructure/"
+   ]
+  },
+  {
+   "name": "fVDB Reality Capture (NVIDIA / OpenVDB)",
+   "category": "Large-scale splat training + mesh extraction",
+   "status_as_of_2026": "Active (fVDB 0.4 around GTC 2026). Toolbox for sensor loading, radiance-field reconstruction, feature learning, mesh/point-cloud extraction, USD export.",
+   "license_and_cost": "Apache-2.0",
+   "strengths": [
+    "Claims ~50% better end-to-end throughput than gsplat and 30% lower runtime",
+    "Commercial-safe mesh extraction path",
+    "Sparse VDB scales to large sites"
+   ],
+   "weaknesses": [
+    "Small community (69 stars)",
+    "Young API"
+   ],
+   "best_fit": "Factory/warehouse-scale capture and commercial-safe mesh extraction",
+   "sources": [
+    "https://github.com/openvdb/fvdb-reality-capture",
+    "https://radiancefields.com/nvidia-advances-fvdb-with-major-0.4-release-ahead-of-gtc"
+   ]
+  },
+  {
+   "name": "NeRF ecosystem (nerfstudio/nerfacto, Instant-NGP, Zip-NeRF)",
+   "category": "Neural radiance fields",
+   "status_as_of_2026": "nerfstudio is active (Apache-2.0, 12k stars, splatfacto uses gsplat). Instant-NGP is effectively legacy. Zip-NeRF is high quality but takes seconds per frame. Isaac Sim can still render NeRF USDZ.",
+   "license_and_cost": "nerfstudio Apache-2.0. Instant-NGP under Nvidia Source Code License-NC (non-commercial; commercial requires NVIDIA research licensing).",
+   "strengths": [
+    "Better extrapolation to views far from training cameras",
+    "Compact neural fields, good for offline novel-view data"
+   ],
+   "weaknesses": [
+    "100-200x slower rendering than 3DGS; not real-time for multi-sensor RL",
+    "Not standardized in USD/glTF like splats; ecosystem momentum has moved to 3DGS",
+    "Instant-NGP licensing blocks commercial use"
+   ],
+   "best_fit": "Keep only as an offline fallback. Migrate CEN's NeRF pipeline to 3DGUT/gsplat.",
+   "sources": [
+    "https://github.com/nerfstudio-project/nerfstudio",
+    "https://github.com/NVlabs/instant-ngp",
+    "https://arxiv.org/pdf/2304.06706",
+    "https://metavert.io/compare/gaussian-splatting-vs-neural-radiance-fields"
+   ]
+  },
+  {
+   "name": "Splat-to-mesh / surface reconstruction for collision (2DGS, PGSR, SuGaR, MILo, Neuralangelo, AnyGS2Mesh)",
+   "category": "Geometry extraction",
+   "status_as_of_2026": "2DGS (SIGGRAPH 2024), PGSR (TVCG; ~1 h on 1 GPU vs NeRF-SDF 8 GPUs x 2 days), MILo (SIGGRAPH Asia 2025, order of magnitude fewer vertices, 250K-14M configurable), Neuralangelo (CVPR 2023). Feed-forward GS-to-mesh appearing (AnyGS2Mesh, arXiv 2609.03304).",
+   "license_and_cost": "2DGS and MILo: Gaussian-Splatting License (Inria, research/evaluation only). PGSR: ZJU license, 'educational, research and non-profit purposes only'. Neuralangelo: NVIDIA research license (business via licensing form). SuGaR: likely Inria-derived (not verified; low confidence). Commercial-safe alternatives: gsplat 2DGS mode, fVDB, own re-implementation from papers.",
+   "strengths": [
+    "Watertight-ish surfaces suitable for convex decomposition / SDF collision",
+    "Planar priors (PGSR) good for indoor/industrial"
+   ],
+   "weaknesses": [
+    "Almost all reference code is non-commercial",
+    "Thin structures, transparent/reflective surfaces still fail",
+    "Meshes need retopology/simplification before physics"
+   ],
+   "best_fit": "Re-implement the best ideas (2DGS/PGSR/MILo) on Apache gsplat/fVDB inside CEN",
+   "sources": [
+    "https://raw.githubusercontent.com/hbb1/2d-gaussian-splatting/main/LICENSE.md",
+    "https://raw.githubusercontent.com/zju3dv/PGSR/main/LICENSE.md",
+    "https://github.com/Anttwo/MILo",
+    "https://github.com/NVlabs/neuralangelo",
+    "https://raw.githubusercontent.com/graphdeco-inria/gaussian-splatting/main/LICENSE.md",
+    "https://arxiv.org/pdf/2609.03304"
+   ]
+  },
+  {
+   "name": "Physics-aware splats & real-to-sim evaluation (PhysGaussian, PhysTwin, OmniPhysGS, soft-body GS eval, PolaRiS, SplatSim)",
+   "category": "Neural + physics hybrid",
+   "status_as_of_2026": "PhysGaussian (CVPR 2024 Highlight; MPM via warp-mpm, no meshing). PhysTwin (ICCV 2025; spring-mass + GS from sparse videos; ropes, cloth, plush, packages). OmniPhysGS (2025, constitutive Gaussians). Real-to-Sim soft-body GS policy evaluation (arXiv 2511.04665; ACT/DP/pi0/SmolVLA sim-real correlation). PolaRiS (arXiv 2512.16881; short video -> GS eval env with strong real correlation and co-training recipe). SplatSim (86.25% zero-shot real success vs 97.5% real-data-trained).",
+   "license_and_cost": "Mostly academic code with varying licenses (verify individually; PhysGaussian license not stated on repo page).",
+   "strengths": [
+    "Closes visual gap and deformable-physics gap together",
+    "Proven value for policy evaluation (sim success predicts real success)"
+   ],
+   "weaknesses": [
+    "Per-object/scene optimization, not yet general",
+    "MPM/spring-mass parameters are object-specific; slow for large-scale RL"
+   ],
+   "best_fit": "Phase-3 'deformables + evaluation twin' feature; the PolaRiS-style evaluation hub is a strong product template for CEN",
+   "sources": [
+    "https://arxiv.org/pdf/2311.12198",
+    "https://openaccess.thecvf.com/content/ICCV2025/html/Jiang_PhysTwin_Physics-Informed_Reconstruction_and_Simulation_of_Deformable_Objects_from_Videos_ICCV_2025_paper.html",
+    "https://arxiv.org/html/2501.18982v1",
+    "https://arxiv.org/html/2511.04665v2",
+    "https://arxiv.org/pdf/2512.16881",
+    "https://github.com/XPandora/PhysGaussian"
+   ]
+  },
+  {
+   "name": "Feed-forward 3D foundation models (VGGT, MapAnything, Depth Anything 3, AnySplat)",
+   "category": "Pose/depth/geometry from few images",
+   "status_as_of_2026": "VGGT (CVPR 2025 Best Paper; commercial checkpoint Jul 29, 2025; VGGT-Omega May 18, 2026). MapAnything (Sep 2025, 3DV 2026; metric multi-modal inputs). Depth Anything 3 (Nov 14, 2025; outperforms VGGT on pose/geometry; any-view feed-forward 3DGS).",
+   "license_and_cost": "VGGT-1B-Commercial: commercial OK (application form; no military). VGGT-1B: non-commercial. MapAnything: code Apache-2.0; weights 'map-anything-apache' Apache-2.0 vs default CC-BY-NC. DA3: Small/Base/Metric-Large/Mono-Large Apache-2.0; Large/Giant/Nested CC-BY-NC-4.0.",
+   "strengths": [
+    "Replaces slow/fragile COLMAP for consumer captures",
+    "Metric scale (MapAnything, DA3-Metric), which is essential for physics-correct assets",
+    "Seconds instead of hours"
+   ],
+   "weaknesses": [
+    "Best-quality weights are often NC",
+    "Accuracy still below calibrated SfM for large sites"
+   ],
+   "best_fit": "Front end of CEN capture pipeline (phone video -> poses, metric depth -> splat init)",
+   "sources": [
+    "https://github.com/facebookresearch/vggt",
+    "https://github.com/facebookresearch/map-anything",
+    "https://github.com/ByteDance-Seed/Depth-Anything-3",
+    "https://arxiv.org/pdf/2511.10647"
+   ]
+  },
+  {
+   "name": "Microsoft TRELLIS / TRELLIS.2-4B",
+   "category": "Open image-to-3D generator",
+   "status_as_of_2026": "TRELLIS.2-4B released ~Dec 2025: O-Voxel sparse structure + flow-matching transformers, full PBR (base color, roughness, metallic, opacity). H100 timings: 512³ ~3 s, 1024³ ~17 s, 1536³ ~60 s. Needs ≥24 GB GPU. Full training code (Objaverse-XL).",
+   "license_and_cost": "MIT (code and weights). However, dependencies nvdiffrast (Nvidia Source Code License, 1-way commercial: non-commercial only) and nvdiffrec have separate licenses. These must be replaced or licensed for commercial use.",
+   "strengths": [
+    "Best permissively licensed open generator; trainable on our own data",
+    "Handles open surfaces/non-manifold and internal structure",
+    "PBR output useful for RTX rendering"
+   ],
+   "weaknesses": [
+    "Outputs are not watertight/simulation-ready and have no scale, mass or articulation",
+    "nvdiffrast dependency is a commercial-license trap"
+   ],
+   "best_fit": "Shape/texture completion of occluded parts in the Real2Sim factory and a text/image-to-asset generator in CEN",
+   "sources": [
+    "https://github.com/microsoft/TRELLIS.2",
+    "https://github.com/microsoft/TRELLIS",
+    "https://raw.githubusercontent.com/NVlabs/nvdiffrast/main/LICENSE.txt",
+    "https://comfyui-wiki.com/news/2025-12-18-microsoft-trellis2-3d-generation"
+   ]
+  },
+  {
+   "name": "Tencent Hunyuan3D 2.1 (open) / 2.5-3.1 (API)",
+   "category": "Image-to-3D generator",
+   "status_as_of_2026": "2.1 open-sourced Jun 13, 2025 with PBR texture; VRAM 10 GB shape, 21 GB texture, 29 GB combined. 2.5/3.0/3.1 Pro are closed (Tencent Cloud API, global English API from Nov 25, 2025; 3.0 = 1536³ geometry).",
+   "license_and_cost": "Tencent Hunyuan 3D 2.1 Community License. Territory = worldwide EXCLUDING the EU, UK and SOUTH KOREA; use of outputs outside the Territory is unlicensed; plus a >1M MAU approval clause. A Korean company cannot legally use the open weights. API terms for Korea not verified.",
+   "strengths": [
+    "Strong quality, good PBR"
+   ],
+   "weaknesses": [
+    "License explicitly excludes South Korea: disqualifying for AICHEMIST",
+    "Newer versions closed"
+   ],
+   "best_fit": "Do NOT use (benchmark reference only, done by a non-Korean entity if at all)",
+   "sources": [
+    "https://raw.githubusercontent.com/Tencent-Hunyuan/Hunyuan3D-2.1/main/LICENSE",
+    "https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1",
+    "https://help.scenario.com/articles/5967392966-hunyuan-3d-models-the-essentials"
+   ]
+  },
+  {
+   "name": "Meta SAM 3D Objects",
+   "category": "Single-image object reconstruction in context",
+   "status_as_of_2026": "Released Nov 19, 2025 with SAM 3. Predicts geometry, texture and layout/pose of a prompted object (mask/point/box) from one image, outputting Gaussian splats (.ply) and meshes. Encoder weights Jun 1, 2026; 3D Artist Object Set + HF leaderboard Jun 2, 2026. Companion SAM 3D Body.",
+   "license_and_cost": "SAM License (custom): royalty-free and worldwide, commercial use allowed with restrictions (e.g., military). Medium confidence on full terms.",
+   "strengths": [
+    "Works on cluttered in-the-wild photos with occlusion, outputs object pose/layout (scene-consistent)",
+    "Pairs naturally with SAM 3 segmentation for scene decomposition"
+   ],
+   "weaknesses": [
+    "Single-view hallucination; scale ambiguous",
+    "No physics/articulation"
+   ],
+   "best_fit": "Object instancing from a single photo of a real scene (Real2Sim of clutter), complementary to multi-view splats",
+   "sources": [
+    "https://github.com/facebookresearch/sam-3d-objects",
+    "https://ai.meta.com/blog/sam-3d/",
+    "https://playground.roboflow.com/models/meta/sam-3d-objects"
+   ]
+  },
+  {
+   "name": "Stability SPAR3D",
+   "category": "Fast image-to-3D",
+   "status_as_of_2026": "Point-cloud-conditioned editing then mesh in ~0.3 s (2025). No notable 2026 update found.",
+   "license_and_cost": "Stability AI Community License: free for orgs <$1M annual revenue; enterprise license above that.",
+   "strengths": [
+    "Very fast, editable point cloud stage"
+   ],
+   "weaknesses": [
+    "Lower quality than TRELLIS.2; revenue-capped license"
+   ],
+   "best_fit": "Low priority; interactive preview only",
+   "sources": [
+    "https://stability.ai/license",
+    "https://www.fast.io/resources/stability-ai-review-2026.md"
+   ]
+  },
+  {
+   "name": "Commercial 3D generators (Meshy 6, Tripo 3.0, Rodin Gen-2.5)",
+   "category": "SaaS text/image-to-3D",
+   "status_as_of_2026": "Meshy 6 (Pro $20/mo, Max $60/mo, Enterprise/API ~$90/mo; free outputs CC BY 4.0 non-commercial). Tripo 3.0 (Ultra up to 2M polys; Pro $12/mo; commercial rights all tiers). Rodin Gen-2.5 (Nov 2025; ~$0.50-1.50 per model).",
+   "license_and_cost": "Paid tiers grant commercial rights; per-asset costs as listed (medium confidence, aggregator sources).",
+   "strengths": [
+    "Fast, polished, game-ready topology"
+   ],
+   "weaknesses": [
+    "Not sim-ready (no mass/collision/articulation); vendor dependency; competitors to CEN's own generator"
+   ],
+   "best_fit": "Benchmark baselines and optional marketplace import connectors",
+   "sources": [
+    "https://costbench.com/software/ai-3d-generation/meshy/",
+    "https://dupple.com/reviews/rodin-ai",
+    "https://www.krea.ai/blog/best-ai-3d-model-generators-2026"
+   ]
+  },
+  {
+   "name": "World Labs Marble (+ World API)",
+   "category": "Generative 3D worlds",
+   "status_as_of_2026": "Beta Sep 2025, GA Nov 12, 2025, World API Jan 2026, Marble 1.1 Apr 2026. Outputs Gaussian splats (SPZ/PLY 2M/500K), collider GLB mesh, HQ GLB mesh, 360 panos. Export to Unreal, Unity, Blender, Houdini.",
+   "license_and_cost": "Free tier cannot export. Standard plan exports splats + collider meshes. Pro plan required for HQ mesh and commercial rights. API from ~$0.12 per Draft world (medium confidence).",
+   "strengths": [
+    "Only commercial generator that outputs splat + collider mesh = near sim-ready environments",
+    "Spark renderer (MIT) for web"
+   ],
+   "weaknesses": [
+    "Closed model; physics-agnostic beyond collider; scale/semantics not guaranteed"
+   ],
+   "best_fit": "Long-tail environment generation for CEN scenes (backgrounds) via API; also a competitive threat",
+   "sources": [
+    "https://docs.worldlabs.ai/marble/export/gaussian-splat.md",
+    "https://invideo.io/blog/world-labs-marble-3d-worlds/",
+    "https://github.com/sparkjsdev/spark"
+   ]
+  },
+  {
+   "name": "Sim-ready conversion toolchain (CoACD/CuACD, V-HACD, PhysX-Anything, Articulate-Anything, Real2Code, URDFormer, ManiTwin, SLAT-Phys, Phys2Real)",
+   "category": "Geometry -> physics asset conversion",
+   "status_as_of_2026": "CoACD (SIGGRAPH 2022; MIT) with new GPU CuACD (Sep 2026, ~100x faster, ~0.25 s/mesh on RTX 4090). PhysX-Anything (CVPR 2026; Qwen2.5-VL; single image -> URDF/MJCF with mass, friction, joints; tested in MuJoCo; deformables unstable). Articulate-Anything (ICLR 2025; MIT; text/image/video -> URDF with actor-critic self-correction). Real2Code (ICLR 2025; up to 10 parts via LLM code). ManiTwin (arXiv 2603.16866; 100K assets with VLM-estimated OBB, mass, friction). SLAT-Phys (2603.23973; material property fields from single image). Phys2Real (2510.11689; VLM priors + online adaptation).",
+   "license_and_cost": "CoACD MIT. V-HACD BSD (from prior knowledge; low confidence). Articulate-Anything MIT. PhysX-Anything S-Lab License (restrictive, non-commercial-style). Others vary.",
+   "strengths": [
+    "Every stage of image->URDF/USD-physics now has a working research method",
+    "CoACD emits fewer hulls (typically 4-24 vs V-HACD 10-64), so simulation runs faster"
+   ],
+   "weaknesses": [
+    "CoACD inflates collision geometry (floating objects when stacked) and is 10-100x slower than V-HACD on CPU",
+    "VLM physical priors are coarse; articulation inference fails on unusual mechanisms",
+    "PhysX-Anything license blocks direct commercial use"
+   ],
+   "best_fit": "Backbone of CEN's 'sim-ready certification' stage: re-implement/fine-tune on own data with permissive bases",
+   "sources": [
+    "https://github.com/SarahWeiii/CoACD",
+    "https://simready.artlabs.ai/compare/v-hacd-vs-coacd-vs-manual-hulls",
+    "https://github.com/ziangcao0312/PhysX-Anything",
+    "https://github.com/vlongle/articulate-anything",
+    "https://arxiv.org/pdf/2406.08474",
+    "https://arxiv.org/pdf/2603.16866",
+    "https://www.alphaxiv.org/abs/2603.23973.md",
+    "https://arxiv.org/pdf/2510.11689",
+    "https://arxiv.org/pdf/2602.09153"
+   ]
+  },
+  {
+   "name": "Physically based materials: MDL, MaterialX 1.39.x, OpenPBR 1.0, UE Substrate",
+   "category": "Material standards",
+   "status_as_of_2026": "OpenPBR 1.0 (ASWF, Adobe+Autodesk; reference implementation inside MaterialX). MaterialX 1.39.2 (Jan 21, 2025; validated with OpenUSD 25.02). Isaac Sim 6.0 adds MaterialX support; MDL is native to Omniverse RTX; UE 5.7 Substrate production-ready.",
+   "license_and_cost": "Apache-2.0 (MaterialX/OpenPBR); MDL SDK open (BSD-3, prior knowledge; medium confidence).",
+   "strengths": [
+    "Portable PBR across Omniverse, Blender, UE and USD",
+    "Measured-material workflows possible"
+   ],
+   "weaknesses": [
+    "Generative 3D outputs only basic metallic-roughness and need upgrading",
+    "Spectral/sensor-band (NIR lidar/radar) material properties are not covered by OpenPBR"
+   ],
+   "best_fit": "Make OpenPBR/MaterialX the CEN marketplace canonical material, with MDL for RTX and per-band sensor material tables added",
+   "sources": [
+    "https://80.lv/articles/aswf-adobe-autodesk-released-openpbr-1-0",
+    "https://cgworld.jp/flashnews/202501-MaterialX1392.html",
+    "https://radiancefields.com/nvidia-s-isaac-sim-6.0-ships-with-nurec-gaussian-splatting"
+   ]
+  },
+  {
+   "name": "Sensor models: Isaac Sim RTX sensors, camera ISP (PPISP), event cameras (v2e/ESIM/EVIS), tactile (TacSL, Taccel, DIGIT sim)",
+   "category": "Sensor realism",
+   "status_as_of_2026": "Isaac Sim 6.x isaacsim.sensors.experimental.rtx: OmniLidar, OmniRadar, Acoustic/ultrasonic, camera (docs Jun 22, 2026). Physically-plausible ISP in 3DGRUT (Jan 2026), gsplat (Jul 2026) and Isaac Lab 3.0. Event cameras: v2e (pixel model with threshold mismatch, bandwidth, noise), ESIM; CARLA native DVS; Isaac Sim lacks native DVS but EVIS (arXiv 2607.08098, Jul 2026) adds real-time event simulation. Tactile: TacSL (>200x faster than prior SOTA; in Isaac Lab, PhysX only); Taccel (NeurIPS 2025, MIT, IPC+ABD, 915 FPS at 4096 envs). DIGIT/TACTO sim not re-verified (low confidence).",
+   "license_and_cost": "Mostly free/open (Isaac Lab BSD-style, Taccel MIT, v2e MIT per prior knowledge).",
+   "strengths": [
+    "Full multi-modal sensor suite possible in one USD scene",
+    "GPU-parallel tactile now practical for dexterous RL"
+   ],
+   "weaknesses": [
+    "Radar realism (multipath, RCS) and lidar intensity need per-material calibration data",
+    "Event/tactile sims not unified in one engine"
+   ],
+   "best_fit": "CEN sensor library with per-device calibrated profiles (a dataset/marketplace product in itself)",
+   "sources": [
+    "https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.sensors.experimental.rtx/docs/index.html",
+    "https://github.com/nv-tlabs/3dgrut",
+    "https://arxiv.org/pdf/2006.07722",
+    "https://arxiv.org/pdf/2607.08098",
+    "https://research.nvidia.com/publication/2025-01_tacsl-library-visuotactile-sensor-simulation-and-learning",
+    "https://papers.neurips.cc/paper_files/paper/2025/hash/87d91d52272c3166315ca20b18519b9e-Abstract-Conference.html",
+    "https://github.com/Taccel-Simulator/Taccel"
+   ]
+  },
+  {
+   "name": "NVIDIA Cosmos Transfer 2.5 / Predict 2.5",
+   "category": "Generative world model: sim-to-real domain adaptation",
+   "status_as_of_2026": "Released Oct 6, 2025. Transfer2.5-2B is a multi-ControlNet (depth, edge, blur, segmentation) with auto control maps, multiview AV and robot multiview variants. Image2Image Dec 2025; distilled low-latency edge model Feb 23, 2026. Predict2.5 2B/14B, action-conditioned and policy variants (Feb 2026). Repos now get only limited maintenance as development moves to Cosmos 3.",
+   "license_and_cost": "Code Apache-2.0; weights NVIDIA Open Model License (commercial use allowed). GPU-heavy: Predict1 7B took ~383 s per clip on 1 H100 (indicative only).",
+   "strengths": [
+    "Label-preserving appearance transfer (keeps geometry via depth/seg control), so sim labels remain valid",
+    "Cookbook post-training recipes; AV multiview"
+   ],
+   "weaknesses": [
+    "Expensive per frame; temporal/physical hallucinations; may shift small objects and break labels",
+    "Superseded by Cosmos 3 within ~8 months"
+   ],
+   "best_fit": "Post-render augmentation layer in CEN SDG pipelines (sim RGB -> photoreal variants) with automatic label-consistency QA",
+   "sources": [
+    "https://github.com/nvidia-cosmos/cosmos-transfer2.5",
+    "https://github.com/nvidia-cosmos/cosmos-predict2.5",
+    "https://research.nvidia.com/labs/cosmos-lab/cosmos-predict2.5/",
+    "https://docs.api.nvidia.com/nim/re/reference/nvidia-cosmos-1_0-diffusion-7b"
+   ]
+  },
+  {
+   "name": "NVIDIA Cosmos 3 (omnimodel)",
+   "category": "Generative world model / world-action model",
+   "status_as_of_2026": "Initial release May 2026, publicly launched Jun 1, 2026 (Computex). Edge variant Jul 2026. Mixture-of-transformers over text/image/video/audio/action. Reasoner + Generator surfaces; Transfer notebook (layout -> photoreal driving video). GitHub lists Super 64B (H200/B200/GB200), Nano 16B (RTX PRO 6000/H100/B200), Edge 4B (Jetson Thor/Orin), while press reports 32B/8B; discrepancy unresolved. Reported best open T2I/I2V on Artificial Analysis and best policy on RoboArena at report time.",
+   "license_and_cost": "OpenMDW-1.1 (permissive; covers weights; no output restrictions). Press also cites NVIDIA Open Model License. Medium confidence.",
+   "strengths": [
+    "Permissive license, fine-tunable on CEN data",
+    "One model for synthetic data, reasoning/QA (auto-labeling, scene critique) and action simulation"
+   ],
+   "weaknesses": [
+    "Very large compute footprint (Super needs H200/B200 class)",
+    "Young; physics consistency unproven for contact-rich manipulation"
+   ],
+   "best_fit": "Strategic successor for CEN augmentation, auto-QA and world-model policy evaluation; fine-tune Nano on Korean domains",
+   "sources": [
+    "https://github.com/NVIDIA/Cosmos",
+    "https://github.com/NVIDIA/Cosmos/blob/main/LICENSE",
+    "https://research.nvidia.com/labs/cosmos-lab/cosmos3/technical-report.pdf",
+    "https://pasqualepillitteri.it/en/news/3945/nvidia-cosmos-3-physical-ai",
+    "https://datanorth.ai/news/nvidia-launches-cosmos-3"
+   ]
+  },
+  {
+   "name": "Closed generative world models (Google DeepMind Genie 3, Wayve GAIA-2/3/4, Runway GWM-1, Decart Oasis 3, Odyssey)",
+   "category": "Interactive/neural simulators",
+   "status_as_of_2026": "Genie 3 (Aug 2025; 720p, 24 fps, minutes of consistency). Project Genie for US AI Ultra subscribers from Jan 29, 2026, 60-s sessions, no developer API. Wayve GAIA-3 (Dec 2, 2025; 15B; offline AV evaluation) and GAIA-4 (Aug 3, 2026; closed-loop with Wayve driver, adds radar). Runway GWM-1 (Dec 11, 2025; Worlds/Avatars/Robotics, action-conditioned, autoregressive on Gen-4.5). Decart Oasis 3 (Jun 10, 2026; real-time photoreal driving via API at $0.02/s; $300M Series C May 2026 at ~$4B). Odyssey: not verified (low).",
+   "license_and_cost": "Proprietary; API-metered where available (Decart $0.02/s ≈ $72/hour of video).",
+   "strengths": [
+    "Real-time, highly photoreal long-tail scenario generation",
+    "Useful as policy evaluators and rare-event generators"
+   ],
+   "weaknesses": [
+    "No ground-truth geometry/labels/physics guarantees; not reproducible or controllable enough for certification",
+    "Vendor-owned; Genie and GAIA not purchasable as APIs"
+   ],
+   "best_fit": "Benchmark against; optionally integrate Decart/Runway APIs for long-tail video. Do not base the platform on them.",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Genie_(world_model)",
+    "https://yourstory.com/ai-story/google-deepmind-project-genie-launch",
+    "https://www.autonomousvehicleinternational.com/news/ai-sensor-fusion/wayves-gaia-3-generative-world-model-now-available-for-autonomous-driving-validation.html",
+    "https://aiwiki.ai/wiki/gaia_3_wayve",
+    "https://runwayml.com/research/introducing-runway-gwm-1",
+    "https://www.kucoin.com/news/flash/decart-launches-oasis-3-for-photorealistic-driving-simulations-via-api",
+    "https://startupfortune.com/decart-opens-its-world-model-to-developers-for-two-cents-a-second-betting-it-can-own-physical-ais-simulation-layer-before-the-big-players-build-one-themselves/"
+   ]
+  },
+  {
+   "name": "Sim-to-real gap metric suite (FID/KID/CMMD, SDQM, SADGE, IPD, mAP-transfer, policy success correlation, trajectory error)",
+   "category": "Evaluation methodology",
+   "status_as_of_2026": "FID often fails to predict detector mAP. SDQM (2025) Pearson r=0.8719 with YOLOv11n mAP50 without training. SADGE (structure + appearance) Pearson 0.88 / Spearman 0.77 across 15 dataset variants and 79k image pairs. Instance Performance Difference for camera sim (arXiv 2411.07375). Real-to-sim policy evals (PolaRiS, soft-body GS) use paired sim/real success correlation.",
+   "license_and_cost": "Methods; implement in-house",
+   "strengths": [
+    "Enables a quantitative 'realism SLA' and dataset pricing by measured utility"
+   ],
+   "weaknesses": [
+    "Requires paired real data per customer domain",
+    "No single metric covers physics + sensors + appearance"
+   ],
+   "best_fit": "CEN Sim2Real Gap Scorecard product feature",
+   "sources": [
+    "https://www.emergentmind.com/papers/2605.22467",
+    "https://arxiv.org/html/2602.18525v1",
+    "https://arxiv.org/html/2411.07375v1",
+    "https://arxiv.org/pdf/2512.16881"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "Isaac Sim 6.0 (GA June 2026) supports 3D Gaussian Splatting via Fabric Scene Delegate with multi-GPU rendering, light interaction with mesh scenes, and MaterialX; splat export moved to the OpenUSD ParticleField3DGaussianSplat schema (.usdc default, .usdz opt-in).",
+   "source": "https://radiancefields.com/nvidia-s-isaac-sim-6.0-ships-with-nurec-gaussian-splatting ; https://docs.isaacsim.omniverse.nvidia.com/6.0.0/overview/release_notes.html",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim 6.1.0 GA and 7.0.0a1 pre-release tags exist (Sep 10 and Sep 18); the fetch tool printed the tag years inconsistently, but the 2026 timing follows from 6.0 GA in June 2026.",
+   "source": "https://github.com/isaac-sim/IsaacSim/releases",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Sim recommended datacenter GPUs are A40 (min), L40S (recommended), RTX PRO 6000 Blackwell Server (best). These are RT-core GPUs; H100/A100 are not listed.",
+   "source": "https://github.com/isaac-sim/IsaacSim",
+   "confidence": "high"
+  },
+  {
+   "claim": "OpenUSD 26.03 adds a native UsdVolParticleField schema family, including UsdVolParticleField3DGaussianSplat.",
+   "source": "https://radiancefields.com/openusd-26.03-adds-native-gaussian-splat-support",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Khronos released KHR_gaussian_splatting as a Release Candidate on Feb 3, 2026 (ratification targeted Q2 2026); Cesium, Babylon.js and PlayCanvas ship support.",
+   "source": "https://aecmag.com/reality-capture-modelling/khronos-announces-gltf-gaussian-splatting-extension/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "3DGRUT is Apache-2.0; v1.1.0 (Jun 10, 2026) added USD/USDZ/PLY/NuRec export with mesh injection; v2.0.0 (Jun 2026) added Neural Harmonic Textures; PPISP (physically-plausible ISP) added Jan 2026; supports fisheye and rolling shutter.",
+   "source": "https://github.com/nv-tlabs/3dgrut ; https://github.com/nv-tlabs/3dgrut/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "gsplat is Apache-2.0, v1.6.0 on main, with 3DGUT, spinning-lidar rasterization (Mar 2026), NCore v4 (Apr 2026), fisheye/FTheta/lidar camera models (Jun 2026), multi-GPU and PPISP (Jul 2026).",
+   "source": "https://github.com/nerfstudio-project/gsplat",
+   "confidence": "high"
+  },
+  {
+   "claim": "The original Inria 3DGS code (Gaussian-Splatting License) is research/evaluation only; commercial use requires Inria consent. 2DGS and MILo use this license; PGSR's license allows 'educational, research and non-profit purposes only'.",
+   "source": "https://raw.githubusercontent.com/graphdeco-inria/gaussian-splatting/main/LICENSE.md ; https://raw.githubusercontent.com/hbb1/2d-gaussian-splatting/main/LICENSE.md ; https://raw.githubusercontent.com/zju3dv/PGSR/main/LICENSE.md ; https://github.com/Anttwo/MILo",
+   "confidence": "high"
+  },
+  {
+   "claim": "Instant-NGP is under Nvidia Source Code License-NC (non-commercial); nvdiffrast is under Nvidia Source Code License (1-Way Commercial), usable non-commercially only except by NVIDIA.",
+   "source": "https://github.com/NVlabs/instant-ngp ; https://raw.githubusercontent.com/NVlabs/nvdiffrast/main/LICENSE.txt",
+   "confidence": "high"
+  },
+  {
+   "claim": "Tencent Hunyuan 3D 2.1 Community License excludes the EU, UK and South Korea from its Territory and forbids use of the Works or their outputs outside the Territory; it also has a >1M MAU approval clause.",
+   "source": "https://raw.githubusercontent.com/Tencent-Hunyuan/Hunyuan3D-2.1/main/LICENSE",
+   "confidence": "high"
+  },
+  {
+   "claim": "TRELLIS.2-4B is MIT-licensed, outputs GLB with PBR (base color, roughness, metallic, opacity), needs ≥24 GB VRAM, and generates 512³/1024³/1536³ in ~3/17/60 s on H100; it depends on nvdiffrast/nvdiffrec with separate licenses.",
+   "source": "https://github.com/microsoft/TRELLIS.2",
+   "confidence": "high"
+  },
+  {
+   "claim": "SAM 3D Objects released Nov 19, 2025 under the SAM License; outputs Gaussian splats (.ply) and pose/layout; encoder weights released Jun 1, 2026.",
+   "source": "https://github.com/facebookresearch/sam-3d-objects",
+   "confidence": "high"
+  },
+  {
+   "claim": "VGGT-1B-Commercial (Jul 29, 2025) is licensed for commercial use (no military); the original VGGT-1B checkpoint is non-commercial; VGGT-Omega released May 18, 2026.",
+   "source": "https://github.com/facebookresearch/vggt",
+   "confidence": "high"
+  },
+  {
+   "claim": "Depth Anything 3 (Nov 14, 2025): Small/Base/Metric-Large/Mono-Large under Apache-2.0; Large/Giant/Nested-Giant under CC-BY-NC-4.0.",
+   "source": "https://github.com/ByteDance-Seed/Depth-Anything-3",
+   "confidence": "high"
+  },
+  {
+   "claim": "MapAnything code is Apache-2.0; weights come in a CC-BY-NC default and an Apache-2.0 'map-anything-apache' variant.",
+   "source": "https://github.com/facebookresearch/map-anything",
+   "confidence": "high"
+  },
+  {
+   "claim": "Cosmos-Transfer2.5 and Predict2.5 released Oct 6, 2025; Transfer controls are depth, edge, blur and segmentation with AV multiview and robot multiview variants; a distilled edge model was released Feb 23, 2026; weights are under the NVIDIA Open Model License (commercial use allowed).",
+   "source": "https://github.com/nvidia-cosmos/cosmos-transfer2.5",
+   "confidence": "high"
+  },
+  {
+   "claim": "The Cosmos-Predict2.5 repo now receives only limited maintenance; development moved to Cosmos 3 at github.com/NVIDIA/Cosmos.",
+   "source": "https://github.com/nvidia-cosmos/cosmos-predict2.5",
+   "confidence": "high"
+  },
+  {
+   "claim": "Cosmos 3 is released under OpenMDW-1.1 (permissive, covers weights, no output restrictions); GitHub lists Super 64B, Nano 16B, Edge 4B (Edge released Jul 2026), while press reported 32B/8B.",
+   "source": "https://github.com/NVIDIA/Cosmos ; https://github.com/NVIDIA/Cosmos/blob/main/LICENSE ; https://pasqualepillitteri.it/en/news/3945/nvidia-cosmos-3-physical-ai",
+   "confidence": "medium"
+  },
+  {
+   "claim": "At GTC 2026 (Mar 17) NVIDIA introduced Newton 1.0 (open source; co-developed with Google DeepMind and Disney Research), Isaac Lab 3.0 early access and GR00T N1.7 early access with commercial licensing.",
+   "source": "https://www.robotics247.com/article/nvidia-gtc-2026-nvidia-global-robotics-leaders-look-to-take-physical-ai-to-the-real-world",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Isaac Lab 3.0 offers Isaac RTX, OVRTX (kit-less), Newton Warp, Newton GL and experimental Newton RTX renderers plus a renderer-neutral physically plausible ISP.",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases",
+   "confidence": "medium"
+  },
+  {
+   "claim": "AlpaSim is Apache-2.0 (Oct 2025), uses NuRec (3DGUT) as default renderer with OmniDreams video-model rendering as an alternative, and ships about 900 reconstructed 20-second long-tail scenes.",
+   "source": "https://github.com/NVlabs/alpasim ; https://radiancefields.com/nvidia-unveils-alpasim-at-ces",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Unreal Engine 5.8 released Jun 17, 2026 with Lumen Lite and MegaLights production-ready; it is the last UE5 release, and UE6 early access is targeted for late 2027.",
+   "source": "https://gamedev.net/news/3999-unreal-engine-58-released/ ; https://labs.invenglobal.com/articles/22900/unreal-engine-6-to-feature-fundamental-overhaul-targeting-early-access-release-by-late-2027",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Unity's 2026 strategy puts HDRP in maintenance (no new features) and prioritizes URP.",
+   "source": "https://unity.com/topics/render-pipelines-strategy-for-2026",
+   "confidence": "high"
+  },
+  {
+   "claim": "WebGPU is on by default in Chrome, Edge, Firefox and Safari 26 (Sep 2025, incl. iOS).",
+   "source": "https://app.cinevva.com/news/2026-01-05-webgpu-era",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Genie 3 is not available as a developer API; Project Genie (Genie 3 + Nano Banana Pro + Gemini) is a research prototype for US Google AI Ultra subscribers with 60-second sessions.",
+   "source": "https://yourstory.com/ai-story/google-deepmind-project-genie-launch ; https://letsdatascience.com/news/deepmind-opens-project-genie-for-interactive-worlds-eb2fec7e",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Wayve GAIA-3 (Dec 2, 2025) is a 15B latent-diffusion multi-camera world model for AV evaluation; GAIA-4 (Aug 3, 2026) is closed-loop and generates radar alongside cameras.",
+   "source": "https://aiwiki.ai/wiki/gaia_3_wayve ; https://www.automotiveworld.com/news/wayve-unveils-gaia-3-for-autonomous-driving-tests/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "PhysX-Anything (CVPR 2026) generates sim-ready URDF/MJCF with geometry, articulation, mass and friction from a single image using Qwen2.5-VL, but uses the restrictive S-Lab License and deformables are unstable in MuJoCo.",
+   "source": "https://github.com/ziangcao0312/PhysX-Anything ; https://arxiv.org/pdf/2511.13648",
+   "confidence": "high"
+  },
+  {
+   "claim": "CoACD is MIT-licensed; GPU CuACD (Sep 2026) is ~100x faster (~0.25 s/mesh on RTX 4090).",
+   "source": "https://github.com/SarahWeiii/CoACD",
+   "confidence": "high"
+  },
+  {
+   "claim": "CoACD tends to inflate collision geometry (visual meshes float when stacked) and is 1-2 orders of magnitude slower than V-HACD.",
+   "source": "https://arxiv.org/pdf/2602.09153",
+   "confidence": "medium"
+  },
+  {
+   "claim": "FID often does not predict detector mAP; SDQM reaches Pearson 0.8719 with YOLOv11n mAP50 and SADGE reaches Pearson 0.88 / Spearman 0.77 with downstream transfer.",
+   "source": "https://www.emergentmind.com/papers/2605.22467 ; https://arxiv.org/html/2602.18525v1",
+   "confidence": "medium"
+  },
+  {
+   "claim": "TacSL simulates visuotactile images and force fields >200x faster than prior SOTA and is integrated into Isaac Lab (PhysX backend only).",
+   "source": "https://research.nvidia.com/publication/2025-01_tacsl-library-visuotactile-sensor-simulation-and-learning ; https://isaac-sim.github.io/IsaacLab/release/3.0.0/source/experimental-features/visuo_tactile_sensor.html",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Taccel (NeurIPS 2025, MIT) uses IPC + Affine Body Dynamics to reach 915 FPS total with 4096 parallel environments for vision-based tactile sensors.",
+   "source": "https://papers.neurips.cc/paper_files/paper/2025/hash/87d91d52272c3166315ca20b18519b9e-Abstract-Conference.html ; https://github.com/Taccel-Simulator/Taccel",
+   "confidence": "high"
+  },
+  {
+   "claim": "World Labs Marble exports splats (SPZ/PLY) plus collider and HQ GLB meshes; GA Nov 12, 2025; World API Jan 2026; Marble 1.1 Apr 2026; commercial rights need the Pro plan.",
+   "source": "https://docs.worldlabs.ai/marble/export/gaussian-splat.md ; https://invideo.io/blog/world-labs-marble-3d-worlds/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Decart launched Oasis 3 (Jun 10, 2026), a real-time photoreal driving world model via API at $0.02/s, after a $300M Series C (May 2026, ~$4B valuation).",
+   "source": "https://www.kucoin.com/news/flash/decart-launches-oasis-3-for-photorealistic-driving-simulations-via-api ; https://startupfortune.com/decart-opens-its-world-model-to-developers-for-two-cents-a-second-betting-it-can-own-physical-ais-simulation-layer-before-the-big-players-build-one-themselves/",
+   "confidence": "medium"
+  },
+  {
+   "claim": "Event camera simulation is not native in Isaac Sim; EVIS (arXiv 2607.08098, Jul 2026) adds real-time event simulation there, while CARLA has native DVS.",
+   "source": "https://arxiv.org/pdf/2607.08098 ; https://arxiv.org/html/2508.17643v1",
+   "confidence": "medium"
+  },
+  {
+   "claim": "fVDB Reality Capture (Apache-2.0, NVIDIA/OpenVDB) claims ~50% better end-to-end training throughput than gsplat and exports meshes/USD.",
+   "source": "https://github.com/openvdb/fvdb-reality-capture",
+   "confidence": "medium"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "3DGUT rendering speed / quality (RTX 5090)",
+   "value": "NeRF-Synthetic 33.88 PSNR @ 846 FPS; MipNeRF360 27.43 PSNR @ 317 FPS",
+   "source": "https://github.com/nv-tlabs/3dgrut"
+  },
+  {
+   "metric": "3DGRT (ray-traced splats) speed / quality (RTX 5090)",
+   "value": "NeRF-Synthetic 33.87 PSNR @ 347 FPS; MipNeRF360 27.22 PSNR @ 68 FPS",
+   "source": "https://github.com/nv-tlabs/3dgrut"
+  },
+  {
+   "metric": "gsplat efficiency vs official 3DGS",
+   "value": "Up to 4x less GPU memory, up to 15% less training time at equal PSNR/SSIM/LPIPS; ~30% faster 3DGUT-MCMC path on A100 (Jun 2026)",
+   "source": "https://github.com/nerfstudio-project/gsplat"
+  },
+  {
+   "metric": "NeRF vs 3DGS render speed",
+   "value": "3DGS 100-200x faster than original NeRF implementations; Zip-NeRF needs multiple seconds per high-res frame",
+   "source": "https://metavert.io/compare/gaussian-splatting-vs-neural-radiance-fields ; https://arxiv.org/pdf/2304.06706"
+  },
+  {
+   "metric": "TRELLIS.2-4B generation time on H100",
+   "value": "512³ ~3 s; 1024³ ~17 s; 1536³ ~60 s; ≥24 GB VRAM",
+   "source": "https://github.com/microsoft/TRELLIS.2"
+  },
+  {
+   "metric": "Hunyuan3D 2.1 VRAM",
+   "value": "10 GB shape, 21 GB texture, 29 GB combined",
+   "source": "https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1"
+  },
+  {
+   "metric": "CuACD convex decomposition speed",
+   "value": "~0.25 s per mesh on RTX 4090 (~100x faster than CoACD)",
+   "source": "https://github.com/SarahWeiii/CoACD"
+  },
+  {
+   "metric": "Convex hull counts",
+   "value": "CoACD typically 4-24 hulls vs V-HACD 10-64 for similar fidelity",
+   "source": "https://simready.artlabs.ai/compare/v-hacd-vs-coacd-vs-manual-hulls"
+  },
+  {
+   "metric": "SplatSim zero-shot sim-to-real manipulation success",
+   "value": "86.25% average (vs 97.5% for policies trained on real data)",
+   "source": "https://arxiv.org/html/2511.04665v2 (search summary)"
+  },
+  {
+   "metric": "Zero-shot sim-to-real of world-action model (Cosmos Policy, ~800 synthetic demos/task, no real demos, Franka)",
+   "value": "35% average success",
+   "source": "https://arxiv.org/abs/2606.31101"
+  },
+  {
+   "metric": "Learned augmentation effect on sim-to-real picking/stacking",
+   "value": "Cube pick 19/20 vs 3/20 without augmentation; stacking 18/20 vs 1/20",
+   "source": "https://docs.nvidia.com/learning/physical-ai/sim-to-real-so-101/latest/14-strategy3-cosmos.html (search summary)"
+  },
+  {
+   "metric": "AlpaSim effect on evaluation variance",
+   "value": "Up to 83% reduction in variance of key real-world metrics; ~900 reconstructed 20-s scenes",
+   "source": "https://radiancefields.com/nvidia-unveils-alpasim-at-ces"
+  },
+  {
+   "metric": "Synthetic-data quality metric correlation with detector mAP",
+   "value": "SDQM Pearson r=0.8719 (YOLOv11n mAP50); SADGE Pearson 0.88, Spearman 0.77 over 15 variants / 79k image pairs",
+   "source": "https://www.emergentmind.com/papers/2605.22467 ; https://arxiv.org/html/2602.18525v1"
+  },
+  {
+   "metric": "TacSL speedup",
+   "value": ">200x faster than prior visuotactile simulation SOTA",
+   "source": "https://research.nvidia.com/publication/2025-01_tacsl-library-visuotactile-sensor-simulation-and-learning"
+  },
+  {
+   "metric": "Taccel throughput",
+   "value": "915 FPS total with 4096 parallel environments",
+   "source": "https://papers.neurips.cc/paper_files/paper/2025/hash/87d91d52272c3166315ca20b18519b9e-Abstract-Conference.html"
+  },
+  {
+   "metric": "Cosmos 3 model sizes",
+   "value": "Super 64B / Nano 16B / Edge 4B (GitHub) vs 32B / 8B (press); trained on ~20T multimodal tokens (press)",
+   "source": "https://github.com/NVIDIA/Cosmos ; https://pasqualepillitteri.it/en/news/3945/nvidia-cosmos-3-physical-ai"
+  },
+  {
+   "metric": "Cosmos video WFM inference cost (indicative, older Predict1)",
+   "value": "~383 s (7B) and ~593 s (14B) per Video2World clip on one H100",
+   "source": "https://docs.api.nvidia.com/nim/re/reference/nvidia-cosmos-1_0-diffusion-7b"
+  },
+  {
+   "metric": "Wayve GAIA-3 scale",
+   "value": "15B params; ~5x compute and ~10x data vs GAIA-2; 9 countries",
+   "source": "https://aiwiki.ai/wiki/gaia_3_wayve"
+  },
+  {
+   "metric": "Genie 3 output",
+   "value": "720p @ 24 fps, multi-minute consistency; Project Genie sessions capped at 60 s",
+   "source": "https://en.wikipedia.org/wiki/Genie_(world_model) ; https://letsdatascience.com/news/deepmind-opens-project-genie-for-interactive-worlds-eb2fec7e"
+  },
+  {
+   "metric": "Decart Oasis 3 API price",
+   "value": "$0.02 per second of generated video (~$72/hour)",
+   "source": "https://startupfortune.com/decart-opens-its-world-model-to-developers-for-two-cents-a-second-betting-it-can-own-physical-ais-simulation-layer-before-the-big-players-build-one-themselves/"
+  },
+  {
+   "metric": "World Labs Marble API price",
+   "value": "From ~$0.12 per Draft world",
+   "source": "https://invideo.io/blog/world-labs-marble-3d-worlds/"
+  },
+  {
+   "metric": "Web splat streaming",
+   "value": "SuperSplat 3.0: 24M Gaussians streamed at ~60 fps (WebGPU); Spark 2.0: 100M+ splat worlds with LoD paging",
+   "source": "https://radiancefields.com/playcanvas-releases-supersplat-3.0 ; https://cgworld.jp/flashnews/01-202603-Spark2.html"
+  },
+  {
+   "metric": "Commercial 3D-gen pricing",
+   "value": "Meshy Pro $20/mo, Max $60/mo, API/Enterprise ~$90/mo; Tripo Pro $12/mo; Rodin ~$0.50-1.50/model",
+   "source": "https://costbench.com/software/ai-3d-generation/meshy/ ; https://dupple.com/reviews/rodin-ai"
+  },
+  {
+   "metric": "Blender 5.1 Cycles speedup",
+   "value": "Up to 10% faster GPU, up to 20% faster CPU on Windows",
+   "source": "https://gamedev.net/news/2274-blender-51-release/"
+  },
+  {
+   "metric": "VGGT-1B-Commercial vs original",
+   "value": "Co3D AUC@30 90.37 vs 89.98",
+   "source": "https://github.com/facebookresearch/vggt"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "Engine decision for realism: adopt, don't build. Use Omniverse RTX via Isaac Sim 6.1+ and Isaac Lab 3.0 as the physically based render + sensor runtime. Use Blender Cycles for offline ground-truth renders on non-RT GPUs. Use the PlayCanvas engine / Spark (MIT, WebGPU/WebGL2) for CEN browser previews. Keep UE 5.8/CARLA as an optional AV connector only. Skip Unity HDRP (frozen) and Godot for realism.",
+  "Adopt a 4-layer realism architecture in one OpenUSD stage. (L1) Physics-grounded meshes with MDL/MaterialX/OpenPBR and physics schemas. (L2) Neural-reconstructed backgrounds as UsdVolParticleField3DGaussianSplat (NuRec/3DGUT), with hidden proxy meshes for collision. (L3) Calibrated sensor models: RTX camera + PPISP, lidar, radar, ultrasonic, IMU noise; event via v2e/EVIS; tactile via TacSL/Taccel. (L4) Optional generative post-render augmentation (Cosmos Transfer 2.5 now, Cosmos 3 Nano fine-tuned later) driven by depth/segmentation/edge controls, with automatic label-consistency checks so labels stay valid.",
+  "Evolve CEN's NeRF photo->3D pipeline into a 'CEN Real2Sim Forge'. Step 1: capture (phone/robot video, optional lidar). Step 2: feed-forward poses and metric depth (VGGT-1B-Commercial, MapAnything-apache, DA3-Metric-Large Apache). Step 3: 3DGUT splat training on gsplat/3DGRUT (Apache) for the visual layer. Step 4: surface mesh via gsplat-2DGS/fVDB plus an in-house PGSR/MILo-style re-implementation. Step 5: generative completion of unseen parts with TRELLIS.2 (replace nvdiffrast) and SAM 3D Objects for single-view clutter. Step 6: part segmentation + articulation (Articulate-Anything MIT as baseline; in-house model fine-tuned on CEN synthetic articulated data). Step 7: CoACD/CuACD collision. Step 8: VLM priors for mass/friction/material, refined by short interaction videos (system identification). Step 9: automated physics QA (drop, stack, push, joint-limit tests in Newton/PhysX). Step 10: export SimReady USD + URDF/MJCF + glTF (KHR_gaussian_splatting) with a 'sim-ready certificate' score.",
+  "Make the moat data plus validation, not models. Monetize (a) certified sim-ready assets and (b) captured Korean environments: factories, logistics centers, shipyards, retail, Korean roads and signage, BIM-aligned sites. Also sell (c) paired real/sim datasets with measured gap scores. Feed customer captures back to fine-tune the generative/articulation models under clear data-rights terms.",
+  "Run an immediate license audit (weeks, not months). Identify what CEN's current NeRF uses: Instant-NGP is NC; nerfstudio is Apache. Remove all Inria-derived 3DGS code (2DGS, SuGaR, MILo, PGSR, original 3DGS rasterizer, TRELLIS v1 diffoctreerast), nvdiffrast/nvdiffrec, CC-BY-NC weights and Hunyuan3D 2.x (license excludes South Korea). Standardize on Apache/MIT/OpenMDW components and get NVIDIA written confirmation on Omniverse/NuRec use in a multi-tenant cloud SaaS.",
+  "Ship a Sim2Real Gap Scorecard as a first-class CEN feature. Rendering: PSNR/SSIM/LPIPS on held-out views. Perception: mAP_real of a synth-trained model divided by mAP_real of a real-trained one, few-shot real fine-tune curves, plus SDQM/SADGE-style predictors; FID/KID/CMMD as secondary only. Policy: paired sim-vs-real success over ≥5 policies, reporting Pearson r and ranking agreement, following PolaRiS. Physics: trajectory ADE/FDE, rest-pose error, contact force error. Sensors: lidar range/intensity error, Chamfer distance, noise PSD.",
+  "Domain strategy: use Real2Sim splats to remove the target-site gap; structured domain randomization (Replicator) for the long tail; generative domain adaptation (Cosmos Transfer) for appearance diversity only; and always a small real fine-tune. Prioritize by measured scorecard gain per GPU-hour.",
+  "GPU plan: split the CEN cloud into an RT-core render pool (L40S / RTX PRO 6000 Blackwell; Isaac Sim min A40) and a training/generative pool (H100/H200/B200 for gsplat training, TRELLIS.2, Cosmos). Budget estimate (my estimate, not sourced): 16-32 RT-core GPUs plus 8-16 H100-class for the first 12 months of the realism workstream.",
+  "Team for this workstream (estimate): 2-3 neural reconstruction (3DGS/3DGUT, lidar splats); 2 geometry/sim-ready (meshing, CoACD, USD physics); 2 generative 3D (TRELLIS.2 fine-tune, articulation, physical-property VLM); 1-2 sensor modeling (camera ISP, lidar/radar, tactile); 2 world-model post-training (Cosmos Transfer/Cosmos 3); 1-2 evaluation/metrics + real-data capture ops; 1 technical artist/material (OpenPBR/MDL). About 11-14 FTE.",
+  "Roadmap. Q4 2026: license audit; NeRF->3DGUT migration; Isaac Sim 6.1 NuRec import/export; WebGPU splat viewer in the marketplace. Q1-Q2 2027: rigid-object Forge v1 (mesh + collision + VLM mass/friction + physics QA), scene-scale capture for 2-3 Korean pilot sites, scorecard v1. Q3 2027: articulation + sensor profiles (lidar/radar/event) + Cosmos Transfer augmentation with label QA. Q4 2027-2028: deformables (PhysTwin-style), world-model-based policy evaluation (Cosmos 3), relightable splats; track the UE6 and Cosmos 3.x transitions.",
+  "Track and benchmark quarterly, but do not build on: Genie 3 (no API), GAIA-3/4 (proprietary), Decart Oasis 3 and Runway GWM-1 (APIs could be optional long-tail video sources), World Labs Marble (possible environment API partner and also a competitor), Hunyuan3D 3.x (API only; Korea terms unverified)."
+ ],
+ "risks": [
+  "License contamination. Most high-quality 3DGS mesh-extraction code (2DGS, MILo, PGSR, SuGaR?) and NVIDIA research code (Instant-NGP, nvdiffrast, Neuralangelo) are non-commercial. Hunyuan3D 2.1 explicitly bans use in South Korea. Shipping any of these in CEN creates IP liability and could block enterprise sales or M&A.",
+  "NVIDIA lock-in. Omniverse license terms for multi-tenant cloud SaaS, the RT-core GPU requirement (H100 fleets cannot run RTX rendering efficiently) and rapid API churn (sensors.rtx deprecated in 6.0; Cosmos 2.5 superseded in ~8 months) raise switching costs.",
+  "Splat limitations. Lighting is baked unless relightable variants are used. Splats have no inherent physics or collision, so proxy meshes are needed. Novel-view extrapolation away from capture trajectories degrades, and lidar/radar on splats is less mature than on meshes, so the sensor gap can persist even when RGB looks perfect.",
+  "Generative 3D outputs are not simulation-truthful: they lack metric scale, contain hallucinated hidden geometry, are non-watertight and have no physical parameters. VLM-estimated mass/friction can be off by large factors, so policies trained on them may fail on contact-rich tasks without system-ID refinement.",
+  "Generative world models (Cosmos, GAIA, Genie, Decart) can hallucinate physics and shift object boundaries. That silently corrupts labels in synthetic datasets, and they are costly per frame. Overreliance undermines CEN's 'controllable, reproducible' value proposition.",
+  "Metric risk: FID/KID can look good while detector mAP or policy success does not transfer. Without paired real data the platform cannot prove realism claims to customers.",
+  "Competitive risk: NVIDIA (NuRec, Cosmos, SimReady), World Labs (Marble splat+collider worlds) and Meshy/Tripo/Rodin are moving into sim-ready asset/world generation, so a pure 'photo->3D' feature will be commoditized within 12-18 months.",
+  "Privacy and regulatory risk when capturing real Korean sites and roads (faces, license plates, factory IP) under PIPA and customer NDAs. Capture pipelines need anonymization (blurring/inpainting) before splat training and marketplace distribution.",
+  "Engine transition risk: UE6 early access in late 2027 and Unity HDRP stagnation make game-engine-centric investments short-lived.",
+  "Research-to-product risk: many key methods (PhysTwin, PolaRiS, PhysX-Anything, Articulate-Anything) are single-paper codebases with limited robustness and maintenance."
+ ],
+ "open_questions": [
+  "What exactly does CEN's current NeRF pipeline use (Instant-NGP, nerfstudio, custom)? This determines license exposure and migration effort.",
+  "Which vertical comes first (industrial manipulation, warehouses/AMRs, Korean AV, shipyards)? It decides whether radar/lidar/event/tactile realism or RGB realism dominates the investment.",
+  "What are NVIDIA's terms for running Omniverse Kit/RTX, NuRec and Isaac Sim in a multi-tenant commercial cloud workspace (and Inception/partner options)? Could not verify; docs.nvidia.com was blocked.",
+  "Cosmos 3 parameter sizes and licensing conflict (GitHub: 64B/16B/4B under OpenMDW-1.1; press: 32B/8B, NVIDIA Open Model License). Needs confirmation from the model cards.",
+  "Does Isaac Sim 6.1 support RTX lidar/radar returns from splat (ParticleField) content, and automatic collision proxies for NuRec scenes? Release notes were unreachable (domain blocked).",
+  "Current Epic Unreal licensing for non-game simulation SaaS in 2026, and whether CARLA's UE5 branch plus NuRec integration is production-ready. Not verified this session.",
+  "Odyssey world model status, DIGIT/TACTO simulator maintenance, V-HACD license/version, and the full SAM License commercial terms were not verified (low confidence).",
+  "Whether Tencent changed Hunyuan3D licensing after the July 2026 Hunyuan LLM Apache-2.0 switch. The current Hunyuan3D-2.1 LICENSE on GitHub still excludes South Korea.",
+  "How much paired real data customers will share for gap measurement, and under what data-rights model it could improve CEN's shared models.",
+  "Web-search budget for this session ran out after ~60 searches. Later items rely on primary GitHub fetches; SIGGRAPH 2026 / CoRL 2026 / RSS 2026-specific announcements beyond those captured above were not exhaustively searched."
+ ]
+}

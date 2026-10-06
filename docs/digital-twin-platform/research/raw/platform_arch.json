@@ -1,0 +1,740 @@
+{
+ "key": "platform_arch",
+ "topic": "Platform architecture, interoperability standards and cloud infrastructure for AICHEMIST's multi-domain digital twin SaaS (CEN extension): engine-agnostic sim kernel, live-twin vs simulation-twin modes, browser-first UX, cost-efficient multi-tenant GPU scheduling, LLM/agent control (status as of 2026-10-06)",
+ "executive_summary": "Recommendation: build the platform layer in-house and adopt the engines. That means the control plane, scene/version service, twin connectors, web UX, MCP/agent layer, metering and multi-tenancy. Do NOT write a physics engine or renderer, because the open engines matured sharply in 2026. Make OpenUSD the canonical internal scene format. AOUSD Core Spec 1.0.1 was published 2025-12-12 under CC-BY-ND-4.0, and OpenUSD 26.08 shipped 2026-07-20 with UsdPhysics nested-rigid-body support, UsdValidation fixers, wasm builds and a Gaussian-splat UsdVolParticleField schema. Note that Core 1.0 standardizes only the data model, composition and value resolution, not UsdPhysics. Express physics as UsdPhysics plus backend-namespaced applied schemas (newton-usd-schemas Apache-2.0 v0.x, mjcPhysics, PhysxSchema). URDF, MJCF, SDFormat, glTF, FBX, PLY and SPZ are edge formats, handled by Apache-2.0 converters: newton-physics/urdf-usd-converter, mujoco-usd-converter and adobe/USD-Fileformat-plugins. The engine-agnostic seam already exists and should be copied, not invented. Isaac Lab 3.0.0-EA (2026-09-16, built for Isaac Sim 6.1, Newton 1.5.2, Warp 1.16) lets you pick physics=isaacsim_physx|ovphysx|newton_mjwarp and renderer=isaacsim_rtx|ovrtx|newton_renderer, and supports Kit-less execution with Warp/DLPack tensor paths. AICHEMIST's 'Sim Kernel API' should mirror that factory pattern. Suggested backend defaults: Newton 1.6.1 (Apache-2.0, Linux Foundation, 2026-10-05; MuJoCo-Warp/VBD/MPM/Kamino, deterministic paths since 1.4) for robot learning. ovphysx 0.6 (PhysX SDK 5.11, BSD-3, pip install) for USD-native industrial/vehicle rigid-body work. MuJoCo 3.15 CPU as the deterministic golden reference. ovrtx (pre-release, NVIDIA proprietary license) or Isaac Sim 6.1 for RTX camera/lidar/radar fidelity. NVIDIA itself is moving to modular headless libraries (ovrtx, ovphysx, ovstorage, announced GTC 2026, early access). Kit continues (Kit 110.3.0, 2026-08-28), but the Launcher (2025-10-01) and the old web-viewer-sample are deprecated. So confine Kit to where it is irreplaceable (Isaac Sim apps, Replicator SDG, ROS bridge, Kit App Streaming) and keep the physics path fully open-source to avoid lock-in. Live twins should flow OPC UA (open62541, MPL-2.0) / MQTT / ROS 2 (Lyrical Luth LTS, released 2026-05-22, EOL May 2031) into Kafka, then into a twin-state service (Eclipse Ditto-style with W3C WoT descriptions), then into a USD 'live session layer' plus a time-series DB (InfluxDB 3 or TimescaleDB). Simulation twins fork from a live snapshot for what-if, RL and synthetic-data runs. Standard formats per data class: MCAP (MIT; rosbag2 default) for raw logs, LeRobotDataset v3 (many episodes per Parquet/MP4, Hub streaming) for training exports, FMI 3.0.2 FMUs plus SSP for vehicle and factory system models. UX should be browser-first and hybrid. The default is client-side WebGPU/WebGL with zero server GPU cost (three.js r186, Babylon.js 9.29 with an OpenUSD WASM loader, PlayCanvas 2.23 splat LOD streaming, Spark for 3DGS). Server-side WebRTC pixel streaming (Kit livestream, own NVENC pipeline, UE Pixel Streaming 2 for UE5.7/5.8) is used only for RTX-fidelity sessions and scales to zero when idle. Compute runs on Kubernetes + GPU Operator v26.7 + KAI Scheduler (Apache-2.0, the open-sourced Run:ai scheduler core: gang scheduling, fractional GPU, hierarchical DRF queues). Add Ray 2.59 for RL and data pipelines, SkyPilot for multi-cloud spot burst, and optionally Slinky (Slurm-on-K8s) and NVIDIA OSMO (Apache-2.0) for physical-AI workflow DAGs. Split GPU pools by capability. RT-core GPUs (L40S at $1.861/h, RTX PRO 6000 at $3.363/h on AWS us-east-1 on-demand; Seoul about 23% higher) handle rendering, streaming and SDG. H100/B200 ($6.88/GPU-h for H100) handle training and render-free physics only. Never time-slice GPUs across tenants. Version scenes as content-hashed USD layer stacks, and make replay reproducible by pinning container digest, driver, GPU SKU, seeds and an MCAP input log. lakeFS moved to BSL 1.1 in v1.87.0 (Sept 2026), so treat it as license-sensitive. Expose everything through a first-party MCP server plus a sandboxed USD code-generating agent with validation gates. Community MCPs (isaac-sim-mcp, blender-mcp, unreal-mcp) execute arbitrary code and are prototypes only. The biggest commercial risk is licensing: Kit, ovrtx and the Omniverse blueprints are under NVIDIA proprietary terms, so hosted-SaaS rights must be negotiated with NVIDIA before GA.",
+ "options": [
+  {
+   "name": "OpenUSD + AOUSD Core Specification",
+   "category": "Canonical scene description / interchange standard",
+   "status_as_of_2026": "AOUSD Core Spec v1.0.1 published 2025-12-12. It is the only normative AOUSD spec so far and covers the data model, composition and value resolution. UsdPhysics and other domain schemas are not yet normative. AOUSD reported member/industrial momentum in March 2026. Pixar OpenUSD 26.08 (2026-07-20): composition load up to 80% faster on heavy rigs, LOD schemas, UsdProfiles. 26.05 (2026-04-24): Hydra 2 scene-index path is the default. 26.03 (2026-02-24): wasm32/wasm64 builds, UsdVolParticleField (3D Gaussian splats), UsdPhysics nested rigid bodies and kinematic articulation. 25.11: OpenExec moved into core.",
+   "license_and_cost": "OpenUSD code is under the Tomorrow Open Source Technology License (Apache-2.0-derived), free. AOUSD spec text is CC-BY-ND-4.0. AOUSD membership is optional and paid.",
+   "strengths": [
+    "De-facto industry standard: NVIDIA, Apple, Autodesk, Adobe, Siemens and Trimble ecosystems",
+    "Non-destructive layer composition maps naturally to multi-user edits, live-state overlays and scene versioning",
+    "UsdPhysics is the common physics vocabulary read by PhysX/ovphysx, Newton and MuJoCo converters",
+    "WASM builds and a Babylon.js OpenUSD loader enable a browser path",
+    "UsdValidation framework with fixers can serve as a CI gate for agent-authored scenes"
+   ],
+   "weaknesses": [
+    "Steep learning curve, and composition semantics are hard for app developers",
+    "Physics, sensor and actuator semantics are still vendor-namespaced (physx*, newton*, mjc*), with no normative physics spec yet",
+    "Large-stage streaming to browsers still needs conversion or LOD (glTF or splats)"
+   ],
+   "best_fit": "Canonical internal representation for all scenes, robots, vehicles, factories, materials and semantic labels.",
+   "sources": [
+    "https://github.com/aousd/specifications-public",
+    "https://raw.githubusercontent.com/PixarAnimationStudios/OpenUSD/release/CHANGELOG.md",
+    "https://github.com/PixarAnimationStudios/OpenUSD/releases",
+    "https://www.linuxfoundation.org/press/aousd_prmarch2026",
+    "https://aousd.org/uncategorized/foundations-of-open-3d-development-introducing-aousd-core-specification-1-0/"
+   ]
+  },
+  {
+   "name": "Newton physics engine + newton-usd-schemas + URDF/MJCF->USD converters",
+   "category": "Physics backend (GPU, open source) + USD physics schema extension",
+   "status_as_of_2026": "Newton 1.0 GA at GTC in March 2026, after a beta first shown in Sept 2025. Latest is v1.6.1 (2026-10-05). Earlier steps: v1.6.0 (2026-09-10) made hydroelastic contacts 33-37% faster and added OpenUSD particles. v1.4.0 (2026-07-16) added coupled solvers (MuJoCo, Kamino, VBD) and deterministic paths for bit-exact repeated rollouts. v1.2.0 added a composable actuator subsystem with USD schema support. The project is hosted by the Linux Foundation, co-developed by Disney Research, Google DeepMind and NVIDIA. newton-usd-schemas is v0.x and marked experimental (codeless schemas extending UsdPhysics). The org also ships urdf-usd-converter and mujoco-usd-converter.",
+   "license_and_cost": "Apache-2.0 for code, CC-BY-4.0 for docs. Free.",
+   "strengths": [
+    "Multi-solver (MuJoCo-Warp, VBD cloth/cables, implicit MPM, Kamino) behind one model API",
+    "Built on Warp, so it runs batched on GPU and integrates differentiably with PyTorch/JAX via Warp",
+    "Vendor-neutral governance under the Linux Foundation",
+    "Native backend in Isaac Lab 3.0 (newton_mjwarp), with a Kit-less path"
+   ],
+   "weaknesses": [
+    "Fast release cadence (monthly minors) and schema v0.x means API churn",
+    "Requires NVIDIA CUDA GPUs; no AMD or Apple path",
+    "Vehicle, tire and powertrain models are thinner than PhysX vehicle or dedicated AV simulators"
+   ],
+   "best_fit": "Default physics backend for robot learning (locomotion, manipulation, deformables) and batched simulation twins.",
+   "sources": [
+    "https://github.com/newton-physics/newton",
+    "https://github.com/newton-physics/newton/releases",
+    "https://github.com/newton-physics/newton-usd-schemas",
+    "https://github.com/newton-physics",
+    "https://dataconomy.com/2026/03/17/nvidia-launches-newton-1-0-physics-engine-for-industrial-robot-training/"
+   ]
+  },
+  {
+   "name": "NVIDIA Omniverse libraries: ovphysx / ovrtx / ovstorage",
+   "category": "Headless modular physics / RTX sensor rendering / storage libraries",
+   "status_as_of_2026": "Announced at GTC 2026 as headless-first C APIs with C++ and Python bindings, early access on GitHub and NGC, with production API stability promised 'later this year'. The SIGGRAPH 2026 coverage was not fetchable here. ovphysx 0.6 maps to PhysX SDK 5.11.0 (0.5 to 5.10) and is installed with pip install ovphysx; it offers USD physics with DLPack tensor interop. ovrtx is pre-release: a C11 + Python 3.10-3.13 SDK for camera, lidar and radar on Windows x86_64 and Linux x86_64/aarch64, shipped as PyPI wheels. ovstorage is pre-release and not enterprise-supported: a plugin storage client for file, HTTP, S3, GCS, Azure, OpenDAL, Nucleus and Omniverse Storage Service, with an MCP server and agent skills.",
+   "license_and_cost": "ovphysx/PhysX: BSD-3-Clause. ovstorage: Apache-2.0 (agent skills CC-BY-4.0; vendored service material proprietary). ovrtx: NVIDIA Software License Agreement + Product-Specific Terms for NVIDIA AI Products, which is proprietary, so hosted-SaaS terms must be confirmed.",
+   "strengths": [
+    "Lets you embed NVIDIA physics and RTX sensors into your own services without the Kit app framework, which suits CI/CD and K8s",
+    "Same backends Isaac Lab 3.0 selects (physics=ovphysx, renderer=ovrtx)",
+    "ovstorage treats Nucleus as just one backend, which aligns with an object-storage-first design"
+   ],
+   "weaknesses": [
+    "Pre-1.0, and NVIDIA states APIs may change between releases",
+    "ovrtx is closed-license and needs RTX (RT-core) GPUs",
+    "ovstorage is not accepting external contributions and is not enterprise-supported"
+   ],
+   "best_fit": "ovphysx: USD-native industrial and vehicle rigid/articulated physics. ovrtx: high-fidelity sensor simulation and SDG workers. ovstorage: optional client abstraction.",
+   "sources": [
+    "https://developer.nvidia.com/blog/integrate-physical-ai-capabilities-into-existing-apps-with-nvidia-omniverse-libraries/",
+    "https://github.com/NVIDIA-Omniverse/ovrtx",
+    "https://github.com/NVIDIA-Omniverse/PhysX",
+    "https://raw.githubusercontent.com/NVIDIA-Omniverse/PhysX/main/README.md",
+    "https://github.com/NVIDIA-Omniverse/ovstorage",
+    "https://github.com/NVIDIA-Omniverse"
+   ]
+  },
+  {
+   "name": "NVIDIA Omniverse Kit SDK / Kit App Template / Kit App Streaming / NVCF / Nucleus",
+   "category": "Full application framework + streaming + collaboration server",
+   "status_as_of_2026": "Kit App Template changelog shows 110.3.0 (2026-08-28, with a kit-upgrade agent skill for 106-110 migrations), 110.1.0 (2026-04-06, versioned packages), 109.0.1 (2025-12-04, ARM64, raised driver floor) and 108.0.0 (2025-08-12, 'Omniverse Cloud Streaming' renamed 'NVCF Streaming', omni.kit.livestream.app). Templates: Kit Service, Base Editor, USD Composer, USD Explorer, USD Viewer (built for streaming). Kit App Streaming (OKAS) is a self-managed K8s/Helm reference; NVCF is the managed option. Launcher deprecated 2025-10-01. web-viewer-sample deprecated in favour of the OV Web SDK WebRTC sample. Nucleus continues, but the 26H1 storage stack and ovstorage reposition it as one backend.",
+   "license_and_cost": "NVIDIA Software License + Omniverse Product-Specific Terms (proprietary). Enterprise production deployment historically needed Omniverse Enterprise per-GPU licensing. Current price not verified (low confidence).",
+   "strengths": [
+    "Fastest route to a polished RTX editor, viewer and streamed app",
+    "Reference blueprints exist: the DSX AI-factory twin (React portal + Kit WebRTC livestream + OKAS/NVCF, RTX PRO 6000 Blackwell) and the CAE fluid twin (React + WebRTC + NIM/Triton surrogate)",
+    "Mature extension ecosystem (400+ extensions)"
+   ],
+   "weaknesses": [
+    "Heavy runtime and a GPU per session, which makes streaming costly",
+    "Proprietary, with frequent major versions (108 to 110 in about 12 months)",
+    "Lock-in to NVIDIA hardware and licensing; template is based on a Kit 'feature branch'"
+   ],
+   "best_fit": "Premium high-fidelity editing and viewing sessions and Isaac Sim-based workflows. Not suited to the always-on default UX or batch workers.",
+   "sources": [
+    "https://github.com/NVIDIA-Omniverse/kit-app-template",
+    "https://raw.githubusercontent.com/NVIDIA-Omniverse/kit-app-template/main/CHANGELOG.md",
+    "https://github.com/NVIDIA-Omniverse/web-viewer-sample",
+    "https://forums.developer.nvidia.com/t/omniverse-launcher-update/321326",
+    "https://github.com/NVIDIA-Omniverse-blueprints/omniverse-dsx-blueprint-for-ai-factories",
+    "https://github.com/NVIDIA-Omniverse-blueprints/digital-twins-for-fluid-simulation"
+   ]
+  },
+  {
+   "name": "Isaac Sim 6.1 / Isaac Lab 3.0",
+   "category": "Robotics simulator app + robot-learning framework (reference for backend abstraction)",
+   "status_as_of_2026": "Isaac Sim v6.0.0 GA (June 2026), v6.0.1 (June 22), v6.1.0 GA (Sept 10, 2026), v7.0.0a1 (Sept 18, 2026). Python 3.12, Ubuntu 22.04/24.04 or Windows 11. Minimum RTX 4080 or A40; L40S recommended. Isaac Lab 3.0.0-EA (Sept 16, 2026) has multi-backend physics (isaacsim_physx, ovphysx, newton_mjwarp), renderers (isaacsim_rtx, ovrtx, newton_renderer), five visualizers (Newton GL, Newton RTX, Kit, Viser, Rerun) and a unified 'isaaclab train'. Breaking change: quaternions go from (w,x,y,z) to (x,y,z,w). The IsaacSim-ros_workspaces README lists only Humble and Jazzy.",
+   "license_and_cost": "Isaac Sim source is Apache-2.0, but it depends on the Kit SDK (NVIDIA proprietary). Isaac Lab is BSD-3; isaaclab_mimic is Apache-2.0. Free.",
+   "strengths": [
+    "Most complete open robotics sim stack: RTX sensors, ROS bridge, Replicator SDG, importers, RL/IL (Mimic)",
+    "Isaac Lab 3.0's factory pattern is a ready blueprint for an engine-agnostic sim kernel",
+    "Kit-less Newton mode allows light containers"
+   ],
+   "weaknesses": [
+    "Major-version churn (5.x, then 6.x, then 7.0 alpha within about 15 months) and breaking API changes",
+    "No official ROS 2 Lyrical workspace yet, per the repo README",
+    "Full app needs RT-core GPUs, so it cannot render on H100/B200"
+   ],
+   "best_fit": "High-fidelity robot sensor simulation, SDG and RL/IL training environments. Wrap it as one backend of AICHEMIST's Sim Kernel, not as the platform itself.",
+   "sources": [
+    "https://github.com/isaac-sim/IsaacSim",
+    "https://github.com/isaac-sim/IsaacSim/releases",
+    "https://github.com/isaac-sim/IsaacLab",
+    "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+    "https://github.com/NVIDIA-Omniverse/IsaacSim-ros_workspaces"
+   ]
+  },
+  {
+   "name": "MuJoCo 3.x / MuJoCo Warp / MJCF",
+   "category": "Physics backend + robot description format",
+   "status_as_of_2026": "MuJoCo 3.15.0 (2026-10-05). 3.14.0 added archive resource providers. 3.13.0 added Python 3.15 and a 'discrete' integrator. 3.12.0 added a PID actuator. MuJoCo Warp is version-locked (3.15.0). The repo has src/experimental/usd with an mjcPhysics schema, an MJCF plugin and a USD writer.",
+   "license_and_cost": "Apache-2.0, free.",
+   "strengths": [
+    "Deterministic CPU simulation is the golden reference for replay and regression",
+    "Huge model zoo (Menagerie) and MJCF is the lingua franca of RL research",
+    "MuJoCo Warp powers Newton's main solver"
+   ],
+   "weaknesses": [
+    "USD support is experimental",
+    "Limited rendering and sensor realism"
+   ],
+   "best_fit": "Golden-reference and validation backend, plus MJCF import/export for customer compatibility.",
+   "sources": [
+    "https://github.com/google-deepmind/mujoco/releases",
+    "https://github.com/google-deepmind/mujoco/tree/main/src/experimental/usd",
+    "https://github.com/google-deepmind/mujoco_warp/releases"
+   ]
+  },
+  {
+   "name": "URDF / SDFormat / glTF 2.0 + converter plugins",
+   "category": "Edge interchange formats",
+   "status_as_of_2026": "SDFormat 16 ships with Gazebo Jetty. glTF 2.0: KHR_physics_rigid_bodies is still 'Review Draft'; the extensions index lists KHR_interactivity and KHR_gaussian_splatting among ratified extensions (medium confidence). adobe/USD-Fileformat-plugins (Apache-2.0) covers glTF/GLB, FBX, OBJ, PLY, SBSAR, SPZ and STL. NVIDIA usd-exchange SDK (Apache-2.0) is for writing USD connectors.",
+   "license_and_cost": "Open specs. Converter plugins are Apache-2.0.",
+   "strengths": [
+    "glTF/GLB is the best format for web delivery",
+    "URDF is universal in ROS",
+    "SPZ/PLY carry Gaussian splats from NeRF/3DGS capture, matching CEN's photo-to-3D pipeline"
+   ],
+   "weaknesses": [
+    "URDF has no closed loops and weak sensor/material semantics",
+    "glTF physics is not ratified",
+    "Round-trips lose information"
+   ],
+   "best_fit": "Import/export edges only. Compile USD to glTF/splat LOD bundles for browser viewing.",
+   "sources": [
+    "https://github.com/KhronosGroup/glTF/tree/main/extensions",
+    "https://github.com/adobe/USD-Fileformat-plugins",
+    "https://github.com/NVIDIA-Omniverse/usd-exchange",
+    "https://github.com/gazebosim/sdformat/releases"
+   ]
+  },
+  {
+   "name": "ROS 2 (Humble / Jazzy / Kilted / Lyrical) + rmw_zenoh + rosbag2/MCAP",
+   "category": "Robot middleware / live-twin connectivity / logging",
+   "status_as_of_2026": "Lyrical Luth released 2026-05-22, LTS to May 2031, the 12th release. It adds native buffers in the Fast DDS RMW for GPU/accelerated memory transport. Jazzy EOL May 2029, Humble EOL May 2027, Kilted EOL Dec 2026. The next release, 'Makoa Mata-mata', is due May 2027. rmw_zenoh needs a Zenoh router (multicast discovery off by default) and is not interoperable with zenoh-plugin-ros2dds. rosbag2's default storage is MCAP.",
+   "license_and_cost": "Apache-2.0, free.",
+   "strengths": [
+    "Universal robot integration; sim and real share the same interfaces (use_sim_time /clock)",
+    "Zenoh suits WAN and cloud links from customer sites to the twin cloud better than DDS multicast",
+    "MCAP is indexable, compressible and multi-language"
+   ],
+   "weaknesses": [
+    "Version fragmentation across customers (Humble, Jazzy and Lyrical all coexist)",
+    "DDS discovery is hostile to NAT/cloud, so a bridge or Zenoh is needed"
+   ],
+   "best_fit": "Robot live-twin ingest, HIL/SIL, and canonical robot log format (MCAP).",
+   "sources": [
+    "https://github.com/ros2/ros2_documentation/blob/rolling/source/Releases.rst",
+    "https://docs.ros.org/en/lyrical/Releases/Release-Lyrical-Luth.html",
+    "https://discourse.openrobotics.org/t/ros-2-lyrical-luth-and-11-years-of-fast-dds-as-ros-2-default-middleware/55062",
+    "https://github.com/ros2/rmw_zenoh",
+    "https://github.com/ros2/rosbag2",
+    "https://github.com/foxglove/mcap"
+   ]
+  },
+  {
+   "name": "Gazebo Jetty (gz-sim 10) + ros_gz",
+   "category": "Open-source ROS-native simulator (alternative backend)",
+   "status_as_of_2026": "Jetty (gz-sim 10, SDFormat 16) is the current LTS, released around late 2025 (exact date unverified). ros_gz pairings: Humble-Fortress, Jazzy-Harmonic, Kilted-Ionic, Lyrical-Jetty, Rolling-Jetty.",
+   "license_and_cost": "Apache-2.0, free.",
+   "strengths": [
+    "ROS-native, and many customers already have SDF worlds",
+    "Runs CPU-only, which is cheap for CI and logic tests"
+   ],
+   "weaknesses": [
+    "Lower visual and sensor fidelity",
+    "Not GPU-batched for RL at scale"
+   ],
+   "best_fit": "Optional plug-in backend for ROS customers and CI smoke tests. Not a flagship backend.",
+   "sources": [
+    "https://github.com/gazebosim/ros_gz",
+    "https://github.com/gazebosim/gz-sim/releases",
+    "https://github.com/gazebosim/sdformat/releases"
+   ]
+  },
+  {
+   "name": "FMI 3.0 / SSP / Modelica (OpenModelica)",
+   "category": "System-level co-simulation standards (vehicles, powertrain, HVAC, PLC/process models)",
+   "status_as_of_2026": "FMI 3.0.2 (2024-11-27) is the latest maintenance release, adding clocks, arrays, terminals and icons, and layered standards. No FMI 3.1 was found. SSP 1.0 and 2.0 maintenance branches exist (2.0 release date not verified). OpenModelica 1.27.x (2026) is still FMI 2-focused; FMI 3 support is promised for 1.28.0 (planned end of 2026).",
+   "license_and_cost": "FMI/SSP standards are free (SSP schemas BSD-2, docs CC-BY-SA). OpenModelica is OSMC-PL/GPL. Commercial tools (Dymola, Simulink) export FMUs.",
+   "strengths": [
+    "Lets customers bring their existing validated vehicle and plant models as black-box FMUs",
+    "SSP describes system wiring and parameters tool-independently"
+   ],
+   "weaknesses": [
+    "Fixed-step co-simulation with rigid-body physics needs a careful master algorithm",
+    "OpenModelica lags on FMI 3"
+   ],
+   "best_fit": "Vehicle dynamics/powertrain, factory process and energy models plugged into the co-simulation orchestrator alongside the physics backend.",
+   "sources": [
+    "https://github.com/modelica/fmi-standard/releases",
+    "https://github.com/modelica/ssp-standard",
+    "https://github.com/OpenModelica/OpenModelica/releases"
+   ]
+  },
+  {
+   "name": "OPC UA (open62541) / MQTT / Kafka / Eclipse Ditto",
+   "category": "Industrial live-twin ingestion and twin-state management",
+   "status_as_of_2026": "open62541 v1.5.9, v1.4.21 and v1.3.22 released together in October 2026. It supports PubSub with encryption and TLS MQTT PubSub. Eclipse Ditto 3.9.7 (2026, fixing CVE-2026-84175 and CVE-2026-82958); 3.9.0 added WoT Thing Description support plus MQTT/Kafka connectivity. Kafka 4.x is KRaft-only (not verified this session).",
+   "license_and_cost": "open62541 MPL-2.0. Ditto EPL-2.0. Kafka Apache-2.0. MQTT brokers (Mosquitto EPL/EDL, EMQX) are open source; managed options are paid.",
+   "strengths": [
+    "Standard factory connectivity (OPC UA) plus lightweight IoT (MQTT)",
+    "Ditto provides twin shadow state, a policy/ACL model and search out of the box"
+   ],
+   "weaknesses": [
+    "Ditto is JVM/MongoDB-heavy",
+    "Mapping the OPC UA information model to USD prims needs a custom mapping layer"
+   ],
+   "best_fit": "Live-twin state sync for factories, warehouses, ships and fleets.",
+   "sources": [
+    "https://github.com/open62541/open62541/releases",
+    "https://github.com/eclipse-ditto/ditto/releases"
+   ]
+  },
+  {
+   "name": "Time-series DBs: InfluxDB 3 / TimescaleDB",
+   "category": "Live-twin history and telemetry store",
+   "status_as_of_2026": "InfluxDB 3 v3.11.4 (2026-09-04) uses an object-storage and Parquet architecture. TimescaleDB 2.x offers hypertables, a columnstore with 90%+ compression, and continuous aggregates.",
+   "license_and_cost": "InfluxDB 3 Core is open source (MIT/Apache, not re-verified); Enterprise is paid. TimescaleDB is Apache-2.0 core plus the Timescale License (TSL) for advanced features, so check SaaS-hosting restrictions.",
+   "strengths": [
+    "Parquet/object storage (Influx 3) fits a data lake",
+    "Timescale is plain Postgres, so it can share the platform's metadata DB skills"
+   ],
+   "weaknesses": [
+    "The TSL restricts offering Timescale as a DBaaS",
+    "InfluxDB 3 Core is young"
+   ],
+   "best_fit": "TimescaleDB for an MVP (Postgres ops reuse); evaluate InfluxDB 3 or Iceberg for large fleets.",
+   "sources": [
+    "https://github.com/influxdata/influxdb/releases",
+    "https://github.com/timescale/timescaledb"
+   ]
+  },
+  {
+   "name": "Dataset/log formats: MCAP, rosbag2, LeRobotDataset v3, Rerun",
+   "category": "Episode logging, training-data export, debugging visualization",
+   "status_as_of_2026": "MCAP (MIT; libraries in C++, Go, Python, TS, Swift, Rust) is the rosbag2 default. LeRobotDataset v3.0 stores many episodes per Parquet/MP4 file, with meta/info.json, stats.json, chunked episode metadata, StreamingLeRobotDataset and a v2.1 converter; dataset.finalize() is required. LeRobot v0.6.1 (Aug 2026). Rerun 0.38.1 (2026-09-17) has a ROS 2 MCAP timeline, experimental Gaussian splats and a catalog for larger-than-RAM files. Lichtblick (MPL-2.0, open-core) is a fork of Foxglove Studio.",
+   "license_and_cost": "MCAP MIT. LeRobot Apache-2.0. Rerun MIT/Apache (not explicitly verified). Lichtblick MPL-2.0.",
+   "strengths": [
+    "MCAP to LeRobot v3 conversion links real and sim logs to VLA/IL training",
+    "LeRobot v3 streaming from the Hub matches the marketplace distribution model"
+   ],
+   "weaknesses": [
+    "LeRobot API churn (breaking module renames in 0.6.x)",
+    "Video codec settings affect training fidelity"
+   ],
+   "best_fit": "MCAP is canonical for raw multi-sensor logs (sim and real). LeRobot v3 is the canonical export for robot-learning datasets. Rerun or Lichtblick serve as embedded debug viewers.",
+   "sources": [
+    "https://github.com/foxglove/mcap",
+    "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/lerobot-dataset-v3.mdx",
+    "https://github.com/huggingface/lerobot/releases",
+    "https://github.com/rerun-io/rerun/releases",
+    "https://github.com/Lichtblick-Suite/lichtblick"
+   ]
+  },
+  {
+   "name": "Kubernetes + NVIDIA GPU Operator + KAI Scheduler (Run:ai OSS core) + DRA",
+   "category": "GPU cluster orchestration and multi-tenant scheduling",
+   "status_as_of_2026": "GPU Operator v26.7.1 (Sept 2026), released on a 26.3/26.7 cadence. KAI Scheduler v0.18.2 (Oct 2026): gang scheduling, NvFractions GPU-memory fractional sharing, hierarchical queues with DRF and reclaim, topology-aware placement, DRA accounting. NVIDIA DRA driver (Apache-2.0): ComputeDomains (MNNVL/IMEX) are supported; DRA-based GPU allocation is still 'not yet officially supported'.",
+   "license_and_cost": "All Apache-2.0 and free. Run:ai commercial control plane is paid (price not verified).",
+   "strengths": [
+    "Fractional GPUs and per-tenant queues are exactly what interactive sim sessions plus batch jobs need",
+    "Scheduling for RL and distributed training is gang-safe"
+   ],
+   "weaknesses": [
+    "Fractional and time-sliced GPUs do not isolate memory or faults, so they are unsafe across tenants",
+    "DRA GPU path not yet GA in NVIDIA's driver"
+   ],
+   "best_fit": "Core scheduler for the AICHEMIST cluster: queues per tenant and tier, fractions only within a tenant.",
+   "sources": [
+    "https://github.com/NVIDIA/gpu-operator/releases",
+    "https://github.com/NVIDIA/KAI-Scheduler",
+    "https://github.com/NVIDIA/KAI-Scheduler/releases",
+    "https://github.com/NVIDIA/k8s-dra-driver-gpu"
+   ]
+  },
+  {
+   "name": "NVIDIA OSMO",
+   "category": "Physical-AI workflow orchestrator (SDG, sim, train, HIL DAGs)",
+   "status_as_of_2026": "Open source on GitHub. Release 6.3.1 (June 2026) brought ConfigMap configuration, gateway TLS and deploy scripts for AKS, EKS and microk8s. 6.2.8 added OAuth2 RBAC and NVLink topology-aware scheduling. Runs locally on KIND or on cloud K8s.",
+   "license_and_cost": "Apache-2.0, free.",
+   "strengths": [
+    "Purpose-built for Isaac SDG, training, RL and HIL pipelines in YAML",
+    "Supports heterogeneous compute, including edge devices"
+   ],
+   "weaknesses": [
+    "Overlaps with Argo, Flyte and Ray",
+    "NVIDIA-centric roadmap"
+   ],
+   "best_fit": "Optional internal pipeline engine for SDG to train to evaluate. Alternatively use Argo Workflows plus Ray if you want vendor neutrality.",
+   "sources": [
+    "https://github.com/NVIDIA/OSMO",
+    "https://github.com/NVIDIA/OSMO/releases"
+   ]
+  },
+  {
+   "name": "Ray (KubeRay) / SkyPilot / Slurm via Slinky",
+   "category": "Distributed compute, multi-cloud burst, HPC-style training",
+   "status_as_of_2026": "Ray 2.59.0 (Oct 2026): Ray Data LLM and Serve LLM are GA; 2.58 added an experimental gVisor-based Ray Sandbox and TPU support in Ray Train. SkyPilot (Apache-2.0) covers K8s, Slurm and 20+ clouds with spot failover, autostop and binpacking. Slinky slurm-operator 1.3.x (Apache-2.0, SchedMD) supports K8s 1.35-1.37 and Slurm 25.11 or newer.",
+   "license_and_cost": "Apache-2.0, free. Anyscale is paid.",
+   "strengths": [
+    "Ray suits RL rollouts plus SDG data pipelines",
+    "SkyPilot cuts cost by chasing spot capacity across clouds, including Korean data residency choices",
+    "Slinky gives ML researchers familiar sbatch on the same K8s cluster"
+   ],
+   "weaknesses": [
+    "Three schedulers add operational complexity, so pick one primary (KAI) and treat the others as job frontends"
+   ],
+   "best_fit": "Ray for RL and data, SkyPilot for burst, Slinky only if the research team demands Slurm.",
+   "sources": [
+    "https://github.com/ray-project/ray/releases",
+    "https://github.com/skypilot-org/skypilot",
+    "https://github.com/SlinkyProject/slurm-operator"
+   ]
+  },
+  {
+   "name": "Server-side pixel streaming: Omniverse Kit livestream (WebRTC) / UE Pixel Streaming 2 / Selkies",
+   "category": "Remote rendering to the browser",
+   "status_as_of_2026": "Kit uses omni.kit.livestream.app (WebRTC) with OKAS on K8s or NVCF; the old web-viewer-sample is deprecated in favour of the OV Web SDK. UE Pixel Streaming 2 (introduced UE 5.5): the infrastructure repo supports UE5.8 (current) and UE5.7, UE5.6 is end-of-life; it includes the Cirrus signalling server and an SFU, MIT licensed. Selkies (MPL-2.0): WebSocket by default with WebRTC opt-in, Ubuntu 26.04 desktop containers; the project is asking for maintainers.",
+   "license_and_cost": "Software is free (Kit is proprietary). Cost is GPU-hours: roughly 1 L40S-class GPU per heavy RTX session, about $1.86-2.29/h on-demand on AWS.",
+   "strengths": [
+    "Full RTX fidelity on any thin client",
+    "Selkies can stream CEN's existing browser virtual OS/desktop workspace"
+   ],
+   "weaknesses": [
+    "Highest per-user cost",
+    "Latency from Korea to US regions",
+    "Needs TURN/SFU infrastructure"
+   ],
+   "best_fit": "Premium, on-demand high-fidelity sessions and full desktop workspaces, with auto-suspend.",
+   "sources": [
+    "https://github.com/EpicGamesExt/PixelStreamingInfrastructure",
+    "https://github.com/selkies-project/selkies",
+    "https://github.com/NVIDIA-Omniverse/web-viewer-sample",
+    "https://raw.githubusercontent.com/NVIDIA-Omniverse/kit-app-template/main/CHANGELOG.md"
+   ]
+  },
+  {
+   "name": "Client-side web 3D: three.js / Babylon.js / PlayCanvas / Spark / Viser",
+   "category": "Browser rendering (WebGPU/WebGL) for the default UX",
+   "status_as_of_2026": "three.js r186 (Sept 2026): WebGPU compute (compileComputeAsync) and TSL improvements. Babylon.js 9.29.0 (Oct 1, 2026); 9.26 (Sept 2026) added an OpenUSD WebAssembly loader, with Gaussian-splat streaming/LOD and KHR_interactivity. PlayCanvas 2.23.0 (Oct 2026): distance-based splat LOD and streamed loading. Spark 2.x (MIT, World Labs): a three.js 3DGS renderer supporting PLY, SPZ, SPLAT, KSPLAT and SOG. Viser (Apache-2.0): Python-driven web 3D, one of Isaac Lab 3.0's visualizers.",
+   "license_and_cost": "MIT (three.js, PlayCanvas engine, Spark) and Apache-2.0 (Babylon.js, Viser). No server GPU cost.",
+   "strengths": [
+    "Zero marginal GPU cost and instant load, the right default for dashboards, live-twin monitoring, annotation and marketplace previews",
+    "3DGS lets photoreal captured environments run on laptops and phones"
+   ],
+   "weaknesses": [
+    "No RTX path tracing or physically accurate sensor simulation",
+    "Large USD stages need server-side baking to glTF and splat LODs"
+   ],
+   "best_fit": "Default UI. Babylon.js if the browser reads USD directly; three.js + Spark if you want the largest ecosystem and splats.",
+   "sources": [
+    "https://github.com/mrdoob/three.js/releases",
+    "https://github.com/BabylonJS/Babylon.js/releases",
+    "https://github.com/playcanvas/engine/releases",
+    "https://github.com/sparkjsdev/spark",
+    "https://github.com/nerfstudio-project/viser"
+   ]
+  },
+  {
+   "name": "Scene and data versioning: USD layers + content-addressed object store; Git LFS; Perforce; lakeFS; DVC/Iceberg",
+   "category": "Version control and reproducibility",
+   "status_as_of_2026": "lakeFS v1.87.0 (Sept 2026) changed its license from Apache-2.0 to Business Source License 1.1 and removed custom IAM plugin and ACL reference server support; v1.88.0 shipped Oct 2026. Git LFS and Perforce are unchanged (not re-verified).",
+   "license_and_cost": "lakeFS BSL 1.1 restricts competing hosted offerings (review the grant). Git LFS is MIT. Perforce is commercial. DVC is Apache-2.0. Iceberg is Apache-2.0.",
+   "strengths": [
+    "USD layer stacks diff and merge at layer granularity",
+    "Content hashes give exact replay pins"
+   ],
+   "weaknesses": [
+    "lakeFS license change is a risk for a SaaS that embeds it",
+    "Perforce licensing cost"
+   ],
+   "best_fit": "Build a thin in-house 'scene commit' service (USD layers + blob hashes in S3 + Postgres metadata). Use Iceberg or DVC snapshots for datasets. Offer Perforce/Git connectors for enterprise customers.",
+   "sources": [
+    "https://github.com/treeverse/lakeFS/releases/tag/v1.87.0",
+    "https://github.com/treeverse/lakeFS/releases"
+   ]
+  },
+  {
+   "name": "MCP servers for LLM/agent control (NVIDIA kit-usd-agents, isaac-sim-mcp, blender-mcp, unreal-mcp, ros-mcp-server)",
+   "category": "Agentic scene authoring and sim control",
+   "status_as_of_2026": "MCP spec schema version 2026-07-28. NVIDIA kit-usd-agents (Apache-2.0) provides Kit MCP (12 tools), USD Code MCP (7), OmniUI MCP (10), Isaac Sim MCP (5) and Chat USD, and is not accepting contributions; Omniverse libraries also ship agent skills. Community servers: omni-mcp/isaac-sim-mcp (MIT, Isaac Sim 4.2+, 14 commits, arbitrary Python exec); blender-mcp (MIT, about 30k stars, now the PyPI package 'mcp-for-blender', execute_blender_code); chongdashu/unreal-mcp (MIT, UE 5.5+, experimental, 2.1k stars); robotmcp/ros-mcp-server (Apache-2.0, 1.5k stars, rosbridge-based, ROS 1 and ROS 2).",
+   "license_and_cost": "Mostly MIT or Apache-2.0, free. LLM token cost is passed through to the CEN token model.",
+   "strengths": [
+    "Lets CEN's existing LLM text-command interface drive scenes, jobs and robots through a standard protocol",
+    "NVIDIA's MCPs ground code generation in correct Kit/USD APIs"
+   ],
+   "weaknesses": [
+    "Community runtime MCPs execute arbitrary code, a prompt-injection and RCE risk in multi-tenant SaaS",
+    "Thin maintenance (isaac-sim-mcp)"
+   ],
+   "best_fit": "Build a first-party typed MCP server over the platform APIs. Use NVIDIA's doc/code MCPs inside the authoring agent. Use community MCPs only in sandboxed, single-tenant dev workspaces.",
+   "sources": [
+    "https://github.com/modelcontextprotocol/modelcontextprotocol",
+    "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+    "https://github.com/omni-mcp/isaac-sim-mcp",
+    "https://github.com/ahujasid/blender-mcp",
+    "https://github.com/chongdashu/unreal-mcp",
+    "https://github.com/robotmcp/ros-mcp-server"
+   ]
+  },
+  {
+   "name": "AV-specific: CARLA + ASAM OSI / OpenDRIVE / OpenSCENARIO",
+   "category": "Autonomous driving simulator and scenario standards (vehicle vertical)",
+   "status_as_of_2026": "CARLA 0.10.0 (Dec 2024) moved to UE 5.5 (Nanite/Lumen), added native ROS 2 and switched physics from PhysX to Chaos. The 0.9.x line continues on UE4. ASAM OSI v3.8.0 is the latest listed release (date not verified). OpenDRIVE and OpenSCENARIO versions were not verified this session.",
+   "license_and_cost": "CARLA MIT (assets CC-BY). OSI MPL-2.0. ASAM standards free or paid depending on membership (not verified).",
+   "strengths": [
+    "Industry-expected scenario and road formats for OEM and Tier-1 customers"
+   ],
+   "weaknesses": [
+    "UE-based: a second rendering stack outside USD",
+    "Vehicle physics fidelity is below dedicated vehicle-dynamics FMUs"
+   ],
+   "best_fit": "Support OpenDRIVE/OpenSCENARIO import and OSI sensor-data export in the vehicle module. Treat CARLA as an optional backend, not the core.",
+   "sources": [
+    "https://github.com/carla-simulator/carla/releases",
+    "https://github.com/OpenSimulationInterface/open-simulation-interface/releases"
+   ]
+  }
+ ],
+ "key_facts": [
+  {
+   "claim": "AOUSD Core Specification v1.0.1 was published 2025-12-12 under CC-BY-ND-4.0. It is the only published AOUSD spec and covers the data model, composition and value resolution. No physics spec has been published yet.",
+   "source": "https://github.com/aousd/specifications-public ; https://aousd.org/uncategorized/foundations-of-open-3d-development-introducing-aousd-core-specification-1-0/",
+   "confidence": "high"
+  },
+  {
+   "claim": "OpenUSD releases: 26.08 (2026-07-20), 26.05 (2026-04-24) and 26.03 (2026-02-24). 26.03 added wasm32/wasm64 support and the UsdVolParticleField schema family (3D Gaussian splats). 26.05 made the Hydra 2 scene-index path the default. UsdPhysics gained nested rigid bodies and kinematic articulations.",
+   "source": "https://raw.githubusercontent.com/PixarAnimationStudios/OpenUSD/release/CHANGELOG.md",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA announced modular, headless-first Omniverse libraries at GTC 2026 (ovrtx, ovphysx, ovstorage) as C APIs with C++ and Python bindings, in early access on GitHub and NGC, with production API stability planned later in 2026.",
+   "source": "https://developer.nvidia.com/blog/integrate-physical-ai-capabilities-into-existing-apps-with-nvidia-omniverse-libraries/ (via search snippet; page egress-blocked)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "ovphysx: 'C API with Python bindings for USD physics simulation with DLPack tensor interop', installed via pip. Release 0.6 corresponds to PhysX SDK 5.11.0, under BSD-3-Clause.",
+   "source": "https://github.com/NVIDIA-Omniverse/PhysX",
+   "confidence": "high"
+  },
+  {
+   "claim": "ovrtx is pre-release, licensed under the NVIDIA Software License Agreement and Product-Specific Terms for NVIDIA AI Products, with Python 3.10-3.13 on Windows x86_64 and Linux x86_64/aarch64.",
+   "source": "https://github.com/NVIDIA-Omniverse/ovrtx",
+   "confidence": "high"
+  },
+  {
+   "claim": "ovstorage is Apache-2.0 and pre-release/early access, 'not enterprise-supported'. It has backends for file, HTTP(S), S3, GCS, Azure, OpenDAL, Nucleus and Omniverse Storage Service.",
+   "source": "https://github.com/NVIDIA-Omniverse/ovstorage",
+   "confidence": "high"
+  },
+  {
+   "claim": "Kit SDK and kit-app-template releases: 110.3.0 (2026-08-28), 110.2.0 (2026-07-20), 110.1.0 (2026-04-06), 109.0.1 (2025-12-04, ARM64) and 108.0.0 (2025-08-12, which renamed 'Omniverse Cloud Streaming' to 'NVCF Streaming').",
+   "source": "https://raw.githubusercontent.com/NVIDIA-Omniverse/kit-app-template/main/CHANGELOG.md",
+   "confidence": "high"
+  },
+  {
+   "claim": "The Omniverse Launcher was deprecated on 2025-10-01. The Omniverse web-viewer-sample is no longer developed; users are directed to the OV Web SDK WebRTC sample.",
+   "source": "https://forums.developer.nvidia.com/t/omniverse-launcher-update/321326 ; https://github.com/NVIDIA-Omniverse/web-viewer-sample",
+   "confidence": "high"
+  },
+  {
+   "claim": "Newton 1.0 launched in March 2026 (GTC). The latest release is v1.6.1 (2026-10-05). v1.4.0 added deterministic execution paths for bit-exact repeated rollouts and coupled solvers. The code is Apache-2.0 and the project is hosted by the Linux Foundation.",
+   "source": "https://github.com/newton-physics/newton/releases ; https://github.com/newton-physics/newton ; https://dataconomy.com/2026/03/17/nvidia-launches-newton-1-0-physics-engine-for-industrial-robot-training/",
+   "confidence": "high"
+  },
+  {
+   "claim": "newton-usd-schemas are codeless extensions of UsdPhysics (Apache-2.0, v0.x, experimental). Solver-specific parameters go through schemas such as mjcPhysics.",
+   "source": "https://github.com/newton-physics/newton-usd-schemas",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Lab 3.0.0-EA (2026-09-16) targets Isaac Sim 6.1, Newton 1.5.2, PyTorch 2.11 and Warp 1.16. Physics backends: isaacsim_physx, ovphysx, newton_mjwarp. Renderers: isaacsim_rtx, ovrtx, newton_renderer. It supports Kit-less mode, and its quaternion convention changed to (x,y,z,w).",
+   "source": "https://github.com/isaac-sim/IsaacLab/releases/tag/v3.0.0-EA",
+   "confidence": "high"
+  },
+  {
+   "claim": "Isaac Sim releases: 6.0.0 GA (June 2026), 6.1.0 GA (Sept 10, 2026), 7.0.0a1 (Sept 18, 2026). Source is Apache-2.0. Minimum GPU is RTX 4080 or A40; L40S is recommended.",
+   "source": "https://github.com/isaac-sim/IsaacSim/releases ; https://github.com/isaac-sim/IsaacSim",
+   "confidence": "high"
+  },
+  {
+   "claim": "ROS 2 Lyrical Luth was released 2026-05-22 as an LTS with EOL May 2031. Kilted EOL is Dec 2026, Jazzy May 2029, Humble May 2027. The next release, Makoa Mata-mata, is due May 2027.",
+   "source": "https://github.com/ros2/ros2_documentation/blob/rolling/source/Releases.rst ; https://docs.ros.org/en/lyrical/Releases/Release-Lyrical-Luth.html",
+   "confidence": "high"
+  },
+  {
+   "claim": "Lyrical adds Native Buffers support in the Fast DDS RMW for GPU-oriented transport.",
+   "source": "https://discourse.openrobotics.org/t/ros-2-lyrical-luth-and-11-years-of-fast-dds-as-ros-2-default-middleware/55062 (search snippet)",
+   "confidence": "medium"
+  },
+  {
+   "claim": "ros_gz pairs Lyrical with Gazebo Jetty and Kilted with Ionic. Jetty is gz-sim 10 / SDFormat 16.",
+   "source": "https://github.com/gazebosim/ros_gz ; https://github.com/gazebosim/sdformat/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "The Isaac Sim ROS workspaces repo provides only humble_ws and jazzy_ws; Lyrical is not listed.",
+   "source": "https://github.com/NVIDIA-Omniverse/IsaacSim-ros_workspaces",
+   "confidence": "medium"
+  },
+  {
+   "claim": "The rosbag2 default storage plugin is MCAP. MCAP is MIT-licensed with C++, Go, Python, JS/TS, Swift and Rust libraries.",
+   "source": "https://github.com/ros2/rosbag2 ; https://github.com/foxglove/mcap",
+   "confidence": "high"
+  },
+  {
+   "claim": "LeRobotDataset v3.0 puts many episodes per Parquet/MP4 file and reconstructs episodes from metadata. It supports StreamingLeRobotDataset from the Hub, and dataset.finalize() is required before publishing.",
+   "source": "https://raw.githubusercontent.com/huggingface/lerobot/main/docs/source/lerobot-dataset-v3.mdx",
+   "confidence": "high"
+  },
+  {
+   "claim": "FMI 3.0.2 (2024-11-27) is the latest FMI release; no FMI 3.1 has been published. OpenModelica plans FMI 3 support for 1.28.0.",
+   "source": "https://github.com/modelica/fmi-standard/releases ; https://github.com/OpenModelica/OpenModelica/releases",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA OSMO is open source under Apache-2.0 and Kubernetes-native, covering Isaac SDG, training, RL and HIL workflows.",
+   "source": "https://github.com/NVIDIA/OSMO",
+   "confidence": "high"
+  },
+  {
+   "claim": "KAI Scheduler (Apache-2.0) offers gang scheduling, GPU sharing/fractions, hierarchical queues with DRF, and topology-aware scheduling. v0.18.x (Sept-Oct 2026) added NvFractions GPU-memory sharing and DRA accounting.",
+   "source": "https://github.com/NVIDIA/KAI-Scheduler ; https://github.com/NVIDIA/KAI-Scheduler/releases",
+   "confidence": "medium"
+  },
+  {
+   "claim": "In the NVIDIA DRA GPU driver, ComputeDomains are officially supported, but DRA GPU allocation is 'not yet officially supported' and is disabled by default. It requires K8s 1.32 or newer.",
+   "source": "https://github.com/NVIDIA/k8s-dra-driver-gpu",
+   "confidence": "high"
+  },
+  {
+   "claim": "lakeFS v1.87.0 changed its license from Apache 2.0 to Business Source License 1.1.",
+   "source": "https://github.com/treeverse/lakeFS/releases/tag/v1.87.0",
+   "confidence": "high"
+  },
+  {
+   "claim": "UE Pixel Streaming 2 was introduced in UE 5.5. The infrastructure repo marks UE5.8 current, UE5.7 supported, UE5.6 end-of-life; it is MIT with a signalling server and SFU.",
+   "source": "https://github.com/EpicGamesExt/PixelStreamingInfrastructure",
+   "confidence": "high"
+  },
+  {
+   "claim": "Babylon.js 9.26 added an OpenUSD WebAssembly loader; the latest is 9.29.0 (Oct 2026). PlayCanvas 2.23.0 adds distance-based Gaussian-splat LOD and streamed loading.",
+   "source": "https://github.com/BabylonJS/Babylon.js/releases ; https://github.com/playcanvas/engine/releases",
+   "confidence": "medium"
+  },
+  {
+   "claim": "The NVIDIA DSX AI-factory digital-twin blueprint uses a Kit app with WebRTC livestream (omni.kit.livestream.app), a React portal over a messaging extension, and an AI agent HTTP API. It deploys on Omniverse Kit App Streaming (K8s) or NVCF and requires an RTX PRO 6000 Blackwell.",
+   "source": "https://github.com/NVIDIA-Omniverse-blueprints/omniverse-dsx-blueprint-for-ai-factories",
+   "confidence": "high"
+  },
+  {
+   "claim": "NVIDIA kit-usd-agents (Apache-2.0) ships Kit MCP (12 tools), USD Code MCP (7), OmniUI MCP (10), Isaac Sim MCP (5) and Chat USD.",
+   "source": "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+   "confidence": "high"
+  },
+  {
+   "claim": "Community MCPs expose arbitrary code execution: blender-mcp's execute_blender_code (README warns it is 'potentially dangerous') and isaac-sim-mcp's arbitrary Python script execution.",
+   "source": "https://github.com/ahujasid/blender-mcp ; https://github.com/omni-mcp/isaac-sim-mcp",
+   "confidence": "high"
+  },
+  {
+   "claim": "glTF KHR_physics_rigid_bodies remains at 'Review Draft'. The extension index lists KHR_gaussian_splatting and KHR_interactivity among ratified extensions.",
+   "source": "https://github.com/KhronosGroup/glTF/tree/main/extensions",
+   "confidence": "medium"
+  },
+  {
+   "claim": "H100/A100/B200-class datacenter GPUs lack RT cores and are unsuitable for Isaac Sim/RTX rendering. L40S has no MIG. RTX PRO 6000 Blackwell supports MIG (reportedly up to 4 instances).",
+   "source": "General NVIDIA product knowledge; NVIDIA domains were egress-blocked this session",
+   "confidence": "low"
+  }
+ ],
+ "quantitative_data": [
+  {
+   "metric": "AWS us-east-1 on-demand, g6e.xlarge (1x L40S 48GB)",
+   "value": "$1.861/h (spot about $1.84)",
+   "source": "SkyPilot catalog https://github.com/skypilot-org/skypilot-catalog (catalogs/v7/aws/vms.csv), fetched 2026-10-06"
+  },
+  {
+   "metric": "AWS us-east-1 on-demand, g7e.2xlarge (1x RTX PRO Server 6000, 96GB)",
+   "value": "$3.363/h (spot $1.91-2.20)",
+   "source": "SkyPilot AWS catalog"
+  },
+  {
+   "metric": "AWS us-east-1 on-demand, g7e.48xlarge (8x RTX PRO 6000)",
+   "value": "$33.14/h, about $24.2k/month at 730 h (spot $13.6-26.5/h)",
+   "source": "SkyPilot AWS catalog"
+  },
+  {
+   "metric": "AWS us-east-1 on-demand, p5.4xlarge (1x H100 80GB) / p5.48xlarge (8x H100)",
+   "value": "$6.88/h / $55.04/h, about $40.2k/month (spot about $3.4/GPU-h)",
+   "source": "SkyPilot AWS catalog"
+  },
+  {
+   "metric": "AWS us-east-1 on-demand, g6.xlarge (1x L4) / p4d.24xlarge (8x A100 40GB)",
+   "value": "$0.805/h / $21.96/h",
+   "source": "SkyPilot AWS catalog"
+  },
+  {
+   "metric": "AWS Seoul (ap-northeast-2) on-demand: L40S g6e.xlarge, RTX PRO 6000 g7e.2xlarge, 8x H100 p5.48xlarge, L4 g6.xlarge",
+   "value": "$2.288/h, $4.135/h, $75.96/h, $0.990/h (Seoul about 23-38% above us-east-1; L40S spot about $1.25)",
+   "source": "SkyPilot AWS catalog"
+  },
+  {
+   "metric": "Newton v1.6.0 hydroelastic contact speedup",
+   "value": "33-37% faster",
+   "source": "https://github.com/newton-physics/newton/releases"
+  },
+  {
+   "metric": "Newton v1.2.0 SolverMuJoCo throughput gain",
+   "value": "about 10%",
+   "source": "https://github.com/newton-physics/newton/releases"
+  },
+  {
+   "metric": "OpenUSD 26.08 composition load time in heavy production rigs",
+   "value": "up to 80% reduction; SdfPathExpression glob matching 5x-20x faster",
+   "source": "https://raw.githubusercontent.com/PixarAnimationStudios/OpenUSD/release/CHANGELOG.md"
+  },
+  {
+   "metric": "ROS 2 support windows",
+   "value": "Lyrical to May 2031; Jazzy to May 2029; Humble to May 2027; Kilted to Dec 2026",
+   "source": "https://github.com/ros2/ros2_documentation/blob/rolling/source/Releases.rst"
+  },
+  {
+   "metric": "Isaac Sim hardware floor",
+   "value": "RTX 4080 (local) or A40 (datacenter) minimum; RTX 5080 / L40S recommended; Python 3.12",
+   "source": "https://github.com/isaac-sim/IsaacSim"
+  },
+  {
+   "metric": "NVIDIA fluid-sim digital-twin blueprint, standard profile",
+   "value": "2x RTX GPUs with 40GB or more each (or 1x 80GB or more), 128 GB RAM, 32 cores; lite profile 1x 16GB RTX",
+   "source": "https://github.com/NVIDIA-Omniverse-blueprints/digital-twins-for-fluid-simulation"
+  },
+  {
+   "metric": "TimescaleDB columnstore compression",
+   "value": "90%+ typical",
+   "source": "https://github.com/timescale/timescaledb"
+  },
+  {
+   "metric": "Kit major-version cadence",
+   "value": "108.0 (2025-08), 109.0.1 (2025-12), 110.1 (2026-04), 110.3 (2026-08): about 3 majors in 12 months",
+   "source": "https://raw.githubusercontent.com/NVIDIA-Omniverse/kit-app-template/main/CHANGELOG.md"
+  },
+  {
+   "metric": "Community MCP adoption (GitHub stars)",
+   "value": "blender-mcp about 30k; unreal-mcp 2.1k; ros-mcp-server 1.5k; Omniverse kit-app-template 1.1k; PhysX 4.8k; ovrtx 226",
+   "source": "GitHub repo pages listed in options"
+  },
+  {
+   "metric": "Estimated cost of an interactive RTX streaming session (derived)",
+   "value": "About $1.86-2.29/h on a dedicated L40S. About $0.84/h if an RTX PRO 6000 ($3.36/h) is split 4-way by MIG, assuming a 24GB slice suffices (MIG profile unverified). $0 for client-side WebGPU sessions.",
+   "source": "Derived from SkyPilot AWS catalog prices; MIG assumption is low confidence"
+  }
+ ],
+ "recommendations_for_aichemist": [
+  "BUILD vs ADOPT. Build in-house: the control plane (tenancy, auth, metering into CEN tokens), scene/version service, twin-connector service, Sim Kernel API, web UX, first-party MCP server and agent, and dataset/marketplace integration. Adopt as pluggable backends: Newton, ovphysx/PhysX, MuJoCo, ovrtx/Isaac Sim RTX, Gazebo, CARLA and FMUs. Never fork or write a physics engine; contribute upstream to Newton (Linux Foundation, Apache-2.0) instead.",
+  "REFERENCE ARCHITECTURE, 8 layers. L0 Infra: K8s + GPU Operator + KAI Scheduler, with node pools RT-render (L40S / RTX PRO 6000), Compute-train (H100/H200/B200) and Light (L4/CPU). L1 Data: S3-compatible object store (canonical blobs), Postgres (metadata, scene commits), Kafka (event backbone), TSDB (telemetry), Iceberg/DVC (datasets), model registry. L2 Scene model: OpenUSD stage service with validation. L3 Sim Kernel: engine-agnostic physics, sensor and co-sim orchestrator. L4 Twin runtime: Live mode, Simulation mode and Shadow/HIL mode. L5 Learning: Isaac Lab 3 / Newton envs, LeRobot, Ray RLlib, SDG pipelines, evaluation harness. L6 Platform APIs: REST/gRPC + Python SDK + MCP. L7 UX: browser-first WebGPU client, on-demand WebRTC streaming, Jupyter/VS Code in the CEN workspace. L8 Agents: LLM planner + sandboxed USD code generation + validation gates.",
+  "CANONICAL INTERNAL STANDARDS. Scene, assets, robots and vehicles: OpenUSD (pin a version per platform release, e.g. 26.08), with UsdPhysics as the portable core plus namespaced applied schemas (newton:*, mjc:*, physx*) for backend extras, and UsdSemantics labels for SDG. Raw logs: MCAP. Robot-learning datasets: LeRobotDataset v3 (export COCO/KITTI/nuScenes-style for perception). System models: FMI 3.0 FMUs + SSP. Twin metadata: W3C WoT Thing Description (as in Ditto) mapped 1:1 to USD prim paths. Web delivery: glTF/GLB + SPZ/SOG splats compiled from USD. Edge-only formats: URDF, MJCF, SDF, FBX, OBJ, STL, OpenDRIVE, OpenSCENARIO, OSI.",
+  "ENGINE-AGNOSTIC SIM KERNEL API. Copy Isaac Lab 3.0's factory pattern: backend = {physics: newton_mjwarp | ovphysx | mujoco_cpu | gazebo | fmu}, renderer = {ovrtx | isaacsim_rtx | newton_gl | none}. The minimal ABI: load(usd_stage_ref, backend_cfg); step(dt, substeps, n_envs); get_state/set_state as Warp/DLPack tensors; apply_actions; render(sensor_ids) to tensors; contacts(); snapshot() / restore(blob); set_seed(); capabilities(). Ship a conformance suite (falling box, pendulum, Franka pick, wheeled vehicle, cloth) that compares backends within tolerances and runs in CI on every backend upgrade.",
+  "LIVE-TWIN vs SIMULATION-TWIN. Live mode: edge gateway (OPC UA via open62541, MQTT, ROS 2 over Zenoh or a DDS bridge) feeds Kafka, then the twin-state service (latest state + WoT model), then a per-twin USD session layer that overrides only transforms, joint states and signals at 10-60 Hz and is pushed to browsers over WebSocket. History goes to the TSDB. Simulation mode: headless batched runs faster than real time, on spot. Fork-from-live: snapshot the live state, then calibrate (system ID / parameter estimation), then run what-if or RL in Simulation mode on a scene branch, then compare predictions against later live data to score twin fidelity. Shadow/HIL mode: run real controllers against the sim with use_sim_time and a lockstep clock.",
+  "BROWSER-FIRST UX. Make the WebGPU/WebGL client the default: Babylon.js 9.x if reading USD client-side, or three.js r186 + Spark for splats and glTF. Bake USD into glTF/splat LOD tiles server-side on asset commit. Offer a 'High-fidelity view' button that launches a WebRTC pixel-stream session: Kit USD Viewer template with livestream, or your own ovrtx + NVENC + WebRTC service. Put sessions behind a session manager with 5-10 minute idle auto-suspend and warm pools. Reuse CEN's browser virtual OS/JupyterLab (Selkies-style) for code-first users. Host streaming GPUs in Seoul for Korean customers, since latency matters more than the roughly 23% price premium.",
+  "COST-EFFICIENT GPU SCHEDULING. Use KAI hierarchical queues: tenant, then tier (interactive / batch / training), with guaranteed quotas for paid tiers and preemptible over-quota. Run batch SDG, RL and evaluation on spot with frequent checkpointing (Newton/Isaac Lab state snapshots + MCAP), and burst through SkyPilot across AWS, GCP and Korean CSPs. Route render-free physics RL (Newton/MuJoCo Warp) to the cheapest adequate GPU: often an L40S or RTX PRO 6000 beats an H100 on price per env-step for simulation. Benchmark steps/s/$ per backend and GPU monthly. Reserve H100/B200 for VLA/foundation-model training. Use a reserved or on-prem RTX PRO 6000 baseline for steady interactive load. Meter GPU-seconds per tenant from DCGM and KAI into CEN tokens.",
+  "MULTI-TENANT ISOLATION. Give each paying tenant whole GPUs or MIG slices (RTX PRO 6000 / H100). Allow time-slicing and KAI fractional sharing only within one tenant's own jobs, or for free-tier previews on dedicated 'untrusted' node pools. Run user code and agent-generated code in Kata Containers or gVisor (Ray Sandbox is experimental). Isolate networks per tenant namespace. Encrypt buckets per tenant. Add data-residency tags (KR / US / EU) enforced by the scheduler.",
+  "DETERMINISM AND REPLAY. Define a 'Run Manifest': scene commit hash (USD layer-stack content hashes), asset blob hashes, container image digest, backend + version, GPU SKU + driver, seeds, dt and substeps, plus the MCAP input log (actions and external live data). Use Newton's deterministic mode (v1.4+) or MuJoCo CPU for bit-exact regression. Use tolerance-based comparison for GPU PhysX and RTX. Store manifests with every dataset and model for lineage, which also supports enterprise audits and the CEN marketplace provenance story.",
+  "SCENE VERSIONING. Implement a thin 'scene commit' service rather than adopting lakeFS (now BSL 1.1). Each edit or session writes its own USD layer; commits are immutable manifests; branches are pointers; merges work at layer granularity with conflict detection on prim paths. Offer Git/Git-LFS and Perforce sync connectors for enterprise customers, and Iceberg or DVC snapshots for datasets.",
+  "OBSERVABILITY. Use OpenTelemetry traces from job submit through scheduler, sim step, render and encode. Use Prometheus + DCGM exporter for GPU utilisation, memory, NVENC and power. Track sim-specific SLOs: real-time factor, steps/s/GPU, solver NaN/explosion detectors, contact counts, streaming RTT and frame drops. Use Rerun or Lichtblick embedded for episode debugging. Track cost per job and per tenant on dashboards.",
+  "AGENT / MCP LAYER. Expose a first-party MCP server (spec rev 2026-07-28) with typed, permissioned tools: scene.search/query/diff, scene.apply_ops (high-level USD ops, not raw exec), asset.search (marketplace), sim.run/sweep, job.submit/status, twin.query/forecast, dataset.export, policy.evaluate. Add a code-generating authoring agent that writes USD Python in a sandbox. Gate its output with UsdValidation, physics sanity checks (mass/inertia, interpenetration, joint limits) and a backend smoke test before the commit lands on a branch; a human approves merges. Use NVIDIA kit-usd-agents MCPs for API grounding. Wrap ros-mcp-server behind tenant ACLs for robot connections. Do not expose community MCPs with arbitrary exec to tenants.",
+  "NVIDIA LICENSING AND LOCK-IN. Before GA, obtain written NVIDIA terms for hosting Kit apps, ovrtx and Isaac Sim (Kit runtime) as multi-tenant SaaS (Omniverse Enterprise / OEM / partner program). Keep a fully open fallback path: Newton/MuJoCo/ovphysx (BSD) physics + newton_gl / web renderers + Gazebo. That way the core product survives a licensing change, with RTX fidelity sold as a premium tier.",
+  "ROADMAP. M0-3 (MVP): USD scene service + importers (URDF/MJCF/glTF via converters), Sim Kernel with Newton + ovphysx + MuJoCo, batch jobs on K8s/KAI, three.js/Babylon viewer, MCAP logging, LeRobot v3 export, first-party MCP (read and run tools). M3-9: ovrtx/Isaac Sim RTX sensors and SDG, WebRTC premium sessions, Isaac Lab 3 training templates (RL + IL/VLA fine-tuning), live-twin connectors (ROS 2/Zenoh, MQTT, OPC UA) + TSDB, scene commits and branches, authoring agent with validation gates. M9-18: FMI/SSP co-simulation, vehicle module (OpenDRIVE/OpenSCENARIO/OSI), fork-from-live calibration, enterprise on-prem/VPC deployment (Helm), MIG-based tenancy, marketplace integration of SimReady assets and datasets, SOC2/ISMS-P.",
+  "TEAM, about 22-26 FTE by month 12 (estimate). Platform/infra/SRE 4 (K8s, KAI, networking, security). Sim kernel and physics integration 4 (Newton/PhysX/MuJoCo, conformance, determinism). Rendering/sensors/streaming 3 (ovrtx, WebRTC, NVENC). Web 3D and frontend 3. Data/ML (SDG, RL/IL/VLA, LeRobot) 4. IIoT/live-twin integration 2. LLM/agent/MCP 2. PM, solutions and DevRel 2. Hire at least one USD expert and one OPC UA/industrial engineer early.",
+  "INFRA BUDGET (rough, derived from AWS list prices). Dev/staging: 1x 8-GPU RTX PRO 6000 node, about $24k/month on-demand or much less spot/reserved, or buy on-prem. Early production (approx. 20 concurrent premium sessions + batch): about $40-80k/month blended with 40-60% on spot. Training bursts: 8x H100 at about $40k/month if always on, so schedule bursts instead. Default to client-side rendering to keep the GPU bill proportional to premium usage."
+ ],
+ "risks": [
+  "NVIDIA proprietary licensing: Kit SDK, ovrtx and the Omniverse blueprints are under NVIDIA SLA / Product-Specific Terms. Rights to host them as multi-tenant SaaS and to charge tokens for their use are unverified and could block or tax the premium fidelity tier.",
+  "API churn in early-access and fast-moving components: ovrtx, ovphysx and ovstorage are pre-1.0; newton-usd-schemas is v0.x experimental; Isaac Lab 3.0 changed quaternion order and data types; Kit went through about 3 majors in 12 months. Integration maintenance could consume a large share of engineering time without a strict adapter layer and conformance suite.",
+  "No normative physics standard: AOUSD Core 1.0 excludes UsdPhysics, and glTF physics is still a review draft. Cross-engine physics portability depends on vendor schemas, so the same USD asset can behave differently on Newton vs PhysX vs MuJoCo.",
+  "GPU determinism limits: bit-exact replay is only realistic on CPU MuJoCo or Newton's deterministic paths on identical hardware and drivers. RTX rendering and GPU PhysX need tolerance-based validation, which complicates audit and replay claims.",
+  "Multi-tenant GPU security: time-slicing and fractional sharing give no memory or fault isolation, and MIG availability on RT-core GPUs in Korean clouds is unverified. Agent-generated and user code is an RCE surface (community MCPs explicitly execute arbitrary Python).",
+  "Cost blow-up from pixel streaming: a dedicated L40S per session is about $1.9-2.3/h. Without client-side default rendering, auto-suspend and warm pools, gross margins on subscriptions can go negative.",
+  "License drift in the open-source stack: lakeFS moved to BSL 1.1 (v1.87.0), Foxglove Studio went closed (hence the Lichtblick fork), and TimescaleDB TSL restricts DBaaS. Every embedded dependency needs SPDX tracking and license review.",
+  "ROS 2 fragmentation: customers on Humble, Jazzy and Lyrical at once, and Isaac Sim's ROS workspace lists only Humble and Jazzy. Bridges must be multi-distro and Zenoh/DDS-aware.",
+  "NVIDIA hardware lock-in: Newton, Warp, ovrtx and Isaac all need CUDA/RTX, so there is no AMD/Intel fallback for GPU physics or rendering. Supply and price shocks pass straight through.",
+  "Data residency and latency: Korean public-sector and manufacturing customers may require domestic hosting. Seoul GPU prices are about 23-38% higher and capacity for new SKUs (RTX PRO 6000, B200) may be limited.",
+  "Research verification gap: the web-search budget ran out after a few queries, and many primary vendor domains (developer.nvidia.com, docs.omniverse.nvidia.com, docs.ros.org, aousd.org, gazebosim.org, AWS docs) were egress-blocked. Several 2026 facts were verified only through GitHub pages; GitHub release dates without a year were inferred as 2026 from version context."
+ ],
+ "open_questions": [
+  "What are NVIDIA's exact commercial terms for hosting Kit apps, Isaac Sim and ovrtx in a multi-tenant SaaS (Omniverse Enterprise per-GPU pricing in 2026, OEM/partner programs, NVIDIA Inception benefits)? When do ovrtx, ovphysx and ovstorage reach 1.0/GA?",
+  "Does RTX PRO 6000 Blackwell MIG (profile sizes, number of instances, RTX/NVENC availability per slice) work under GPU Operator v26.7 and KAI? Which Korean CSPs (Naver Cloud, KT Cloud, NHN Cloud, Samsung SDS) offer it, and at what price?",
+  "What is the AOUSD roadmap for normative domain specs (UsdGeom, UsdShade, UsdPhysics) after Core 1.0, and should AICHEMIST join AOUSD to influence the physics/SimReady specs?",
+  "When will Isaac Sim support ROS 2 Lyrical, and what are the full Isaac Sim 6.1 / 7.0 release notes on Kit version, Newton/ovphysx integration and streaming? (The docs site was blocked this session.)",
+  "Exact Gazebo Jetty release and EOL dates; SSP 2.0 release status; current OpenDRIVE, OpenSCENARIO and OSI versions for the vehicle module.",
+  "What are the SIGGRAPH 2026 (July) announcements on Omniverse libraries open-sourcing and the Agent Toolkit? Secondary coverage suggests expanded open-source libraries and agent tooling; this needs primary-source confirmation.",
+  "What is measured steps/s/$ for Newton vs ovphysx vs MuJoCo Warp on L40S vs RTX PRO 6000 vs H100 for AICHEMIST's target tasks? (Internal benchmark needed before GPU pool sizing.)",
+  "Is a CEN marketplace dataset in LeRobot v3 / MCAP formats acceptable to target customers, and which perception label formats (COCO, KITTI, nuScenes, OpenLABEL) must be supported for SDG exports?",
+  "Should the live-twin state service build on Eclipse Ditto (EPL-2.0, JVM/MongoDB) or a lighter in-house service on Kafka + Postgres? This depends on expected twin counts and update rates."
+ ]
+}
