@@ -198,7 +198,7 @@ flowchart LR
 | **Explorer** | 무료 | 브라우저 뷰어(WebGPU, 미지원 브라우저는 WebGL2), MuJoCo CPU 샌드박스, Bronze Forge 변환 월 3회, LIGHT 5시간 | M9 초대제 베타(대기자 명단·주간 승인 상한, Zone T 전용), 공개 가입은 M15 GA | 연구자, 학생, 협력사 엔지니어 | Builder, 데이터셋 문의 |
 | **Builder** | 월 ₩99,000 / 워크스페이스 | 1,000 토큰, 템플릿 | M9(베타, Zone T 전용), M15 GA | 스타트업, 연구실 | Team |
 | **Team** | 월 ₩190만 | 편집 좌석 5석(리뷰어·뷰어 좌석은 무료·무제한), 25,000 토큰, 프라이빗 마켓플레이스 | M15 | 로봇 OEM 내부 팀, 1·2차 협력사 | Enterprise VPC |
-| **Enterprise VPC** | 연 ₩2억부터 | 국내 CSP 또는 고객 VPC, SSO, SLA, 예약 RT GPU 4장. RTX는 고객 자체 라이선스로 고객이 운영(BYOL) | M15 | 대기업 계열, 로봇 OEM | Sovereign |
+| **Enterprise VPC** | 연 ₩2억부터 | 국내 CSP 또는 고객 VPC, SSO, SLA, 예약 RT GPU 4장(Zone T 허용형 경로). RTX는 고객 자체 계정·자체 VPC에서 고객이 직접 운영할 때만 BYOL로 연동한다. AICHEMIST가 운영하는 국내 CSP 테넌시에서는 NVIDIA 체크리스트 #5 서면 확인 전까지 RTX를 제공하지 않는다 | M15 | 대기업 계열, 로봇 OEM | Sovereign |
 | **Athanor Sovereign**(온프렘·국내 소버린 클라우드) | 플랫폼 연 ₩2.5억(16 GPU·20석 이하) + 초과 GPU당 연 ₩1,200만. 일반 거래 연 ₩4–8억 | 허용형 코어, 서명 SBOM, 텔레메트리 없음, 지원 SLA | 베타 M14, GA M18 | 재벌 계열 공장, 조선 | 양산 스킬 프로그램, Arena |
 | **Athanor Air-gap**(국방) | 연 ₩8–15억 | 오프라인 업데이트, 인증 지원, 상주 엔지니어 | M27 이후(트리거 조건부) | ADD, 방산 프라임 | 국방 과제 |
 
@@ -735,7 +735,7 @@ gantt
     section 자격
     KOITA 연구소 벤처 IRIS 정비        :a1, 2026-11-01, 2026-12-31
     section 스타트업 트랙
-    TIPS 운영사 확보                   :b1, 2026-10-15, 2026-12-31
+    TIPS 운영사 확보                   :b1, 2026-10-26, 2026-12-31
     Deep-tech TIPS 제출                :b2, 2027-01-01, 2027-03-31
     TIPS 선정 예상                     :milestone, b3, 2027-05-15, 0d
     초격차 스타트업 공모               :b4, 2027-02-01, 2027-03-31
@@ -744,7 +744,7 @@ gantt
     AI 바우처 공모                     :c2, 2027-01-01, 2027-03-31
     바우처 납품 M5-M8                  :c3, 2027-03-01, 2027-06-30
     section 컨소시엄 R&D
-    K-Humanoid Alliance 가입           :d1, 2026-10-15, 2026-12-31
+    K-Humanoid Alliance 가입           :d1, 2026-11-02, 2026-12-31
     IITP 신규과제                      :d2, 2027-01-01, 2027-04-30
     KEIT 로봇 R&D 공모                 :d3, 2027-01-01, 2027-06-30
     NIA 학습데이터 구축                :d4, 2027-01-01, 2027-06-30

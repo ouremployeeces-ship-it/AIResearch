@@ -2,7 +2,7 @@
 
 > **문서 번호** 12 · **기준일** 2026-10-06 · **버전** v1.0 · **상위 문서** [README](README.md)
 > **관련 문서** [01 비전·포지셔닝](01-vision-positioning.md) · [02 시장·경쟁](02-market-competition.md) · [03 엔진 선정](03-engine-selection-build-vs-buy.md) · [04 시스템 아키텍처](04-system-architecture.md) · [05 물리·현실감](05-physics-and-realism.md) · [06 사용성·에이전트](06-usability-and-agent.md) · [07 학습 모듈](07-training-module.md) · [08 도메인 팩](08-domain-packs.md) · [09 로드맵·조직·예산](09-roadmap-organization-budget.md) · [10 사업모델·GTM](10-business-model-gtm.md) · [11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md) · [부록 A 기술 카탈로그](appendix-a-technology-catalog.md) · [부록 B 출처·검증](appendix-b-sources-verification.md)
-> **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 수치는 결정 기록(DR) 부록 A 고정값 또는 GitHub·PyPI·SkyPilot 가격 카탈로그로 확인된 값 · ₩억 = 1억 원, 1 USD = ₩1,400 [A] · 모든 매출 수치는 예측이 아닌 목표 · M1 = 2026년 11월
+> **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 수치는 결정 기록(DR) 부록 "전 문서 공통 고정값" 또는 GitHub·PyPI·SkyPilot 가격 카탈로그로 확인된 값 · ₩억 = 1억 원, 1 USD = ₩1,400 [A] · 모든 매출 수치는 예측이 아닌 목표 · M1 = 2026년 11월
 
 ---
 
@@ -29,7 +29,7 @@
 | ④ | **Wave-1 앵커 3곳과 첫 데이터셋 고객 지정** | "로봇 OEM 1, 조선 로보틱스 1, 물류·AI팩토리 1을 앵커 후보로, 기존 CEN SDG 고객 [고객명]을 첫 데이터셋 고객으로 지정한다." | CEO 영업 시간 주 1일 | 첫 매출(M4)과 TIPS 수요처 증거 동시 실패 | CEO | D10(10-28) |
 | ⑤ | **6–8주 엔진 베이크오프 착수** | "W1(2026-11-02)부터 W8(2026-12-27)까지 베이크오프를 수행하고 결정 메모를 2027-01-08에 제출한다. 벤더 수치는 결정 근거에서 제외한다." | 클라우드 약 ₩0.4억(P0 컴퓨트 안), 재배치 인력 3–4 FTE | 서버 1호기 사양, Train 1 매트릭스, 토큰 원가가 모두 미확정으로 남음 | CTO 대행 + Kernel 리드 대행 | D0(10-16) |
 | ⑥ | **기존 현금 확인과 Series A 납입 구조** | "기존 가용 현금 ₩15억을 CFO가 2026-11-06까지 확인하고, Series A ₩80억을 브리지 ₩20억(M5, Series A 전환 조건부, 할인 15–20%) + 1차 클로징 ₩30억(M10) + 2차 클로징 ₩30억(M12, G1 통과 연동)으로 나눠 받는 구조로 투자자 협의를 개시한다. 가용 현금이 ₩15억 미만이면 브리지를 M3로 당긴다." | 외부 법률 자문(SAFE·전환사채 문서, 법무 예산 안), CEO·CFO 시간 | 기존 현금이 M4에 약 ₩4억까지 내려가고 M5에 바닥나, M5–M9에 약 ₩12–17억이 부족하다([09 §9.2](09-roadmap-organization-budget.md)). 협의를 늦게 열면 브리지 납입이 M5를 넘긴다 | CEO + CFO | D0(10-16), 현금 확인 11-06 |
-| ⑦ | **G1 미통과 시 보수안 자동 전환 규칙** | "G1(2027-09-24)에서 미통과로 판정되거나 Series A가 ₩60억 미만이면, 이사회 추가 결의 없이 보수안(24개월 ₩98.8억)으로 자동 전환하고 30일 절차([09 §3.8](09-roadmap-organization-budget.md))를 실행한다. 보수안 진입 뒤 다음 게이트에서도 핵심 조건을 채우지 못하면 중단·축소 기준([09 §3.7a](09-roadmap-organization-budget.md))을 적용한다." | 이사회 사전 결의 1건 | 실패 뒤 재심은 대개 '한 분기만 더'로 끝나고, 전환 비용(협상, 사기 저하)과 손실이 커진다 | CEO(이사회 상정) | D0(10-16) |
+| ⑦ | **G1 미통과 시 보수안 자동 전환 규칙** | "G1(2027-09-24)에서 미통과로 판정되거나 Series A 총액(브리지 ₩20억 포함)이 ₩60억 미만이면, 이사회 추가 결의 없이 보수안(24개월 ₩98.8억)으로 자동 전환하고 30일 절차([09 §3.8](09-roadmap-organization-budget.md))를 실행한다. 보수안 진입 뒤 다음 게이트에서도 핵심 조건을 채우지 못하면 중단·축소 기준([09 §3.7a](09-roadmap-organization-budget.md))을 적용한다." | 이사회 사전 결의 1건 | 실패 뒤 재심은 대개 '한 분기만 더'로 끝나고, 전환 비용(협상, 사기 저하)과 손실이 커진다 | CEO(이사회 상정) | D0(10-16) |
 
 **앵커 후보(DR §5.2):**
 - ① 로봇 OEM: Doosan Robotics(Isaac·cuRobo 통합을 GitHub에서 확인) 또는 Rainbow Robotics(Samsung 지분 약 35%, 중간 신뢰도 [U])
@@ -187,12 +187,12 @@ gantt
 > **일자:** 2026년 10월 23일
 > **제목:** CEN Athanor 플랫폼의 NVIDIA Isaac Sim·Omniverse 런타임 상업적 이용 조건에 대한 서면 확인 요청
 >
-> 안녕하십니까. AICHEMIST는 GPU 클라우드 워크스페이스, NeRF 기반 2D→3D 변환, 토큰 기반 마켓플레이스를 제공하는 3D·AI 플랫폼 CEN을 운영하는 회사로, 현재 로봇·제조 고객을 위한 피지컬 AI(Physical AI) 디지털 트윈 플랫폼 'CEN Athanor'를 준비하고 있습니다. 저희는 Isaac Lab, Newton, OpenUSD를 핵심 기술로 채택했으며, 향후 24개월 동안 RTX PRO 6000 Blackwell 서버 16장 도입, RT GPU 클라우드 약 11만 GPU-시간, H100급 학습 약 6.5만 GPU-시간 사용을 계획하고 있습니다. 한국 로봇·조선·물류 고객 현장에서 NVIDIA 스택의 사용을 넓히는 파트너가 되고자 합니다.
+> 안녕하십니까. AICHEMIST는 GPU 클라우드 워크스페이스, NeRF 기반 2D→3D 변환, 토큰 기반 마켓플레이스를 제공하는 3D·AI 플랫폼 CEN을 운영하는 회사로, 현재 로봇·제조 고객을 위한 피지컬 AI(Physical AI) 디지털 트윈 플랫폼 'CEN Athanor'를 준비하고 있습니다. 저희는 Isaac Lab, Newton, OpenUSD를 핵심 기술로 채택했으며, 향후 24개월 동안 RTX PRO 6000 Blackwell GPU 16장(8-GPU 서버 2대) 도입, RT GPU 클라우드 약 11만 GPU-시간, H100급 학습 약 6.5만 GPU-시간 사용을 계획하고 있습니다. 한국 로봇·조선·물류 고객 현장에서 NVIDIA 스택의 사용을 넓히는 파트너가 되고자 합니다.
 >
 > 사업을 시작하기 전에 라이선스 조건을 정확히 지키고자, 아래 사항에 대한 NVIDIA의 **서면 확인**을 요청드립니다. 저희의 이용 구조는 다음 세 구역으로 나뉩니다.
 > - **내부 팩토리:** AICHEMIST 엔지니어만 Isaac Sim 6.1, Kit, RTX 센서, Replicator, Isaac Lab(PhysX 경로)을 사용하고, 고객에게는 데이터셋·학습된 정책·USD 자산·리포트 같은 산출물만 납품합니다.
-> - **고객 대면 클라우드:** 고객이 접속하는 환경에는 NVIDIA 독점 런타임을 넣지 않고 Newton, MuJoCo, Isaac Lab 소스 빌드(Kit-less) 등 허용형 오픈소스만 사용합니다.
-> - **고객 온프레미스·에어갭:** 위와 같은 허용형 구성을 기본으로 하며, RTX 기능은 고객이 보유한 NVIDIA 라이선스로 고객이 직접 운영하는 경우에만 연동합니다.
+> - **고객 대면 클라우드:** 고객이 접속하는 환경에는 NVIDIA 독점 런타임을 넣지 않습니다. Newton, MuJoCo, Isaac Lab 소스 빌드(Kit-less) 등 허용형 오픈소스(Apache-2.0·BSD·MIT)를 기본으로 하고, 고지·소스 공개 의무를 이행하는 약한 카피레프트(MPL-2.0·EPL-2.0·LGPL) 구성요소를 함께 씁니다.
+> - **고객 온프레미스·에어갭:** 위와 같이 NVIDIA 독점 런타임이 없는 오픈소스 구성을 기본으로 하며, RTX 기능은 고객이 보유한 NVIDIA 라이선스로 고객이 직접 운영하는 경우에만 연동합니다.
 >
 > **확인을 요청드리는 사항**
 > 1. **산출물 판매:** 내부 팩토리에서 Isaac Sim·RTX·Replicator·NuRec로 생성한 데이터셋, 영상, 학습된 정책, USD 자산을 고객에게 판매하거나 마켓플레이스에서 재판매할 때 NVIDIA AI Enterprise 또는 Omniverse Enterprise 라이선스가 필요한지 여부
@@ -223,8 +223,8 @@ gantt
 >
 > Before we launch, we want to make sure we comply fully with NVIDIA's terms. We therefore request **written confirmation** on the points below. Our usage falls into three zones:
 > - **Internal factory:** Only AICHEMIST engineers use Isaac Sim 6.1, Kit, RTX sensors, Replicator and the Isaac Lab PhysX path. Customers receive outputs only: datasets, trained policies, USD assets and reports.
-> - **Customer-facing cloud:** No NVIDIA proprietary runtime is exposed to customers. This tier uses permissive open-source components only, such as Newton, MuJoCo and Isaac Lab built from source in Kit-less mode.
-> - **Customer on-premises and air-gapped sites:** The same permissive stack by default. RTX features are connected only where the customer operates them under its own NVIDIA license.
+> - **Customer-facing cloud:** No NVIDIA proprietary runtime is exposed to customers. This tier is built on permissive open-source components (Apache-2.0, BSD, MIT), such as Newton, MuJoCo and Isaac Lab built from source in Kit-less mode, together with weak-copyleft components (MPL-2.0, EPL-2.0, LGPL) whose notice and source-disclosure obligations we meet.
+> - **Customer on-premises and air-gapped sites:** The same open-source stack, with no NVIDIA proprietary runtime, by default. RTX features are connected only where the customer operates them under its own NVIDIA license.
 >
 > **Points for confirmation**
 > 1. **Sale of outputs:** Whether an NVIDIA AI Enterprise or Omniverse Enterprise license is required when we sell, or resell through our marketplace, datasets, videos, trained policies and USD assets generated in our internal factory with Isaac Sim, RTX, Replicator or NuRec.
@@ -561,7 +561,7 @@ sequenceDiagram
 |---|---|---|---|
 | V1–V8 검증 상태표 | V1 NVIDIA 서면, V2 GPL·ovstage 법률 의견, V3 사내 벤치마크, V4 국내 CSP RT GPU·MIG, V5 급여 밴드, V6 정부 공고·상한, V7 모델 약관, V8 온프렘 LLM 출처 | 2027-02-12 | BD·라이선스 매니저 |
 | SPDX 거부 목록 CI | 상업 경로 차단 건수 0, 감사 판정표 100% | 2026-11-30 가동 | CTO |
-| NeRF 런타임 퇴역 | 프로덕션 NeRF 호출 0 | 2027-02-28 | Forge Lead |
+| NeRF 런타임 퇴역 | 패키지에는 3DGUT 대체 경로 가동과 고객 이관 현황, 퇴역(프로덕션 NeRF 호출 0)은 M4 말 확인 | 2027-02-12 / 2027-02-28 | Forge Lead |
 | Run Manifest·라이선스 레지스트리 v0 | Manifest 재생 해시 일치 | 2027-02-12 | Kernel 리드 |
 | Test Cell 1 + 측정 프로토콜 v1 | 시운전 완료, 페어드 trial 1k | 2027-01-15 / 2027-02-26 | Head of Fidelity |
 | Head of Fidelity 확정 | 오퍼 수락(M4) | 2027-02-26 | CEO |

@@ -12,7 +12,7 @@
 - **'재현 가능'은 세 등급으로 나눠 판다.** 인증서는 D0(비트 일치: MuJoCo CPU, 또는 베이크오프 W7을 통과한 Newton 결정론 모드 + 고정 GPU·드라이버)에서만 발행한다. GPU 배치·변형체 산출물은 D1 '통계적 재현', 생성형 증강 프레임은 D2다. 차량(Chrono)·드론(PX4 SITL)·해양(Fossen) 동역학은 D0 등록 시험을 통과하기 전까지 D1이다. 인증 시험 결정론적 재현율 100%는 P0부터 고정 KPI다.
 - **물성 파라미터는 엔진 간에 이식되지 않는다.** 같은 실측 trial로 백엔드마다 파라미터 세트를 따로 맞추고 인증서에 백엔드별로 기록한다. 보정 사다리는 VLM 사전분포(Bronze) → 영상 sysid(Silver) → Fidelity Lab 실측(Gold) → 접촉 부품의 Drake 교차 검증이다.
 - **현실감은 하나의 OpenUSD 스테이지 위 4계층으로 쌓는다.** L1 PBR 재질(MDL, MaterialX, OpenPBR), L2 신경 재구성(3DGUT, UsdVolParticleField), L3 실측 보정 센서(RTX / Warp Sensor Library + 디바이스 프로파일), L4 생성형 증강(M5–M8 Cosmos Transfer 2.5 → M9부터 Cosmos 3 Nano, 라벨 일관성 QA 통과 프레임만 납품)이다.
-- **Athanor Forge는 CEN NeRF 파이프라인의 후속인 10단계 Real2Sim 라인이다.** 비상업 구성요소는 하나도 쓰지 않는다. 허용형(MapAnything-apache, DA3 S/B/Metric, gsplat 1.6.0, 3DGRUT 2.0, TRELLIS.2(nvdiffrast 교체), Articulate-Anything, CoACD/CuACD)이 기본이고, 커스텀 사용 제한 라이선스인 VGGT-1B-Commercial·SAM 3D Objects는 V7 법률 검토를 통과한 민수 경로에서만 조건부로 쓴다. CEN NeRF 라이선스 감사는 M1, 3DGUT 전환과 NeRF 런타임 퇴역은 M4(G0, 2027-02-26)에 한다.
+- **Athanor Forge는 CEN NeRF 파이프라인의 후속인 10단계 Real2Sim 라인이다.** 비상업 구성요소는 하나도 쓰지 않는다. 허용형(MapAnything-apache, DA3 S/B/Metric, gsplat 1.6.0, 3DGRUT 2.0, TRELLIS.2(nvdiffrast 교체), Articulate-Anything, CoACD/CuACD)이 기본이고, 커스텀 사용 제한 라이선스인 VGGT-1B-Commercial·SAM 3D Objects는 V7 법률 검토를 통과한 민수 경로에서만 조건부로 쓴다. CEN NeRF 라이선스 감사는 M1, 3DGUT 전환과 NeRF 런타임 퇴역은 M4 말(2027-02-28, G0 증거 패키지 운영 항목)에 한다.
 - **'현실 유사도'의 정의는 Sim2Real Gap Scorecard다.** mAP 비율, 성공률 갭(%p), Pearson r, ADE/FDE, Chamfer, 노이즈 PSD, PSNR/SSIM/LPIPS를 공식·표본 요건·측정 프로토콜까지 고정해 제3자가 재계산할 수 있게 한다. FID·KID는 분포 드리프트 경보용 보조 지표다.
 - **Fidelity Lab이 증거를 생산하고, 레이더는 증거 전까지 팔지 않는다.** Test Cell 1(P0)·2(P1)에서 Gold 최소 프로토콜(물체당 50 trial [A])을 자동 반복해 페어드 코퍼스 1k → 10k → 50k → 150k trial과 Bronze/Silver/Gold 인증서(`aic:TwinCertificate`)를 만든다. 레이더·EO/IR은 오차 막대를 공개한 프로파일 전에는 해양·국방에 판매하지 않는다.
 
@@ -132,7 +132,7 @@ calibration_source: certificate   # 자산 인증서의 백엔드별 파라미�
 
 ### 2.3 범용성: 대상별 물리 준비 시점(상업 Wave와 별도)
 
-DR v1.1 보완에 따라 '무엇을 트윈으로 만들 수 있는가'와 '어디서 먼저 돈을 버는가'를 분리한다. 아래 표의 준비 시점은 기술 준비이고, 판매 순서는 [10 사업모델·GTM](10-business-model-gtm.md)의 Wave를 따른다. 예산·인원은 DR 부록 A 고정값 안에서 처리한다. 적합성 장면 번호는 [04 §4.6](04-system-architecture.md)의 C01–C15가 정본이고, C16 이후는 이 문서가 제안하는 확장 후보다(§8.1).
+DR v1.1 보완에 따라 '무엇을 트윈으로 만들 수 있는가'와 '어디서 먼저 돈을 버는가'를 분리한다. 아래 표의 준비 시점은 기술 준비이고, 판매 순서는 [10 사업모델·GTM](10-business-model-gtm.md)의 Wave를 따른다. 예산·인원은 DR 부록 "전 문서 공통 고정값" 안에서 처리한다. 적합성 장면 번호는 [04 §4.6](04-system-architecture.md)의 C01–C15가 정본이고, C16 이후는 이 문서가 제안하는 확장 후보다(§8.1).
 
 **표 2-2. 대상별 물리 준비 시점**
 
@@ -659,7 +659,7 @@ flowchart TD
 | # | 단계 | 기술(버전) | 라이선스 | 에디션 제한 | 산출물 | 자동 QA 게이트 [A] |
 |---|---|---|---|---|---|---|
 | 1 | 촬영·익명화 | CEN 촬영 가이드 앱(자체), 온프렘 촬영·재구성 키트(P1, 카메라 반입 제한 사이트용). 익명화는 RF-DETR N–L 기반 얼굴·번호판·고객 IP 검출 + 블러·인페인팅 | 자체 / Apache-2.0. Ultralytics(AGPL)는 SaaS 사용 금지 | 없음 | 원본 MCAP(고객 사이트·데이터 거주 태그 준수) + 익명화 프레임 | 익명화 재현율 ≥99%, 모션 블러·노출 검사, 커버리지 지도 |
-| 2 | 포즈·메트릭 깊이 | VGGT-1B-Commercial(포즈), MapAnything(`map-anything-apache` 가중치), DA3 Small/Base/Metric | VGGT-1B-Commercial은 커스텀 사용 제한 라이선스(신청서, 군사·ITAR 제외) → **조건부(V7)**. MapAnything 코드·apache 가중치 Apache-2.0(기본 CC-BY-NC 가중치 금지). DA3 S/B/Metric Apache-2.0(Large/Giant/Nested CC-BY-NC 금지) | VGGT-Commercial의 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외. Air-gap은 MapAnything-apache + DA3 경로만 | 카메라 포즈, 메트릭 깊이, 스케일 | 재투영 오차 ≤1 px, 기준 카드 대비 스케일 오차 ≤1% |
+| 2 | 포즈·메트릭 깊이 | VGGT-1B-Commercial(포즈), MapAnything(`map-anything-apache` 가중치), DA3 Small/Base/Metric | VGGT-1B-Commercial은 커스텀 사용 제한 라이선스(신청서, 군사·ITAR 제외) → **조건부(V7)**. MapAnything 코드·apache 가중치 Apache-2.0(기본 비 apache 가중치 금지, CC-BY-NC로 표기 [U]). DA3 S/B/Metric Apache-2.0(Large/Giant/Nested CC-BY-NC 금지) | VGGT-Commercial의 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외. Air-gap은 MapAnything-apache + DA3 경로만 | 카메라 포즈, 메트릭 깊이, 스케일 | 재투영 오차 ≤1 px, 기준 카드 대비 스케일 오차 ≤1% |
 | 3 | 3DGUT 스플랫 | gsplat 1.6.0(main 브랜치, PyPI 미배포 → 커밋 해시 고정), 3DGRUT 2.0(PPISP 포함) | Apache-2.0 | 3DGRT는 RT 코어 GPU 필요 | `UsdVolParticleField3DGaussianSplat`, glTF + `KHR_gaussian_splatting`, 웹용 SPZ | 보류 뷰 PSNR/SSIM/LPIPS(§9.3 기준) |
 | 4 | 표면 메시 | gsplat 2DGS 모드, fVDB Reality Capture(대규모 현장), PGSR·MILo 아이디어의 클린룸 재구현(논문만 참조) | Apache-2.0 / 자체 | 없음 | 수밀(watertight) 메시 + OpenPBR 텍스처 | 수밀·매니폴드, 2단계 대비 스케일 오차 ≤1%, 깊이 점군 대비 Chamfer ≤2 mm(물체) |
 | 5 | 생성형 보완 | TRELLIS.2-4B(nvdiffrast를 자체 Warp/CUDA 래스터라이저로 교체 [A]. ≥24 GB VRAM, H100 512³ 약 3초·1024³ 약 17초), SAM 3D Objects(단일 시점 클러터) | TRELLIS.2 MIT. SAM 3D Objects는 SAM License(커스텀 사용 제한, 신청서, 군사·ITAR 제외) → **조건부(V7)**. Hunyuan3D 2.x 금지(한국 제외, 출력물 포함) | SAM 3D는 민수 전용·V7 조건부(테넌트 호스팅 추론은 V7 통과 후, 온프렘 번들은 재배포 서면 확인 전 제외), Air-gap 제외 | 보이지 않는 면을 보완한 메시 + 면별 '생성됨' 마스크 | 생성 보완 면적 ≤30%면 Silver 자격, 초과 시 Bronze만 |
@@ -714,7 +714,7 @@ gantt
     고객 고지와 대체 자산 제공         :c2, 2027-01-11, 28d
     section 전환
     Forge v0 강체 3DGUT 운영           :d1, 2027-01-18, 41d
-    NeRF 런타임 퇴역 G0                :milestone, 2027-02-26, 0d
+    NeRF 런타임 퇴역                   :milestone, 2027-02-28, 0d
 ```
 
 | 단계 | 기간 | 작업 | 완료 기준 | 책임 |
@@ -724,7 +724,7 @@ gantt
 | T3 병행 구축 | 2026-11 중순–12 | gsplat 1.6.0·3DGRUT 2.0 파이프라인을 같은 입력으로 구축 | 같은 촬영으로 끝까지 산출 | Forge Lead |
 | T4 패리티 | 2026-12–2027-01 | 기존 촬영 30세트 [A]에서 NeRF 대비 PSNR/SSIM/LPIPS·처리 시간 비교 | 3DGUT이 동등 이상, 처리 시간 ≤ NeRF | Forge Lead |
 | T5 재처리 | 2026-12 말–2027-02 | 금지 코드로 만든 자산은 원본 촬영에서 재생성, 원본이 없으면 비공개 | 오염 자산 공개 0 | Forge Lead + 마켓플레이스 |
-| T6 퇴역 | 2027-02-26(M4, G0) | NeRF 런타임 프로덕션 제거. nerfstudio(Apache-2.0)는 오프라인 외삽 도구로만 보존 | 프로덕션 NeRF 호출 0 | CTO |
+| T6 퇴역 | 2027-02-28(M4 말) | NeRF 런타임 프로덕션 제거. nerfstudio(Apache-2.0)는 오프라인 외삽 도구로만 보존 | 프로덕션 NeRF 호출 0 | CTO |
 
 ### 10.5 라이선스 감사 판정표
 
@@ -743,7 +743,7 @@ gantt
 | Hunyuan3D 2.x | 한국·EU·UK 제외(출력물 포함) | **NEVER** | — |
 | VGGT-1B 원본 / VGGT-1B-Commercial | 비상업 / 커스텀 사용 제한(신청서, 군사·ITAR 제외) | 원본 NEVER / Commercial **조건부(V7, 민수)** | 신청서 제출. 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외. Air-gap 제외 |
 | DA3 Large/Giant/Nested / S·B·Metric | CC-BY-NC / Apache-2.0 | NC NEVER / S·B·Metric 허용 | 가중치 레지스트리에서 체크섬 고정 |
-| MapAnything 기본 가중치 / apache 가중치 | CC-BY-NC / Apache-2.0 | 기본 NEVER(DR NEVER 목록 #22 후보) / apache 허용 | 가중치 레지스트리에서 `map-anything-apache`만 허용 |
+| MapAnything 기본 가중치 / apache 가중치 | 비 apache(CC-BY-NC로 표기 [U]) / Apache-2.0 | 기본 NEVER(DR NEVER 목록 #22 후보) / apache 허용 | 가중치 레지스트리에서 `map-anything-apache`만 허용 |
 | SAM 3D Objects | SAM License(커스텀 사용 제한, 신청서, 군사·ITAR 제외) | **조건부(V7, 민수)** | 테넌트 호스팅 추론은 V7 통과 후, 온프렘 번들은 재배포 서면 확인 전 제외. 국방 에디션 화이트리스트에서 제외 |
 | PhysX-Anything | S-Lab License | **NEVER** | Articulate-Anything + 자체 모델 |
 | ManiSkill 자산 | CC BY-NC 4.0 | **NEVER**(상업 번들) | — |
@@ -1453,7 +1453,7 @@ quadrantChart
 | D5 | sim2sim 게이트는 Zone F에서 3개(Newton·PhysX·MuJoCo CPU), Zone T/S에서 2개(Newton·MuJoCo CPU) 백엔드로 운영하고, 임계값은 07 §7.3의 Tier 1(전 정책, ≤10%p)·Tier 2(인증 대상, ≤5%p·RMSE ≤0.05 rad) 2단을 따른다 | §2.2, §8.4 |
 | D6 | 증강 프레임은 라벨 QA C1–C8을 모두 통과해야 납품하며, 재라벨을 금지한다 | §12.2 |
 | D7 | 레이더·EO/IR은 V-S4(오차 막대 공개 + 제3자 성적서) 완료와 Wave 3 트리거 충족 전까지 해양·국방에 판매하지 않는다 | §11.3 |
-| D8 | CEN NeRF 런타임은 2027-02-26(G0)에 프로덕션에서 퇴역한다 | §10.4 |
+| D8 | CEN NeRF 런타임은 2027-02-28(M4 말)에 프로덕션에서 퇴역한다 | §10.4 |
 | D9 | 적합성 장면의 정본은 04 §4.6의 C01–C15로 하고, 05에만 있던 장면은 C16–C21 후보(KPI 미집계)로 둔다. 변형체 인증서는 정적 보정 항목만 MuJoCo CPU D0 재현·'experimental'로 발행한다 | §2.1, §8.1 |
 
 **다음 액션**

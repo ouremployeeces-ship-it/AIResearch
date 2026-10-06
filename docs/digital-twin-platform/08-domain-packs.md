@@ -12,7 +12,7 @@
 - **시간축은 두 개다.** 상업 Wave(DR §5: Wave 1 M1–M18, Wave 2 M12–M24, Wave 3 M25–, Wave 3b M27–)는 '어디서 먼저 돈을 버는가'의 순서다. Capability Readiness(DR v1.1 범용성 보완)는 '무엇을 트윈으로 만들 수 있는가'의 순서다. 차량 Mobility Pack α는 M18–M24, 드론 PX4 SITL 템플릿은 M20–M24에 준비한다. 정확한 문장은 "자동차는 안 한다"가 아니라 "자동차 시뮬레이터 시장에서 정면 경쟁하지 않고 표준으로 연결한다"이다.
 - **준비는 상업보다 앞설 수 있지만, 상업이 준비를 앞서지는 않는다.** 팩 성숙도를 CRL(Capability Readiness Level) 0–5 [A]로 판정하고, CRL 4(검증된 센서 프로파일과 Silver/Gold 인증 발행) 전에는 그 도메인의 인증 결과물을 팔지 않는다. Wave 밖에서 들어오는 요청은 4단계 수락 규칙으로 처리한다.
 - **DR §5.1 평가표의 거부권이 차량과 사족의 위치를 정한다.** AV·ADAS(19점)와 사족(17점)은 '열린 경쟁 지형'이 1점이므로 독자 매출 라인이 될 수 없다. AV는 MORAI를 거치는 인식 데이터와 OpenSCENARIO·OSI·FMI 3.0 브리지로, 사족은 템플릿과 Crucible 평가로만 수익을 낸다.
-- **Mobility Pack은 3단 구조다.** α(M18–M24)는 야드 차량·AMR(Zone F는 PhysX Vehicle2, Zone T/S는 Newton 관절 휠)과 Chrono::Vehicle(Pacejka·TMeasy 타이어, SCM 지형)이다. P3에는 오프로드 UGV(Chrono CRM)가 붙고, 도로 AV는 처음부터 연결 모드로 간다. 규제 수요(UN ADS 규정 [U], ISO 34505:2025, ISO 21448, UL 4600 Ed.3, 국내 Level-4 성능인증)에는 도구 인증이 아니라 Credibility Dossier 조각과 K-City 상관 연구로 대응한다.
+- **Mobility Pack은 3단 구조다.** α(M18–M24)는 야드·저속 차량이다. 차량 동역학은 Chrono::Vehicle(Pacejka·TMeasy 타이어, SCM 지형, Zone F·T·S)과 PhysX Vehicle2(Zone F 전용)로 처리하고, 대형 AMR은 Zone T/S에서 Newton 관절 휠을 쓴다. P3에는 오프로드 UGV(Chrono CRM)가 붙고, 도로 AV는 처음부터 연결 모드로 간다. 규제 수요(UN ADS 규정 [U], ISO 34505:2025, ISO 21448, UL 4600 Ed.3, 국내 Level-4 성능인증)에는 도구 인증이 아니라 Credibility Dossier 조각과 K-City 상관 연구로 대응한다.
 - **해양과 국방은 센서 증거가 먼저다.** 클린룸 Fossen 6-DOF, Chrono FSI, 오차 막대를 공개한 레이더·EO/IR 프로파일이 갖춰지기 전에는 판매하지 않는다. Air-gap 에디션(M27–, 연 ₩8–15억)은 SAM 계열·VGGT-Commercial·GPL 번들·미확인 모델을 뺀 별도 라이선스 프로파일과 서명 SBOM, 오프라인 서명 업데이트로 운영한다.
 - **새 도메인은 정해진 절차와 공수로 편입한다.** 기존 어댑터로 충족되는 Type A는 12–25 HM, 신규 어댑터가 필요한 Type B는 18–37 HM, 신규 물리 연구가 필요한 Type C는 30–60 HM이다 [A]. 농업 로봇·건설 장비·의료 로봇에 이 절차를 적용해 판정했다. 모든 확장은 DR 고정값(인원 16/26/36/48명, 24개월 예산 ₩122.0억) 안에서 고객 NRE와 정부과제로 충당한다.
 
@@ -249,7 +249,7 @@ flowchart TD
 
 ### 2.5 DR 문구와의 정합
 
-v1.1 보완은 DR 부록 A 고정값을 바꾸지 않고 일정만 조정한다. 그 과정에서 DR v1.0 본문 일부 문구가 v1.1 보완과 어긋났다. 아래 6건은 이 문서의 해석대로 DR v1.1(상단 보완 블록과 §16 정합 결정)에 모두 반영됐다. 표는 변경 이력과 해석 근거로 남긴다(§8).
+v1.1 보완은 DR 부록 "전 문서 공통 고정값"을 바꾸지 않고 일정만 조정한다. 그 과정에서 DR v1.0 본문 일부 문구가 v1.1 보완과 어긋났다. 아래 6건은 이 문서의 해석대로 DR v1.1(상단 보완 블록과 §16 정합 결정)에 모두 반영됐다. 표는 변경 이력과 해석 근거로 남긴다(§8).
 
 **표 2-3. DR v1.0 문구와 v1.1 보완의 차이, 확정 해석**
 
@@ -258,7 +258,7 @@ v1.1 보완은 DR 부록 A 고정값을 바꾸지 않고 일정만 조정한다.
 | 1 | §2 #6: Chrono 10.0은 'M24 이후 착수' | Mobility Pack α에 Chrono::Vehicle 어댑터 포함, M18–M24 | 차량용 Chrono::Vehicle 어댑터는 M18 착수. 해양(Chrono FSI)·오프로드(CRM)는 P3 유지 | 없음(WS1-M 1명 + WS3 지원) |
 | 2 | §2 #7: 드론은 'P3 국방 에디션 안에서만 착수' | P2 PX4 SITL 브리지 기본 템플릿(M20–M24) | 템플릿(기술 준비)은 P2에 RL 1종으로 세고, 상업 착수는 P3 국방 에디션. 적합성 C14는 P3 정식 편입 | 없음 |
 | 3 | §5.1: 사족은 '템플릿만 제공(매출 라인 아님)' | '휴머노이드·사족·덱스터러스: P1 템플릿, P2 상업화' | P2 상업화는 휴머노이드·덱스터러스에만 적용. 사족은 거부권(경쟁 지형 1점)에 따라 템플릿과 Crucible 평가로만 수익화 | 없음 |
-| 4 | §8.3: WS1-M 채용은 '해양 동역학 엔지니어(M20)' | Mobility Pack α를 WS1-M 1명이 M18부터 수행 | 직무를 '차량·해양 동역학 엔지니어(Chrono, FMI, Fossen)'로 정의. 서치 M16, 착석 M18([09 §7.1](09-roadmap-organization-budget.md) 채용 표 기준. DR §8.3의 M20은 최종 기한). 공백 시 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당 | 없음(P2 말 WS1-M 1명 그대로) |
+| 4 | §8.3: WS1-M 채용은 '해양 동역학 엔지니어(M20)' | Mobility Pack α를 WS1-M 1명이 M18부터 수행 | 직무를 '차량·해양 동역학 엔지니어(Chrono, FMI, Fossen)'로 정의. 서치 M16, 착석 M18([09 §7.1](09-roadmap-organization-budget.md) 채용 표 기준. DR §8.1·§16 #15의 '늦어도 M20'은 최종 기한). 공백 시 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당 | 없음(P2 말 WS1-M 1명 그대로) |
 | 5 | §2 #6: 'PhysX Vehicle2(AMR·야드 차량)' 행의 SaaS 호스팅 OK | — | 현재 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Zone F 전용. 테넌트·온프렘 개방은 PhysX SDK 소스 어댑터(P2 조건부, X6) 또는 Mobility α 설계 메모(M17)의 C++ 바인딩 결정 이후. Zone T/S의 AMR은 Newton 관절 휠, 차량은 Chrono::Vehicle | 없음 |
 | 6 | §4.1: 인증·재현은 MuJoCo CPU 또는 Newton 결정론 모드만 | 차량·해양 Domain Pack 인증 기준 요구 | D0 경로 확장 규칙: Chrono CPU·클린룸 Fossen·PX4 SITL lockstep은 반복 비트 일치 시험 통과 + CTO 등록 후 인증 경로(목표 Chrono M22, Fossen M28 [A]). 등록 전 동역학은 D1 라벨과 Scorecard만, 인증은 자산·센서에 한정 | 없음 |
 
@@ -950,11 +950,11 @@ flowchart LR
 | CRL 판정 기준과 분기 리뷰 운영 규칙 승인 | CTO | M3(2027-01) |
 | manipulation-pack v0.1: 한국 SKU Silver/Gold 150개, 템플릿 RL 3 / IL 1 / 인식 1, C01–C05 통과 | Forge Lead + Skill Lead | M4(2027-02, G0) |
 | 베이크오프 T11 결과로 휴머노이드 + 양손 경로(MJWarp 분할 vs PhysX 팩토리) 결정 | CTO | 2027-01 첫 주(결정 메모) |
-| Wave 밖 요청 수락 규칙(그림 3)을 영업 플레이북과 Outcome Console 견적 흐름에 반영 | Product Lead + BD | M6(2027-04) |
+| Wave 밖 요청 수락 규칙(그림 3)을 영업 플레이북과 Outcome Console 견적 흐름에 반영 | CTO(WS7 대행, M8 Product Lead 착석 후 인수) + BD | M6(2027-04) |
 | humanoid-dex-pack·legged-pack 템플릿(CRL 2) 출시 | Skill Lead | M12(2027-10) |
 | amr-cell-pack α: Newton 관절 휠 C05 회귀, AMR 인식 SDG 템플릿, 바닥재 마찰 실측 | WS1 + WS3 | M9 착수, M18 CRL 4 |
 | factory-live-pack: OPC UA·라이브 트윈 엔지니어 채용, 트윈 상태 서비스 Ditto vs 자체 결정 | Platform Lead | 채용 M13, 결정 M12, 첫 라이브 트윈 M18 |
-| WS1-M(P2 1명) 직무를 '차량·해양 동역학 엔지니어(Chrono, FMI, Fossen)'로 정의하고 서치 착수. 공백 시 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당 | CEO + CTO | 서치 M16, 착석 M18([09 §7.1](09-roadmap-organization-budget.md) 채용 표 기준. DR §8.3의 M20은 최종 기한) |
+| WS1-M(P2 1명) 직무를 '차량·해양 동역학 엔지니어(Chrono, FMI, Fossen)'로 정의하고 서치 착수. 공백 시 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당 | CEO + CTO | 서치 M16, 착석 M18([09 §7.1](09-roadmap-organization-budget.md) 채용 표 기준. DR §8.1·§16 #15의 '늦어도 M20'은 최종 기한) |
 | Mobility Pack α 설계 메모(Chrono::Vehicle·PhysX Vehicle2(Zone F)·esmini·FMI 3.0 범위, esmini 라이선스 확인, Vehicle2 C++ 바인딩의 Zone T 개방 여부 결정) | CTO(WS1-M 채용 전) | M17(2028-03) |
 | MORAI 파트너십: 상호 비경쟁 범위와 한국 도로 인식 데이터 팩 유통 조건 협의 | WS9 BD | 협의 착수 M12, MOU M18 |
 | KATRI·화성 허브 K-City 상관 연구 제안 | Head of Fidelity | M20(2028-06) |

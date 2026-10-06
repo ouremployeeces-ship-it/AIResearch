@@ -60,7 +60,7 @@
 | usd-content-agents | 2026-10 갱신 | Apache-2.0 | SimReady 자산 수작업 변환 | 재질 지정, 물성 분류, 관절 추론을 자동화한다. **추정 수준**의 자산 제작이 범용화됐다 |
 | Genesis World | 1.4.3(2026-09-30) | Apache-2.0(Nyx 렌더러는 폐쇄 바이너리) | 20개 이상 연구실이 약 24개월 협업 [U] | 비CUDA 대안이 생겼다. 우리는 관찰만 한다 |
 
-같은 수준의 엔진을 자체로 만들려면 전문가 40–80명이 3–5년(150–300 engineer-year), 약 ₩400–600억, MVP까지 30–48개월 이상을 들여야 한다. 우리 24개월 기준 예산 ₩122억의 3–5배다. 그렇게 만들어도 무료 엔진과 경쟁해야 한다. 엔진 결정의 상세 근거는 [03 엔진 선정](03-engine-selection-build-vs-buy.md)에 있다.
+같은 수준의 엔진을 자체로 만들려면 전문가 40–80명이 3–5년(추정 150–300 engineer-year), 약 ₩400–600억, MVP까지 30–48개월 이상을 들여야 한다. 우리 24개월 기준 예산 ₩122억의 3–5배다. 그렇게 만들어도 무료 엔진과 경쟁해야 한다. 엔진 결정의 상세 근거는 [03 엔진 선정](03-engine-selection-build-vs-buy.md)에 있다.
 
 ### 1.4 가치 이동: 무엇이 희소해졌는가
 
@@ -267,7 +267,7 @@ flowchart LR
 
 **결론: 네 가지 요구와 범용성은 측정 가능한 KPI로 답한다. 요구별 답은 [README §1](README.md)과 [DR §0](00-decision-record.md)의 1분 요약, 메커니즘과 단계별 KPI는 [DR §4](00-decision-record.md)가 정본이다. 이 절은 비전 관점의 한 줄 요약만 둔다.**
 
-- **① 강력한 물리 엔진:** 검증된 엔진 다섯 개(오픈소스 4개 + 사내 전용 NVIDIA Isaac Lab·PhysX)를 작업 유형별로 골라 쓰고, 현실과의 오차를 측정한다. 증명은 적합성 스위트 4×8(M12) → 6×15(M36)와 궤적 ADE ≤2 cm → ≤1 cm다([05](05-physics-and-realism.md), [03](03-engine-selection-build-vs-buy.md)).
+- **① 강력한 물리 엔진:** 검증된 엔진의 역할별 포트폴리오(로봇 Newton·MuJoCo·Drake와 사내 전용 NVIDIA Isaac Lab·PhysX, 차량·지형 Chrono, 선박 Chrono FSI·클린룸 Fossen, 드론 PX4 SITL + Gazebo)를 작업 유형별로 골라 쓰고, 현실과의 오차를 측정한다. 증명은 적합성 스위트 4×8(M12) → 6×15(M36)와 궤적 ADE ≤2 cm → ≤1 cm다([05](05-physics-and-realism.md), [03](03-engine-selection-build-vs-buy.md)).
 - **② 높은 현실 유사도:** 재질·신경 재구성·실측 센서·생성형 증강의 4계층으로 맞추고 모든 납품물에 Scorecard를 붙인다. 증명은 합성 전용 mAP 비율 ≥0.90(M12)과 정책 갭 ≤15%p(M12) → ≤8%p(M36)다([05](05-physics-and-realism.md)).
 - **③ 편의성:** 한국어로 주문하거나 설치 없이 브라우저에서 직접 만든다. 증명은 첫 시뮬레이션 ≤10분(베타) → ≤5분, 영상 → 피킹 스킬 24시간 → 4시간이다([06](06-usability-and-agent.md)).
 - **④ 모델 학습 내장:** RL·IL·VLA·인식을 한 라인에서 학습하고 sim2sim 게이트와 실셀로 검증한다. 증명은 템플릿 8/3/3(M12) → 25/10/8(M36), 실셀 이전 정책 누적 8 → 80이다([07](07-training-module.md)).

@@ -69,7 +69,7 @@ mindmap
 | **RL** | 인증 자산 장면, 보상·관측·랜덤화 명세 | 정책(PPO 등) + 롤아웃 영상 | Isaac Lab 3.x + rsl_rl 5.5 / mjlab 1.6.0 | F·T·S | P0 | 큐브 들기, 빈 피킹 그래스프, 디팔레타이징(P0, 모두 조작). 휴머노이드 속도 추종은 P1(M6–M8) |
 | **IL** | 텔레옵 시연(LeRobot v3), Mimic 증식 데이터 | BC·ACT·Diffusion 정책 | LeRobot 0.6.1, Isaac Lab Mimic | F(증식)·T(학습) | P0 | 픽앤플레이스, 키팅, 커넥터 삽입 |
 | **VLA** | 언어 지시 + 멀티뷰 영상 + 행동 시연 | 파인튜닝 VLA 체크포인트 | LeRobot 0.6.1(SmolVLA, GR00T N1.7) | F·T(국방은 SmolVLA만) | P1 | 다품종 토트 피킹, 양팔 핸드오버 |
-| **인식** | Replicator SDG + 증강 + 소량 실데이터 | 검출·분할 모델 + Scorecard | RF-DETR N–L | F(RTX SDG)·T·S | P0 | 한국 SKU 빈 검출, 팔레트 검출 |
+| **인식** | SDG(Zone F: Replicator RTX, Zone T·S: Newton Warp 래스터 + Warp Sensor Library) + 증강 + 소량 실데이터 | 검출·분할 모델 + Scorecard | RF-DETR N–L | F(RTX SDG)·T·S | P0 | 한국 SKU 빈 검출, 팔레트 검출 |
 | **월드모델** | 시뮬 렌더 + 제어 신호(깊이·분할·엣지) | 증강 프레임, 정책 사전 선별 점수 | Cosmos Transfer 2.5 → Cosmos 3 Nano/Super | F | P1(증강), P3(선별) | 조명·재질 다양화, 실셀 시험 전 정책 필터 |
 
 ### 1.3 범용성: 대상별 학습 준비 시점
@@ -161,7 +161,7 @@ flowchart LR
 | VLA: 참고만 | OpenVLA-OFT(벤치마크 기준선) | — | 상업 납품 | 7B, 8 GPU·150k 스텝 | 코드 MIT, 가중치 Llama 2 Community License | F(내부 비교) | 고비용·구형 백본 |
 | VLA: 금지 | — | — | **AgiBot GO-1**(CC BY-NC-SA), **RLDX-1 가중치**(비상업) | — | 비상업 | 차단 | RLWRLD는 데이터 고객 후보로만 접근 |
 | 시연 증식 | **Isaac Lab Mimic** | SkillGen(Apache 태그 cuRobo 고정 + NVIDIA 확인 후) | **MimicGen·DexMimicGen 코드**(NVIDIA Source Code License). Isaac Lab 번들 cuRobo | isaaclab_mimic 1.0.16 | Apache-2.0 | F(Kit-less 검증 전) | 10개 → 1,000개, 생성 성공률 약 50%(Franka) |
-| 텔레옵 | **Isaac Teleop**(팩토리), **GELLO + SpaceMouse**(테넌트·현장) | 키보드, Apple Vision Pro 손 추적(Isaac Teleop 경유) | 테넌트용 CloudXR(약관 전) | Isaac Teleop은 Isaac Lab 3.0 beta부터 내장 텔레옵 대체 | GELLO MIT. Isaac Teleop 라이선스 [U] | F / T·S | MCAP 기록·재생, 리타게팅, 양팔 GELLO |
+| 텔레옵 | **Isaac Teleop**(팩토리), **GELLO + SpaceMouse**(테넌트·현장) | 키보드, Apple Vision Pro 손 추적(Isaac Teleop 경유) | 테넌트용 CloudXR(약관 전) | Isaac Teleop은 Isaac Lab 3.0 beta부터 내장 텔레옵 대체 | GELLO MIT. Isaac Teleop은 NVIDIA 독점(CloudXR, DR §6.2. 세부 약관 [U], 체크리스트 #12) | F / T·S | MCAP 기록·재생, 리타게팅, 양팔 GELLO |
 | 인식 SDG | **Replicator**(Isaac Sim 6.1 RTX, Zone F 전용) / **Newton Warp 래스터 + Warp Sensor Library**(Zone T·S 기본) | Blender Cycles(별도 프로세스, 내부) | BlenderProc(GPL-3.0) 온프렘 번들, Kubric(정체) | Isaac Sim 6.1.0(2026-09-10) | Replicator는 NVIDIA 독점(Kit·Omniverse 약관, 팩토리 산출물 전용은 서면 확인 필요) / Warp 경로 Apache-2.0 | F / T·S | RT 코어 GPU 필수(L40S, RTX PRO 6000) |
 | 생성형 증강 | **Cosmos Transfer 2.5**(현재) → **Cosmos 3 Nano 16B**(M9) | Cosmos 3 Super 64B(P3 선별), Edge 4B(관찰) | Genie 3·GAIA 등 독점 모델의 데이터 생산 사용 | Cosmos 3(2026년 5–6월), Transfer 2.5는 유지보수 축소 | OpenMDW-1.1(전문 [U]) / NVIDIA Open Model License | F | 깊이·분할·엣지 제어로 라벨 보존 |
 | 자동 라벨링(실데이터) | **SAM 3.1 + VLM 캡션**(민수 전용) | RF-DETR 교사 + 사람 검수(국방) | 국방 에디션의 SAM 계열 | SAM 3.1 Object Multiplex(2026-03-27) | SAM License(커스텀 사용 제한, 신청서, 군사·ITAR 제외) → 조건부(V7) | F·T(민수. 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외) | 개방 어휘 분할·추적 |
@@ -175,7 +175,7 @@ flowchart LR
 | 분산·설정 | **Ray 2.59 + torchrun**, Hydra 1.3.7 | KubeRay·Kueue | Ray Sandbox(실험적) 의존 | ray 2.59.0(2026-10-02) | Apache-2.0 / MIT | 전 구역 | KAI 큐 귀속과 결합 |
 | 데이터셋 스냅샷 | **DVC 3.67.1 / Iceberg** | — | lakeFS 1.87 이상 | dvc 3.67.1 | Apache-2.0 | 전 구역 | 콘텐츠 해시 계보 |
 | 롤아웃 뷰어 | **Rerun 0.38.1, Viser 1.1.1** | Newton GL 뷰어 | — | rerun-sdk 0.38.1, viser 1.1.1 | MIT·Apache-2.0 / Apache-2.0 | 전 구역 | 브라우저 재생 |
-| 수출·엣지 | **ONNX(opset 고정) → TensorRT → Jetson AGX Thor** | ONNX Runtime CPU(BeyondMimic식 경량 정책) | — | onnxruntime 1.30.0, tensorrt 11.3.0.99(x86 PyPI, 데이터센터 서빙용), Jetson 엔진은 JetPack 7.2 번들 TensorRT(버전 [U]) / CUDA 13.2 | MIT / NVIDIA 독점(무료) | 전 구역 | GR00T 저장소가 Thor·Orin 지원 명시 |
+| 수출·엣지 | **ONNX(opset 고정) → TensorRT → Jetson AGX Thor** | ONNX Runtime CPU(BeyondMimic식 경량 정책) | — | onnxruntime 1.30.0, tensorrt 11.3.0.99(x86 PyPI, 데이터센터 서빙용), Jetson 엔진은 JetPack 7.2 번들 TensorRT(버전 [U]) / CUDA 13.2 | MIT / NVIDIA 독점(무료) | ONNX 수출·ONNX Runtime은 전 구역. TensorRT는 F(데이터센터 서빙) / 고객 Jetson의 JetPack 구성요소로만 사용(Zone T/S 이미지 번들 금지, x86 TensorRT의 테넌트·온프렘 사용은 NVIDIA 서면 확인 후) | GR00T 저장소가 Thor·Orin 지원 명시 |
 | 월드모델 연구 | — | V-JEPA 2.1(MIT), DreamerV3(MIT) | Genie 3(학습 API 없음) | V-JEPA 2.1(2026-03-16, 최대 2B) | MIT | 관찰 | 실로봇 데이터 희소 과제 연구 트랙 |
 
 ### 2.2 왜 PyPI 휠이 아니라 소스 빌드인가
@@ -195,7 +195,7 @@ flowchart LR
 | GELLO·SpaceMouse 텔레옵 | O | O(P2 Studio GA부터 셀프 기록) | O | — |
 | RTX Replicator SDG | O | X(Warp 래스터 SDG) | BYOL만 | NVIDIA 체크리스트 #2·#4 |
 | mjlab·Isaac Lab Kit-less RL | O | O | O | — |
-| LeRobot IL·VLA 파인튜닝 | O | O | O(국방은 SmolVLA만) | GR00T 국방 사용은 V7 |
+| LeRobot IL·VLA 파인튜닝 | O | O | O(SmolVLA·ACT. GR00T는 V7 통과 후, 국방은 SmolVLA만) | GR00T Zone S 번들·가중치 납품은 V7(M3) 후, 국방은 차단 |
 | Cosmos 증강 | O | 산출물로만 | X(국방) | OpenMDW-1.1 법률 검토(V7) |
 | Crucible 평가 | O(하네스 운영) | 셀프 시뮬 평가(mjlab), 공식 평가는 주문 | 고객 사이트 셀프 평가 키트 [A] | 공식 인증은 항상 Crucible 라인 |
 
@@ -384,7 +384,7 @@ flowchart LR
 
 | 장치 | 구역 | 방식 | 강점 | 약점 | 라이선스 | 적합 과제 |
 |---|---|---|---|---|---|---|
-| **Isaac Teleop**(CloudXR, Apple Vision Pro 등 XR) | F | XR 손 추적·그리퍼·덱스터러스 핸드, 전신 로코매니퓰레이션(Homie), 로봇 없는 자기중심 수집, MCAP 기록·재생 | 휴머노이드·덱스터러스 시연 품질 | 저지연 네트워크 필요, Quest/Pico 지원 미확인, SaaS 약관 미확인 | 오픈소스(라이선스 [U]) | 휴머노이드, 양팔, 손 |
+| **Isaac Teleop**(CloudXR, Apple Vision Pro 등 XR) | F | XR 손 추적·그리퍼·덱스터러스 핸드, 전신 로코매니퓰레이션(Homie), 로봇 없는 자기중심 수집, MCAP 기록·재생 | 휴머노이드·덱스터러스 시연 품질 | 저지연 네트워크 필요, Quest/Pico 지원 미확인, SaaS 약관 미확인 | NVIDIA 독점(CloudXR, DR §6.2. 세부 약관 [U], 체크리스트 #12) | 휴머노이드, 양팔, 손 |
 | **GELLO** | F·T·S | 3D 프린트 + Dynamixel 관절 공간 퍼펫(I2RT YAM, Franka FR3/FER, UR, xArm, 양팔, FACTR 중력 보상) | 저비용, 직관적, 실로봇·MuJoCo 시뮬 겸용 | 팔 형상별 하드웨어 제작 | MIT | 팔 조작, 양팔 |
 | **SpaceMouse** | F·T·S | 6-DoF 말단 속도 지령 | 즉시 사용, 원격 브라우저 텔레옵 | 정밀 접촉·양팔에 약함 | 상용 기기 | 단순 픽앤플레이스 |
 | 키보드 | F·T | 이산 지령 | 테스트용 | 품질 낮음 | — | 디버그 |
@@ -874,7 +874,7 @@ sequenceDiagram
 |---|---|---|
 | 1 | PyTorch 체크포인트 → ONNX | opset은 트레인별 고정, 동적 축 최소화 |
 | 2 | ONNX Runtime 1.30.0 대조 | 동일 입력 1,000개, 행동 최대 오차 ≤1e-3(Tier 1) |
-| 3 | TensorRT 엔진 빌드 | 대상 Jetson에서 JetPack 7.2 번들 TensorRT(버전 [U])로 빌드한다. TensorRT 엔진은 TensorRT 버전·GPU 아키텍처 사이에 이식되지 않으므로 Jetson SKU·JetPack 버전별로 따로 만든다. x86 tensorrt 11.3(PyPI)은 데이터센터 서빙용이다. 정밀도 FP16 기본, INT8·FP8은 보정 데이터셋과 정확도 회귀 검사 후[A] |
+| 3 | TensorRT 엔진 빌드 | 대상 Jetson에서 JetPack 7.2 번들 TensorRT(버전 [U])로 빌드한다. TensorRT 엔진은 TensorRT 버전·GPU 아키텍처 사이에 이식되지 않으므로 Jetson SKU·JetPack 버전별로 따로 만든다. x86 tensorrt 11.3(PyPI)은 Zone F 데이터센터 서빙용이며 Zone T/S 이미지에 번들하지 않는다. 정밀도 FP16 기본, INT8·FP8은 보정 데이터셋과 정확도 회귀 검사 후[A] |
 | 4 | 지연 프로파일 | p50·p99 지연, 메모리, 전력. 제어 주기 예산 대비 여유 ≥30%[A] |
 | 5 | 패키징 | 컨테이너 + ROS 2 노드(Jazzy·Lyrical) + 안전 래퍼(관절·속도 한계, 워치독) + 모델 카드 + 라이선스 매니페스트 + Run Manifest ID |
 | 6 | 서명·등록 | 패키지 해시 서명, MLflow `deployed` 단계 등록 |
@@ -1015,7 +1015,7 @@ flowchart LR
 | Ultralytics YOLO | AGPL-3.0 | SaaS 불가 | — | X | **차단**(고객 Enterprise 라이선스 시 예외) |
 | MimicGen·DexMimicGen 데이터셋 | CC-BY-4.0 | O(귀속) | O | 검토 | 데이터만 허용, 코드는 차단 |
 | ManiSkill 자산 | CC BY-NC 4.0 | X | X | X | **차단** |
-| HOVER / BeyondMimic | Apache-2.0 / MIT | O | O | O | 허용 |
+| HOVER / BeyondMimic(코드) | Apache-2.0 / MIT | O | O | O | 코드 허용. 모션 데이터(LAFAN1 등)는 라이선스 [U] → 확인 전 상업·재배포·국방 X, RL-08 Studio 공개 전 데이터 라이선스 확인 |
 
 - **강제 지점:** ① 학습 제출 시 task-spec의 베이스 가중치·데이터셋을 워크스페이스 프로파일(상업·연구·국방)과 대조, ② 레지스트리 `exportable` 전이 시 `allowed_uses` 재계산, ③ 마켓플레이스 등록 시 출처 게이트. 세 곳 모두 CI의 NEVER 목록과 같은 규칙 파일을 읽는다.
 - **목표:** 라이선스 게이트를 우회한 납품 0건(전 단계). 위반은 납품 차단과 보안 알림으로 처리한다(QA-L).

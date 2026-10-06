@@ -14,7 +14,7 @@
 - **라이선스는 세 개의 Zone과 하나의 CI로 지킨다.** NVIDIA 독점 런타임은 Zone F(내부 팩토리) 산출물 생산에만 쓰고, Zone T(테넌트)와 Zone S(소버린·온프렘·에어갭)는 허용형(Apache-2.0/BSD/MIT)과 의무 이행이 가능한 약한 카피레프트(MPL-2.0·EPL-2.0·LGPL)로만 구성한다. NEVER 21개 항목과 #22 후보(MapAnything 기본 가중치)는 SPDX CI가 PR·빌드·반출·마켓 등록 4단계에서 자동 차단한다. CC-BY와 'Built on NVIDIA Cosmos' 귀속 문구는 납품물마다 자동 생성한다.
 - **AI 기본법(2026-01-22 시행)은 시뮬레이션 신뢰성을 의무화하지 않는다.** 이 법이 다루는 것은 고영향 AI, 투명성, 생성물 표시다. 시뮬레이션 신뢰성 수요의 근거는 UN ADS 규정(WP.29 [U])과 ISO 34505:2025다. 우리 의무는 Cosmos 증강 프레임의 생성물 표시와 에이전트 사용 고지다.
 - **보안 인증은 조달 일정에 맞춘다.** ISMS-P·ISO 27001은 M6 착수·M18 취득, GS 인증은 동결 릴리스로 M18, CSAP는 인증받은 국내 CSP를 경유해서만 대응한다. 국방은 SAM 계열·VGGT-Commercial을 뺀 별도 빌드 프로파일과 건별 EAR·ITAR 심사로 간다.
-- **26개 미검증 항목은 담당자와 기한이 있다.** 가장 중요한 항목은 NVIDIA 약관(요청 발송 D5 = 2026-10-23, 회신 M3 1차, M10 최종)이다. 기한 안에 검증되지 않으면 항목마다 정해 둔 '기본 조치'를 자동으로 적용한다.
+- **31개 미검증 항목은 담당자와 기한이 있다.** 가장 중요한 항목은 NVIDIA 약관(요청 발송 D5 = 2026-10-23, 회신 M3 1차, M10 최종)이다. 기한 안에 검증되지 않으면 항목마다 정해 둔 '기본 조치'를 자동으로 적용한다.
 
 ---
 
@@ -336,7 +336,7 @@ KPI가 실사에서 깎이지 않으려면 숫자가 원천 시스템에서 사�
 | 카피레프트·소스 공개형 | SaaS 내 Ultralytics(AGPL-3.0), 온프렘 번들 내 GPL(BlenderProc, Stonefish, ArduPilot), lakeFS 1.87 이상(BSL 1.1) | AGPL은 네트워크 사용만으로, GPL은 온프렘 배포로 의무가 생긴다 |
 | 용도 제한 | 국방 에디션 내 SAM 계열·VGGT-Commercial | ITAR·무역통제 금지 용도, 군사 용도 금지 |
 | 번들 약관 | Isaac Lab 번들 cuRobo | Isaac Lab 밖 사용 금지. Apache-2.0 태그로 고정한 업스트림만 허용 |
-| #22 후보 | MapAnything 기본(비 apache) 가중치 | 기본 가중치는 비상업(CC-BY-NC) 조건이다. 허용 대상은 MapAnything-apache 가중치로 한정한다([부록 A §0.3](appendix-a-technology-catalog.md), [05](05-physics-and-realism.md) Forge 라인과 정합). CI는 후보 단계에서도 차단한다 |
+| #22 후보 | MapAnything 기본(비 apache) 가중치 | 기본 가중치는 비 apache(CC-BY-NC로 표기 [U], SPDX 확인 M2) 조건이다. 허용 대상은 MapAnything-apache 가중치로 한정한다([부록 A §0.3](appendix-a-technology-catalog.md), [05](05-physics-and-realism.md) Forge 라인과 정합). CI는 후보 단계에서도 차단한다 |
 
 - **조건부 보류(NEVER 아님):** MinIO(AGPL-3.0 [U], SPDX 확인 M2), Genesis Nyx(라이선스 미표기), pi0.5 가중치(약관 미명시), OpenVLA 가중치(Llama 2 약관), Stability SPAR3D(매출 $1M 초과 시 엔터프라이즈 라이선스), UE 런타임(코어 탑재 금지, 커넥터만).
 
@@ -375,10 +375,10 @@ KPI가 실사에서 깎이지 않으려면 숫자가 원천 시스템에서 사�
 | GR00T N1.7(3B) | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | 학습·내부 사용 허용 | 산출물로 제공(가중치 납품은 V7 후) | V7 후 | 보류 | 파인튜닝 가중치의 고객 납품은 재배포에 해당하므로 V7 법률 검토(M3) 통과 후. 부정적이면 SmolVLA 또는 ACT로 증류해 납품 |
 | pi0 / pi0.5(openpi) | 코드 Apache-2.0, 가중치 약관 미명시 | 차단 | 차단 | 차단 | 차단 | 약관 확인 전 |
 | Cosmos Transfer 2.5 | 가중치 NVIDIA Open Model License | 허용 | 산출물만 | 산출물만 | 보류 | 'Built on NVIDIA Cosmos' 귀속, 가드레일 유지 |
-| Cosmos 3(Super 64B / Nano 16B / Edge 4B) | OpenMDW-1.1(전문 [U]) | V7 조건 허용 | 산출물만 | V7 후 | 보류 | 귀속·가드레일·사용 분야 조항 확인 |
+| Cosmos 3(Super 64B / Nano 16B / Edge 4B) | OpenMDW-1.1(전문 [U]) | V7 조건 허용 | V7 후 | V7 후 | 보류 | 귀속·가드레일·사용 분야 조항 확인 |
 | VGGT-1B-Commercial | 커스텀 사용 제한 라이선스(신청서, 군사·ITAR 제외) | 허용 | 조건부(V7 후 호스팅 추론) | 가중치 번들은 재배포 조항 서면 확인 전 제외 | **금지** | 조건부(V7). 신청 양식 필요 |
 | 원본 VGGT-1B | 비상업 | 금지 | 금지 | 금지 | 금지 | NEVER |
-| MapAnything | 코드 Apache-2.0, 가중치는 기본 CC-BY-NC / 'map-anything-apache' Apache-2.0 | apache 가중치만 | apache 가중치만 | apache 가중치만 | apache 가중치만 | 기본 가중치는 NEVER #22 후보 |
+| MapAnything | 코드 Apache-2.0, 가중치는 기본 비 apache(CC-BY-NC로 표기 [U]) / 'map-anything-apache' Apache-2.0 | apache 가중치만 | apache 가중치만 | apache 가중치만 | apache 가중치만 | 기본 가중치는 NEVER #22 후보 |
 | DA3 Small/Base/Metric/Mono | Apache-2.0 | 허용 | 허용 | 허용 | 허용 | Large/Giant는 NEVER |
 | SAM 3D Objects, SAM 3 | SAM License(커스텀 사용 제한 라이선스: 신청서, 군사·ITAR 제외) | 허용 | 조건부(V7 후 호스팅 추론) | 가중치 번들은 재배포 조항 서면 확인 전 제외 | **금지** | 조건부(V7). 산출물에 civil-only 태그 |
 | TRELLIS.2-4B | MIT(nvdiffrast 의존) | 래스터라이저 교체 후 | 교체 후 | 교체 후 | 교체 후 + 국방 검토 | nvdiffrast는 NEVER |
@@ -386,7 +386,7 @@ KPI가 실사에서 깎이지 않으려면 숫자가 원천 시스템에서 사�
 | Ultralytics YOLO | AGPL-3.0 | 내부 실험만 | 금지 | 고객 Enterprise 라이선스 시 | 금지 | — |
 | 온프렘 LLM(에이전트) | 오픈 가중치(모델별) | — | 프런티어 API | 온프렘 오픈 가중치 | 출처 확인 국산 모델 우선 | V8 출처 확인 |
 
-- **파인튜닝 가중치 납품 규칙:** 고객에게 넘기는 가중치에는 기반 모델의 라이선스 사본과 조건 승계 문구를 붙인다. 기반 모델 약관이 재배포를 막으면 가중치가 아니라 추론 엔드포인트나 Jetson 패키지(ONNX → TensorRT)로 납품하거나, SmolVLA·ACT 같은 허용형 모델로 증류해 납품한다.
+- **파인튜닝 가중치 납품 규칙:** 고객에게 넘기는 가중치에는 기반 모델의 라이선스 사본과 조건 승계 문구를 붙인다. 기반 모델 약관이 재배포를 막거나 V7(M3) 해석 전이면 가중치·Jetson 패키지(ONNX/TensorRT 엔진 포함)·호스팅 추론 엔드포인트 어느 형태로도 납품하지 않고, SmolVLA·ACT 같은 허용형 모델로 증류해 납품한다(DR §16 #32, [07 §10.4](07-training-module.md)).
 - **'OK(민수)' 표기 금지:** SAM 계열·VGGT-1B-Commercial은 민수용이라도 '조건부(V7)'로 표기한다(DR §16 #32).
 
 ### 4.6 귀속(Attribution) 의무
@@ -544,7 +544,7 @@ gantt
 | 4 | 재결정 트리거 | §6.3 정본 목록(TR-01–TR-33. 02 §10 시장 트리거와 03 §14 X-코드 포함) | 전략 재검토 착수 여부 | CEO + 이사회 |
 | 5 | 가격 재산정 | 풀 실제 원가, 항목별 마진 | 토큰·SKU 가격 조정 | CFO + Product Lead(M8 착석 전에는 CEO, 원가 입력 CTO) |
 | 6 | 라이선스 감사 | 분기 감사 결과, NVIDIA 협상 상태 | 차단·교체 결정 | CTO + 라이선스 자문 |
-| 7 | 검증 항목 | §7 26개 진척 | 기본 조치 발동 | CEO |
+| 7 | 검증 항목 | §7 31개 진척 | 기본 조치 발동 | CEO |
 | 8 | 채용·조직 | 게이팅 채용, 인원 상한 | 채용 승인 | CEO |
 | 9 | 현금·라운드 | 런웨이, 보조금 지급, 라운드 진척 | 보수안 전환 여부 | CFO |
 
@@ -624,9 +624,9 @@ gantt
 
 ---
 
-## 7. 검증 필요 항목 26개
+## 7. 검증 필요 항목 31개
 
-**결론: 리서치가 1차 출처로 확인하지 못한 26개 항목은 이사회·IR·정부과제 제출 전에 재검증한다. 각 항목에는 책임자, 기한(달력 날짜), 그리고 기한까지 검증되지 않으면 자동 적용되는 '기본 조치'가 있다.**
+**결론: 리서치가 1차 출처로 확인하지 못한 31개 항목은 이사회·IR·정부과제 제출 전에 재검증한다. 각 항목에는 책임자, 기한(달력 날짜), 그리고 기한까지 검증되지 않으면 자동 적용되는 '기본 조치'가 있다.**
 
 - **기한 표기:** M1 = 2026.11, M2 = 2026.12, M3 = 2027.01, M4 = 2027.02, M6 = 2027.04, M10 = 2027.08, M12 = 2027.10. 'IR 전'은 TIPS 제출 패키지에 쓰는 항목이면 M3, 그 밖에는 Series A 데이터룸 개설(M8, 2027.06) 전을 뜻한다 [A].
 
@@ -635,7 +635,7 @@ gantt
 | 1 | NVIDIA SaaS 호스팅·산출물 면제·온프렘 재배포·텔레메트리 약관 | 미확인(가장 중요) | Zone 경계, 매출 라인 | 서면 회신(16개 항목 체크리스트, 요청 발송 D5 = 2026-10-23) | CEO + 얼라이언스·라이선스 매니저 | M3 1차, M10 최종 | G1에서 허용형 전용 확정, Zone F 산출물은 NVAIE 예비비로 보호 |
 | 2 | NVAIE·Omniverse Enterprise 가격($4,500/GPU/년), Inception 75% 할인 | 미확인 | 예비비 | 원화 서면 견적 | 얼라이언스·라이선스 매니저 | M2 | 예비비 ₩2.9억(리스트 가격 기준) 유지 |
 | 3 | NuRec·3DGUT 컨테이너의 성숙도·라이선스(GA 여부) | 미확인 | Forge·DATA | NVIDIA 서면 | CTO(Sim Architect) + 라이선스 매니저 | M3 | gsplat 1.6.0 + 3DGRUT 2.0(Apache-2.0)만 사용 |
-| 4 | OpenMDW-1.1 전문, GR00T Open Model License, openpi 가중치 약관, 군사 조항 | 미확인 | VLA 등급, 국방 | 법률 검토(V7) | 외부 라이선스 자문 + Skill Lead | M3 | Cosmos 3·GR00T는 Zone F 산출물 전용, GR00T 파인튜닝 가중치 고객 납품 금지(SmolVLA·ACT로 증류 납품), SAM 계열·VGGT-Commercial은 테넌트 호스팅 보류, pi0.5 차단 유지, 국방은 SmolVLA |
+| 4 | OpenMDW-1.1 전문, GR00T Open Model License(파인튜닝 가중치 고객 납품 = 재배포), openpi 가중치 약관, SAM License(SAM 3D Objects·SAM 3)·VGGT-1B-Commercial 재배포·군사 조항 | 미확인 | VLA 등급, Zone T 호스팅 추론, Zone S 가중치 번들, 국방 | 법률 검토(V7) | 외부 라이선스 자문 + Skill Lead | M3 | Cosmos 3·GR00T는 Zone F 산출물 전용, GR00T 파인튜닝 가중치 고객 납품 금지(SmolVLA·ACT로 증류 납품), SAM 계열·VGGT-Commercial은 테넌트 호스팅 보류·Zone S 가중치 번들 제외, pi0.5 차단 유지, 국방은 SmolVLA |
 | 5 | 국내 CSP RT GPU(L40S, RTX PRO 6000) 공급·가격, MIG, R580 이미지 | 미확인 | RT 풀, 토큰 원가 | 견적·실측(V4) | Platform Lead | M2 | 서울 대화형은 AWS 서울 단가로 95 토큰 유지, 배치는 자체 서버·네오클라우드 |
 | 6 | 정부 GPU 배정 규칙(스타트업 접근성, 허용 워크로드) | 미확인 | TRAIN 업사이드 | NIPA·MSIT 문의 | BD·정부과제 매니저 | M4 | 예산에 넣지 않음(현행 유지) |
 | 7 | Deep-tech TIPS(₩15억), 초격차(₩6억), AI 바우처(₩2–3억), 데이터 바우처(₩7,000만) 상한과 2027 공고 일정 | 중간·낮은 신뢰도 | 정부과제 맵 | IRIS·K-Startup·NIPA 공고 | BD·정부과제 매니저 | 각 공고 시 | 제안서에 '공고 기준' 각주, 금액은 업사이드로만 |
@@ -658,6 +658,11 @@ gantt
 | 24 | AICHEMIST의 현재 현금(₩15억 가정), 주주 구성, 기존 CEN 매출 기준선, 기존 CEN 인력 재배치 가능 인원(6명 가정), 기존 CEN NeRF 구성요소 | 내부 확인 필요 | P0 자금, 브리지 시점, 희석 경로, 인력 | CFO·CTO 내부 점검 | CFO + CTO | M1 첫 주(2026-11-06) | 현금 ₩15억 미만이면 브리지를 M3로 앞당기고 P0 집행을 확보 금액 안으로 제한(R21) |
 | 25 | 명칭 'Athanor' 상표 충돌 | 미확인 | 브랜드 | KIPRIS·USPTO·EUIPO | 라이선스·법무 매니저 + 변리사 | M2 | 대외 공표 보류, 후보명(Crucible 등) 재검토 |
 | 26 | Korea–US MASGA 투자 규모(USD 150B), Hanwha Philly 관련 수요 | 중간 신뢰도 | 미국 진출 서사 | 공식 자료 | CFO(IR 담당) + BD | IR 전 | 미국 산업 고객 서사에서 MASGA 수치 삭제 |
+| 27 | Isaac Sim 6.1에 번들된 PhysX·Kit 버전(공개 SDK 5.11, kit-app-template 110.3.0과 같은지) | 미확인(릴리스 노트 접근 차단) | 호환성 매트릭스, Run Manifest 표기 | Isaac Sim 6.1 릴리스 노트·컨테이너 확인 | CTO + Kernel 리드 | 베이크오프 W1(2026-11-08) | 'PhysX 5.x(Isaac Sim 6.1 번들 버전 [U])', 'Kit 110.x [U]' 표기 유지(DR §16 #34), 컨테이너에서 읽은 실제 버전을 Run Manifest에 기록 |
+| 28 | Newton 1.6.1의 최소 Warp 버전(Warp 1.16 수용 여부) | 미확인 | 이중 핀 필요성, GPU·드라이버 하한 | pyproject 확인 | Kernel 리드 | 베이크오프 W1(2026-11-08) | Newton은 Isaac Lab 3.x GA 핀 하나로 통일하고, 1.6.x 신기능이 꼭 필요할 때만 이중 핀 이미지를 따로 발행한다([04 §4.8](04-system-architecture.md)). 노드 하한은 R580 이상(CUDA 13)·Turing(sm_75) 이상 |
+| 29 | Drake PyPI 휠에 번들된 서드파티 솔버 약관('Other/Proprietary') | 분류만 확인 | Zone S 번들 범위 | 법률 의견(V2) | 외부 라이선스 자문 | M3 | Zone S에 Drake PyPI 휠을 넣지 않음. Zone F 내부 검증에만 사용(DR §16 #33) |
+| 30 | Chrono CPU·클린룸 Fossen·PX4 SITL lockstep의 반복 비트 일치(D0 등록) | 미시험 | 차량·선박·드론 인증 범위 | N1–N4 동등 시험 | CTO + Kernel 리드 | Chrono M22, Fossen M28 [A] | D1 '통계적 재현'으로 두고 Scorecard만 납품, 인증서는 자산·센서 항목에 한정(DR §16 #6) |
+| 31 | ROS 2 Humble EOL(2027-05) 이후 고객 브리지 보안 영향 | 일정은 확인 | 라이브 트윈·엣지 게이트웨이 | 고객별 배포 현황 점검 | Platform Lead | M6 | 신규 배포는 Jazzy·Lyrical 기본, Humble 브리지는 M7 이후 best-effort(DR §16 #39) |
 
 - **운영:** 검증 결과는 [부록 B](appendix-b-sources-verification.md)의 출처 목록과 이 표를 함께 갱신한다. 상태는 '미확인 → 검증 중 → 확인/정정/폐기' 4단계로 관리하고, 분기 리뷰 안건 7에서 점검한다.
 
@@ -671,7 +676,7 @@ gantt
 3. 라이선스는 Zone F/T/S와 SPDX CI 4+1단계로 통제하고, 귀속 파일은 납품물마다 자동 생성한다.
 4. AI 기본법을 시뮬레이션 신뢰성 의무의 근거로 쓰지 않는다.
 5. G3의 ARR은 M24 시점 계약 ARR(정부재원 제외)로, 총마진은 직전 분기(2028 Q3) 혼합 총마진으로 판정한다 [A].
-6. 26개 검증 항목은 기한 경과 시 '기본 조치'를 자동 적용한다.
+6. 31개 검증 항목은 기한 경과 시 '기본 조치'를 자동 적용한다.
 7. 재결정 트리거의 전사 정본은 §6.3(TR-01–TR-33)이다. 02 §10과 03 §14는 이 ID를 병기한다.
 8. 'Gold 자산 질량/마찰 오차'(Forge 자동 추정 vs 랩 실측)와 'Gold 랩 실측 재현성'(랩 vs 시험기관)은 이름과 산식을 따로 쓴다(§3.3, §3.5).
 

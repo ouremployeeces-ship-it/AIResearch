@@ -213,7 +213,7 @@ flowchart TB
 | Newton 어댑터 | Newton(트레인 핀 = Isaac Lab 3.x GA 릴리스 노트 핀, EA 기준 1.5.2 / Warp 1.16. 예외 승인 이미지 `kernel-newton:train-1-1.6`에서만 1.6.1 + Warp 1.18). MJWarp 3.15 기본, Kamino·VBD·Style3D·ImplicitMPM | 학습 처리량, 보행·조작·변형체 | INTEGRATE | F·T·S | P0 |
 | MuJoCo CPU 어댑터 | MuJoCo 3.15.0(float64) | 결정론 재현·인증, 레퍼런스 | INTEGRATE | F·T·S | P0 |
 | Isaac Lab + PhysX 어댑터 | Isaac Lab 3.x(소스 빌드) + Isaac Sim 6.1 + PhysX 5.x(번들 버전 [U], 공개 SDK 최신 5.11) | 접촉 집약 조작, TacSL, Mimic, Teleop, Vehicle2(야드 차량·AMR) | LICENSE(Kit 런타임) | **F만** | P0 |
-| Drake 어댑터 | Drake v1.57.0(BSD-3, CPU) | 오프라인 접촉 골드 스탠다드(hydroelastic, SAP) | INTEGRATE | F·T(내부 검증) | P1 |
+| Drake 어댑터 | Drake v1.57.0(소스 BSD-3. PyPI 휠은 BSD and Other/Proprietary, CPU) | 오프라인 접촉 골드 스탠다드(hydroelastic, SAP) | INTEGRATE | F(내부 검증). Zone S는 독점 솔버를 뺀 소스 빌드만(V2 후) | P1 |
 | Chrono 어댑터 | Chrono 10.0.0(Vehicle, SCM/CRM, FSI-SPH) | 차량·지형·해양 FSI. CPU 경로는 반복 비트 일치 시험 + CTO 등록 전까지 D1(D0 목표 M22 [A]) | INTEGRATE | F·T·S | P2(Mobility Pack α) |
 | 클린룸 Fossen 어댑터 | 자체 Warp 커널(6-DOF 선체 동역학 + 파랑 스펙트럼), Warp CPU 경로 | 선박·USV·부유체 동역학, 적합성 6번째 백엔드(C13). D0 등록 전 D1(목표 M28 [A]) | **OWN** | F·T·S | P3 |
 | FMU 마스터 | FMI 3.0.2 + SSP | 고객 CarSim/CarMaker·플랜트 모델 공동 시뮬레이션(BYOL). 공동 시뮬레이션 브리지이므로 적합성 백엔드 수에 넣지 않는다 | **OWN**(마스터 알고리즘) | F·T·S | P2 |
@@ -516,7 +516,7 @@ task_types:
   humanoid_dex_gt60: { tenant: split_tree,       factory: isaaclab_physx, certify: mujoco_cpu_split }   # 베이크오프 T11로 확정
   amr_cell_vehicle:  { tenant: newton_wheel,     factory: isaaclab_physx_vehicle2, fallback: chrono, certify: mujoco_cpu }   # Vehicle2는 Zone F 전용
   road_offroad:      { tenant: chrono,           factory: chrono,         fallback: fmu,
-                       certify: statistical_only }   # Chrono CPU는 반복 비트 일치 시험(N1–N4 동등) + DR 개정 후 D0 등록(목표 M22) [A]. M18–M24
+                       certify: statistical_only }   # Chrono CPU는 반복 비트 일치 시험(N1–N4 동등) 통과 + CTO D0 목록 등록 후 전환(목표 M22) [A]. M18–M24
   drone_px4:         { tenant: px4_sitl,         factory: px4_sitl,       certify: statistical_only }   # PX4 SITL lockstep D0 등록 후 전환. M20–M24
   marine_6dof:       { tenant: fossen,           factory: fossen,         fallback: chrono_fsi,
                        certify: statistical_only }   # 클린룸 Fossen CPU D0 등록(목표 M28) 후 전환. P3
@@ -644,7 +644,7 @@ DR KPI는 "통과한 백엔드 수 × 장면 수"다. P0 3 × 5, P1 4 × 8, P2 5
 
 ### 4.8 버전 핀과 이중 핀 처리
 
-- **트레인 단위 핀:** Train 1(2026-12 ~ 2027-06)은 Zone F에 Isaac Sim 6.1.x, Kit 110.x, Isaac Lab 3.x GA를 쓴다. Newton·Warp는 GA 릴리스 노트에 명시된 핀이다(EA 기준 Newton 1.5.2, Warp 1.16. GA 핀은 [U]). 공통으로 드라이버 R580 이상, OpenUSD 툴링 26.08을 쓴다.
+- **트레인 단위 핀:** Train 1(2026-12 ~ 2027-06)은 Zone F에 Isaac Sim 6.1.x, Kit 110.x [U], Isaac Lab 3.x GA를 쓴다. Newton·Warp는 GA 릴리스 노트에 명시된 핀이다(EA 기준 Newton 1.5.2, Warp 1.16. GA 핀은 [U]). 공통으로 드라이버 R580 이상, OpenUSD 툴링 26.08을 쓴다.
 - **이중 핀 예외:** 테넌트 Kernel이 Newton 1.6.x 신기능을 꼭 써야 하면 `kernel-newton:train-1-isaaclab`과 `kernel-newton:train-1-1.6` 두 이미지를 발행한다. 두 이미지는 같은 적합성 스위트를 돌리고, 장면별 차이를 결정 메모에 기록한다. Warp 1.18은 Turing 이상 GPU와 R580 이상 드라이버가 필요하므로, 이 이미지는 사전 점검기를 통과한 노드에만 스케줄된다.
 - **호환성 매트릭스 필드:** Isaac Sim, Kit, Isaac Lab, Newton, Warp, MuJoCo, MJWarp, mjlab, PhysX SDK, Drake, Chrono, OpenUSD(툴링·런타임), PyTorch, CUDA, 드라이버, Python. 실제 국내 CSP GPU 이미지에서 검증한 뒤에 발행한다.
 - **mjlab 이미지:** mjlab 1.6.x는 MuJoCo Warp 3.11에 고정돼 있으므로 `kernel-mjlab:train-1`(MJWarp 3.11) 별도 이미지로 운영한다. mjlab으로 학습한 정책의 인증 재현은 MuJoCo 3.15 CPU에서 하고, 두 버전의 차이는 적합성 스위트로 관리한다.
@@ -1162,8 +1162,8 @@ def Xform "KR_RamenBox_A" (
     "kernel_api": "0.3.0",
     "train": "train-1",
     "adapters": [
-      { "name": "isaaclab_physx", "version": "isaacsim 6.1.0 / physx 5.x(bundled)", "image_digest": "sha256:9c0b…", "zone": "F" },
-      { "name": "r3_rtx", "version": "kit 110.x(bundled)", "image_digest": "sha256:9c0b…", "zone": "F" }
+      { "name": "isaaclab_physx", "version": "isaacsim 6.1.0 / physx 5.x(bundled, version [U])", "image_digest": "sha256:9c0b…", "zone": "F" },
+      { "name": "r3_rtx", "version": "kit 110.x(bundled [U])", "image_digest": "sha256:9c0b…", "zone": "F" }
     ]
   },
   "backend": { "physics": "isaaclab_physx", "renderer": "r3_rtx", "solver": { "tgs_iters": 8 },
@@ -1649,7 +1649,7 @@ flowchart LR
 | 세션 유형 | 렌더 | 구역 | 사용자 | GPU |
 |---|---|---|---|---|
 | 서버 Warp·신경 렌더 보기 | R1, R2 | T·S | Studio 고객 | RT 1장 |
-| RTX 고충실도 보기 | R3(Kit App Streaming) | **F(사내 리뷰)**, 고객 BYOL 환경 | AICHEMIST 엔지니어, BYOL 고객 | RT 1장 |
+| RTX 고충실도 보기 | R3(Kit App Streaming) | **F(사내 리뷰)만** | AICHEMIST 엔지니어 | RT 1장 |
 | 코드 데스크톱 | Selkies(MPL-2.0) 데스크톱 | T·S | 코드 우선 사용자 | LIGHT 또는 RT |
 
 ```mermaid
@@ -1668,6 +1668,7 @@ flowchart LR
     STR -->|"사용자 종료"| TRM
 ```
 
+- **BYOL 고객의 R3:** 고객이 운영하는 환경에서만 실행하며, 위 어드미션·웜 풀과 AICHEMIST RT 풀을 쓰지 않는다. AICHEMIST가 고객 라이선스로 대신 호스팅하는 것은 NVIDIA 체크리스트 #5 서면 확인 전까지 금지다([DR §6.2](00-decision-record.md)).
 - **웜 풀 크기[A]:** 직전 4주 같은 시간대 동시 세션 수 p90의 20%를 상한으로 하고, 업무 시간(KST 09–19시)에만 유지한다.
 - **비용 근거:** 전용 L40S 세션은 시간당 $1.86–2.29다. MIG 4분할 시 약 $0.84/시간이라는 추정은 미검증[U]이므로 가격표에 쓰지 않는다.
 
@@ -1725,9 +1726,8 @@ flowchart LR
 
 - **도구[A]:** SBOM은 SPDX 형식(Syft 등 Apache-2.0 도구), 취약점 스캔은 Trivy, 서명은 Sigstore cosign을 쓴다. 에어갭에서는 오프라인 키로 서명·검증한다. 도구 선택은 [A]이며 P0 라이선스 레지스트리 v0에서 확정한다.
 - **구역 규칙(자동 판정):**
-  - Zone T/S 이미지: Kit, Isaac Sim, Replicator, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠 포함 시 차단. 허용 라이선스는 허용형(Apache-2.0/BSD/MIT)과 의무 이행이 가능한 약한 카피레프트(MPL-2.0: open62541·Selkies·OpenBao·Lichtblick, EPL-2.0: Ditto, LGPL: Ceph RGW)뿐이다. TSL(TimescaleDB 고급 기능)·BSL 포함 시 차단.
-  - Zone T(SaaS): AGPL(예: Ultralytics) 포함 시 차단.
-  - Zone S(온프렘 번들): GPL(BlenderProc, Stonefish, ArduPilot) 포함 시 차단. Blender는 V2 법률 의견 전까지 제외. Drake는 독점 솔버를 뺀 소스 빌드만 허용(V2 후). SAM 계열·VGGT-Commercial·GR00T 파인튜닝 가중치는 재배포 조항 서면 확인 전 차단.
+  - Zone T/S 이미지: Kit, Isaac Sim, Replicator, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠, PhysX Vehicle2(어댑터 전) 포함 시 차단. 허용 라이선스는 허용형(Apache-2.0/BSD/MIT)과 의무 이행이 가능한 약한 카피레프트(MPL-2.0: open62541·Selkies·OpenBao·Lichtblick, EPL-2.0: Ditto, LGPL: Ceph RGW)뿐이다. TSL(TimescaleDB 고급 기능)·BSL·AGPL(예: Ultralytics, MinIO [U])·GPL(BlenderProc, Stonefish, ArduPilot)·비상업 라이선스 포함 시 차단(Ultralytics는 고객 Enterprise 라이선스가 있을 때만 예외).
+  - Zone S(온프렘 번들) 추가 규칙: Blender는 V2 법률 의견 전까지 제외. Drake는 독점 솔버를 뺀 소스 빌드만 허용(V2 후). SAM 계열·VGGT-Commercial·GR00T 파인튜닝 가중치는 재배포 조항 서면 확인 전 차단.
   - 전 구역: NEVER 목록(Hunyuan3D 2.x, Inria 3DGS 계열, Instant-NGP, nvdiffrast, MimicGen·DexMimicGen 코드, PhysX-Anything, ManiSkill 자산, AgiBot World·GO-1, RLDX-1 가중치, DA3 Large/Giant, 원본 VGGT-1B, Waymax·WOD, lakeFS 1.87 이상, Isaac Lab 번들 cuRobo)과 후보 #22(MapAnything 기본 CC-BY-NC 가중치. MapAnything-apache 가중치만 허용) 포함 시 차단.
   - 국방 프로파일: SAM 계열, VGGT-Commercial, 미확인 모델 차단.
 - **모델·데이터 BOM:** 가중치(GR00T N1.7은 NVIDIA Open Model License로 학습·내부 사용은 가능하지만 파인튜닝 가중치의 고객 납품은 V7 통과 후, Cosmos 3는 OpenMDW-1.1)와 데이터셋 라이선스도 같은 매니페스트에 넣는다. SAM License·VGGT-1B-Commercial은 '조건부(V7)'로 태그하고, 테넌트 호스팅 추론은 V7 통과 후에 연다. 납품물의 라이선스 고지는 이 매니페스트에서 자동 생성한다.
@@ -1937,15 +1937,15 @@ requires:                          # 모든 구역에서 설치 가능해야 하
   adapters: [chrono, fmu]
   capabilities: [VEHICLE_TIRE, DEFORMABLE_TERRAIN, FMU_COSIM]
 optional:
-  adapters_zone_f: [isaaclab_physx_vehicle2]   # Zone F 전용. 조건부 PhysX SDK 소스 어댑터 전에는 Zone T/S에 설치하지 않는다
-  adapters_zone_ts: [newton_wheel]             # 테넌트 야드 차량·AMR
+  adapters_zone_f: [isaaclab_physx_vehicle2]   # Zone F 전용. PhysX SDK 소스 어댑터(X6) 또는 M17 C++ 바인딩 결정 전에는 Zone T/S에 설치하지 않는다
+  adapters_zone_ts: [newton_wheel]             # AMR 전용(차량은 Chrono::Vehicle)
 assets:
   - ath://pack/mobility/vehicles/sedan_generic@sha256:…    # 차체·서스펜션·타이어 파라미터
   - ath://pack/mobility/roads/kr_urban_sample@sha256:…
 physics_profiles:
   tire_models: [pacejka, tmeasy]   # Chrono::Vehicle
   terrain: [rigid, scm]
-  routing: { road_vehicle: chrono, yard_vehicle: { F: isaaclab_physx_vehicle2, T: newton_wheel, S: newton_wheel }, customer_model: fmu }
+  routing: { road_vehicle: chrono, yard_vehicle: { F: isaaclab_physx_vehicle2, T: chrono, S: chrono }, amr: { F: isaaclab_physx_vehicle2, T: newton_wheel, S: newton_wheel }, customer_model: fmu }
   determinism: { chrono_cpu: D1_statistical }   # 비트 일치 시험 + CTO 등록 후 D0(목표 M22) [A]
 sensor_rigs:
   - name: front_camera_lidar
