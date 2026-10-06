@@ -1,6 +1,6 @@
 # 05. 물리와 현실감: 측정으로 증명하는 강력한 물리와 현실 유사도
 
-> **문서 번호** 05 · **기준일** 2026-10-06 · **버전** v1.0 · **상위 문서** [README](README.md)
+> **문서 번호** 05 · **기준일** 2026-10-06 · **버전** v1.1(DR v1.1·문서 간 정합 반영) · **상위 문서** [README](README.md)
 > **관련 문서** [01 비전·포지셔닝](01-vision-positioning.md) · [02 시장·경쟁](02-market-competition.md) · [03 엔진 선정·Build vs Buy](03-engine-selection-build-vs-buy.md) · [04 시스템 아키텍처](04-system-architecture.md) · [06 사용성·에이전트](06-usability-and-agent.md) · [07 학습 모듈](07-training-module.md) · [08 도메인 팩](08-domain-packs.md) · [09 로드맵·조직·예산](09-roadmap-organization-budget.md) · [10 사업모델·GTM](10-business-model-gtm.md) · [11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md) · [12 90일 실행](12-execution-90days.md) · [부록 A 기술 카탈로그](appendix-a-technology-catalog.md) · [부록 B 출처·검증](appendix-b-sources-verification.md)
 > **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 사실은 GitHub·PyPI로 확인된 값(2026-10-05/06) · ₩억 = 1억 원 · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · DR = 결정 기록(Decision Record, 전 문서의 단일 기준)
 
@@ -8,13 +8,13 @@
 
 ## 핵심 요약
 
-- **강력한 물리는 '엔진 하나'가 아니라 '작업별 라우팅 + 보정 + 재현 + 측정'이다.** 13개 작업 유형을 Newton 1.6.x(MJWarp·Kamino·VBD·Style3D·ImplicitMPM·SDF/hydroelastic), MuJoCo 3.15 CPU, Isaac Lab 3.x + PhysX 5.11(Zone F), Drake v1.57, Chrono 10.0에 나눠 보냄. 경계는 적합성 스위트(P0 3×5 → P3 6×15)와 수출 전 sim2sim 게이트(적용률 100%)로 지킴.
-- **'재현 가능'은 세 등급으로 나눠 판다.** 인증서는 D0(비트 일치: MuJoCo CPU, 또는 베이크오프 W7을 통과한 Newton 결정론 모드 + 고정 GPU·드라이버)에서만 발행. GPU 배치 산출물은 D1 '통계적 재현', 생성형 증강 프레임은 D2. 인증 시험 결정론적 재현율 100%는 P0부터 고정 KPI.
-- **물성 파라미터는 엔진 간에 이식되지 않는다.** 같은 실측 trial로 백엔드마다 파라미터 세트를 따로 맞추고 인증서에 백엔드별로 기록. 보정 사다리는 VLM 사전분포(Bronze) → 영상 sysid(Silver) → Fidelity Lab 실측(Gold) → 접촉 부품의 Drake 교차 검증.
-- **현실감은 하나의 OpenUSD 스테이지 위 4계층으로 쌓는다.** L1 PBR 재질(MDL, MaterialX, OpenPBR), L2 신경 재구성(3DGUT, UsdVolParticleField), L3 실측 보정 센서(RTX / Warp Sensor Library + 디바이스 프로파일), L4 생성형 증강(Cosmos Transfer 2.5 → Cosmos 3 Nano, 라벨 일관성 QA 통과 프레임만 납품).
-- **Athanor Forge는 CEN NeRF 파이프라인의 후속인 10단계 Real2Sim 라인이다.** 전 단계 허용형 라이선스(VGGT-1B-Commercial, MapAnything-apache, DA3 S/B/Metric, gsplat 1.6.0, 3DGRUT 2.0, TRELLIS.2(nvdiffrast 교체), Articulate-Anything, CoACD/CuACD). CEN NeRF 라이선스 감사는 M1, 3DGUT 전환과 NeRF 런타임 퇴역은 M4(G0).
-- **'현실 유사도'의 정의는 Sim2Real Gap Scorecard다.** mAP 비율, 성공률 갭(%p), Pearson r, ADE/FDE, Chamfer, 노이즈 PSD, PSNR/SSIM/LPIPS를 공식·표본 요건·측정 프로토콜까지 고정해 제3자가 재계산할 수 있게 함. FID·KID는 분포 드리프트 경보용 보조 지표.
-- **Fidelity Lab이 증거를 생산하고, 레이더는 증거 전까지 팔지 않는다.** Test Cell 1(P0)·2(P1)에서 Gold 최소 프로토콜(물체당 50 trial [A])을 자동 반복해 페어드 코퍼스 1k → 10k → 50k → 150k trial과 Bronze/Silver/Gold 인증서(`aic:TwinCertificate`)를 만듦. 레이더·EO/IR은 오차 막대를 공개한 프로파일 전에는 해양·국방에 판매 금지.
+- **강력한 물리는 '엔진 하나'가 아니라 '작업별 라우팅 + 보정 + 재현 + 측정'이다.** 13개 작업 유형을 Newton 1.6.x(버전은 Isaac Lab 3.x GA 핀으로 통일, 2026-10 최신 1.6.1. MJWarp·Kamino·VBD·Style3D·ImplicitMPM·SDF/hydroelastic), MuJoCo 3.15 CPU, Isaac Lab 3.x + PhysX 5.x(Zone F, Isaac Sim 6.1 번들 버전 [U], 공개 SDK 최신 5.11), Drake v1.57, Chrono 10.0에 나눠 보낸다. 경계는 적합성 스위트([04 §4.6](04-system-architecture.md)의 C01–C15, P0 3×5 → P3 6×15)와 수출 전 sim2sim 게이트(Tier 1 적용률 100%, 인증 대상은 Tier 2 추가)로 지킨다.
+- **'재현 가능'은 세 등급으로 나눠 판다.** 인증서는 D0(비트 일치: MuJoCo CPU, 또는 베이크오프 W7을 통과한 Newton 결정론 모드 + 고정 GPU·드라이버)에서만 발행한다. GPU 배치·변형체 산출물은 D1 '통계적 재현', 생성형 증강 프레임은 D2다. 차량(Chrono)·드론(PX4 SITL)·해양(Fossen) 동역학은 D0 등록 시험을 통과하기 전까지 D1이다. 인증 시험 결정론적 재현율 100%는 P0부터 고정 KPI다.
+- **물성 파라미터는 엔진 간에 이식되지 않는다.** 같은 실측 trial로 백엔드마다 파라미터 세트를 따로 맞추고 인증서에 백엔드별로 기록한다. 보정 사다리는 VLM 사전분포(Bronze) → 영상 sysid(Silver) → Fidelity Lab 실측(Gold) → 접촉 부품의 Drake 교차 검증이다.
+- **현실감은 하나의 OpenUSD 스테이지 위 4계층으로 쌓는다.** L1 PBR 재질(MDL, MaterialX, OpenPBR), L2 신경 재구성(3DGUT, UsdVolParticleField), L3 실측 보정 센서(RTX / Warp Sensor Library + 디바이스 프로파일), L4 생성형 증강(M5–M8 Cosmos Transfer 2.5 → M9부터 Cosmos 3 Nano, 라벨 일관성 QA 통과 프레임만 납품)이다.
+- **Athanor Forge는 CEN NeRF 파이프라인의 후속인 10단계 Real2Sim 라인이다.** 비상업 구성요소는 하나도 쓰지 않는다. 허용형(MapAnything-apache, DA3 S/B/Metric, gsplat 1.6.0, 3DGRUT 2.0, TRELLIS.2(nvdiffrast 교체), Articulate-Anything, CoACD/CuACD)이 기본이고, 커스텀 사용 제한 라이선스인 VGGT-1B-Commercial·SAM 3D Objects는 V7 법률 검토를 통과한 민수 경로에서만 조건부로 쓴다. CEN NeRF 라이선스 감사는 M1, 3DGUT 전환과 NeRF 런타임 퇴역은 M4(G0, 2027-02-26)에 한다.
+- **'현실 유사도'의 정의는 Sim2Real Gap Scorecard다.** mAP 비율, 성공률 갭(%p), Pearson r, ADE/FDE, Chamfer, 노이즈 PSD, PSNR/SSIM/LPIPS를 공식·표본 요건·측정 프로토콜까지 고정해 제3자가 재계산할 수 있게 한다. FID·KID는 분포 드리프트 경보용 보조 지표다.
+- **Fidelity Lab이 증거를 생산하고, 레이더는 증거 전까지 팔지 않는다.** Test Cell 1(P0)·2(P1)에서 Gold 최소 프로토콜(물체당 50 trial [A])을 자동 반복해 페어드 코퍼스 1k → 10k → 50k → 150k trial과 Bronze/Silver/Gold 인증서(`aic:TwinCertificate`)를 만든다. 레이더·EO/IR은 오차 막대를 공개한 프로파일 전에는 해양·국방에 판매하지 않는다.
 
 ---
 
@@ -28,9 +28,9 @@
 
 | 요구 | 우리의 정의 | 핵심 메커니즘 | 증명 KPI: P1(M12) → P3(M36) | 본문 |
 |---|---|---|---|---|
-| (1) 강력한 물리 | 과제별 최적 백엔드에서, 실측으로 보정된 파라미터로, 재현 가능하게 돈다 | 라우팅(§2), 접촉 모델 가이드(§3), 변형체(§4), 폐루프·고자유도(§5), 결정론(§6), 보정(§7), 적합성 스위트(§8) | 적합성 4×8 → 6×15. Gold 질량/마찰 오차 ≤10%/≤20% → ≤5%/≤10%. 궤적 ADE ≤2 cm → ≤1 cm. 결정론적 재현 100% | §2–§8 |
+| (1) 강력한 물리 | 과제별 최적 백엔드에서, 실측으로 보정된 파라미터로, 재현 가능하게 돈다 | 라우팅(§2), 접촉 모델 가이드(§3), 변형체(§4), 폐루프·고자유도(§5), 결정론(§6), 보정(§7), 적합성 스위트(§8) | 적합성 4×8 → 6×15(C01–C15). Forge 자동 추정값의 Gold 랩 실측 대비 질량/마찰 오차 ≤10%/≤20% → ≤5%/≤10%. 궤적 ADE ≤2 cm → ≤1 cm. 결정론적 재현 100% | §2–§8 |
 | (2) 현실 유사도 | 시각·물리·센서 갭을 계층별로 닫고, 모든 납품물에 Scorecard를 붙인다 | 4계층 스택(§9), Forge(§10), 센서 프로파일(§11), 증강 QA(§12), Scorecard(§13), 인증(§14), Fidelity Lab(§15) | mAP 비율 ≥0.90 → 3개 버티컬 ≥0.95. 갭 ≤15%p(3개 과제) → ≤8%p(10개 과제). r ≥0.7 → ≥0.85. 라이다 ≤3 cm → ≤2 cm + 레이더 프로파일 공개 | §9–§15 |
-| 범용성(보완 지시) | 로봇·차량·드론·선박·공장을 같은 Kernel·같은 인증 체계로 받는다 | Domain Pack의 물리 프로파일·센서 리그·인증 기준([08](08-domain-packs.md)) | 적합성 스위트에 '바퀴 차량' 장면을 P0부터, 해양 부유체 장면을 P3에 포함 | §2.3 |
+| 범용성(DR v1.1) | 로봇·차량·드론·선박·공장을 같은 Kernel·같은 인증 체계로 받는다 | Domain Pack의 물리 프로파일·센서 리그·인증 기준([08](08-domain-packs.md)) | 적합성 스위트에 바퀴 차량 장면(C05)을 P0부터, 차량 선회(C12)를 P2에, 선박 롤 감쇠(C13)를 P3에 포함 | §2.3 |
 
 **표 1-2. 다섯 가지 설계 원칙**
 
@@ -69,30 +69,32 @@ flowchart LR
 
 ### 2.1 라우팅 표(베이크오프 전 가설, 2027년 1월 첫 주 결정 메모로 확정)
 
-[03 §3.4](03-engine-selection-build-vs-buy.md)의 라우팅 가설을 운영 단위로 펼친 표다. dt와 substep은 출발값이며, 베이크오프 W5–W6의 '성공률 보정 steps/s/$'로 덮어쓴다.
+[03 §3.4](03-engine-selection-build-vs-buy.md)의 라우팅 가설을 운영 단위로 펼친 표다. dt와 decimation은 출발값이며, 베이크오프 W5–W6의 '성공률 보정 steps/s/$'로 덮어쓴다.
 
 **표 2-1. 작업 유형 → 백엔드 라우팅**
 
-| # | 작업 유형 | 대표 과제(베이크오프) | 학습 기본 백엔드·접촉 | 대안·폴백 | 인증 재현(D0) | 산출물 결정론 | 출발 dt·제어 주기 [A] | 구역 | 기술 준비 시점 |
+| # | 작업 유형 | 대표 과제(베이크오프) | 학습 기본 백엔드·접촉 | 대안·폴백 | 인증 재현(D0) | 산출물 결정론 | 출발 dt·decimation / 정책 주기 [A] | 구역 | 기술 준비 시점 |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 보행·전신(사족, 휴머노이드 속도 추종, 모션 트래킹) | T1 G1 속도 추종, T2 BeyondMimic | Newton/MJWarp, 소프트 볼록 접촉, 타원 콘 | mjlab 1.6.0, PhysX(Zone F) | MuJoCo CPU | D1 | 5 ms / 정책 50 Hz | F·T·S | 템플릿 P1(M6–M12), 상업화 P2 |
-| 2 | 일반 픽앤플레이스·빈 피킹 | T3 Franka 큐브, T5 한국 SKU 클러터 | 팩토리: Isaac Lab + PhysX(TGS, GPU SDF). 테넌트: Newton/MJWarp | MuJoCo CPU | MuJoCo CPU | D1 | 5 ms, substep 2 / 30 Hz | F·T·S | P0–P1 |
-| 3 | 손안 재배치(덱스터러스) | T4 LEAP/Allegro | Newton/MJWarp | PhysX(Zone F) | MuJoCo CPU | D1 | 4 ms / 30 Hz | F·T·S | P1 |
-| 4 | 삽입·조립(공차 ≤0.5 mm), 촉각 | T7 페그·커넥터 | 팩토리: PhysX SDF + TacSL. 테넌트: Newton SDF + hydroelastic | Drake hydroelastic/SAP(대조 기준) | Newton 결정론 모드(W7 통과 시) 또는 MuJoCo CPU + SDF 근사 | D1 | 1–2 ms / 60 Hz | F(T는 Newton) | P0–P1 |
-| 5 | 케이블 삽입·라우팅 | T8 케이블 삽입 | Newton VBD(로드) | MuJoCo cable composite, PhysX(Zone F) | MuJoCo CPU cable composite(별도 보정 세트) | D1 | 2 ms / 30 Hz | F·T·S | P1 |
-| 6 | 폴리백·천·연체 | T6 폴리백, T9 천 접기 | Newton VBD / Style3D | MuJoCo 3.15 flex(Stable Neo-Hookean, 실험), PhysX FEM(Zone F) | MuJoCo CPU flex(별도 보정 세트, 실험 기능) | D1 | 2 ms / 30 Hz | F·T·S | P1(Forge v1 VBD 폴리백) |
-| 7 | 입상체·식품·점성 유체 | P1 추가 과제 [A] | Newton ImplicitMPM | Genesis MPM(관찰만) | 없음 → 인증 대상 아님(Scorecard 리포트만) | D1 | 1 ms / 30 Hz | F·T·S | P1–P2 |
-| 8 | 폐루프 그리퍼·링크·델타 | T10 Kamino 그리퍼 | Newton Kamino(NCP, 하드 접촉) | MuJoCo equality 제약 | MuJoCo CPU(equality 모델) | D1 | 2 ms / 50 Hz | F·T·S | P1(experimental 표시) |
-| 9 | 휴머노이드 + 양손(단일 메커니즘 60 DoF 초과) | T11 스트레스 테스트 | PhysX(Zone F) 또는 관절 트리 분할 | — | MuJoCo CPU(분할 모델) | D1 | 4 ms / 50 Hz | F(분할 모델은 T·S) | 템플릿 출시 전 T11 판정 |
-| 10 | AMR·공장 셀 차량 | 적합성 장면 S5·S12 | 테넌트: Newton 관절형 휠 + 마찰 [A]. 팩토리: PhysX Vehicle2 | Chrono::Vehicle | MuJoCo CPU(Chrono는 D0 등록 후) | D1 | 5 ms / 20 Hz | F·T·S | P1–P2(M9–M18) |
-| 11 | 승용·상용 차량, 오프로드 | Mobility Pack α 시나리오 | Chrono 10(Vehicle, Pacejka/TMeasy 타이어, SCM 지형) + PhysX Vehicle2. 고객 CarSim/CarMaker FMU(FMI 3.0) | BeamNG.tech(견적 기반) | Chrono CPU(D0 등록 시험 후) [A] | D1 | 1 ms / 100 Hz | F·T·S | α는 P2(M18–M24), CRM 오프로드 P3 |
-| 12 | 드론 | PX4 SITL 템플릿 | PX4 SITL + Gazebo Jetty | Pegasus 포팅 또는 자체 브리지 | PX4 SITL lockstep(D0 등록 시험 후) [A] | D1 | 4 ms / 250 Hz | F·T·S | 템플릿 P2(M20–M24), 국방 P3 |
-| 13 | 선박·부유체·항만 | 적합성 장면 S15 | 자체 클린룸 Fossen 6-DOF(Warp) + Chrono FSI(SPH) | — | 자체 Fossen CPU 경로(D0 등록 시험 후) [A] | D1 | 10 ms / 10 Hz | F·T·S | P3(M25–) |
+| 1 | 보행·전신(사족, 휴머노이드 속도 추종, 모션 트래킹) | T1 G1 속도 추종, T2 BeyondMimic | Newton/MJWarp, 소프트 볼록 접촉, 타원 콘 | mjlab 1.6.0(MJWarp 3.11 고정 별도 이미지), PhysX(Zone F) | MuJoCo 3.15 CPU | D1 | 5 ms, decimation 4 / 50 Hz | F·T·S | 템플릿 P1(M6–M12), 상업화 P2(휴머노이드·덱스터러스만) |
+| 2 | 일반 픽앤플레이스·빈 피킹 | T3 Franka 큐브, T5 한국 SKU 클러터 | 팩토리: Isaac Lab + PhysX(TGS, GPU SDF). 테넌트: Newton/MJWarp | MuJoCo CPU | MuJoCo CPU | D1 | 5 ms, decimation 4 / 50 Hz | F·T·S | P0–P1 |
+| 3 | 손안 재배치(덱스터러스) | T4 LEAP/Allegro | Newton/MJWarp | PhysX(Zone F) | MuJoCo CPU | D1 | 1/240 s(≈4.17 ms), decimation 8 / 30 Hz | F·T·S | P1 |
+| 4 | 삽입·조립(공차 ≤0.5 mm), 촉각 | T7 페그·커넥터 | 팩토리: PhysX SDF + TacSL. 테넌트: Newton SDF + hydroelastic | Drake hydroelastic/SAP(대조 기준) | Newton 결정론 모드(W7 통과 시) 또는 MuJoCo CPU + SDF 근사 | D1 | 1/480 s(≈2.08 ms), decimation 8 / 60 Hz | F(T는 Newton) | P0–P1 |
+| 5 | 케이블 삽입·라우팅 | T8 케이블 삽입 | Newton VBD(로드) | MuJoCo cable composite, PhysX(Zone F) | 정적 보정 시험(처짐)만 MuJoCo CPU cable composite로 D0 재현, 'experimental' | D1 | 1/480 s, decimation 16 / 30 Hz | F·T·S | P1 |
+| 6 | 폴리백·천·연체 | T6 폴리백, T9 천 접기 | Newton VBD / Style3D | MuJoCo 3.15 flex(Stable Neo-Hookean 3.15·IPC 접촉 3.14 모두 실험), PhysX FEM(Zone F) | 정적 보정 시험(정지 형상)만 MuJoCo CPU flex로 D0 재현, 'experimental' | D1 | 1/480 s, decimation 16 / 30 Hz | F·T·S | P1(Forge v1 VBD 폴리백) |
+| 7 | 입상체·식품·점성 유체 | P1 추가 과제 [A] | Newton ImplicitMPM | Genesis MPM(관찰만) | 없음 → 인증 대상 아님(Scorecard 리포트만) | D1 | 1/960 s, decimation 32 / 30 Hz | F·T·S | P1–P2 |
+| 8 | 폐루프 그리퍼·링크·델타 | T10 Kamino 그리퍼 | Newton Kamino(NCP, 하드 접촉) | MuJoCo equality 제약 | MuJoCo CPU(equality 모델) | D1 | 2 ms, decimation 10 / 50 Hz | F·T·S | P1(experimental 표시) |
+| 9 | 휴머노이드 + 양손(단일 메커니즘 60 DoF 초과) | T11 스트레스 테스트 | PhysX(Zone F) 또는 관절 트리 분할 | — | MuJoCo CPU(분할 모델) | D1 | 4 ms, decimation 5 / 50 Hz | F(분할 모델은 T·S) | 템플릿 출시 전 T11 판정 |
+| 10 | AMR·공장 셀 차량 | 적합성 장면 C05(+ 후보 C19 타이어 슬립) | 테넌트(Zone T/S): Newton 관절형 휠 + 마찰 [A]. 팩토리(Zone F 전용): PhysX Vehicle2(Isaac Lab 경유) | Chrono::Vehicle | MuJoCo CPU(Newton 관절 휠 모델). Chrono는 D0 등록 후 | D1 | 5 ms, decimation 10 / 20 Hz | F·T·S(Vehicle2는 F만) | P1–P2(M9–M18) |
+| 11 | 승용·상용 차량, 오프로드 | Mobility Pack α 시나리오, 적합성 C12 | Chrono 10(Vehicle, Pacejka/TMeasy 타이어, SCM 지형, Zone T/S) + PhysX Vehicle2(Zone F 전용). 고객 CarSim/CarMaker FMU(FMI 3.0, BYOL) | BeamNG.tech(견적 기반, 벤더 라이선스) | Chrono CPU(D0 등록 시험 후, 목표 M22) [A] | D1 | 1 ms, decimation 10 / 100 Hz | F·T·S(Vehicle2는 F만) | α는 P2(M18–M24), CRM 오프로드 P3 |
+| 12 | 드론 | PX4 SITL 템플릿(RL 1종, P2), 적합성 C14 | PX4 SITL + Gazebo Jetty(자체 PX4 브리지) | Pegasus 포팅(Isaac Sim 런타임 의존, Zone F·BYOL 전용) | PX4 SITL lockstep(D0 등록 시험 후) [A] | D1 | 4 ms, decimation 1 / 250 Hz(lockstep) | F·T·S(Pegasus는 F만) | 템플릿 P2(M20–M24), 상업화 P3 국방 에디션 |
+| 13 | 선박·부유체·항만 | 적합성 장면 C13 | 자체 클린룸 Fossen 6-DOF(Warp) + Chrono FSI(SPH) | — | 자체 Fossen CPU 경로(D0 등록 시험 후, 목표 M28) [A] | D1 | 10 ms, decimation 10 / 10 Hz | F·T·S | P3(M25–) |
 
-- **인증 재현 규칙:** 학습은 어느 백엔드에서 하든, 인증 시험 장면은 D0 경로에서 다시 돌림. 케이블·폴리백·연체(5·6행)는 VBD 산출물이 D1이므로, 인증 시험만 MuJoCo CPU의 cable·flex 모델(같은 trial로 따로 보정한 세트)로 D0 재현. D0 경로가 없는 입상체·유체(7행)는 인증서를 발행하지 않고 Scorecard 리포트만 납품.
-- **D0 허용 목록 확장 규칙:** DR이 인증 재현에 허용한 경로는 MuJoCo CPU와 Newton 결정론 모드 두 가지. 차량(Chrono)·드론(PX4 SITL)·해양(Fossen) 경로를 인증에 쓰려면 §6.3의 N1–N4와 같은 결정론 시험을 통과하고 CTO가 D0 목록에 등록해야 함. 등록 전 해당 도메인은 인증서 없이 Scorecard 리포트만 납품.
-- **Drake의 위치:** 인증 재현 백엔드가 아니라 접촉 '기준값' 생성기. 삽입 과제의 기대 접촉력·성공 판정을 만들고, Newton·PhysX 파라미터를 거기에 맞춤(§7.6).
-- **Genesis:** 어느 행에도 기본값으로 들어가지 않음. 베이크오프에서 2개 과제만 관찰.
+- **dt·decimation 규칙:** 정책 주기 = dt × decimation이다. [04](04-system-architecture.md) Kernel API의 `substeps`(제어 1회당 물리 스텝 수, 제어 주기 = `dt × substeps`)가 이 decimation과 같은 값이다. Isaac Lab·mjlab은 정수 decimation만 표현하므로 위 출발값은 모두 정수 decimation으로 맞췄다. 실제 로봇 컨트롤러 주기가 다르면 [07 §7.1](07-training-module.md)의 '제어 주기 정합' 규칙대로 dt를 조정한다.
+- **인증 재현 규칙:** 학습은 어느 백엔드에서 하든, 인증 시험 장면은 D0 경로에서 다시 돌린다. 변형체(VBD·flex·cable, 5·6행) 동역학 산출물은 D1이다. 변형체 자산 인증서는 정적 보정 시험(P-CABLE 처짐, 정지 형상)을 MuJoCo CPU cable/flex 모델(같은 trial로 따로 보정한 세트)로 D0 재현한 항목에만 붙이고 'experimental'로 표기한다. 파지·삽입 중 변형 같은 동역학 거동은 Scorecard 리포트와 '통계적 재현' 라벨로만 납품한다. D0 경로가 없는 입상체·유체(7행)는 인증 대상에서 제외하고 Scorecard 리포트만 납품한다.
+- **D0 허용 목록 확장 규칙:** DR이 인증 재현에 허용한 경로는 MuJoCo CPU와 Newton 결정론 모드(베이크오프 W7의 N1–N5 통과 후) 두 가지다. Chrono CPU(차량)·클린룸 Fossen(Warp CPU, 선박)·PX4 SITL lockstep(드론)은 §6.3의 N1–N4와 동등한 반복 비트 일치 시험을 통과하고 CTO가 D0 목록에 등록한 뒤에만 인증 경로로 쓴다(목표 등재 Chrono M22, Fossen M28 [A]). 등록 전 해당 동역학 산출물은 D1 '통계적 재현'으로 표기하고 Scorecard 리포트만 납품하며, 인증서는 자산·센서 항목에만 발행한다.
+- **Drake의 위치:** 인증 재현 백엔드가 아니라 접촉 '기준값' 생성기다. 삽입 과제의 기대 접촉력·성공 판정을 만들고, Newton·PhysX 파라미터를 거기에 맞춘다(§7.6). Drake PyPI 휠은 'BSD and Other/Proprietary'(번들된 서드파티 솔버에 별도 약관)이므로 Zone F 내부 검증에 쓰고, Zone S(온프렘·에어갭) 번들에는 독점 솔버를 뺀 소스 빌드만 V2 법률 의견 뒤에 넣는다.
+- **mjlab 고정:** mjlab은 MJWarp 3.11에 고정한 별도 이미지로 운영하고, 인증 재현은 MuJoCo 3.15 CPU에서 한다.
+- **Genesis:** 어느 행에도 기본값으로 들어가지 않는다. 베이크오프에서 2개 과제만 관찰한다.
 
 ### 2.2 라우팅 메커니즘
 
@@ -109,34 +111,42 @@ contact:
   cone: elliptic
   penetration_budget_mm: 0.5
 deformables: none
-certify_backend: mujoco.cpu   # D0 경로
-sim2sim_gate: [newton.mjwarp, mujoco.cpu]   # Zone T는 PhysX 제외
-gate_tolerance:
-  success_gap_pp: 5
-  joint_rmse_rad: 0.05
+certify_backend: mujoco.cpu   # D0 경로(determinism: D0_bitwise)
+sim2sim_gate: [newton.mjwarp, mujoco.cpu]   # Zone T/S는 PhysX 제외(PhysX SDK 어댑터 편입 전)
+gate_tolerance:               # 2단 구조, 정본은 07 §7.3
+  tier1:                      # 모든 수출 정책, 실패 시 수출 차단
+    episodes: 1000
+    success_gap_pp: 10
+    return_ratio_min: 0.85
+    latency_noise_drop_pp: 15
+    onnx_action_max_abs_err: 1.0e-3
+  tier2:                      # 로봇-과제 인증서·Crucible 공식 캠페인 대상
+    initial_conditions: 200
+    success_gap_pp: 5
+    joint_rmse_rad: 0.05
 calibration_source: certificate   # 자산 인증서의 백엔드별 파라미터 세트를 그대로 사용
 ```
 
-- **구역별 sim2sim 게이트:** 팩토리(Zone F) 정책은 Newton → PhysX → MuJoCo CPU 3개 백엔드, 테넌트(Zone T/S) 정책은 Newton ↔ MuJoCo CPU 2개 백엔드. PhysX SDK 소스 어댑터가 DR §3.4의 세 조건(G1 통과, 베이크오프에서 PhysX 우위 실측, 온프렘 수요 2건 이상)을 충족해 P2에 들어오면 Zone T 게이트도 3개로 확대.
-- **오버라이드 감사:** 비기본 백엔드로 학습한 정책은 Scorecard에 'off-default' 플래그. Crucible 평가에서 별도 집계.
+- **구역별 sim2sim 게이트:** 팩토리(Zone F) 정책은 Newton → PhysX → MuJoCo CPU 3개 백엔드, 테넌트(Zone T/S) 정책은 Newton ↔ MuJoCo CPU 2개 백엔드로 확인한다. PhysX SDK 소스 어댑터가 DR §3.4의 세 조건(G1 통과, 베이크오프에서 PhysX 우위 실측, 온프렘 수요 2건 이상)을 충족해 P2에 들어오면 Zone T/S 게이트도 3개로 넓힌다. 임계값은 Tier 1·Tier 2의 2단이며 §8.4에 적는다.
+- **오버라이드 감사:** 비기본 백엔드로 학습한 정책은 Scorecard에 'off-default' 플래그를 달고, Crucible 평가에서 따로 집계한다.
 
 ### 2.3 범용성: 대상별 물리 준비 시점(상업 Wave와 별도)
 
-보완 지시에 따라 '무엇을 트윈으로 만들 수 있는가'와 '어디서 먼저 돈을 버는가'를 분리한다. 아래 표의 준비 시점은 기술 준비이고, 판매 순서는 [10 사업모델·GTM](10-business-model-gtm.md)의 Wave를 따른다. 예산·인원은 DR 부록 A 고정값 안에서 처리한다.
+DR v1.1 보완에 따라 '무엇을 트윈으로 만들 수 있는가'와 '어디서 먼저 돈을 버는가'를 분리한다. 아래 표의 준비 시점은 기술 준비이고, 판매 순서는 [10 사업모델·GTM](10-business-model-gtm.md)의 Wave를 따른다. 예산·인원은 DR 부록 A 고정값 안에서 처리한다. 적합성 장면 번호는 [04 §4.6](04-system-architecture.md)의 C01–C15가 정본이고, C16 이후는 이 문서가 제안하는 확장 후보다(§8.1).
 
 **표 2-2. 대상별 물리 준비 시점**
 
 | 대상 | 물리 구성 | 핵심 물리 요소 | 적합성 장면 | 기술 준비 | 상업 진입 |
 |---|---|---|---|---|---|
-| 로봇 조작(암, 빈 피킹, 조립, 삽입) | Newton, PhysX(F), MuJoCo CPU, Drake | 소프트·SDF·hydroelastic 접촉, 파지 마찰 | S1–S4, S6–S8 | P0–P1(M1–M12) | Wave 1(M1–M18) |
-| 모바일 로봇·AMR·공장/물류 셀 | PhysX Vehicle2, Newton 휠 모델 | 휠 슬립, 바닥 마찰, 적재 하중 | S5, S12 | P1–P2(M9–M18) | P2 라이브 트윈 부가 기능 |
-| 휴머노이드·사족·덱스터러스 핸드 | Newton/MJWarp, PhysX(60 DoF 초과) | 접지 접촉, 손가락 다접촉, 액추에이터 동역학 | S10 | 템플릿 P1(M6–M12) | Wave 2(M12–M24) |
-| 차량(Mobility Pack α) | Chrono::Vehicle(Pacejka/TMeasy, SCM) + PhysX Vehicle2 + esmini(OpenDRIVE/OpenSCENARIO) + FMI 3.0 | 타이어 힘, 서스펜션, 지형 변형 | S5, S12 | P2(M18–M24). WS1-M 1명(P2) + WS3 지원 | 도로 AV는 '연결' 전략(MORAI, OSI/FMI 브리지) |
-| 드론 | PX4 SITL + Gazebo Jetty | 추력·항력, 바람 외란 | 템플릿 회귀 장면 [A] | P2(M20–M24) | P3 국방 에디션 |
-| 선박·항만·조선 해양 | 클린룸 Fossen 6-DOF + Chrono FSI | 부가질량, 감쇠, 파랑 강제력 | S15 | P3(M25–) | Wave 3(트리거 조건부) |
-| 오프로드 UGV | Chrono CRM(SPH 지형) | 연약 지반 침하·견인력 | S12 확장 [A] | P3 | Wave 3b(M27–) |
+| 로봇 조작(암, 빈 피킹, 조립, 삽입) | Newton, PhysX(F), MuJoCo CPU, Drake | 소프트·SDF·hydroelastic 접촉, 파지 마찰 | C01–C04, C06–C10(+ 후보 C16·C17·C18) | P0–P1(M1–M12) | Wave 1(M1–M18) |
+| 모바일 로봇·AMR·공장/물류 셀 | PhysX Vehicle2(Zone F 전용), Newton 관절 휠 모델(Zone T/S) | 휠 슬립, 바닥 마찰, 적재 하중 | C05(+ 후보 C19) | P1–P2(M9–M18) | P2 라이브 트윈 부가 기능 |
+| 휴머노이드·사족·덱스터러스 핸드 | Newton/MJWarp, PhysX(60 DoF 초과, Zone F) 또는 관절 트리 분할 | 접지 접촉, 손가락 다접촉, 액추에이터 동역학 | C11 | 템플릿 P1(M6–M12) | Wave 2(M12–M24). P2 상업화는 휴머노이드·덱스터러스만, 사족은 템플릿·Crucible 평가로만 수익화 |
+| 차량(Mobility Pack α) | Chrono::Vehicle(Pacejka/TMeasy, SCM, Zone T/S) + PhysX Vehicle2(Zone F 전용) + esmini(OpenDRIVE/OpenSCENARIO) + FMI 3.0 | 타이어 힘, 서스펜션, 지형 변형 | C12(+ 후보 C19) | P2(M18–M24). WS1-M 1명(차량·해양 동역학 엔지니어, 서치 M16·착석 M18) + WS3 지원 | AV 시뮬레이터 시장에는 정면으로 들어가지 않고 MORAI·표준(OpenSCENARIO·OSI·FMI 3.0)으로 연결 |
+| 드론 | PX4 SITL + Gazebo Jetty | 추력·항력, 바람 외란 | C14(PX4 SITL 브리지, 백엔드 수 미집계) | P2(M20–M24, RL 템플릿 1종) | P3 국방 에디션 |
+| 선박·항만·조선 해양 | 클린룸 Fossen 6-DOF + Chrono FSI | 부가질량, 감쇠, 파랑 강제력 | C13 | P3(M25–) | Wave 3(트리거 조건부) |
+| 오프로드 UGV | Chrono CRM(SPH 지형), Chrono SCM | 연약 지반 침하·견인력 | C15 | P3 | Wave 3b(M27–) |
 
-- **차량 물리에 대한 입장:** 자동차를 하지 않는 것이 아님. 차량 동역학은 Chrono로 준비하고, 상업 진입은 OEM HIL 도구와 정면 경쟁하지 않는 연결 전략으로 함. Newton에는 전용 타이어·파워트레인 모델이 없으므로 고충실도 차량은 Chrono가 맡음.
+- **차량 물리에 대한 입장:** 자동차를 하지 않는 것이 아니다. AV 시뮬레이터 시장에는 정면으로 들어가지 않고 MORAI·표준(OpenSCENARIO·OSI·FMI 3.0)으로 연결하며, 차량 트윈 기술(Mobility Pack α: 야드·저속 차량 동역학과 도로 시나리오 재생)은 M18–M24에 준비한다. Newton에는 전용 타이어·파워트레인 모델이 없으므로 고충실도 차량은 Chrono가 맡는다. 테넌트 AMR은 Newton 관절 휠 모델을 쓰고, PhysX Vehicle2는 조건부 PhysX SDK 소스 어댑터가 생기기 전까지 Zone F 전용이다.
 
 ---
 
@@ -148,7 +158,7 @@ calibration_source: certificate   # 자산 인증서의 백엔드별 파라미�
 
 **표 3-1. 접촉 모델 비교**
 
-| 항목 | MJWarp 소프트 접촉 | Newton SDF + hydroelastic | PhysX 5.11(Isaac Lab, Zone F) | Drake hydroelastic + SAP |
+| 항목 | MJWarp 소프트 접촉 | Newton SDF + hydroelastic | PhysX 5.x(Isaac Lab, Zone F)¹ | Drake hydroelastic + SAP |
 |---|---|---|---|---|
 | 정식화 | 볼록 최적화 기반 소프트 제약. 피라미드·타원 마찰 콘. MuJoCo와 동일한 MJCF 의미론 | SDF 충돌 + 압력장(pressure-field) 접촉. Drake 개념을 차용한 분산 접촉 패치 | TGS/PGS 반복 솔버, 축약좌표 관절, GPU SDF(비볼록 삼각 메시). 마찰은 패치 기반 근사 | 압력장 접촉 + SAP(볼록 컴플라이언트) 솔버. FEM 변형체와 강체-변형체 접촉 |
 | 수치 정밀도 | float32(GPU). 같은 모델의 MuJoCo CPU는 float64 | float32 [A] | float32 | float64 |
@@ -158,6 +168,8 @@ calibration_source: certificate   # 자산 인증서의 백엔드별 파라미�
 | 보정 대상 파라미터 | `solref`(timeconst, dampratio), `solimp`, `friction`(미끄럼·비틀림·구름), `condim`, `impratio` | 형상 재질 마찰, 접촉 강성·감쇠, hydroelastic 계수, SDF 해상도 [A] | `contactOffset`, `restOffset`, 정·동마찰, 반발계수, 솔버 위치·속도 반복 수 | `hydroelastic_modulus`, `hunt_crossley_dissipation`, `mu_static`, `mu_dynamic`, `resolution_hint` |
 | 상대 처리량 [A] | 최고 | 중간 | 중상 | 오프라인 |
 | 쓰는 곳 | 보행, 일반 파지, 손안 조작, 빈 피킹(테넌트) | 삽입·조립, 박스 적재, 면 접촉(테넌트의 접촉 집약 경로) | 팩토리 접촉 집약 조작, 촉각, 시연 증강 | 삽입 기준값, 접촉 파라미터 교정, 분쟁 시 3차 의견 |
+
+¹ Isaac Sim 6.1에 번들된 PhysX·Kit 버전은 미확인이다. 'Isaac Lab 3.x + PhysX 5.x(Isaac Sim 6.1 번들 버전 [U], 공개 SDK 최신 5.11)', 'Kit 110.x [U]'로 표기하고, 인증서·Run Manifest에는 실제 이미지에서 읽은 번들 버전을 기록한다.
 
 ### 3.2 선택 순서도
 
@@ -200,7 +212,7 @@ flowchart TD
 
 **표 3-2. 물리량별 엔진 파라미터 대응**
 
-| 물리량 | MuJoCo / MJWarp | Newton(SDF·hydroelastic) | PhysX 5.11 | Drake |
+| 물리량 | MuJoCo / MJWarp | Newton(SDF·hydroelastic) | PhysX 5.x(Isaac Sim 6.1 번들 [U]) | Drake |
 |---|---|---|---|---|
 | 마찰 | `friction[0]` 미끄럼, `[1]` 비틀림, `[2]` 구름, 콘 종류 | 형상 재질 마찰 계수 [A] | `staticFriction`, `dynamicFriction`, 패치 마찰 모드 | `mu_static`, `mu_dynamic`, stiction tolerance |
 | 접촉 강성·감쇠 | `solref`(timeconst, dampratio), `solimp`(폭·중점·지수) | 접촉 강성·감쇠, hydroelastic 계수 [A] | `contactOffset`, `restOffset`, 컴플라이언트 접촉 강성·감쇠 | `hydroelastic_modulus`, `hunt_crossley_dissipation` |
@@ -222,15 +234,16 @@ flowchart TD
 |---|---|---|---|---|---|---|---|
 | 폴리백·파우치 | 물류 택배 비닐, 지퍼백 | 얇은 막(shell) + 내용물 강체·입상체 결합 [A] | Newton VBD(1.6의 compliant ALM 옵션 포함) | MuJoCo 3.15 flex, PhysX FEM 표면(Zone F) | 막 신축·굽힘 강성, 표면 마찰, 내용물 질량 분포 | 낙하(P-DROP) + 폴리백 전용 P-BAG-v1(집기 처짐, 흡착 들어올림 처짐, P1 제정 [A]) | M12 실측 전 성능 보증 금지. 이후 Gold 프로파일이 있는 SKU만 |
 | 케이블·호스 | 커넥터 케이블, 냉장고 호스, 공압 튜브 | 로드(rod) | Newton VBD | MuJoCo cable composite | 선밀도, 굽힘·비틀림 강성, 감쇠 | 케이블 처짐(P-CABLE), 캔틸레버 처짐 | 처짐 오차 ≤5% 실측 확인 후 인수 기준에 포함 [A] |
-| 천·직물 | 작업복, 포장 천 | 천(cloth) | Newton Style3D | Newton VBD | 신축·전단·굽힘 강성, 마찰 | 드레이프 형상 Chamfer | 데모·데이터 전용(P3 장면 S14 전까지) |
-| 체적 연체 | 스펀지, 고무 그리퍼 패드, 과일 | 체적 FEM / VBD 연체 | Newton VBD | MuJoCo Stable Neo-Hookean(실험), MuJoCo IPC flex(3.14, 실험), PhysX FEM 체적 | 영률 E, 푸아송비 ν, 감쇠 | 압입(F/T 압자) | 측정된 E·ν 범위 안에서만 |
+| 천·직물 | 작업복, 포장 천 | 천(cloth) | Newton Style3D | Newton VBD | 신축·전단·굽힘 강성, 마찰 | 드레이프 형상 Chamfer | 데모·데이터 전용(P3 후보 장면 C21 천 드레이프 통과 전까지) |
+| 체적 연체 | 스펀지, 고무 그리퍼 패드, 과일 | 체적 FEM / VBD 연체 | Newton VBD | MuJoCo 3.15 Stable Neo-Hookean(실험), MuJoCo IPC flex 접촉(3.14, 실험), PhysX FEM 체적 | 영률 E, 푸아송비 ν, 감쇠 | 압입(F/T 압자) | 측정된 E·ν 범위 안에서만 |
 | 입상체·식품 | 곡물, 스낵, 너트·볼트 벌크 | MPM 입자 | Newton ImplicitMPM | Genesis MPM(관찰) | 입자 크기, 밀도, 내부 마찰각 | 안식각 측정 | 안식각 ±2° 확인 후 [A] |
 | 점성 유체 | 소스, 접착제 | MPM 점성 | Newton ImplicitMPM | — | 점도 | 유출 시간 | R&D 전용 |
 
 **변형체 보정의 핵심 기법: 대규모 병렬 식별 [A].** 변형체는 파라미터가 많고 기울기를 얻기 어렵다(MJWarp는 미분 불가, Newton은 Featherstone·SemiImplicit만 기초 미분). 대신 GPU 배치를 '후보 파라미터의 병렬 평가'에 쓴다. 예를 들어 CMA-ES 개체 64개 × 보정 trial 16개 = 1,024개 월드를 한 번에 돌려, 실측 영상에서 복원한 점군 시퀀스와 시뮬 메시 사이의 Chamfer 거리를 최소화한다. 이때 GPU 비결정성은 문제가 되지 않는다. 목적함수가 통계적이기 때문이다. 최종 후보만 D1 등급으로 3개 시드에서 재확인한다.
 
-- **IPC 계열의 위치:** MuJoCo 3.14의 IPC flex 접촉(관통 없음)과 Genesis IPC(libuipc)는 얇은 막의 관통 문제를 풀 수 있는 후보. 둘 다 실험 단계이므로 P1 베이크오프 추가 과제로만 평가 [A].
-- **계약 문구:** "변형체 거동은 [운영 범위]에서 측정된 Scorecard 값을 보고하며, 해당 범위 밖의 성능은 보증하지 않는다." 책임 상한은 계약 금액(DR PoC 조건).
+- **IPC 계열의 위치:** MuJoCo 3.14의 IPC flex 접촉(관통 없음)과 Genesis IPC(libuipc)는 얇은 막의 관통 문제를 풀 수 있는 후보다. 둘 다 실험 단계이므로 P1 베이크오프 추가 과제로만 평가한다[A].
+- **인증서 범위:** 변형체 동역학 산출물은 D1이다. 변형체 자산 인증서는 정적 보정 시험(P-CABLE 처짐, 정지 형상)을 MuJoCo CPU cable/flex로 D0 재현한 항목에만 붙이고 'experimental'로 표기한다(§2.1). 입상체·점성 유체는 인증 대상이 아니다.
+- **계약 문구:** "변형체 거동은 [운영 범위]에서 측정된 Scorecard 값을 보고하며, 해당 범위 밖의 성능은 보증하지 않는다." 책임 상한은 계약 금액이다(DR PoC 조건).
 
 ---
 
@@ -250,8 +263,8 @@ Kamino(Disney Research, arXiv 2603.16536)는 최대좌표계에서 구속 다물
 | MuJoCo equality(connect/weld) | 소프트 제약으로 루프 닫기 | 성숙, CPU 결정론 재현 가능 | 루프 닫힘 오차(드리프트), 강성 튜닝 필요 | Kamino 폴백, 인증 재현 모델 |
 | 트리 근사(루프 절단 + 결합 관절) | 루프를 끊고 mimic/tendon으로 결합 | 모든 엔진에서 동작 | 힘 전달 왜곡 | Bronze 자산의 임시 표현 |
 
-- **합격 기준 [A]:** 루프 닫힘 오차 ≤0.1 mm, 그리퍼 파지력-전류 곡선 실측 대비 ±5%(적합성 장면 S9).
-- **판매 규칙:** Kamino 기반 템플릿은 'experimental' 배지. 인증서의 재현 경로는 MuJoCo equality 모델로 별도 보정.
+- **합격 기준 [A]:** 적합성 장면 C10(백엔드 간 링크 구속 오차 ≤0.5 mm, 파지력 차이 ≤10%, 정본 [04 §4.6](04-system-architecture.md))을 통과하고, 랩 기준으로 루프 닫힘 오차 ≤0.1 mm, 그리퍼 파지력-전류 곡선 실측 대비 ±5%를 만족해야 한다.
+- **판매 규칙:** Kamino 기반 템플릿에는 'experimental' 배지를 붙인다. 인증서의 재현 경로는 MuJoCo equality 모델로 따로 보정한다.
 
 ### 5.2 60 DoF 초과 메커니즘
 
@@ -266,8 +279,8 @@ MJWarp 문서는 단일 연결 메커니즘이 약 60 DoF를 넘으면 성능이
 | O3 결합 관절 축소 | 손가락 결합 관절(mimic·tendon)을 독립 DoF에서 제외 | 일부 손에서 거동 단순화 | 손 모델 사양과 일치할 때만 |
 | O4 MJWarp 그대로 | 솔버 반복 수 증가 | 처리량 저하 | O1 대비 성공률 보정 steps/s/$ 가 10% 이내일 때만 |
 
-- **결정 시점:** 베이크오프 W7의 T11 스트레스 테스트(2026년 12월). 휴머노이드 + 덱스터러스 핸드 템플릿 출시(P1, M6–M12) 전에 O1–O4 중 기본값 확정.
-- **측정 항목:** env-steps/s, VRAM, 제약 위반량, 솔버 실패율, Newton ↔ PhysX ↔ MuJoCo 정책 이전 편차.
+- **결정 시점:** 베이크오프 W7(2026-12-14 ~ 12-20)의 T11 스트레스 테스트로 판정한다. 휴머노이드 + 덱스터러스 핸드 템플릿 출시(P1, M6–M12) 전에 O1–O4 중 기본값을 확정한다.
+- **측정 항목:** env-steps/s, VRAM, 제약 위반량, 솔버 실패율, Newton ↔ PhysX ↔ MuJoCo 정책 이전 편차를 잰다. 적합성 장면 C11(관절 궤적 RMSE ≤2°, 발 접촉 타이밍 ≤10 ms)이 회귀 기준이다.
 
 ---
 
@@ -281,18 +294,20 @@ MJWarp 문서는 단일 연결 메커니즘이 약 60 DoF를 넘으면 성능이
 
 | 등급 | 정의 | 허용 경로 | 고정해야 하는 것 | 검증 방법 | 대외 표기 | 쓰는 곳 |
 |---|---|---|---|---|---|---|
-| **D0 비트 재현** | 같은 입력이면 같은 상태 해시 | MuJoCo 3.15 CPU(float64, 월드당 단일 스레드). Newton 결정론 모드(W7 통과 후, 고정 GPU SKU·드라이버) | 엔진 버전·빌드 플래그, CPU 명령어 집합 [A] 또는 GPU SKU, 드라이버(R580 이상의 정확한 빌드), CUDA, 시드, 장면 USD 해시, 자산 인증서 ID | 3회 반복 실행, 100 스텝마다 `qpos`·`qvel`·접촉 상태의 SHA-256 해시 전부 일치 | "결정론적 재현(Deterministic Replay)" | 인증서, 인증 시험, 분쟁 재현, Crucible 회귀 |
-| **D1 통계적 재현** | 같은 설정이면 지표 분포가 같다 | Newton/MJWarp GPU 배치, PhysX, VBD, MPM | 시드, GPU SKU, 드라이버, env 수, decimation, 솔버 설정 | 시드 3개 × 에피소드 1,024개 이상 [A]. 성공률 차이 ≤2%p이고 95% 신뢰구간이 겹침 | "통계적 재현(statistically reproducible)" | 데이터셋, 학습 정책, 벤치마크, 변형체 산출물 |
-| **D2 비재현(생성형)** | 같은 시드라도 출력 동일성을 보장하지 않음 | Cosmos 증강, VLM 물성 추정 | 모델 가중치 해시, 시드, 프롬프트·제어 맵 해시 | 라벨 일관성 QA 통과 여부만 보장(§12) | "생성형 증강 프레임" | L4 증강 프레임, Bronze 물성 사전분포 |
+| **D0 비트 재현**(`D0_bitwise`) | 같은 입력이면 같은 상태 해시 | MuJoCo 3.15 CPU(float64, 월드당 단일 스레드). Newton 결정론 모드(W7 통과 후, 고정 GPU SKU·드라이버). Chrono CPU·Fossen Warp CPU·PX4 SITL lockstep은 반복 비트 일치 시험 통과와 CTO 등록 후에만(목표 Chrono M22, Fossen M28 [A]) | 엔진 버전·빌드 플래그, CPU 명령어 집합 [A] 또는 GPU SKU, 드라이버(R580 이상의 정확한 빌드), CUDA, 시드, 장면 USD 해시, 자산 인증서 ID | 3회 반복 실행, 100 스텝마다 `qpos`·`qvel`·접촉 상태의 SHA-256 해시 전부 일치 | "결정론적 재현(Deterministic Replay)" | 인증서, 인증 시험, 분쟁 재현, Crucible 회귀 |
+| **D1 통계적 재현**(`D1_statistical`) | 같은 설정이면 지표 분포가 같다 | Newton/MJWarp GPU 배치, PhysX, VBD·flex·cable 동역학, MPM, D0 등록 전의 Chrono·Fossen·PX4 SITL | 시드, GPU SKU, 드라이버, env 수, decimation, 솔버 설정 | 시드 3개 × 에피소드 1,024개 이상 [A]. 성공률 차이 ≤2%p이고 95% 신뢰구간이 겹침 | "통계적 재현(statistically reproducible)" | 데이터셋, 학습 정책, 벤치마크, 변형체 산출물 |
+| **D2 비재현(생성형)**(`D2_generative`) | 같은 시드라도 출력 동일성을 보장하지 않음 | Cosmos 증강, VLM 물성 추정 | 모델 가중치 해시, 시드, 프롬프트·제어 맵 해시 | 라벨 일관성 QA 통과 여부만 보장(§12) | "생성형 증강 프레임" | L4 증강 프레임, Bronze 물성 사전분포 |
+
+- **토큰 정본:** 결정론 등급은 Run Manifest 필드 `D0_bitwise` / `D1_statistical` / `D2_generative` / `none`으로 기록한다(DR §4.1). `none`은 등급 판정 대상이 아닌 실행(디버그·미리보기)이다. 인증서의 `aic:det:class`도 같은 토큰을 쓴다.
 
 ### 6.2 GPU 비결정성은 왜 생기는가
 
-- **원자적 누적:** MJWarp는 접촉력·제약 누적에 atomics를 쓰므로 부동소수 덧셈 순서가 실행마다 달라짐. float32에서는 이 차이가 수백 스텝 후 궤적 분기로 커짐.
-- **PhysX의 범위:** 같은 하드웨어·같은 버전의 강체·관절 장면만 결정론. GPU 모델이 바뀌거나 천·연체가 들어가면 보장 없음(Isaac Lab 재현성 문서).
-- **실측 보고:** GPUSimBench는 주요 GPU 배치 시뮬레이터 전반의 실행 간·환경 간 비결정성을 보고[U].
-- **결론:** 데이터셋·정책 같은 대량 산출물에 비트 재현을 약속하는 것은 기술적으로 거짓. 우리는 그 대신 D0 재현 가능한 '인증 시험 장면'을 따로 두고, 대량 산출물은 D1로 표기함.
+- **원자적 누적:** MJWarp는 접촉력·제약 누적에 atomics를 쓰므로 부동소수 덧셈 순서가 실행마다 달라진다. float32에서는 이 차이가 수백 스텝 뒤 궤적 분기로 커진다.
+- **PhysX의 범위:** 같은 하드웨어·같은 버전의 강체·관절 장면만 결정론이다. GPU 모델이 바뀌거나 천·연체가 들어가면 보장이 없다(Isaac Lab 재현성 문서).
+- **실측 보고:** GPUSimBench는 주요 GPU 배치 시뮬레이터 전반에서 실행 간·환경 간 비결정성을 보고했다[U].
+- **결론:** 데이터셋·정책 같은 대량 산출물에 비트 재현을 약속하는 것은 기술적으로 거짓이다. 우리는 그 대신 D0 재현이 가능한 '인증 시험 장면'을 따로 두고, 대량 산출물은 D1로 표기한다.
 
-### 6.3 Newton 결정론 모드 검증(베이크오프 W7, 2026년 12월)
+### 6.3 Newton 결정론 모드 검증(베이크오프 W7, 2026-12-14 ~ 12-20)
 
 Newton v1.4.0은 반복 롤아웃의 비트 일치를 위한 결정론 실행 경로를 추가했고, '하드웨어 간 이식 가능' 결정론도 주장한다. 후자는 미시험이다[U]. W7에서 아래 매트릭스로 판정한다.
 
@@ -300,14 +315,15 @@ Newton v1.4.0은 반복 롤아웃의 비트 일치를 위한 결정론 실행 �
 
 | 시험 | 조건 | 합격 기준 | 불합격 시 |
 |---|---|---|---|
-| N1 동일 GPU 반복 | RTX PRO 6000 1장, 3회 반복, 장면 S1–S5 | 100 스텝 해시 100% 일치 | Newton D0 불허, MuJoCo CPU만 |
+| N1 동일 GPU 반복 | RTX PRO 6000 1장, 3회 반복, 적합성 장면 C01–C05 | 100 스텝 해시 100% 일치 | Newton D0 불허, MuJoCo CPU만 |
 | N2 GPU 간 | RTX PRO 6000 vs H100 vs L40S | 해시 일치 | D0를 'GPU SKU 고정'으로 한정, 인증서에 SKU 기록 |
 | N3 env 수 독립성 | 월드 1개 vs 4,096개 중 0번 월드 | 해시 일치 | 인증 재현은 단일 월드 실행으로 고정 |
 | N4 드라이버 마이너 | R580 계열 마이너 2종 | 해시 일치 | 드라이버 빌드를 인증 재현 이미지에 고정 |
 | N5 처리량 비용 | 결정론 모드 on/off | steps/s 저하율 측정(판정 아님) | 인증 시험에만 사용, 학습은 off |
 
-- **P0 운용:** 결정 메모(2027년 1월 첫 주) 전까지 인증 재현은 MuJoCo CPU 단독. 인증 시험 결정론적 재현율 100%(G0 조건 ④)는 이 경로로 달성.
-- **LIGHT 풀 사용:** MuJoCo CPU 재현은 GPU가 필요 없으므로 LIGHT 풀(L4·CPU)에서 실행. 인증 원가를 낮추는 구조적 이점.
+- **P0 운용:** 결정 메모(2027-01 첫 주) 전까지 인증 재현은 MuJoCo CPU 단독으로 한다. 인증 시험 결정론적 재현율 100%(G0 조건 ④)는 이 경로로 달성한다.
+- **LIGHT 풀 사용:** MuJoCo CPU 재현은 GPU가 필요 없으므로 LIGHT 풀(L4·CPU)에서 실행한다. 인증 원가를 낮추는 구조적 이점이다.
+- **다른 D0 후보 경로:** Chrono CPU·클린룸 Fossen(Warp CPU)·PX4 SITL lockstep은 N1–N4와 동등한 반복 비트 일치 시험(04 §4.6의 DT-5)을 통과하고 CTO가 등록해야 D0 목록에 들어간다. 시험 매트릭스는 이 표의 N1·N3·N4를 CPU 경로에 맞게 바꿔 쓴다(N2 대신 CPU 명령어 집합 고정).
 
 **그림 3. 인증 재현 시퀀스**
 
@@ -331,19 +347,19 @@ sequenceDiagram
 
 | 필드 | 예시 | 용도 |
 |---|---|---|
-| `det.class` | `D0` / `D1` / `D2` | 대외 표기 자동 결정 |
+| `det.class` | `D0_bitwise` / `D1_statistical` / `D2_generative` / `none` | 대외 표기 자동 결정(DR §4.1 정본 토큰) |
 | `engine` | `mujoco==3.15.0`, `newton==1.6.1`, `warp-lang==1.18.0` | 재현 이미지 선택 |
-| `hw.gpu_sku`, `hw.driver`, `hw.cuda` | `RTX PRO 6000 Blackwell`, `580.xx`, `13.x` | D0(Newton) 조건 확인 |
-| `sim.dt`, `sim.substeps`, `sim.decimation`, `sim.num_envs` | `0.005`, `2`, `4`, `4096` | D1 재현 조건 |
+| `hw.gpu_sku`, `hw.driver`, `hw.cuda` | `RTX PRO 6000 Blackwell`, `580.xx`, `13.x` | D0(Newton) 조건 확인. Warp 1.18 휠은 Turing(sm_75) 이상 GPU와 R580 이상 드라이버(CUDA 13)가 필요하다 |
+| `sim.dt`, `sim.substeps`, `sim.num_envs` | `0.005`, `4`, `4096` | D1 재현 조건. `substeps`는 제어 1회당 물리 스텝 수(= decimation, 04 Kernel API) |
 | `seeds` | `[17, 29, 43]` | D1 재현 |
 | `scene.usd_hash`, `assets[].cert_id` | SHA-256, UUID | 입력 동일성 |
 | `replay.hash_chain` | 100 스텝 간격 해시 목록의 머클 루트 [A] | D0 대조 |
 
 ### 6.5 대외 문구 규칙
 
-- **금지 문구:** "완전 재현", "어떤 GPU에서도 동일", "결정론적 데이터셋".
-- **허용 문구:** D0 → "인증 시험은 결정론적으로 재현됩니다(MuJoCo 3.15 CPU 기준)". D1 → "통계적으로 재현됩니다(시드·GPU·드라이버는 Run Manifest 참조)".
-- **검토자:** 마케팅·IR·정부과제 문서의 재현성 문구는 Head of Fidelity & Evaluation 승인 필수.
+- **금지 문구:** "완전 재현", "어떤 GPU에서도 동일", "결정론적 데이터셋"은 쓰지 않는다.
+- **허용 문구:** D0 → "인증 시험은 결정론적으로 재현됩니다(MuJoCo 3.15 CPU 기준)". D1 → "통계적으로 재현됩니다(시드·GPU·드라이버는 Run Manifest 참조)". 변형체 인증 항목 → "정적 보정 시험 항목만 결정론적으로 재현됩니다(experimental)".
+- **검토자:** 마케팅·IR·정부과제 문서의 재현성 문구는 Head of Fidelity & Evaluation이 승인한다.
 
 ---
 
@@ -441,71 +457,97 @@ Drake는 진실이 아니다. 진실은 실측이다. Drake는 실측이 비싸�
 
 **결론: 적합성 스위트는 '엔진이 바뀌어도 우리 결과는 바뀌지 않는다'는 증명서다. 모든 엔진 업그레이드와 릴리스 트레인은 이 스위트를 통과해야 병합된다.**
 
-### 8.1 장면 목록(15개)과 허용치
+### 8.1 장면 목록(정본 C01–C15)과 05의 랩 기준
 
-장면 S1–S5는 DR이 정한 v0 구성이고, S6–S15와 허용치는 이 문서의 계획값이다[A]. 'N×M' KPI는 백엔드 N개 × 장면 M개이며, 적용 불가 조합은 매트릭스에 N/A로 명시하고 적용 가능한 조합은 전부 통과해야 한다.
+**장면 번호·장면·허용치의 정본은 [04 §4.6](04-system-architecture.md)의 C01–C15다.** 이 절은 04의 허용치를 그대로 옮기고, 이 문서가 더하는 랩 기준값(Fidelity Lab 측정 프로토콜, §15.3)과 도입 시점만 덧붙인 보충표다. 허용치 최종값은 베이크오프 W2 측정 후 결정 메모(2027-01 첫 주, 목표 2027-01-08)에서 하나로 고정한다[A]. 'N×M' KPI는 백엔드 N개 × 장면 M개이며, 적용 불가 조합은 매트릭스에 N/A로 명시하고 적용 가능한 조합은 전부 통과해야 한다. 단계별 장면 수는 P0 C01–C05, P1 C01–C08, P2 C01–C12, P3 C01–C15다.
 
-**표 8-1. 적합성 장면과 판정 기준**
+**표 8-1. 적합성 장면(정본 04 §4.6)과 05가 더하는 랩 기준**
 
-| ID | 장면 | 검사 대상 | 지표 | 허용치 [A] | 기준값 출처 | 결정론 | 도입 |
+| C-ID | 장면(04 §4.6) | 도입 | 허용치(정본, 04 §4.6) [A] | 05가 더하는 랩 기준값·측정 프로토콜 [A] | 판정 방식 | 구 05 번호 |
+|---|---|---|---|---|---|---|
+| C01 | 낙하 박스(1 kg, 10 cm 정육면체, 1 m 낙하) | P0 | 자유낙하 위치: 이산 적분기 해 대비 ≤1e-6 m 또는 연속 해석해 대비 ≤3 mm(dt = 1 ms) / 정지 후 관통 ≤1 mm / 정지 드리프트 ≤0.5 mm/s / 백엔드 간 정지 자세 ≤2 mm·1° | P-DROP-v1: 첫 반발 높이 랩 실측 대비 ±10%(보조 지표, KPI 판정 밖) | D0 비트 재현 + 허용치 | S1 |
+| C02 | 진자(1 m, 1 kg, 10°·60°) | P0 | 주기 ≤0.5%(10°는 소각 해석해, 60°는 타원적분 정확해 대비) / 10초 에너지 드리프트(무감쇠) ≤1% / 백엔드 간 각도 RMSE ≤1° | 해석해만 사용(랩 불필요). PhysX는 각감쇠·관절 마찰 0을 명시 | D0 + 허용치 | S2 |
+| C03 | Franka 픽(스크립트 관절 궤적, 5 cm 큐브) | P0 | 파지 성공 10/10 / 리프트 중 미끄럼 ≤5 mm / EE 궤적 ADE(백엔드 간) ≤5 mm / 관절 토크 상대차 ≤10% | Test Cell 1 파지 trial로 미끄럼 기준 교차 확인(P1) | D0(MuJoCo CPU)·D1(GPU) | S3 |
+| C04 | 폴리백(VBD vs MuJoCo flex) | P0 | 정지 형상 Chamfer ≤15 mm / 100시드 파지 성공률 차이 ≤15%p(통계적, 결정론 요구 없음) | P-BAG-v1(P1 제정): 정지 위치 분포 KS 검정 p ≥0.05 | 통계 판정(D1) | S4 |
+| C05 | 바퀴 차량(4륜 AMR, 1 m/s + 0.5 rad/s, 10초) | P0 | 최종 위치 ≤5 cm, 요 ≤3°(백엔드 간) | 바닥재별 마찰 실측(에폭시·콘크리트), 해석적 차동 구동 운동학과 대조 | D0 + 허용치 | S5 |
+| C06 | 관절 서랍 열기 | P1 | 힘-변위 곡선 RMSE ≤10% | 토크 게이지 실측(§7.1 관절 행) | D0·D1 | — |
+| C07 | 페그 삽입(공차 0.5 mm) | P1 | 접촉력 피크 vs Drake ±20% / 100시드 성공·실패 판정 일치 ≥95% | P-INS-v1 실측으로 보정한 Drake 기준(§7.6: Drake 보정 합격은 피크 삽입력 오차 ≤15%) | D0·D1 | S7 |
+| C08 | 한국 SKU 빈 클러터(30개, 5초 정착) | P1 | 관통 ≤2 mm / 폭발(속도 >10 m/s) 0건 | Forge 9단계 물리 QA와 같은 자산 세트 | D0·D1 | — |
+| C09 | 케이블 삽입 | P2 | 끝점 궤적 ADE ≤10 mm / 성공률 차이 ≤15%p | P-CABLE-v1로 보정한 로드 파라미터 사용 | 통계 판정(D1) | — |
+| C10 | Kamino 폐루프 그리퍼 | P2 | 링크 구속 오차 ≤0.5 mm / 파지력 차이 ≤10% | 실측 그리퍼 기준 루프 닫힘 ≤0.1 mm, 파지력-전류 곡선 ±5%(§5.1) | D1(MuJoCo equality로 D0 재현) | S9 |
+| C11 | 휴머노이드 + 양손(60 DoF 초과) 정지·보행 1주기 | P2 | 관절 궤적 RMSE ≤2° / 발 접촉 타이밍 ≤10 ms | T11 결합부 위치 오차 ≤0.5 mm(§5.2 O2) | D1(MuJoCo CPU 분할 모델로 D0 재현) | S10 |
+| C12 | 차량 정상상태 선회(Mobility Pack α) | P2 | 정상 선회 반경·요레이트 ≤3%, ≤3% | 실차·야드 차량 로그(P2, 디자인 파트너) [A] | D1(Chrono D0 등록 전) | — |
+| C13 | 선박 6-DOF 롤 감쇠(Fossen) | P3 | 롤 주기·감쇠비 해석해 대비 ≤2%, ≤5% | 수조 시험 또는 문헌 대비 롤 주기 ±3%, 감쇠비 ±10% [U] | D1(Fossen D0 등록 전, 목표 M28 [A]) | S15 |
+| C14 | 쿼드로터 호버·스텝 응답(PX4 SITL) | P3 | 고도 오버슈트 ≤5%, 정착 시간 ≤10% | 드론 템플릿(P2, M20–M24) 회귀 장면으로 먼저 운영 | D1(lockstep D0 등록 전) | — |
+| C15 | SCM 지형 침하(오프로드 UGV) | P3 | 침하 깊이 실측 대비 ≤15% | 토조 침하 실측 [A] | D1 | — |
+
+**표 8-1b. C16+ 확장 후보(05에만 있던 장면, KPI 미집계)**
+
+아래 장면은 04 §4.6에 편입되기 전까지 '보조 장면'으로 야간 CI에서 돌리되, 단계별 '백엔드 × 장면' KPI에는 세지 않는다. 번호는 후보 번호이며 04 §4.6 편입 시 확정한다.
+
+| 후보 ID | 장면 | 지표 | 허용치 [A] | 기준값 출처 | 판정 방식 | 도입 | 구 05 번호 |
 |---|---|---|---|---|---|---|---|
-| S1 | 낙하 박스 | 반발, 정지 자세 | 정지 위치·회전 오차, 첫 반발 높이 | ≤2 mm, ≤1°, ±10% | MuJoCo CPU + 랩 낙하 | D0 | P0 |
-| S2 | 진자 | 적분기, 에너지 보존 | 주기 오차, 10초 에너지 드리프트(무감쇠) | ≤0.5%, ≤1% | 해석해 | D0 | P0 |
-| S3 | Franka 픽 | 파지 마찰, 관절 제어 | 성공률 차이, 들어올린 후 미끄러짐 | ≤5%p, ≤2 mm | MuJoCo CPU | D0/D1 | P0 |
-| S4 | 폴리백 | 변형체 낙하·안착 | 정지 위치 평균 차, 분포 KS 검정 | ≤1 cm, p ≥0.05 | 기준 분포(랩) | D1 | P0 |
-| S5 | 바퀴 차량 | 휠 접촉, 차량 운동학 | 직진 편향, 회전 반경 | ≤1%, ±2% | 해석해 / Chrono | D0 | P0 |
-| S6 | 경사면 미끄럼 | 정·동마찰 | 미끄럼 개시각, 가속도 | ±1°, ±5% | 해석해 + 랩 | D0 | P1 |
-| S7 | 페그 삽입 | SDF·hydroelastic | 성공 판정 일치, 피크 힘 | ≥95%, ±15% | Drake + 랩 | D0/D1 | P1 |
-| S8 | 케이블 처짐 | 로드 굽힘 | 중앙 처짐 오차 | ≤5% | 현수선 해 + 랩 | D1 | P1 |
-| S9 | Kamino 폐루프 그리퍼 | 루프 닫힘 | 닫힘 오차, 파지력 | ≤0.1 mm, ±5% | 실측 그리퍼 | D1 | P2 |
-| S10 | 휴머노이드 + 양손 | 60 DoF 초과 | 제약 위반, 정책 이전 편차 | 결합부 ≤0.5 mm, ≤5%p | MuJoCo CPU 분할 모델 | D1 | P2 |
-| S11 | 박스 5단 적재 | 적층 안정성, 볼록 분해 부풀림 | 10초 후 붕괴 판정 일치, 변위 | 일치 100%, ≤3 mm | 랩 | D0 | P2 |
-| S12 | AMR·차량 타이어 슬립 | 종·횡 슬립 | 슬립 비-구동력 곡선 | 곡선 RMSE ≤10% | Chrono | D1 | P2 |
-| S13 | 입상체 붓기 | MPM | 안식각 | ±2° | 랩 | D1 | P3 |
-| S14 | 천 드레이프 | 직물 굽힘 | 형상 Chamfer | ≤5 mm | 랩 | D1 | P3 |
-| S15 | 부유체 롤 감쇠 | 해양 동역학 | 롤 주기, 감쇠비 | ±3%, ±10% | 수조 시험 또는 문헌 [U] | D0 | P3 |
+| C16 | 경사면 미끄럼 | 미끄럼 개시각, 가속도 | ±1°, ±5% | 해석해 + P-SLIDE-v1 | D0 | P1 | S6 |
+| C17 | 케이블 처짐(정적) | 중앙 처짐 오차 | ≤5% | 현수선 해 + P-CABLE-v1 | D0(MuJoCo CPU cable, 변형체 인증서의 정적 항목) | P1 | S8 |
+| C18 | 박스 5단 적재 | 10초 후 붕괴 판정 일치, 변위 | 일치 100%, ≤3 mm | 랩 | D0 | P2 | S11 |
+| C19 | AMR·차량 타이어 슬립 | 슬립 비-구동력 곡선 | 곡선 RMSE ≤10% | Chrono | D1 | P2 | S12 |
+| C20 | 입상체 붓기 | 안식각 | ±2° | 랩 | D1 | P3 | S13 |
+| C21 | 천 드레이프 | 형상 Chamfer | ≤5 mm | 랩 | D1 | P3 | S14 |
+
+- **구 번호 대응:** S1→C01, S2→C02, S3→C03, S4→C04, S5→C05, S7→C07, S9→C10, S10→C11, S15→C13. S6·S8·S11·S12·S13·S14는 C16–C21 후보다. 다른 문서가 인용한 '05 S12'(타이어 슬립)는 C19 후보, '05 S15'(수조 기준)는 C13의 랩 기준, '05 S12 확장'(지형)은 C15를 뜻한다. S 번호는 더 쓰지 않는다.
+- **허용치가 달라진 장면:** C01은 연속 해석해 대비 1e-4 m 기준을 쓰지 않는다. 반암시적 Euler의 1 m 낙하 오차가 약 ½·g·dt·t = 2.2 mm(dt = 1 ms)라서 어떤 백엔드도 통과할 수 없기 때문이다. 옛 05의 정지 자세 ≤2 mm·1°는 C01의 '백엔드 간 정지 자세'로 흡수됐다. C05·C07·C10·C13은 04의 허용치를 KPI 판정에 쓰고, 05의 값은 '랩 기준' 열에서 실측 대비 보조 지표로만 쓴다.
 
 ### 8.2 단계별 백엔드와 적용 매트릭스
 
-- **P0(3개):** Newton/MJWarp, MuJoCo 3.15 CPU, Isaac Lab 3.x + PhysX(Zone F).
-- **P1(4개):** + Drake v1.57(접촉 기준).
+- **P0(3개):** Newton/MJWarp, MuJoCo 3.15 CPU, Isaac Lab 3.x + PhysX(Zone F). 베이크오프 W2의 '× 5개 백엔드'는 실행 구성 B1–B5이며, B1·B2·B5는 같은 Newton/MJWarp 계열이므로 KPI '3×5'의 백엔드 3개는 Newton/MJWarp 계열·PhysX·MuJoCo CPU의 통과 수로 센다.
+- **P1(4개):** + Drake v1.57(오프라인 접촉 기준, 접촉 장면만).
 - **P2(5개):** + Chrono 10(Mobility Pack α, M18–M24).
-- **P3(6개):** + 자체 Fossen 6-DOF 해양 모듈(Wave 3). PhysX SDK 소스 어댑터가 P2 조건으로 착수되면 그 어댑터가 먼저 6번째가 되고, Fossen은 7번째로 추가 [A].
+- **P3(6개):** + 자체 Fossen 6-DOF 해양 모듈(Wave 3, 해양 장면 C13). PhysX SDK 소스 어댑터가 P2 조건으로 착수되면 추가 백엔드로 세되, 6×15 KPI는 Fossen을 포함한 6개 기준으로 판정한다.
+- **브리지는 백엔드가 아니다:** FMU(FMI 3.0)와 PX4 SITL은 공동 시뮬레이션 브리지라 백엔드 수에 넣지 않는다. C14는 PX4 SITL 브리지 위에서 돌지만 KPI의 백엔드 수에는 영향을 주지 않는다.
 
-**표 8-2. 장면 × 백엔드 적용 매트릭스(● 적용, ○ 통계 판정, — N/A)**
+**표 8-2. 장면 × 백엔드 적용 매트릭스(● 적용, ○ 통계 판정, — N/A, 적용 백엔드의 정본은 04 §4.6)**
 
-| 장면 | Newton/MJWarp | MuJoCo CPU | PhysX(Isaac Lab) | Drake | Chrono | Fossen |
-|---|---|---|---|---|---|---|
-| S1 낙하 박스 | ● | ● | ● | ● | — | — |
-| S2 진자 | ● | ● | ● | ● | ● | — |
-| S3 Franka 픽 | ● | ● | ● | — | — | — |
-| S4 폴리백 | ○ | ○ | ○ | — | — | — |
-| S5 바퀴 차량 | ● | ● | ● | — | ● | — |
-| S6 경사면 | ● | ● | ● | ● | ● | — |
-| S7 페그 삽입 | ● | ● | ● | ● | — | — |
-| S8 케이블 처짐 | ○ | ○ | ○ | — | — | — |
-| S9 Kamino 그리퍼 | ● | ● | — | — | — | — |
-| S10 휴머노이드 + 양손 | ● | ● | ● | — | — | — |
-| S11 박스 적재 | ● | ● | ● | ● | — | — |
-| S12 타이어 슬립 | ○ | — | ○ | — | ● | — |
-| S13 입상체 | ○ | — | — | — | ○ | — |
-| S14 천 드레이프 | ○ | ○ | ○ | — | — | — |
-| S15 부유체 롤 | — | — | — | — | ○ | ● |
+| 장면 | Newton/MJWarp | MuJoCo CPU | PhysX(Isaac Lab) | Drake | Chrono | Fossen | 브리지(PX4 SITL·FMU, 미집계) |
+|---|---|---|---|---|---|---|---|
+| C01 낙하 박스 | ● | ● | ● | ● | ● | — | — |
+| C02 진자 | ● | ● | ● | ● | ● | — | — |
+| C03 Franka 픽 | ● | ● | ● | — | — | — | — |
+| C04 폴리백 | ○ | ○ | ○ | — | — | — | — |
+| C05 바퀴 차량 | ●(관절 휠) | ● | ●(Vehicle2, Zone F) | — | — | — | — |
+| C06 관절 서랍 | ● | ● | ● | — | — | — | — |
+| C07 페그 삽입 | ●(SDF·hydro) | — | ● | ● | — | — | — |
+| C08 한국 SKU 빈 클러터 | ● | ● | ● | — | — | — | — |
+| C09 케이블 삽입 | ○ | — | ○ | — | — | — | — |
+| C10 Kamino 그리퍼 | ●(Kamino) | ●(equality) | — | — | — | — | — |
+| C11 휴머노이드 + 양손 | ●(분할) | ● | ● | — | — | — | — |
+| C12 차량 정상 선회 | — | — | ●(Vehicle2, Zone F) | — | ● | — | — |
+| C13 선박 롤 감쇠 | — | — | — | — | ○(FSI) | ● | — |
+| C14 쿼드로터 호버 | — | — | — | — | — | — | ●(PX4 SITL) |
+| C15 SCM 지형 침하 | — | — | — | — | ● | — | — |
+
+- **Fossen 열의 '—':** 클린룸 Fossen 모듈은 선체 6-DOF 동역학 전용이라 강체 일반 장면(C01·C02)에는 적용하지 않는다(04 §4.6의 '전체'는 강체 일반 백엔드를 뜻한다).
+- **C07의 MuJoCo CPU:** 삽입 과제의 인증 재현 후보(MuJoCo CPU + SDF 근사, §2.1 4행)를 확인하는 참고 실행으로 돌리되, 04 §4.6 적용 백엔드에 없으므로 KPI 판정 조합에는 넣지 않는다.
 
 ### 8.3 CI 운영 절차
 
-1. **야간 실행:** LIGHT 풀에서 MuJoCo CPU·Drake 장면, RT/TRAIN 풀의 소형 슬롯에서 GPU 백엔드 장면. 전체 스위트 실행 시간 ≤2시간 [A].
-2. **업스트림 릴리스 감지:** Newton·MuJoCo·Warp·Isaac Lab·Drake의 새 태그를 매일 감시. 사이드 브랜치에서 7일 안에 스위트 실행 [A].
-3. **판정:** 적용 조합 전부 통과 → 트레인 후보 등록. 1개라도 실패 → 원인 분류(엔진 회귀 / 우리 어댑터 / 허용치 재검토) 후 이슈 등록, 엔진 회귀는 업스트림 보고.
-4. **채택:** 트레인 후보는 인증 재현 회귀(기존 인증서 표본 50개 [A]의 D0 재실행)를 통과해야 병합. 채택 지연 KPI는 P1 ≤45일, P2–P3 ≤30일.
-5. **공개:** 사내 벤치마크(steps/s/$, 보상 도달 시간)와 함께 P0 10개 과제 → P1 분기 → P2·P3 월간 갱신.
+1. **야간 실행:** LIGHT 풀에서 MuJoCo CPU·Drake 장면을, RT/TRAIN 풀의 소형 슬롯에서 GPU 백엔드 장면을 돌린다. C16+ 후보 장면도 같은 야간 실행에 넣는다. 전체 스위트 실행 시간은 ≤2시간이다[A].
+2. **업스트림 릴리스 감지:** Newton·MuJoCo·Warp·Isaac Lab·Drake의 새 태그를 매일 감시하고, 사이드 브랜치에서 7일 안에 스위트를 돌린다[A].
+3. **판정:** 적용 조합이 전부 통과하면 트레인 후보로 등록한다. 1개라도 실패하면 원인을 분류(엔진 회귀 / 우리 어댑터 / 허용치 재검토)해 이슈로 등록하고, 엔진 회귀는 업스트림에 보고한다.
+4. **채택:** 트레인 후보는 인증 재현 회귀(기존 인증서 표본 50개 [A]의 D0 재실행)를 통과해야 병합한다. 채택 지연 KPI는 P1 ≤45일, P2–P3 ≤30일이며, 새 엔진 릴리스를 사이드 브랜치에서 검증 완료 후보로 만들기까지의 일수로 잰다. 프로덕션 반영은 다음 릴리스 트레인에서 한다.
+5. **공개:** 사내 벤치마크(steps/s/$, 보상 도달 시간)를 P0 10개 과제로 시작해 P1 분기, P2·P3 월간으로 갱신한다.
 
-### 8.4 정책 수출 전 sim2sim 게이트
+### 8.4 정책 수출 전 sim2sim 게이트(2단 구조)
 
-- **절차:** ONNX 내보내기 전에 정책을 게이트 백엔드 전부에서 같은 초기 조건 200개 [A]로 실행.
-- **합격 [A]:** 백엔드 쌍별 성공률 차이 ≤5%p, 관절 궤적 RMSE ≤0.05 rad.
-- **불합격 시:** '백엔드 과적합' 플래그 → 접촉 파라미터 도메인 랜덤화 폭 확대 후 재학습, 또는 고객 승인하에 운영 범위 축소.
-- **KPI:** 적용률 100%(P0–P3). 게이트를 건너뛴 정책은 Jetson 수출 파이프라인이 거부.
+**게이트의 정본은 [07 §7.3](07-training-module.md)의 2단 구조다.** 이 절은 물리 쪽 관점에서 같은 기준을 옮긴다. DR KPI '수출 전 sim2sim 게이트 적용률 100%'는 Tier 1 기준이다.
+
+| 단 | 적용 대상 | 교차 백엔드 | 절차와 합격 기준 [A] | 불합격 시 |
+|---|---|---|---|---|
+| **Tier 1: 수출 차단 게이트** | 모든 정책(수출 전 적용률 100%) | Zone F 정책: PhysX·Newton·MuJoCo CPU 3개. Zone T/S 정책: Newton·MuJoCo CPU 2개(조건부 PhysX SDK 소스 어댑터 편입 시 3개) | 학습 백엔드에서 1,000 에피소드 → 교차 백엔드에서 같은 정책·같은 시드 집합: 성공률 차이 ≤10%p, 평균 반환 비율 ≥0.85 → 지연·노이즈 주입 후 성공률 하락 ≤15%p → ONNX(opset 고정) 변환 후 행동 최대 오차 ≤1e-3 | 수출 차단. 원인 분류(물리 의존·과적합·수치) 후 SKILL 라인에 반려 |
+| **Tier 2: 인증 등급 게이트** | 로봇-과제 인증서·Crucible 공식 캠페인 대상 정책 | Tier 1과 같은 게이트 백엔드 전부 | Tier 1 통과 후 같은 초기 조건 200개: 백엔드 쌍별 성공률 차이 ≤5%p, 관절 궤적 RMSE ≤0.05 rad | 인증 보류. '백엔드 과적합' 플래그 → 접촉 파라미터 도메인 랜덤화 폭 확대 후 재학습, 또는 고객 승인하에 운영 범위 축소 |
+
+- **각 백엔드는 자기 보정값으로 돈다:** 게이트의 각 백엔드는 자산 인증서의 백엔드별 파라미터 세트(§3.4)로 실행한다. 파라미터를 복사해 돌린 결과는 게이트 판정에 쓰지 않는다.
+- **KPI:** Tier 1 적용률 100%(P0–P3)다. 게이트를 건너뛴 정책은 Jetson 수출 파이프라인이 거부한다. Tier 2는 인증 대상에만 적용하며 인증서의 `aic:conf` 필드에 결과를 남긴다.
+- **왜 두 단인가:** 모든 정책에 5%p를 걸면 변형체·접촉 과제의 PoC 반복이 막히고, 인증서에 10%p를 허용하면 인증의 의미가 흐려진다. 납품 속도는 Tier 1이, 인증의 엄격성은 Tier 2가 지킨다.
 
 ---
 
@@ -522,7 +564,7 @@ Drake는 진실이 아니다. 진실은 실측이다. Drake는 실측이 비싸�
 | **L1 물리 기반 메시·재질** | 재질의 빛 반응, 형상, 질량·마찰 스키마 | MDL(RTX), MaterialX 1.39.x, OpenPBR 1.0, UsdPhysics + newton/mjc/physx 스키마 | MaterialX·OpenPBR Apache-2.0, MDL SDK BSD-3 [U] | F·T·S(MDL은 RTX 경로) | 컬러 차트 색차 ΔE2000, mAP 비율 | WS3 + 테크니컬 아티스트 |
 | **L2 신경 재구성 배경** | 대상 현장의 배경·조명·클러터 | gsplat 1.6.0, 3DGRUT 2.0(3DGUT), fVDB Reality Capture, `UsdVolParticleField3DGaussianSplat`, glTF `KHR_gaussian_splatting`(비준) | Apache-2.0 | F·T·S | 보류 뷰 PSNR/SSIM/LPIPS | WS2 Forge |
 | **L3 보정 센서** | ISP·노이즈·왜곡·거리·강도 | 팩토리: RTX 카메라(PPISP)·OmniLidar·OmniRadar. 테넌트: 자체 Warp Sensor Library. 공통: 디바이스 실측 프로파일 | RTX는 NVIDIA 독점(Zone F), Warp 라이브러리는 자체 | F / T·S | 라이다 거리 오차, 노이즈 PSD, Chamfer | WS3 |
-| **L4 생성형 증강** | 날씨·조명·마모·질감의 외형 다양성 | Cosmos Transfer 2.5 → Cosmos 3 Nano 16B(M9 파인튜닝) | Transfer 2.5 가중치 NVIDIA Open Model License, Cosmos 3 OpenMDW-1.1 | F 우선, T·S는 법률 검토 V7 후 | 라벨 일관성 통과율, 증강 전후 mAP 증분 | WS3 + WS5 |
+| **L4 생성형 증강** | 날씨·조명·마모·질감의 외형 다양성 | Cosmos Transfer 2.5(P1 DATA 라인 M5–M8) → Cosmos 3 Nano 16B(M9부터 파인튜닝) | Transfer 2.5 가중치 NVIDIA Open Model License, Cosmos 3 OpenMDW-1.1 | F 우선, T·S는 법률 검토 V7 후 | 라벨 일관성 통과율, 증강 전후 mAP 증분 | WS3 + WS5 |
 
 **그림 5. 하나의 스테이지에서 네 계층이 결합되는 방식**
 
@@ -576,7 +618,7 @@ L3는 §11(센서 시뮬레이션), L4는 §12(생성형 증강과 라벨 QA)에
 | 갭 원인 | 처방 | 측정 | 비용 수준 [A] |
 |---|---|---|---|
 | 대상 현장의 배경·클러터 | L2 스플랫(Real2Sim) | 보류 뷰 LPIPS, 현장 mAP 비율 | 현장당 촬영 반나절 + GPU 수 시간 |
-| 롱테일 자세·배치·조명 | 구조화된 도메인 랜덤화(Replicator). 범위는 현장 실측(조도, 색온도)으로 고정 | mAP 비율, 소량 실데이터 곡선 | 래스터 이미지 ₩0.3/장 |
+| 롱테일 자세·배치·조명 | 구조화된 도메인 랜덤화(Zone F는 Replicator, Zone T/S는 Newton Warp 래스터 + Warp Sensor Library). 범위는 현장 실측(조도, 색온도)으로 고정 | mAP 비율, 소량 실데이터 곡선 | 래스터 이미지 ₩0.3/장 |
 | 외형 다양성(오염, 마모, 날씨) | L4 생성형 증강 | 증강 전후 mAP 증분, 라벨 통과율 | 프레임당 GPU-초 단위, 가장 비쌈 |
 | 센서 특성 | L3 실측 프로파일 | 노이즈 PSD, 라이다 오차 | 센서 SKU당 측정 1–2일 |
 | 남는 잔차 | 소량 실데이터 파인튜닝(기본 포함) | 합성 + 실데이터 10% vs 실데이터 100% | 고객 데이터 소량 |
@@ -587,7 +629,7 @@ L3는 §11(센서 시뮬레이션), L4는 §12(생성형 증강과 라벨 QA)에
 
 ## 10. 현실감 ②: Athanor Forge 10단계 Real2Sim 파이프라인
 
-**결론: Forge는 '휴대폰 영상 → 인증된 SimReady 자산'을 만드는 공장 라인이다. 10단계 모두 허용형 라이선스이고, 단계마다 자동 QA 게이트가 있어 무개입 비율을 30%(P0)에서 90%(P3)로 끌어올린다.**
+**결론: Forge는 '휴대폰 영상 → 인증된 SimReady 자산'을 만드는 공장 라인이다. 10단계 모두 상업 사용이 가능한 라이선스로 짠다(허용형이 기본이고, 커스텀 사용 제한 라이선스인 VGGT-1B-Commercial·SAM 3D Objects는 V7 법률 검토 조건부). 단계마다 자동 QA 게이트가 있어 무개입 비율을 30%(P0)에서 90%(P3)로 끌어올린다.**
 
 ### 10.1 파이프라인
 
@@ -598,7 +640,7 @@ flowchart TD
     S1["1 촬영 - 휴대폰, 로봇 영상, 선택 라이다 + 익명화"] --> S2["2 피드포워드 포즈와 메트릭 깊이 - VGGT-1B-Commercial, MapAnything, DA3"]
     S2 --> S3["3 3DGUT 스플랫 - gsplat 1.6, 3DGRUT 2.0"]
     S3 --> S4["4 표면 메시 - gsplat 2DGS 모드, fVDB, 클린룸 구현"]
-    S4 --> S5["5 생성형 보완 - TRELLIS.2 nvdiffrast 교체, SAM 3D 민수 전용"]
+    S4 --> S5["5 생성형 보완 - TRELLIS.2 nvdiffrast 교체, SAM 3D 민수 V7 조건부"]
     S5 --> S6["6 관절 추정 - Articulate-Anything + 자체 모델"]
     S6 --> S7["7 충돌 형상 - CoACD, CuACD"]
     S7 --> S8["8 물성 - VLM 사전분포 + 영상 sysid"]
@@ -617,10 +659,10 @@ flowchart TD
 | # | 단계 | 기술(버전) | 라이선스 | 에디션 제한 | 산출물 | 자동 QA 게이트 [A] |
 |---|---|---|---|---|---|---|
 | 1 | 촬영·익명화 | CEN 촬영 가이드 앱(자체), 온프렘 촬영·재구성 키트(P1, 카메라 반입 제한 사이트용). 익명화는 RF-DETR N–L 기반 얼굴·번호판·고객 IP 검출 + 블러·인페인팅 | 자체 / Apache-2.0. Ultralytics(AGPL)는 SaaS 사용 금지 | 없음 | 원본 MCAP(고객 사이트·데이터 거주 태그 준수) + 익명화 프레임 | 익명화 재현율 ≥99%, 모션 블러·노출 검사, 커버리지 지도 |
-| 2 | 포즈·메트릭 깊이 | VGGT-1B-Commercial(포즈), MapAnything(`map-anything-apache` 가중치), DA3 Small/Base/Metric | VGGT-Commercial 상용 허용·군사 금지(신청서). MapAnything 코드·apache 가중치 Apache-2.0(기본 CC-BY-NC 가중치 금지). DA3 S/B/Metric Apache-2.0(Large/Giant/Nested CC-BY-NC 금지) | Air-gap: VGGT-Commercial 제외, MapAnything-apache + DA3 경로만 | 카메라 포즈, 메트릭 깊이, 스케일 | 재투영 오차 ≤1 px, 기준 카드 대비 스케일 오차 ≤1% |
+| 2 | 포즈·메트릭 깊이 | VGGT-1B-Commercial(포즈), MapAnything(`map-anything-apache` 가중치), DA3 Small/Base/Metric | VGGT-1B-Commercial은 커스텀 사용 제한 라이선스(신청서, 군사·ITAR 제외) → **조건부(V7)**. MapAnything 코드·apache 가중치 Apache-2.0(기본 CC-BY-NC 가중치 금지). DA3 S/B/Metric Apache-2.0(Large/Giant/Nested CC-BY-NC 금지) | VGGT-Commercial의 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외. Air-gap은 MapAnything-apache + DA3 경로만 | 카메라 포즈, 메트릭 깊이, 스케일 | 재투영 오차 ≤1 px, 기준 카드 대비 스케일 오차 ≤1% |
 | 3 | 3DGUT 스플랫 | gsplat 1.6.0(main 브랜치, PyPI 미배포 → 커밋 해시 고정), 3DGRUT 2.0(PPISP 포함) | Apache-2.0 | 3DGRT는 RT 코어 GPU 필요 | `UsdVolParticleField3DGaussianSplat`, glTF + `KHR_gaussian_splatting`, 웹용 SPZ | 보류 뷰 PSNR/SSIM/LPIPS(§9.3 기준) |
 | 4 | 표면 메시 | gsplat 2DGS 모드, fVDB Reality Capture(대규모 현장), PGSR·MILo 아이디어의 클린룸 재구현(논문만 참조) | Apache-2.0 / 자체 | 없음 | 수밀(watertight) 메시 + OpenPBR 텍스처 | 수밀·매니폴드, 2단계 대비 스케일 오차 ≤1%, 깊이 점군 대비 Chamfer ≤2 mm(물체) |
-| 5 | 생성형 보완 | TRELLIS.2-4B(nvdiffrast를 자체 Warp/CUDA 래스터라이저로 교체 [A]. ≥24 GB VRAM, H100 512³ 약 3초·1024³ 약 17초), SAM 3D Objects(단일 시점 클러터) | TRELLIS.2 MIT. SAM License(상용 허용, 군사·ITAR 금지). Hunyuan3D 2.x 금지(한국 제외, 출력물 포함) | SAM 3D는 민수 전용, Air-gap 제외 | 보이지 않는 면을 보완한 메시 + 면별 '생성됨' 마스크 | 생성 보완 면적 ≤30%면 Silver 자격, 초과 시 Bronze만 |
+| 5 | 생성형 보완 | TRELLIS.2-4B(nvdiffrast를 자체 Warp/CUDA 래스터라이저로 교체 [A]. ≥24 GB VRAM, H100 512³ 약 3초·1024³ 약 17초), SAM 3D Objects(단일 시점 클러터) | TRELLIS.2 MIT. SAM 3D Objects는 SAM License(커스텀 사용 제한, 신청서, 군사·ITAR 제외) → **조건부(V7)**. Hunyuan3D 2.x 금지(한국 제외, 출력물 포함) | SAM 3D는 민수 전용·V7 조건부(테넌트 호스팅 추론은 V7 통과 후, 온프렘 번들은 재배포 서면 확인 전 제외), Air-gap 제외 | 보이지 않는 면을 보완한 메시 + 면별 '생성됨' 마스크 | 생성 보완 면적 ≤30%면 Silver 자격, 초과 시 Bronze만 |
 | 6 | 관절 추정 | Articulate-Anything(액터-크리틱 자기 수정) + CEN 합성 관절 데이터로 파인튜닝한 자체 모델 | MIT / 자체. PhysX-Anything(S-Lab) 금지 | 없음 | URDF/MJCF/UsdPhysics 관절(회전·직선), 한계 | 관절 축 오차 ≤5°(상호작용 영상 대비), 한계 구간 스윕 자기충돌 0 |
 | 7 | 충돌 형상 | CoACD, GPU CuACD(RTX 4090에서 메시당 약 0.25초, 약 100배). 삽입 핵심부는 SDF | MIT. V-HACD(BSD [U])는 폴백 | 없음 | 볼록 껍질 집합(통상 4–24개) 또는 SDF | 부피 부풀림 ≤3%, 껍질 수 ≤32, 적층 시 부유 간격 ≤1 mm |
 | 8 | 물성 | VLM 사전분포(SaaS는 프런티어 API, 소버린은 온프렘 오픈 가중치, 공공·국방은 출처 확인 국산 모델) + 영상 sysid(MuJoCo sysid 툴박스) | 모델별 확인(V8) / Apache-2.0 | 국방: 출처 확인 모델만 | θ ± σ, `source` 태그 | 밀도 50–8,000 kg/m³, μ 0.05–1.5 범위, 사전분포와 3σ 초과 괴리 시 검토 |
@@ -672,7 +714,7 @@ gantt
     고객 고지와 대체 자산 제공         :c2, 2027-01-11, 28d
     section 전환
     Forge v0 강체 3DGUT 운영           :d1, 2027-01-18, 41d
-    NeRF 런타임 퇴역                   :milestone, 2027-02-28, 0d
+    NeRF 런타임 퇴역 G0                :milestone, 2027-02-26, 0d
 ```
 
 | 단계 | 기간 | 작업 | 완료 기준 | 책임 |
@@ -682,7 +724,7 @@ gantt
 | T3 병행 구축 | 2026-11 중순–12 | gsplat 1.6.0·3DGRUT 2.0 파이프라인을 같은 입력으로 구축 | 같은 촬영으로 끝까지 산출 | Forge Lead |
 | T4 패리티 | 2026-12–2027-01 | 기존 촬영 30세트 [A]에서 NeRF 대비 PSNR/SSIM/LPIPS·처리 시간 비교 | 3DGUT이 동등 이상, 처리 시간 ≤ NeRF | Forge Lead |
 | T5 재처리 | 2026-12 말–2027-02 | 금지 코드로 만든 자산은 원본 촬영에서 재생성, 원본이 없으면 비공개 | 오염 자산 공개 0 | Forge Lead + 마켓플레이스 |
-| T6 퇴역 | 2027-02-28(M4, G0) | NeRF 런타임 프로덕션 제거. nerfstudio(Apache-2.0)는 오프라인 외삽 도구로만 보존 | 프로덕션 NeRF 호출 0 | CTO |
+| T6 퇴역 | 2027-02-26(M4, G0) | NeRF 런타임 프로덕션 제거. nerfstudio(Apache-2.0)는 오프라인 외삽 도구로만 보존 | 프로덕션 NeRF 호출 0 | CTO |
 
 ### 10.5 라이선스 감사 판정표
 
@@ -699,10 +741,10 @@ gantt
 | nvdiffrast / nvdiffrec | NVIDIA Source Code License(1-Way Commercial, NVIDIA 외 비상업) | **NEVER** | TRELLIS.2의 래스터라이저 교체 |
 | TRELLIS v1의 diffoctreerast | 리서치 권고상 제거 대상 | **NEVER** | TRELLIS.2(MIT)만 사용 |
 | Hunyuan3D 2.x | 한국·EU·UK 제외(출력물 포함) | **NEVER** | — |
-| VGGT-1B 원본 / VGGT-1B-Commercial | 비상업 / 상용 허용·군사 금지 | 원본 NEVER / Commercial 민수 허용 | 신청서 제출, Air-gap 제외 |
+| VGGT-1B 원본 / VGGT-1B-Commercial | 비상업 / 커스텀 사용 제한(신청서, 군사·ITAR 제외) | 원본 NEVER / Commercial **조건부(V7, 민수)** | 신청서 제출. 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외. Air-gap 제외 |
 | DA3 Large/Giant/Nested / S·B·Metric | CC-BY-NC / Apache-2.0 | NC NEVER / S·B·Metric 허용 | 가중치 레지스트리에서 체크섬 고정 |
-| MapAnything 기본 가중치 / apache 가중치 | CC-BY-NC / Apache-2.0 | 기본 NEVER / apache 허용 | — |
-| SAM 3D Objects | SAM License(군사·ITAR 금지) | 민수 허용 | 국방 에디션 화이트리스트에서 제외 |
+| MapAnything 기본 가중치 / apache 가중치 | CC-BY-NC / Apache-2.0 | 기본 NEVER(DR NEVER 목록 #22 후보) / apache 허용 | 가중치 레지스트리에서 `map-anything-apache`만 허용 |
+| SAM 3D Objects | SAM License(커스텀 사용 제한, 신청서, 군사·ITAR 제외) | **조건부(V7, 민수)** | 테넌트 호스팅 추론은 V7 통과 후, 온프렘 번들은 재배포 서면 확인 전 제외. 국방 에디션 화이트리스트에서 제외 |
 | PhysX-Anything | S-Lab License | **NEVER** | Articulate-Anything + 자체 모델 |
 | ManiSkill 자산 | CC BY-NC 4.0 | **NEVER**(상업 번들) | — |
 | CoACD / CuACD, Articulate-Anything, TRELLIS.2 코드·가중치 | MIT | 허용 | nvdiffrast 의존 제거 확인 |
@@ -739,14 +781,18 @@ gantt
 
 **카메라 ISP(PPISP) 처리 순서.** PPISP(physically-plausible ISP)는 3DGRUT(2026-01), gsplat(2026-07), Isaac Lab 3.0의 렌더러 중립 ISP로 들어왔다. 우리는 같은 ISP 모델을 R1(Warp)·R2(3DGUT)·R3(RTX) 출력에 공통으로 적용해, 렌더러를 바꿔도 카메라 외형 갭이 같은 방식으로 닫히게 한다. 처리 순서는 다음과 같다.
 
-1. 선형 복사량(HDR) 렌더 → 노출 시간·아날로그 게인 적용
-2. **선형 RAW 영역에서** 샷 노이즈(포아송), 판독 노이즈, PRNU·DSNU 주입
-3. 비네팅, 렌즈 왜곡·롤링셔터(3DGUT은 렌더 단계에서 직접 처리)
-4. 화이트 밸런스 → 색 보정 행렬(ColorChecker로 피팅)
-5. 톤 매핑(HDR → LDR, 감마) → 디바이스 프로파일의 노이즈 저감·샤프닝
-6. 압축 아티팩트(선택, 고객 파이프라인이 JPEG·H.264를 쓸 때)
+1. 선형 복사량(HDR) 렌더
+2. **광학:** 렌즈 왜곡·MTF/블러·비네팅, 롤링셔터 시간 샘플링(3DGUT은 왜곡·롤링셔터를 렌더 단계에서 직접 처리)
+3. **노출·게인:** 노출 시간, 아날로그 게인
+4. **선형 RAW 영역의 센서 노이즈:** 광자(샷) 노이즈(포아송, 광학 감쇠 후 광자 수 기준), PRNU·DSNU, 암전류, 판독 노이즈
+5. **ADC 양자화:** 센서 비트 깊이(예: 10·12 bit)로 양자화
+6. **디모자이킹:** Bayer CFA 샘플링 후 디모자이킹
+7. 화이트 밸런스 → 색 보정 행렬(CCM, ColorChecker로 피팅)
+8. 톤 매핑(HDR → LDR, 감마)
+9. 디바이스 프로파일의 노이즈 저감·샤프닝
+10. 압축 아티팩트(선택, 고객 파이프라인이 JPEG·H.264를 쓸 때)
 
-- **흔한 오류와 우리 규칙:** 최종 sRGB 이미지에 가우시안 노이즈를 더하는 방식은 밝기별 노이즈 분포가 실제 센서와 다르게 나옴. 노이즈는 반드시 2단계(선형 RAW)에서 주입하고, 광자 전달 곡선으로 검증.
+- **흔한 오류와 우리 규칙:** 최종 sRGB 이미지에 가우시안 노이즈를 더하면 밝기별 노이즈 분포가 실제 센서와 다르게 나온다. 노이즈는 반드시 4단계(광학 감쇠를 거친 선형 RAW)에서 주입하고, 광자 전달 곡선으로 검증한다. 비네팅을 노이즈 뒤에 적용하면 모서리의 노이즈 크기가 틀어져 광자 전달 곡선 검증이 깨지므로, 광학 단계는 항상 노이즈 앞에 둔다.
 
 ### 11.2 실측 프로파일 방법론
 
@@ -771,7 +817,7 @@ gantt
 | V-S2 육상 레이더 캠페인 | P2 전반 | 기지 RCS 코너 반사체를 거리별 배치, 차량·AMR 레이더 1종 | 거리-검출확률 곡선, RCS 오차 | RCS 오차 ≤3 dB, 검출확률 곡선 차 ≤10%p | WS3 |
 | V-S3 해상 캠페인 | P2 후반–P3 초 | KRISO·KR·시험기관 협력 [U]. 해상 상태 2–4, 표적 선박, X-band 해양 레이더, EO/IR | 해면 클러터 분포(K-분포 적합 KS 검정), 검출확률, 오경보율, 겉보기 온도 | 클러터 분포 KS p ≥0.05, 겉보기 온도 ≤2 K | WS3 + 협력 기관 |
 | V-S4 오차 막대 공개 | P3 초 | 95% 신뢰구간을 붙인 프로파일 데이터시트 공개 + 제3자 시험성적서 | 공개 프로파일, 시험성적서 | 제3자 서명 | Head of Fidelity |
-| V-S5 판매 개시 판정 | M25 이후 | Wave 3 트리거(ARR ₩30억 이상 또는 확정 ₩5억 이상 앵커) + Sovereign GA + V-S4 완료 | 판매 승인 메모 | 세 조건 모두 | CEO |
+| V-S5 판매 개시 판정 | M25 이후 | Wave 3 트리거(ARR ₩30억 이상 또는 확정 ₩5억 이상 앵커. 기준안의 2028년 말 ARR은 ₩20억이므로 M25 착수는 앵커 계약 경로가 기본, DR §5.4) + Sovereign GA + V-S4 완료 | 판매 승인 메모 | 세 조건 모두 | CEO |
 | V-S6 실선 검증 | M30 | 실제 선박 로그로 합성 90% 이상 학습 검출기를 해상 벤치마크 평가(DR 데모) | 검증 리포트 | 고객 합의 기준 | WS4 |
 
 - **국방 추가 조건:** Air-gap 에디션은 SAM 계열·VGGT-Commercial·미확인 모델 제외, 건별 수출통제(EAR·ITAR) 심사.
@@ -789,7 +835,7 @@ gantt
 
 | 시기 | 모델 | 라이선스 | 용도 | GPU | 비고 |
 |---|---|---|---|---|---|
-| 현재–M8 | Cosmos Transfer 2.5(2B, 깊이·엣지·블러·분할 멀티 ControlNet. 저지연 증류 엣지 모델 2026-02-23) | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | DATA 라인 외형 증강(P1 M5부터) | TRAIN 풀(H100급) | 저장소는 유지보수 축소 상태 |
+| 현재(내부 시험)·M5–M8(P1 DATA 라인) | Cosmos Transfer 2.5(2B, 깊이·엣지·블러·분할 멀티 ControlNet. 저지연 증류 엣지 모델 2026-02-23) | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | DATA 라인 외형 증강(P1 M5부터) | TRAIN 풀(H100급) | 저장소는 유지보수 축소 상태 |
 | M9– | **Cosmos 3 Nano 16B** 한국 도메인 파인튜닝(공장·물류·조선소) | OpenMDW-1.1(전문 미확인 [U], V7 조건) | 증강 + 자동 품질 보조(장면 비평) | RTX PRO 6000 / H100 / B200 | Transfer 2.5 대비 품질은 사내 A/B로 판정 |
 | P3 | Cosmos 3 Super 64B | OpenMDW-1.1 | 정책 사전 선별(실셀 평가 전 필터) | H200 / B200 | 인증을 대체하지 않음 |
 | 관찰 | Cosmos 3 Edge 4B | OpenMDW-1.1 | 현장 Jetson 사전 필터 [A] | Jetson Thor | — |
@@ -815,9 +861,11 @@ flowchart LR
 
 **표 12-2. 검사 항목과 임계값 [A]**
 
+검사 ID C1–C8은 라벨 일관성 QA의 번호이며(한 자리), 적합성 장면 C01–C15(두 자리, §8.1)와 다르다. 혼동을 막기 위해 문서와 대시보드에서는 '라벨 QA C1–C8'로 부른다.
+
 | ID | 검사 | 방법 | 통과 기준 |
 |---|---|---|---|
-| C1 | 인스턴스 마스크 일치 | 검증용 분할 모델(민수는 SAM 3 계열 가능, 국방은 Apache 모델만)을 증강 프레임에 적용, 정답 마스크와 인스턴스별 IoU | 32×32 px 이상 IoU ≥0.85, 소형 ≥0.70 |
+| C1 | 인스턴스 마스크 일치 | 검증용 분할 모델(민수는 V7 통과 후 SAM 3 계열 가능, 국방은 Apache 모델만)을 증강 프레임에 적용, 정답 마스크와 인스턴스별 IoU | 32×32 px 이상 IoU ≥0.85, 소형 ≥0.70 |
 | C2 | 박스·클래스 일치 | 실데이터로 학습한 교사 검출기(RF-DETR)를 증강 프레임에 적용 | 매칭 IoU ≥0.80, 클래스 일치 ≥98% |
 | C3 | 깊이 일관성 | DA3-Metric 추정 깊이 vs 시뮬 정답 깊이(스케일 정렬 후) | AbsRel ≤0.10 |
 | C4 | 엣지 일관성 | 증강 프레임 엣지 vs 제어 엣지 맵 | F-score ≥0.70 |
@@ -826,11 +874,11 @@ flowchart LR
 | C7 | 시간 일관성(영상) | 광류 워핑 오차, 프레임 간 인스턴스 수 | 워핑 오차 상한 이내, 인스턴스 수 불변 |
 | C8 | 개수·환각 물체 | 정답 밖 위치의 신뢰도 0.5 이상 신규 검출 | 0 |
 
-- **재라벨 금지 이유:** 증강 프레임 라벨을 모델 출력으로 고치면 라벨 출처가 시뮬에서 생성 모델로 바뀌어 데이터셋의 정답성이 무너짐. 실패 프레임은 폐기.
-- **KPI(DR):** 증강 프레임 라벨 일관성 검사 통과율 ≥98%(P1), ≥99%(P2·P3). 이 수치는 생성기의 품질 지표이고, 납품 프레임은 정의상 100% 통과분.
-- **경제성 규칙 [A]:** 증강은 같은 GPU-시간을 도메인 랜덤화에 썼을 때보다 mAP 비율을 더 올릴 때만 유지. 데이터셋당 A/B 1회.
-- **비용 감각:** 영상 월드모델 추론은 비싸다(구형 Cosmos Predict1 7B 기준 H100 1장에서 클립당 약 383초, 참고치). 증강 비율은 데이터셋 프레임의 10–30%에서 시작 [A].
-- **IP:** '월드모델 증강 라벨 일관성 검증'은 M24까지 출원할 특허 8건 중 하나.
+- **재라벨 금지 이유:** 증강 프레임 라벨을 모델 출력으로 고치면 라벨 출처가 시뮬에서 생성 모델로 바뀌어 데이터셋의 정답성이 무너진다. 실패 프레임은 폐기한다.
+- **KPI(DR):** 증강 프레임 라벨 일관성 검사 통과율은 ≥98%(P1), ≥99%(P2·P3)다. 이 수치는 생성기의 품질 지표이고, 납품 프레임은 정의상 100% 통과분이다.
+- **경제성 규칙 [A]:** 증강은 같은 GPU-시간을 도메인 랜덤화에 썼을 때보다 mAP 비율을 더 올릴 때만 유지한다. 데이터셋당 A/B를 1회 돌린다.
+- **비용 감각:** 영상 월드모델 추론은 비싸다(구형 Cosmos Predict1 7B 기준 H100 1장에서 클립당 약 383초, 참고치). 증강 비율은 데이터셋 프레임의 10–30%에서 시작한다[A].
+- **IP:** '월드모델 증강 라벨 일관성 검증'은 M24까지 출원할 특허 8건 중 하나다.
 
 ### 12.3 근거: 증강이 실제로 돕는가
 
@@ -946,9 +994,11 @@ e_{\mathrm{range}}=\frac{1}{N}\sum_{i=1}^{N}\left|\hat{r}_i-r_i\right|,\qquad \m
 | 대외 문구 | "추정" | "영상 식별" | "실측 검증" |
 | KPI 집계 | 제외(참고: 5,000 → 100,000) | 포함 | 포함(Gold 30 → 2,000) |
 
-- **가격(DR, [A]):** 인증 트윈(물체) ₩30만–150만(Bronze → Gold), 자산 클래스당 인증서 발급 ₩500만, 로봇-과제 인증서 ₩3,000만–1억. Gold는 랩 실측 원가(물체당 셀 약 1.3시간 + 기술자 검수)를 가격 하한으로 사용.
-- **로봇-과제 인증서:** 자산이 아니라 '정책 × 로봇 × 셀 × 운영 범위'에 대한 인증. 성공률(신뢰구간), 갭, r을 담고 Crucible 평가 캠페인과 Arena 공동서명 절차를 따름([07 학습 모듈](07-training-module.md)).
-- **승급 경로:** Bronze → Silver는 고객이 Forge 앱으로 30초 상호작용 영상을 추가하면 자동. Silver → Gold는 물체를 랩으로 보내거나 현장 측정 키트로 측정.
+- **가격(DR, [A]):** 인증 트윈(물체) ₩30만–150만(Bronze → Gold), 자산 클래스당 인증서 발급 ₩500만, 로봇-과제 인증서 ₩3,000만–1억이다. Gold는 랩 실측 원가(물체당 셀 약 1.3시간 + 기술자 검수)를 가격 하한으로 쓴다.
+- **Gold 인증서가 담는 값:** Gold 인증서에는 랩 실측값과 측정 불확도(σ_lab)를 기록한다. §16.1의 '자동 Forge 추정값의 Gold 대비 질량/마찰 오차' KPI(P1 ≤10%/≤20% 등)는 자동화 체인의 정확도 지표이므로, Gold 자산의 인증 임계나 고객 보증 문구로 쓰지 않는다.
+- **변형체 인증서:** 변형체 자산은 정적 보정 시험(처짐·정지 형상)을 MuJoCo CPU로 D0 재현한 항목에만 인증서를 붙이고 'experimental'로 표기한다. 동역학 항목은 Scorecard 리포트(D1)로만 낸다(§2.1).
+- **로봇-과제 인증서:** 자산이 아니라 '정책 × 로봇 × 셀 × 운영 범위'에 대한 인증이다. 성공률(신뢰구간), 갭, r을 담고 sim2sim Tier 2(§8.4), Crucible 평가 캠페인, Arena 공동서명 절차를 따른다([07 학습 모듈](07-training-module.md)).
+- **승급 경로:** Bronze → Silver는 고객이 Forge 앱으로 30초 상호작용 영상을 추가하면 자동으로 진행한다. Silver → Gold는 물체를 랩으로 보내거나 현장 측정 키트로 측정한다.
 
 ### 14.2 `aic:TwinCertificate` 스키마
 
@@ -967,7 +1017,7 @@ USD API 스키마(`AicTwinCertificateAPI`)를 자산 prim에 적용하고, 같�
 | 출처 | `aic:phys:source:<param>` | token | `vlm`/`video`/`lab` |
 | 백엔드별 세트 | `aic:phys:backend:<engine>` | dictionary | 엔진·버전·솔버별 보정 파라미터 |
 | 점수 | `aic:score:ade`, `aic:score:fde`, `aic:score:restPoseErr`, `aic:score:forceRmse` | double | 보류 trial 기준 |
-| 재현 | `aic:det:class`, `aic:det:replayBackend`, `aic:det:replayHash` | token / string | D0/D1, 재현 엔진, 해시 체인 루트 |
+| 재현 | `aic:det:class`, `aic:det:replayBackend`, `aic:det:replayHash` | token / string | `D0_bitwise`/`D1_statistical`(Run Manifest와 같은 토큰), 재현 엔진, 해시 체인 루트 |
 | 적합성 | `aic:conf:suiteVersion`, `aic:conf:trainId` | string | 통과한 적합성 스위트와 릴리스 트레인 |
 | 증거 | `aic:evidence:trialIds`, `aic:evidence:runManifestId` | string[] / string | 코퍼스 trial ID |
 | 권리 | `aic:license:spdx`, `aic:prov:captureSource`, `aic:prov:consentId`, `aic:prov:anonymized` | string / bool | 라이선스, 촬영 출처, 동의, 익명화 |
@@ -998,7 +1048,7 @@ def Xform "KR_RamenBox_120g" (
     token aic:phys:source:mass = "lab"
     token aic:phys:source:muDynamic = "lab"
     double aic:score:ade = 0.017
-    token aic:det:class = "D0"
+    token aic:det:class = "D0_bitwise"
     string aic:det:replayBackend = "mujoco==3.15.0"
     string aic:conf:trainId = "train-1"
 }
@@ -1014,18 +1064,21 @@ def Xform "KR_RamenBox_120g" (
     "mass": {"value": 0.1213, "sigma": 0.0001, "source": "lab"},
     "mu_dynamic": {"value": 0.38, "sigma": 0.02, "source": "lab"},
     "backend": {
-      "mujoco==3.15.0": {"friction": [0.41, 0.005, 0.0001], "solref": [0.004, 1.0]},
-      "newton==1.6.1": {"mu": 0.39},
-      "physx==5.11": {"static_friction": 0.47, "dynamic_friction": 0.37, "restitution": 0.12}
+      "mujoco==3.15.0": {"dt": 0.005, "friction": [0.41, 0.005, 0.0001], "solref": [0.01, 1.0]},
+      "newton==1.6.1": {"dt": 0.005, "mu": 0.39},
+      "physx@isaacsim-6.1.0": {"dt": 0.005, "static_friction": 0.47, "dynamic_friction": 0.37, "restitution": 0.12}
     }
   },
   "scores": {"ade_m": 0.017, "fde_m": 0.021, "rest_pose_err_m": 0.003},
-  "determinism": {"class": "D0", "replay_backend": "mujoco==3.15.0", "hash_root": "sha256:4be2..."},
+  "determinism": {"class": "D0_bitwise", "replay_backend": "mujoco==3.15.0", "hash_root": "sha256:4be2..."},
   "evidence": {"trial_ids": ["FL1-DROP-0001", "FL1-PUSH-0007"], "run_manifest_id": "rm-2027-02-15-0042"},
   "license": {"spdx": "LicenseRef-AICHEMIST-Asset-1.0", "anonymized": true},
   "signature": {"alg": "Ed25519", "key_id": "aic-cert-2027-01", "value": "base64..."}
 }
 ```
+
+- **보정 dt 기록 규칙:** 백엔드별 세트에는 보정할 때 쓴 dt를 함께 기록한다. MuJoCo `solref`의 timeconst는 §3.3 R1(timeconst ≥ 2·dt)에 따라 dt = 5 ms이면 0.01 s 이상이어야 한다. 이보다 작은 값을 넣으면 MuJoCo가 내부에서 값을 조정하므로, 인증서에 적힌 보정값과 실제로 시뮬레이션된 값이 달라진다. 다른 dt로 쓰려면 그 dt에서 다시 보정한 세트를 추가한다.
+- **PhysX 키 표기:** PhysX 세트의 키는 공개 SDK 버전이 아니라 실제로 실행한 Isaac Sim 이미지의 번들 버전으로 기록한다(§3.1 각주).
 
 ### 14.3 유효기간과 재인증
 
@@ -1057,10 +1110,11 @@ flowchart LR
 
 ### 14.4 제3자 검증
 
-- **시험기관:** KTL, KOLAS 인정 시험기관, TTA 중 지표별 지정.
-- **대상 지표(DR):** 합성 전용 mAP 비율, 정책 갭(%p), 라이다 거리 오차(cm), 결정론적 재현율(%). P2 말까지 3개 이상.
-- **절차 [A]:** 우리는 프로토콜 문서, 데이터, D0 재현 컨테이너를 제출 → 시험기관이 재현 실행·지표 재계산 → 시험성적서 발행. 정부과제·IR에는 이 지표만 '검증된 KPI'로 표기.
-- **목표 수(DR):** 시험성적서 지표 1(P1) → 3(P2) → 5(P3). 첫 성적서는 2027 Q4(M12–M14).
+- **시험기관:** KTL, KOLAS 인정 시험기관, TTA 중에서 지표별로 지정한다.
+- **대상 지표(DR):** 합성 전용 mAP 비율, 정책 갭(%p), 라이다 거리 오차(cm), 결정론적 재현율(%)이다. P2 말까지 3개 이상을 받는다.
+- **Gold 관련 지표의 이름:** 시험기관과 비교하는 Gold 측정 지표는 'Gold 랩 실측 재현성'(같은 물체를 시험기관이 다시 쟀을 때의 차이)으로 따로 부른다. §16.1의 '자동 Forge 추정값의 Gold 대비 오차' KPI와 섞지 않는다.
+- **절차 [A]:** 우리가 프로토콜 문서, 데이터, D0 재현 컨테이너를 제출하면 시험기관이 재현 실행·지표 재계산을 거쳐 시험성적서를 발행한다. 정부과제·IR에는 이 지표만 '검증된 KPI'로 표기한다.
+- **목표 수(DR):** 시험성적서 지표 1(P1) → 3(P2) → 5(P3)다. 첫 성적서는 2027 Q4(M12–M14)에 받는다.
 
 ---
 
@@ -1070,9 +1124,9 @@ flowchart LR
 
 ### 15.1 역할·조직·예산
 
-- **소유 범위:** 측정 프로토콜, 테스트 셀, 페어드 코퍼스, Scorecard, 충실도 예측기, 인증서 서명.
-- **조직(DR):** Head of Fidelity & Evaluation(M4까지 확정, 게이팅 조건). WS4 Fidelity Science & Crucible 1 → 2 → 3 → 4명, WS4-L 촬영·랩 운영 1 → 2 → 2 → 3명(P0 → P3). 미확정 시 KAIST·SNU 교수 겸직 Chief Scientist + 시니어 sim2real 엔지니어로 대체.
-- **일정:** Test Cell 1 발주 D1–30(2026-11), 시운전과 측정 프로토콜 v1은 D61–90(2027-01 중순). Test Cell 2는 P1(목표 M8, 2027-06 [A]). 휴머노이드·양팔 셀은 파트너 리스(Arena v1 M18 전, 목표 M15–M17 [A]).
+- **소유 범위:** 측정 프로토콜, 테스트 셀, 페어드 코퍼스, Scorecard, 충실도 예측기, 인증서 서명을 소유한다.
+- **조직(DR):** Head of Fidelity & Evaluation은 M4까지 확정한다(게이팅 조건). WS4 Fidelity Science & Crucible은 1 → 2 → 3 → 4명, WS4-L 촬영·랩 운영은 1 → 2 → 2 → 3명이다(P0 → P3). P0에는 WS4 sim2real 과학자 1명이 M4에 착석한다. Head가 미확정이면 KAIST·SNU 교수 겸직 Chief Scientist + 시니어 sim2real 엔지니어로 대체한다.
+- **일정:** Test Cell 1은 D1–30(2026-10-19 ~ 11-17)에 BOM 확정과 견적 3건을 받고, 2026-11-30(D43)에 발주하며, D61–90(2026-12-18 ~ 2027-01-16)에 시운전과 측정 프로토콜 v1을 낸다. Test Cell 2는 P1(목표 M8, 2027-06 [A])에 가동한다. 휴머노이드·양팔 셀은 파트너 리스로 마련한다(Arena v1 M18 전, 목표 M15–M17 [A]).
 
 **표 15-1. Fidelity Lab 예산(DR 기준안, ₩억)**
 
@@ -1240,15 +1294,20 @@ erDiagram
 
 | 지표 | P0(M4) | P1(M12) | P2(M24) | P3(M36) |
 |---|---|---|---|---|
-| 적합성 스위트 통과(백엔드 × 장면) | 3 × 5 | 4 × 8 | 5 × 12 | 6 × 15 |
+| 적합성 스위트 통과(백엔드 수 × 장면, C01–C15)¹ | 3 × 5 | 4 × 8 | 5 × 12 | 6 × 15 |
 | 사내 벤치마크 공개(steps/s/$, 보상 도달 시간) | 10개 과제 | 분기 갱신 | 월간 갱신 | 월간 갱신 |
-| Gold 자산 질량 / 마찰 오차(랩 실측 대비) | ≤15% / ≤25% | ≤10% / ≤20% | ≤8% / ≤15% | ≤5% / ≤10% |
+| 자동 Forge 추정값의 Gold 랩 실측 대비 질량 / 마찰 오차² | ≤15% / ≤25% | ≤10% / ≤20% | ≤8% / ≤15% | ≤5% / ≤10% |
 | 궤적 오차 ADE(표준 밀기·낙하 시험) | 기준선 측정 | ≤2 cm | ≤1.5 cm | ≤1 cm |
-| 인증 시험 결정론적 재현율(CPU·결정론 경로) | 100% | 100% | 100% | 100% |
-| 신규 엔진 릴리스 채택 지연(고정 버전 기준) | — | ≤45일 | ≤30일 | ≤30일 |
+| 인증 시험 결정론적 재현율(D0 경로) | 100% | 100% | 100% | 100% |
+| 신규 엔진 릴리스 채택 지연(고정 버전 기준)³ | — | ≤45일 | ≤30일 | ≤30일 |
 
-- **'Gold 자산 질량/마찰 오차'의 측정 정의(이 문서의 운영 해석):** 랩 실측값이 있는 Gold 자산을 기준 세트로 삼아, 같은 자산을 Forge 자동 사슬(VLM 사전분포 + 영상 sysid)로 추정한 값의 상대오차 |θ_auto − θ_lab| / θ_lab을 잰다. Gold 인증서에 기록되는 값 자체는 랩 실측값이므로, 이 KPI는 '랩 없이 만든 Silver 자산이 얼마나 정확한가'를 Gold로 감사하는 지표다. 마찰은 백엔드별 보정값이 아닌 물리량(경사판·밀기 실측 μ) 기준.
-- **ADE 측정 정의:** P-DROP·P-PUSH 보류 trial(물체당 10개)의 ADE 중앙값을 Gold 자산 전체에서 평균.
+¹ 장면 정의의 정본은 [04 §4.6](04-system-architecture.md)의 C01–C15다(05의 S 번호는 쓰지 않고, C16+ 후보는 집계하지 않는다). P0 '3 × 5'의 백엔드 3개는 베이크오프 구성 B1–B5 가운데 Newton/MJWarp 계열·PhysX·MuJoCo CPU의 통과 백엔드 수로 센다. P3 '6'은 클린룸 Fossen을 포함한 6개다(§8.2).
+
+² 'Gold 자산 질량/마찰 오차'의 정의다(결정 D4, DR §4.1). 랩 실측값이 있는 Gold 자산을 기준 세트로 삼아, 같은 자산을 Forge 자동 사슬(VLM 사전분포 + 영상 sysid)로 추정한 값 θ_auto의 상대오차 |θ_auto − θ_lab| / θ_lab을 잰다. Gold 값 자체는 랩 실측이므로 이 지표는 자동화 체인의 정확도, 즉 '랩 없이 만든 Silver 자산이 얼마나 정확한가'를 Gold로 감사하는 지표다. 마찰은 백엔드별 보정값이 아닌 물리량(경사판·밀기 실측 μ) 기준이다. Gold 인증서에는 랩 실측값과 측정 불확도를 기록하며, 이 KPI 수치를 Gold 자산의 인증 임계나 고객 보증 문구로 쓰지 않는다. 시험기관 비교 지표는 'Gold 랩 실측 재현성'으로 따로 부른다(§14.4).
+
+³ 새 엔진 릴리스를 사이드 브랜치에서 적합성 스위트·인증 재현 회귀를 통과한 '검증 완료 후보'로 만들기까지의 일수다. 프로덕션 반영은 다음 릴리스 트레인에서 한다(§8.3).
+
+- **ADE 측정 정의:** P-DROP·P-PUSH 보류 trial(물체당 10개)의 ADE 중앙값을 Gold 자산 전체에서 평균한다.
 
 ### 16.2 현실감 KPI(DR §4.2)
 
@@ -1279,15 +1338,15 @@ erDiagram
 
 | 게이트 | 이 문서 관련 조건(DR) | 이 문서의 담보 장치 |
 |---|---|---|
-| G0(M4, 2027-02) | ② Silver/Gold 한국 SKU 150개 ③ 합성 전용 mAP 비율 ≥0.85 ④ 인증 시험 결정론적 재현 100% | Forge v0 + Test Cell 1, Scorecard v1, MuJoCo CPU D0 재현 |
-| G1(M11, 2027-09) | ⑥ 3개 피킹 과제 sim-to-real 갭 ≤15%p | 액추에이터 넷, sim2sim 게이트, 소량 실데이터 파인튜닝 |
-| G3(M24, 2028-10) | ④ 5개 과제 갭 ≤10%p ⑤ sim/real r ≥0.8 ⑥ Silver/Gold 4,000개 | Test Cell 2 + 휴머노이드 셀, Gold 최소 세트 자동화 |
+| G0(M4, 2027-02-26) | ② Silver/Gold 한국 SKU 150개 ③ 합성 전용 mAP 비율 ≥0.85 ④ 인증 시험 결정론적 재현 100% | Forge v0 + Test Cell 1, Scorecard v1, MuJoCo CPU D0 재현 |
+| G1(M11, 2027-09-24) | ⑥ 3개 피킹 과제 sim-to-real 갭 ≤15%p | 액추에이터 넷, sim2sim 게이트(Tier 1·2), 소량 실데이터 파인튜닝 |
+| G3(M24, 2028-10-27) | ④ 5개 과제 갭 ≤10%p ⑤ sim/real r ≥0.8 ⑥ Silver/Gold 4,000개 | Test Cell 2 + 휴머노이드 셀, Gold 최소 세트 자동화 |
 
 ### 16.5 내부 관리 지표 [A]
 
 | 지표 | P0 | P1 | P2 | P3 |
 |---|---|---|---|---|
-| sim2sim 게이트 1차 통과율 | 측정 | ≥80% | ≥85% | ≥90% |
+| sim2sim Tier 1 첫 시도 통과율([07 §13.3](07-training-module.md)과 같은 값) | 측정 | ≥70% | ≥80% | ≥85% |
 | 적합성 스위트 전체 실행 시간 | ≤4시간 | ≤2시간 | ≤2시간 | ≤2시간 |
 | Forge 9단계 QA 1차 통과율 | 측정 | ≥70% | ≥85% | ≥92% |
 | 발행 센서 프로파일(SKU 누적) | 2 | 8 | 20 | 40 |
@@ -1302,7 +1361,7 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %Y-%m
     section 물리
-    베이크오프 W1-W8                 :b1, 2026-11-02, 2026-12-31
+    베이크오프 W1-W8                 :b1, 2026-11-02, 2026-12-27
     결정 메모와 Train 1 매트릭스      :milestone, 2027-01-08, 0d
     적합성 4x8 Drake 추가             :c1, 2027-03-01, 2027-10-31
     적합성 5x12 Chrono 추가           :c2, 2027-11-01, 2028-10-31
@@ -1312,13 +1371,15 @@ gantt
     Cosmos 3 Nano 파인튜닝            :r3, 2027-07-01, 2027-10-31
     센서 공동연구 V-S1에서 V-S4       :r4, 2027-04-01, 2028-12-31
     section Fidelity Lab
-    Test Cell 1 발주와 시운전         :f1, 2026-11-02, 2027-01-15
+    Test Cell 1 BOM과 견적            :f0, 2026-10-19, 2026-11-17
+    Test Cell 1 발주                  :milestone, 2026-11-30, 0d
+    Test Cell 1 시운전과 프로토콜 v1  :f1, 2026-12-18, 2027-01-16
     Test Cell 2 가동                  :milestone, 2027-06-30, 0d
     첫 제3자 시험성적서               :milestone, 2027-12-31, 0d
     section 게이트
-    G0                                :milestone, 2027-02-28, 0d
-    G1                                :milestone, 2027-09-30, 0d
-    G3                                :milestone, 2028-10-31, 0d
+    G0                                :milestone, 2027-02-26, 0d
+    G1                                :milestone, 2027-09-24, 0d
+    G3                                :milestone, 2028-10-27, 0d
 ```
 
 ---
@@ -1342,9 +1403,9 @@ gantt
 | 리스크 | 봉쇄 장치 |
 |---|---|
 | 스플랫 조명 굽힘·외삽 열화·스플랫 위 센서 미성숙 | 촬영 사양, 조명 랜덤화 범위 제한, 충돌·라이다용 프록시 메시 |
-| 생성형 증강의 물체 경계 이동·문자 환각 | C1–C8 검사, 재라벨 금지, 1% 사람 감사, 배치 격리 |
+| 생성형 증강의 물체 경계 이동·문자 환각 | 라벨 QA C1–C8 검사, 재라벨 금지, 1% 사람 감사, 배치 격리 |
 | VLM 물성 추정이 수 배 틀림 | Bronze 표기 '추정', KPI 제외, Silver 승급 유도(30초 영상) |
-| CoACD 충돌 형상 부풀림(적층 시 부유) | 부피 부풀림 ≤3%, 적재 안정 시험(S11), 핵심부 SDF |
+| CoACD 충돌 형상 부풀림(적층 시 부유) | 부피 부풀림 ≤3%, 적재 안정 시험(후보 장면 C18 박스 5단 적재), 핵심부 SDF |
 | MJWarp 60 DoF 초과 약점 | T11 판정, PhysX 경로·트리 분할 |
 | Newton 미성숙·월간 API 변화, Isaac Lab 3.x EA | 릴리스 트레인 핀, 적합성 CI, 엔진 접촉 워크스트림 용량 25% 예약 |
 | GPU 비결정성이 '재현 가능' 약속을 훼손 | D0/D1/D2 등급, 대외 문구 규칙, Newton W7 시험 |
@@ -1379,39 +1440,43 @@ quadrantChart
 
 ## 18. 결정 사항 및 다음 액션
 
-**결론: 이 문서로 확정하는 것은 결정론 3등급, 엔진별 보정, Gold 최소 세트, KPI 측정 정의, 구역별 sim2sim 게이트, 라벨 QA 8개 검사, 레이더 판매 조건, NeRF 퇴역일이다.**
+**결론: 이 문서로 확정하는 것은 결정론 3등급, 엔진별 보정, Gold 최소 세트, KPI 측정 정의, 구역별·2단 sim2sim 게이트, 적합성 장면 정본(C01–C15)과 변형체 인증 범위, 라벨 QA 8개 검사, 레이더 판매 조건, NeRF 퇴역일이다.**
 
 **결정 사항**
 
 | # | 결정 | 근거 절 |
 |---|---|---|
-| D1 | 결정론을 D0/D1/D2로 나누고, 인증서는 D0에서만 발행한다. P0 인증 재현은 MuJoCo CPU 단독, Newton 결정론 모드는 W7 결과에 따라 허용 범위를 정한다 | §6 |
-| D2 | 물성 파라미터는 백엔드별로 보정하고 인증서에 백엔드별 세트로 저장한다. 파라미터 복사를 금지한다 | §3.4, §7 |
+| D1 | 결정론을 D0/D1/D2(Run Manifest `D0_bitwise`/`D1_statistical`/`D2_generative`/`none`)로 나누고, 인증서는 D0에서만 발행한다. P0 인증 재현은 MuJoCo CPU 단독, Newton 결정론 모드는 W7 N1–N5 결과에 따라 허용 범위를 정한다. Chrono·Fossen·PX4 SITL은 반복 비트 일치 시험과 CTO 등록 전까지 D1이다 | §2.1, §6 |
+| D2 | 물성 파라미터는 백엔드별로 보정하고 인증서에 백엔드별 세트(보정 dt 포함)로 저장한다. 파라미터 복사를 금지한다 | §3.4, §7, §14.2 |
 | D3 | Gold 최소 측정 세트를 물체당 50 trial(낙하 24, 밀기 9, 미끄럼 9, 질량·관성 8)로 고정한다 | §15.3 |
-| D4 | 'Gold 자산 질량/마찰 오차' KPI는 Forge 자동 추정 사슬을 Gold 랩 실측으로 감사하는 지표로 정의한다 | §16.1 |
-| D5 | sim2sim 게이트는 Zone F에서 3개(Newton·PhysX·MuJoCo CPU), Zone T/S에서 2개(Newton·MuJoCo CPU) 백엔드로 운영한다 | §2.2, §8.4 |
-| D6 | 증강 프레임은 C1–C8을 모두 통과해야 납품하며, 재라벨을 금지한다 | §12.2 |
+| D4 | 'Gold 자산 질량/마찰 오차' KPI는 Forge 자동 추정 사슬을 Gold 랩 실측으로 감사하는 지표로 정의한다. 이 수치를 Gold 인증 임계나 고객 보증 문구로 쓰지 않는다 | §16.1 |
+| D5 | sim2sim 게이트는 Zone F에서 3개(Newton·PhysX·MuJoCo CPU), Zone T/S에서 2개(Newton·MuJoCo CPU) 백엔드로 운영하고, 임계값은 07 §7.3의 Tier 1(전 정책, ≤10%p)·Tier 2(인증 대상, ≤5%p·RMSE ≤0.05 rad) 2단을 따른다 | §2.2, §8.4 |
+| D6 | 증강 프레임은 라벨 QA C1–C8을 모두 통과해야 납품하며, 재라벨을 금지한다 | §12.2 |
 | D7 | 레이더·EO/IR은 V-S4(오차 막대 공개 + 제3자 성적서) 완료와 Wave 3 트리거 충족 전까지 해양·국방에 판매하지 않는다 | §11.3 |
-| D8 | CEN NeRF 런타임은 2027-02-28(G0)에 프로덕션에서 퇴역한다 | §10.4 |
+| D8 | CEN NeRF 런타임은 2027-02-26(G0)에 프로덕션에서 퇴역한다 | §10.4 |
+| D9 | 적합성 장면의 정본은 04 §4.6의 C01–C15로 하고, 05에만 있던 장면은 C16–C21 후보(KPI 미집계)로 둔다. 변형체 인증서는 정적 보정 항목만 MuJoCo CPU D0 재현·'experimental'로 발행한다 | §2.1, §8.1 |
 
 **다음 액션**
 
 | 액션 | 책임 | 기한 |
 |---|---|---|
 | CEN NeRF 파이프라인 SPDX 감사 착수, 금지 구성요소 킬스위치 적용 | CTO(대행) + 라이선스 자문 | 2026-11-30(M1) |
-| 적합성 스위트 v0(S1–S5) × 3개 백엔드 구축(베이크오프 W2) | WS1 Kernel 리드 | 2026-11-15 |
-| Test Cell 1 발주(표 15-2 BOM 기준 견적 3건) | Head of Fidelity(대행) | 2026-11-30 |
-| Newton 결정론 모드 N1–N5 시험(베이크오프 W7) | WS1 + Sim Architect | 2026-12-24 |
-| T11 60 DoF 초과 스트레스 테스트와 O1–O4 판정 | WS1 + Skill Lead | 2026-12-24 |
-| 베이크오프 결정 메모에 작업 유형별 라우팅 표(표 2-1) 확정 반영 | CTO | 2027-01-08 |
-| Test Cell 1 시운전, 측정 프로토콜 v1(P-DROP, P-PUSH, P-SLIDE, P-MASS) 발행 | Head of Fidelity + WS4-L | 2027-01-15 |
-| `aic:TwinCertificate` 스키마 v1.0, JSON 사이드카, Ed25519 서명 서비스 | Forge Lead + Platform Lead | 2027-01-31 |
+| 적합성 스위트 v0(C01–C05) × 3개 백엔드(베이크오프 W2, 실행 구성 B1–B5) | WS1 Kernel 리드(CTO 대행) | 2026-11-13(W2) |
+| Test Cell 1 BOM 확정(표 15-2)과 견적 3건 | Head of Fidelity(대행) | 2026-11-17(D30) |
+| Test Cell 1 발주 | Head of Fidelity(대행) + CFO | 2026-11-30(D43) |
+| 변형체 인증 규칙(정적 보정 항목만 D0 'experimental')을 04 Kernel 라우팅(`deformable.certify`)과 08 팩 매니페스트에 반영 요청 | Head of Fidelity(대행) + WS1 Kernel 리드 | 2026-12-18(M2) |
+| Newton 결정론 모드 N1–N5 시험(베이크오프 W7) | WS1 + Sim Architect | 2026-12-18(W7 금) |
+| T11 60 DoF 초과 스트레스 테스트와 O1–O4 판정(베이크오프 W7) | WS1 + Skill Lead | 2026-12-18(W7 금) |
+| 베이크오프 결정 메모에 작업 유형별 라우팅 표(표 2-1)와 C01–C15 허용치 최종값 확정 반영 | CTO | 2027-01-08 |
+| Test Cell 1 시운전, 측정 프로토콜 v1(P-DROP, P-PUSH, P-SLIDE, P-MASS) 발행 | Head of Fidelity + WS4-L | 2027-01-15(D61–90) |
+| `aic:TwinCertificate` 스키마 v1.0, JSON 사이드카, Ed25519 서명 서비스 | Forge Lead + WS1(P0 라이선스 레지스트리 백엔드) | 2027-01-31 |
 | Forge v0로 첫 Silver 자산 50개 | Forge Lead | 2027-01-31 |
-| Scorecard v1(mAP 비율, ADE/FDE, PSNR/SSIM/LPIPS) 운영 | Head of Fidelity | 2027-02-28(G0) |
-| Silver/Gold 150개, 합성 전용 mAP 비율 ≥0.85, D0 재현 100% 달성 | Forge Lead + Head of Fidelity | 2027-02-28(G0) |
+| Scorecard v1(mAP 비율, ADE/FDE, PSNR/SSIM/LPIPS) 운영 | Head of Fidelity | 2027-02-26(G0) |
+| Silver/Gold 150개, 합성 전용 mAP 비율 ≥0.85, D0 재현 100% 달성 | Forge Lead + Head of Fidelity | 2027-02-26(G0) |
 | 라벨 일관성 QA v1(C1–C8)을 Cosmos Transfer 2.5와 함께 DATA 라인에 적용 | WS3 리드 | 2027-03-31(M5) |
 | IITP 센서 물리 공동연구(V-S1) 제안서 제출 | WS9 BD + WS3 리드 | 2027-04-30 |
 | Test Cell 2 가동, P-INS·P-CABLE 프로토콜 발행, 카메라·라이다·IMU 프로파일 1차 | Head of Fidelity + WS3 | 2027-06-30 |
 | Cosmos 3 Nano 16B 한국 도메인 파인튜닝 착수(V7 법률 검토 통과 조건) | WS3 + WS5 | 2027-07-31(M9) |
-| 3개 피킹 과제 sim-to-real 갭 ≤15%p 확인(G1 조건 ⑥) | Skill Lead + Head of Fidelity | 2027-09-30(M11) |
+| 3개 피킹 과제 sim-to-real 갭 ≤15%p 확인(G1 조건 ⑥) | Skill Lead + Head of Fidelity | 2027-09-24(G1, M11) |
 | 첫 제3자 시험성적서(지표 1개) 확보 | Head of Fidelity | 2027-12-31 |
+| Chrono CPU D0 등록 시험(반복 비트 일치, 04 §4.6 DT-5)과 CTO 등록 | WS1-M + WS1 | 2028-08(M22) [A] |

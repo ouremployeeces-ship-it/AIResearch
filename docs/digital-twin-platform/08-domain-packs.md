@@ -2,17 +2,17 @@
 
 > **문서 번호** 08 · **기준일** 2026-10-06 · **버전** v1.0 · **상위 문서** [README](README.md)
 > **관련 문서** [01 비전·포지셔닝](01-vision-positioning.md) · [02 시장·경쟁](02-market-competition.md) · [03 엔진 선정·Build vs Buy](03-engine-selection-build-vs-buy.md) · [04 시스템 아키텍처](04-system-architecture.md) · [05 물리·현실감](05-physics-and-realism.md) · [06 사용성·에이전트](06-usability-and-agent.md) · [07 학습 모듈](07-training-module.md) · [09 로드맵·조직·예산](09-roadmap-organization-budget.md) · [10 사업모델·GTM](10-business-model-gtm.md) · [11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md) · [12 90일 실행](12-execution-90days.md) · [부록 A 기술 카탈로그](appendix-a-technology-catalog.md) · [부록 B 출처·검증](appendix-b-sources-verification.md)
-> **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 사실은 리서치에서 GitHub·PyPI·표준 원문으로 확인된 값(2026-10-05/06) · ₩억 = 1억 원 · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · DR = 결정 기록(Decision Record, 전 문서의 단일 기준) · 보완 지시 = DR 보완 지시(기술적 범용성과 상업 집중 순서의 분리)
+> **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 사실은 리서치에서 GitHub·PyPI·표준 원문으로 확인된 값(2026-10-05/06) · ₩억 = 1억 원 · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · DR = 결정 기록(Decision Record, 전 문서의 단일 기준) · v1.1 보완 = DR 상단의 범용성 보완(기술적 범용성과 상업 집중 순서의 분리)
 
 ---
 
 ## 핵심 요약
 
 - **범용성은 약속이 아니라 구조다.** OpenUSD 단일 장면, 엔진 중립 Sim Kernel API, 그리고 7요소(자산·물리 프로파일·센서 리그·표준 커넥터·학습 템플릿·평가지표·인증 기준)로 이뤄진 Domain Pack이 로봇·차량·드론·선박·공장을 같은 방식으로 받는다. 새 대상은 코어를 고치지 않고 팩 하나와, 필요하면 Kernel 어댑터 하나를 더해 수용한다. 이 문서는 8개 팩(조작, AMR·셀, 휴머노이드·덱스터러스, 사족, Mobility, 드론, 해양, 공장 라이브)을 정의한다.
-- **시간축은 두 개다.** 상업 Wave(DR §5: Wave 1 M1–M18, Wave 2 M12–M24, Wave 3 M25–, Wave 3b M27–)는 '어디서 먼저 돈을 버는가'의 순서다. Capability Readiness(보완 지시)는 '무엇을 트윈으로 만들 수 있는가'의 순서다. 차량 Mobility Pack α는 M18–M24, 드론 PX4 SITL 템플릿은 M20–M24에 준비한다. 정확한 문장은 "자동차는 안 한다"가 아니라 "자동차 시뮬레이터 시장에서 정면 경쟁하지 않고 표준으로 연결한다"이다.
+- **시간축은 두 개다.** 상업 Wave(DR §5: Wave 1 M1–M18, Wave 2 M12–M24, Wave 3 M25–, Wave 3b M27–)는 '어디서 먼저 돈을 버는가'의 순서다. Capability Readiness(DR v1.1 범용성 보완)는 '무엇을 트윈으로 만들 수 있는가'의 순서다. 차량 Mobility Pack α는 M18–M24, 드론 PX4 SITL 템플릿은 M20–M24에 준비한다. 정확한 문장은 "자동차는 안 한다"가 아니라 "자동차 시뮬레이터 시장에서 정면 경쟁하지 않고 표준으로 연결한다"이다.
 - **준비는 상업보다 앞설 수 있지만, 상업이 준비를 앞서지는 않는다.** 팩 성숙도를 CRL(Capability Readiness Level) 0–5 [A]로 판정하고, CRL 4(검증된 센서 프로파일과 Silver/Gold 인증 발행) 전에는 그 도메인의 인증 결과물을 팔지 않는다. Wave 밖에서 들어오는 요청은 4단계 수락 규칙으로 처리한다.
 - **DR §5.1 평가표의 거부권이 차량과 사족의 위치를 정한다.** AV·ADAS(19점)와 사족(17점)은 '열린 경쟁 지형'이 1점이므로 독자 매출 라인이 될 수 없다. AV는 MORAI를 거치는 인식 데이터와 OpenSCENARIO·OSI·FMI 3.0 브리지로, 사족은 템플릿과 Crucible 평가로만 수익을 낸다.
-- **Mobility Pack은 3단 구조다.** α(M18–M24)는 야드 차량·AMR(PhysX Vehicle2, Zone F)과 Chrono::Vehicle(Pacejka·TMeasy 타이어, SCM 지형)이다. P3에는 오프로드 UGV(Chrono CRM)가 붙고, 도로 AV는 처음부터 연결 모드로 간다. 규제 수요(UN ADS 규정 [U], ISO 34505:2025, ISO 21448, UL 4600 Ed.3, 국내 Level-4 성능인증)에는 도구 인증이 아니라 Credibility Dossier 조각과 K-City 상관 연구로 대응한다.
+- **Mobility Pack은 3단 구조다.** α(M18–M24)는 야드 차량·AMR(Zone F는 PhysX Vehicle2, Zone T/S는 Newton 관절 휠)과 Chrono::Vehicle(Pacejka·TMeasy 타이어, SCM 지형)이다. P3에는 오프로드 UGV(Chrono CRM)가 붙고, 도로 AV는 처음부터 연결 모드로 간다. 규제 수요(UN ADS 규정 [U], ISO 34505:2025, ISO 21448, UL 4600 Ed.3, 국내 Level-4 성능인증)에는 도구 인증이 아니라 Credibility Dossier 조각과 K-City 상관 연구로 대응한다.
 - **해양과 국방은 센서 증거가 먼저다.** 클린룸 Fossen 6-DOF, Chrono FSI, 오차 막대를 공개한 레이더·EO/IR 프로파일이 갖춰지기 전에는 판매하지 않는다. Air-gap 에디션(M27–, 연 ₩8–15억)은 SAM 계열·VGGT-Commercial·GPL 번들·미확인 모델을 뺀 별도 라이선스 프로파일과 서명 SBOM, 오프라인 서명 업데이트로 운영한다.
 - **새 도메인은 정해진 절차와 공수로 편입한다.** 기존 어댑터로 충족되는 Type A는 12–25 HM, 신규 어댑터가 필요한 Type B는 18–37 HM, 신규 물리 연구가 필요한 Type C는 30–60 HM이다 [A]. 농업 로봇·건설 장비·의료 로봇에 이 절차를 적용해 판정했다. 모든 확장은 DR 고정값(인원 16/26/36/48명, 24개월 예산 ₩122.0억) 안에서 고객 NRE와 정부과제로 충당한다.
 
@@ -34,7 +34,7 @@ CEO 요구 원문은 "대상은 로봇, 자동차 등 어떤 것도 가능"이�
 |---|---|---|---|---|
 | A. 도메인별 별도 제품 | 조작 sim, 차량 sim, 해양 sim을 각각 개발 | 영업 메시지가 단순하다 | 엔진 통합·인증·Forge가 3벌로 늘어난다. 인원 상한(26명, G1 전) 안에서는 어느 것도 깊이를 얻지 못한다 | 기각 |
 | B. 자체 범용 엔진 | 모든 물리를 직접 구현 | 완전한 통제 | 150–300 engineer-year, ₩400–600억, MVP까지 30–48개월 이상(DR §3.2). 24개월 예산의 3–5배 | 기각 |
-| C. 외부 시뮬레이터 래핑 | CARLA·Gazebo·Isaac Sim을 감싸 판매 | 출시가 빠르다 | 결정론·인증·라이선스를 통제하지 못한다. CARLA·Project AirSim·HoloOcean은 UE EULA를 끌고 온다(매출 USD 1M 초과 시 좌석당 연 $1,850) | 기각. 커넥터로만 사용 |
+| C. 외부 시뮬레이터 래핑 | CARLA·Gazebo·Isaac Sim을 감싸 판매 | 출시가 빠르다 | 결정론·인증·라이선스를 통제하지 못한다. CARLA·Project AirSim·HoloOcean은 UE EULA를 끌고 온다(매출 USD 1M 초과 시 좌석당 연 $1,850 [U]) | 기각. 커넥터로만 사용 |
 | **D. 커널 하나 + Domain Pack** | 공통 코어 고정 + 도메인 차이를 7요소로 격리 | 공통 구성 재사용률 70–80% [A]. 새 대상의 한계비용이 낮다. 인증 체계가 하나다 | 팩 경계를 지키는 규율이 필요하다(§1.5) | **채택** |
 
 ### 1.2 Domain Pack의 7요소
@@ -44,7 +44,7 @@ CEO 요구 원문은 "대상은 로봇, 자동차 등 어떤 것도 가능"이�
 | 요소 | 담는 내용 | 형식·위치 | 완료 기준(DoD) | 소유 |
 |---|---|---|---|---|
 | ① 자산 | SimReady USD(물체·로봇·차량·선체·환경), 라이선스 매니페스트, 출처(촬영원·동의·익명화) | `ath://pack/<pack>/...` USD + `aic:TwinCertificate` | Bronze 이상 등급, SPDX·출처 게이트 통과, NEVER 목록(DR §3.3) 0건 | WS2 Forge |
-| ② 물리 프로파일 | 과제 유형별 학습 백엔드 라우팅, 접촉 모델, dt·substep, 보정 파라미터 기본값, 인증 백엔드, sim2sim 게이트 백엔드 | YAML(`kernel-routing` 조각) + USD 보정 레이어 | 지정 적합성 장면 통과, 인증 경로가 D0(비트 일치)로 정의됨([05 §2](05-physics-and-realism.md)) | WS1 Kernel |
+| ② 물리 프로파일 | 과제 유형별 학습 백엔드 라우팅, 접촉 모델, dt·substep, 보정 파라미터 기본값, 인증 백엔드, sim2sim 게이트 백엔드(Zone F 3개, Zone T/S 2개) | YAML(`kernel-routing` 조각) + USD 보정 레이어 | 지정 적합성 장면 통과, 인증 경로가 D0(`D0_bitwise`) 등록 경로로 정의됨([05 §2](05-physics-and-realism.md)) | WS1 Kernel |
 | ③ 센서 리그 | 센서 prim 배치, 디바이스별 실측 프로파일, `validated` 플래그 | USD 센서 prim + `aic:SensorProfile` | `validated=false` 프로파일로는 Silver/Gold를 발행하지 않음 | WS3 센서 |
 | ④ 표준 커넥터 | import·export 변환기, 엣지 게이트웨이 플러그인, co-sim 브리지 | 커넥터 컨테이너, Apache 계열 변환기 | 왕복(round-trip) 테스트 통과, 라이선스 판정 OK, 구역(Zone) 태그 | WS1·WS6 |
 | ⑤ 학습 템플릿 | 과제 명세(보상·관측·종료·랜덤화·커리큘럼), 기본 프리셋, 수출 프로파일 | Isaac Lab 3.x·mjlab 과제, LeRobot 설정 | 템플릿 7요소([06](06-usability-and-agent.md)) 충족, 백엔드별 적합성 결과 첨부 | WS5 Skill |
@@ -62,33 +62,35 @@ CEO 요구 원문은 "대상은 로봇, 자동차 등 어떤 것도 가능"이�
 name: manipulation-pack
 version: 1.2.0                     # 릴리스 트레인(반기)에 맞춰 SemVer
 readiness: { crl: 4, since: "M4" }  # Capability Readiness Level(§1.4). G0 조건과 동기화
-zones: [F, T, S]                   # Zone F: PhysX·TacSL·Mimic 경로 포함 / T·S: 허용형 전용
+zones: [F, T, S]                   # Zone F: PhysX·TacSL·Mimic 경로 포함 / T·S: 허용형 + 의무 이행 가능한 약한 카피레프트만(DR §6.2)
 requires:
   kernel_api: ">=1.0"
-  adapters: [newton, mujoco_cpu, isaaclab_physx, drake_offline]
-  capabilities: [RIGID_ARTICULATION, SDF_CONTACT, HYDROELASTIC, DEFORMABLE_VBD, CLOSED_LOOP]
+  adapters: [newton_mjwarp, mujoco_cpu, isaaclab_physx, drake]   # 04 §4.2 어댑터 레지스트리 이름. isaaclab_physx는 Zone F 전용
+  capabilities: [REDUCED_COORD_ARTICULATION, SDF_CONTACT, HYDROELASTIC, CLOTH, CABLE, CLOSED_LOOP]   # 04 §4.2 Cap 열거형
 assets:
   - ath://pack/manip/kr-sku/ramen-box-a@sha256:…      # 한국 SKU(Silver/Gold)
   - ath://pack/manip/cells/test-cell-1@sha256:…       # Fidelity Lab Test Cell 1
-physics_profiles:
-  bin_picking:     { train: newton.mjwarp, contact: soft_convex, cone: elliptic, certify: mujoco.cpu }
-  polybag:         { train: newton.vbd, certify: statistical_d1 }       # 변형체는 D1(통계적 재현)
-  peg_insertion:   { train_F: isaaclab.physx_sdf, train_T: newton.sdf_hydroelastic,
-                     offline_ref: drake.hydroelastic, certify: mujoco.cpu }
-  linkage_gripper: { train: newton.kamino, certify: mujoco.equality }
+physics_profiles:                  # 표기는 04·05·07과 같은 snake_case(어댑터_모드)
+  bin_picking:     { train: newton_mjwarp, contact: soft_convex, cone: elliptic, certify: mujoco_cpu }
+  polybag:         { train: newton_vbd, certify: mujoco_cpu_static_calib, determinism: D1_statistical }   # 동역학 D1. 정적 보정 항목만 D0 'experimental'
+  peg_insertion:   { train_F: isaaclab_physx_sdf, train_T: newton_sdf_hydro,
+                     reference: drake_hydroelastic, certify: mujoco_cpu }
+  linkage_gripper: { train: newton_kamino, certify: mujoco_equality }   # MuJoCo CPU equality 모델 D0(별도 보정 세트). Kamino 산출물은 D1
 sensor_rigs:
   - name: cell_rgbd_3cam_ft        # Test Cell 1과 동일 구성: 카메라 3대 + F/T 센서
     profiles_required: validated
 connectors:
   import: [urdf, mjcf, usd, step_via_customer_cad]
-  runtime: [ros2_humble, ros2_jazzy, ros2_lyrical]
+  runtime: [ros2_jazzy, ros2_lyrical, ros2_humble_bridge]   # 신규 배포 기본은 Jazzy·Lyrical. Humble(2027-05 EOL) 브리지는 M7 이후 best-effort
   export: [lerobot_v3, mcap, coco, onnx_tensorrt_jetson_thor]
-templates: [rl_grasp_lift, rl_bin_pick_kr_sku, rl_depal, il_mimic_smolvla, sdg_detector_rfdetr]
+templates: [RL-01, RL-02, RL-03, RL-04, IL-01, IL-02, PE-01, PE-02]   # ID 마스터 06 §6.2. P1 말 조작 팩 배분 4/2/2(§7.1)
 metrics: [picks_per_1000, sim2real_gap_pp, map_ratio, pearson_r_policies, cycle_time_s]
+kpi:
+  forge_auto_vs_gold: { mass: 0.10, friction: 0.20 }   # 05 §16.1 P1. Forge 자동 추정 |θ_auto − θ_lab| / θ_lab. 인증 임계 아님
 certification:
-  object_gold:   { mass_err_max: 0.10, friction_err_max: 0.20, protocol: "AIC-OBJ-GOLD v1" }  # P1 KPI 값
+  object_gold:   { value_source: lab, mass_uncert_max: "[A]", friction_uncert_max: "[A]", protocol: "AIC-OBJ-GOLD v1" }   # 랩 실측값 + 측정 불확도 기록
   cell_silver:   { scorecard: [map_ratio, gap_pp], protocol: "AIC-CELL v1" }
-conformance_scenes: [C01, C02, C03, C04, C06, C07, C08]   # 04 §4.6 번호 체계
+conformance_scenes: [C01, C02, C03, C04, C06, C07, C08]   # 04 §4.6 번호 체계(정본)
 license_profile: commercial        # defense 프로파일은 §5 규칙으로 별도 빌드
 owners: { pack: "Skill Lead", physics: "WS1", sensors: "WS3", cert: "Head of Fidelity" }
 ```
@@ -106,16 +108,18 @@ owners: { pack: "Skill Lead", physics: "WS1", sensors: "WS3", cert: "Head of Fid
 | 2 | 템플릿 | 학습 템플릿 1개 이상, 센서 리그 정의, Bronze 자산 | 디자인 파트너와 무상·NRE 공동개발 | 인증 결과물 판매 |
 | 3 | 알파(α) | 표준 커넥터, 평가 지표, 인증 기준 초안, 실측 trial 수집 시작 | 고정가 PoC·파일럿 데이터 팩(산출물 전용, 책임 상한 = 계약 금액, 인증서 없이 Scorecard 수치만 보고) | Silver/Gold 인증 발행 |
 | 4 | 상업 | 센서 프로파일 `validated=true`, Silver/Gold 인증 발행, Scorecard 기반 인수 가능 | 결과물 SKU 전체, 에디션 탑재 | 셀프서브 개방 |
-| 5 | 셀프서브 | 생산화 게이트 통과: 무개입 80% 이상, 라인 총마진 60% 이상, 모든 구성요소의 테넌트 사용 서면 라이선스 근거(DR §4.3) | Studio 셀프서브, 마켓플레이스 | — |
+| 5 | 셀프서브 | 생산화 게이트 통과: 무개입 80% 이상, 라인 총마진 60% 이상([10 §6.4](10-business-model-gtm.md) 완전원가 기준), 모든 구성요소의 테넌트 사용 서면 라이선스 근거(DR §4.3) | Studio 셀프서브, 마켓플레이스 | — |
 
 ### 1.5 팩 경계 규칙
 
 - **코어 포크 금지:** 팩은 Kernel·스키마·Orchestrator를 수정하지 않음. 필요한 기능은 어댑터 추가 또는 `aic:` codeless 스키마 확장(하위 호환)으로만 해결
-- **구역 태그 강제:** 팩의 모든 구성요소에 Zone F/T/S 태그. Zone F 전용 구성요소(Isaac Sim 6.1, RTX 센서, PhysX Vehicle2 via Isaac Lab, TacSL, Mimic)가 들어간 템플릿은 테넌트 카탈로그에 노출 불가
-- **인증 경로 단일화:** 어떤 팩이든 '재현 가능' 인증서는 MuJoCo CPU 또는 Newton 결정론 모드(고정 하드웨어·드라이버)에서만 발행(DR §4.1). 차량(Chrono 타이어·지형)과 해양(Fossen) 동역학은 이 두 경로로 재현할 수 없으므로, DR 개정 전까지 동역학 산출물에는 D1 '통계적 재현' 라벨만 붙이고 인증은 자산·센서 항목에 한정. Chrono CPU·Fossen CPU(Warp CPU 모드)를 D0 후보로 등록하는 DR 개정안은 베이크오프 W7과 같은 반복 비트 일치 시험을 통과한 뒤 제출[A](§2.5)
+- **구역 태그 강제:** 팩의 모든 구성요소에 Zone F/T/S 태그. Zone F 전용 구성요소(Isaac Sim 6.1, RTX 센서, Replicator, PhysX Vehicle2 via Isaac Lab, TacSL, Mimic, Pegasus 포팅)가 들어간 템플릿은 테넌트 카탈로그에 노출 불가. 벤더·고객 라이선스 구성요소(BeamNG.tech, 고객 CarSim·CarMaker FMU)는 BYOL 태그
+- **인증 경로 단일화:** 어떤 팩이든 '재현 가능' 인증서는 D0(`D0_bitwise`) 등록 경로(고정 하드웨어·드라이버)에서만 발행(DR v1.1 §4.1). 현재 등록 경로는 MuJoCo CPU이며, Newton 결정론 모드는 N1–N5 시험(베이크오프 W7) 통과 후 편입
+- **D0 경로 확장 규칙(DR v1.1 §4.1):** Chrono CPU(차량), 클린룸 Fossen(Warp CPU, 선박), PX4 SITL lockstep(드론)은 반복 비트 일치 시험(N1–N4 동등)을 통과하고 CTO가 D0 목록에 등록한 뒤에만 인증 경로로 사용(목표 등재 Chrono M22, Fossen M28 [A]). 등록 전 해당 동역학 산출물에는 D1 '통계적 재현' 라벨과 Scorecard 리포트만 붙이고, 인증서는 자산·센서 항목에 한정(§2.5)
+- **변형체·입상체·유체:** 변형체(VBD·flex·cable) 산출물은 D1. 변형체 인증서는 정적 보정 시험(처짐·정지 형상)을 MuJoCo CPU로 D0 재현한 항목에만 붙이고 'experimental'로 표기. 입상체(SCM·CRM·DEM)·유체(FSI) 산출물은 인증 대상에서 제외
 - **센서 미검증 판매 금지:** `validated=false` 센서로 만든 데이터는 Bronze 등급과 '미검증 센서' 라벨로만 출고
 - **NEVER 목록 상속:** DR §3.3 NEVER 목록은 모든 팩의 CI에서 자동 차단. 국방 프로파일은 추가 제외 목록 적용(§5)
-- **팩 하나 = 적합성 장면 1개 이상:** 팩이 쓰는 물리 경로는 반드시 적합성 스위트 장면으로 회귀 검사. 장면 수는 DR KPI(P0 3×5 → P3 6×15) 안에서 배분
+- **팩 하나 = 적합성 장면 1개 이상:** 팩이 쓰는 물리 경로는 반드시 적합성 스위트 장면으로 회귀 검사. 장면 번호·허용치의 정본은 04 §4.6의 C01–C15이고, 05에만 있던 장면은 C16+ 확장 후보. 장면 수는 DR KPI(P0 3×5 → P3 6×15) 안에서 배분하며 KPI에는 C01–C15만 셈
 
 **그림 1. 공통 코어, Domain Pack, Kernel 어댑터의 관계**
 
@@ -141,9 +145,9 @@ flowchart TB
         C7["Outcome Orchestrator와 한국어 MCP 에이전트"]
     end
     subgraph ADP["Kernel 어댑터"]
-        A1["Newton 1.6.x - MJWarp VBD Kamino SDF"]
+        A1["Newton 1.6.x Isaac Lab GA 핀 - MJWarp VBD Kamino SDF"]
         A2["MuJoCo 3.15 CPU - 인증 경로"]
-        A3["PhysX 5.11 via Isaac Lab - Zone F"]
+        A3["PhysX 5.x via Isaac Lab - Zone F 전용"]
         A4["Chrono 10.0 - Vehicle SCM CRM FSI"]
         A5["FMI 3.0 FMU 마스터"]
         A6["PX4 SITL 브리지"]
@@ -167,7 +171,7 @@ flowchart TB
 | 축 | 질문 | 결정 근거 | 결정 주체 | 변경 조건 | 근거 문서 |
 |---|---|---|---|---|---|
 | 상업 Wave | 어디서 먼저 돈을 버는가 | DR §5.1 7개 기준 점수, 앵커 접근성, 결과 측정 속도, 거부권 | CEO·이사회 | G1(M11)·G2(M18)·G3(M24), Wave 3 트리거(ARR ₩30억 또는 확정 ₩5억 이상 앵커) | DR §5, [10](10-business-model-gtm.md) |
-| Capability Readiness | 무엇을 트윈으로 만들 수 있는가 | 어댑터·템플릿·커넥터·인증 기준의 기술 준비 | CTO | 반기 릴리스 트레인, 분기 CRL 리뷰 | 보완 지시, [03 §4](03-engine-selection-build-vs-buy.md), [04 §17](04-system-architecture.md) |
+| Capability Readiness | 무엇을 트윈으로 만들 수 있는가 | 어댑터·템플릿·커넥터·인증 기준의 기술 준비 | CTO | 반기 릴리스 트레인, 분기 CRL 리뷰 | v1.1 보완, [03 §4](03-engine-selection-build-vs-buy.md), [04 §17](04-system-architecture.md) |
 
 ### 2.2 왜 두 축이 다른가
 
@@ -208,15 +212,15 @@ gantt
 
 **표 2-2. 도메인별 두 시점과 그 사이에 파는 것**
 
-| 도메인 | 기술 준비(보완 지시) | 상업 시점(DR) | 차이가 나는 이유 | 준비~상업 사이의 수익화 |
+| 도메인 | 기술 준비(v1.1 보완) | 상업 시점(DR) | 차이가 나는 이유 | 준비~상업 사이의 수익화 |
 |---|---|---|---|---|
 | 로봇 조작 | P0–P1(M1–M12) | Wave 1(M1–M18), 첫 데이터셋 계약 M4 | 차이 없음. 준비와 판매가 함께 감 | 데이터셋(M4), 바우처(M5–M8), PoC(M5부터) |
 | AMR·공장/물류 셀 | P1–P2(M9–M18) | P2 라이브 트윈 부가 기능 | '열린 경쟁 지형' 2점. 단독 라인보다 셀 트윈의 부속이 유리 | 조작 셀 계약에 AMR 동선·인식 데이터 포함 |
-| 휴머노이드·덱스터러스 | 템플릿 M6–M12, 상업화 P2 | Wave 2(M12–M24), Arena v1 M18 | 공동서명 기관 MOU(M10)·헌장 전 외부 채점 금지 | 글로벌 FM 기업 데이터·평가(M12–M15 착수) |
+| 휴머노이드·덱스터러스 | 템플릿 M6–M12, 상업화 P2 | Wave 2(M12–M24), Arena v1 M18 | 헌장 초안(M8) → 공동서명 MOU(M10) → 헌장 서명(M12 초) 전 외부 순위 채점 금지. 서명 지연 시 K-Pick은 비순위 시연 | 글로벌 FM 기업 데이터·평가(M12–M15 착수) |
 | 사족 | 템플릿 M6–M12 | 독자 매출 라인 없음 | 거부권(경쟁 지형 1점) | Crucible 평가, 국방 에디션 안 UGV |
 | 차량(Mobility α) | P2(M18–M24) | AV는 MORAI 파트너 전용, 인식 데이터만 | 거부권(경쟁 지형 1점). OEM HIL 도구와 정면 경쟁 회피 | 야드 차량 셀 트윈(조작·AMR 계약 부속), MORAI 경유 데이터 |
 | 드론 | 템플릿 P2(M20–M24) | 국방 에디션 안(P3, M27–) | 민수 18점, 국방 17점. 판매 주기 12–24개월 | P3에 CRL 3 도달 후 조선소 선체 점검 등 PoC만 |
-| 선박·항만·해양 | P3(M25–) | Wave 3(M25–, 트리거) | 센서 검증(레이더·EO/IR)이 판매 전제 | 조선소 작업장 셀은 Wave 1 조작 팩으로 이미 판매 |
+| 선박·항만·해양 | P3(M25–) | Wave 3(M25–, 트리거. 기본 경로는 확정 ₩5억 이상 앵커 계약) | 센서 검증(레이더·EO/IR)이 판매 전제 | 조선소 작업장 셀은 Wave 1 조작 팩으로 이미 판매 |
 | 오프로드 UGV | P3 | Wave 3b(M27–, 트리거) | 국방 조달·보안 요건 | 없음 |
 | 공장 라이브 트윈 | P2(첫 라이브 트윈 M18) | P2 부가 기능 | 범용 IIoT 플랫폼을 만들지 않는다는 범위 제한 | 양산 스킬 프로그램의 인수 모니터링 |
 
@@ -245,18 +249,18 @@ flowchart TD
 
 ### 2.5 DR 문구와의 정합
 
-보완 지시는 DR 부록 A 고정값을 바꾸지 않고 일정만 조정한다. 그 결과 DR 본문 일부 문구가 보완 지시와 어긋난다. 이 문서는 아래 해석을 따르며, 다음 DR 개정에서 문구를 맞춘다(§8).
+v1.1 보완은 DR 부록 A 고정값을 바꾸지 않고 일정만 조정한다. 그 과정에서 DR v1.0 본문 일부 문구가 v1.1 보완과 어긋났다. 아래 6건은 이 문서의 해석대로 DR v1.1(상단 보완 블록과 §16 정합 결정)에 모두 반영됐다. 표는 변경 이력과 해석 근거로 남긴다(§8).
 
-**표 2-3. DR 문구와 보완 지시의 차이와 해석**
+**표 2-3. DR v1.0 문구와 v1.1 보완의 차이, 확정 해석**
 
-| # | DR 원 문구 | 보완 지시 | 이 문서의 해석 | 고정값 영향 |
+| # | DR v1.0 원 문구 | v1.1 보완 문구 | 확정 해석(DR v1.1 반영) | 고정값 영향 |
 |---|---|---|---|---|
 | 1 | §2 #6: Chrono 10.0은 'M24 이후 착수' | Mobility Pack α에 Chrono::Vehicle 어댑터 포함, M18–M24 | 차량용 Chrono::Vehicle 어댑터는 M18 착수. 해양(Chrono FSI)·오프로드(CRM)는 P3 유지 | 없음(WS1-M 1명 + WS3 지원) |
-| 2 | §2 #7: 드론은 'P3 국방 에디션 안에서만 착수' | P2 PX4 SITL 브리지 기본 템플릿(M20–M24) | 템플릿(기술 준비)은 P2, 상업 착수는 P3 국방 에디션 | 없음 |
-| 3 | §5.1: 사족은 '템플릿만 제공(매출 라인 아님)' | '휴머노이드·사족·덱스터러스: P1 템플릿, P2 상업화' | P2 상업화는 휴머노이드·덱스터러스에만 적용. 사족은 거부권(경쟁 지형 1점)에 따라 템플릿 유지 | 없음 |
-| 4 | §8.3: WS1-M 채용은 '해양 동역학 엔지니어(M20)' | Mobility Pack α를 WS1-M 1명이 M18부터 수행 | 직무를 '차량·해양 동역학(Chrono, FMI, Fossen)'으로 정의, 서치 M16·온보딩 M18–M20. 공백 기간은 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격을 맡음 | 없음(P2 말 WS1-M 1명 그대로) |
-| 5 | §2 #6: 'PhysX Vehicle2(AMR·야드 차량)' 행의 SaaS 호스팅 OK | — | 현재 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Zone F 전용. 테넌트 개방은 PhysX SDK 소스 어댑터(P2 조건부, §3.4) 이후 | 없음 |
-| 6 | §4.1: 인증·재현은 MuJoCo CPU 또는 Newton 결정론 모드만 | 차량·해양 Domain Pack 인증 기준 요구 | 동역학은 D1 라벨, 인증은 자산·센서에 한정. Chrono CPU·Fossen CPU의 D0 등록은 시험 후 DR 개정 | 없음 |
+| 2 | §2 #7: 드론은 'P3 국방 에디션 안에서만 착수' | P2 PX4 SITL 브리지 기본 템플릿(M20–M24) | 템플릿(기술 준비)은 P2에 RL 1종으로 세고, 상업 착수는 P3 국방 에디션. 적합성 C14는 P3 정식 편입 | 없음 |
+| 3 | §5.1: 사족은 '템플릿만 제공(매출 라인 아님)' | '휴머노이드·사족·덱스터러스: P1 템플릿, P2 상업화' | P2 상업화는 휴머노이드·덱스터러스에만 적용. 사족은 거부권(경쟁 지형 1점)에 따라 템플릿과 Crucible 평가로만 수익화 | 없음 |
+| 4 | §8.3: WS1-M 채용은 '해양 동역학 엔지니어(M20)' | Mobility Pack α를 WS1-M 1명이 M18부터 수행 | 직무를 '차량·해양 동역학 엔지니어(Chrono, FMI, Fossen)'로 정의. 서치 M16, 착석 M18([09 §7.1](09-roadmap-organization-budget.md) 채용 표 기준. DR §8.3의 M20은 최종 기한). 공백 시 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당 | 없음(P2 말 WS1-M 1명 그대로) |
+| 5 | §2 #6: 'PhysX Vehicle2(AMR·야드 차량)' 행의 SaaS 호스팅 OK | — | 현재 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Zone F 전용. 테넌트·온프렘 개방은 PhysX SDK 소스 어댑터(P2 조건부, X6) 또는 Mobility α 설계 메모(M17)의 C++ 바인딩 결정 이후. Zone T/S의 AMR은 Newton 관절 휠, 차량은 Chrono::Vehicle | 없음 |
+| 6 | §4.1: 인증·재현은 MuJoCo CPU 또는 Newton 결정론 모드만 | 차량·해양 Domain Pack 인증 기준 요구 | D0 경로 확장 규칙: Chrono CPU·클린룸 Fossen·PX4 SITL lockstep은 반복 비트 일치 시험 통과 + CTO 등록 후 인증 경로(목표 Chrono M22, Fossen M28 [A]). 등록 전 동역학은 D1 라벨과 Scorecard만, 인증은 자산·센서에 한정 | 없음 |
 
 ---
 
@@ -343,13 +347,13 @@ quadrantChart
 |---|---|
 | 대상 시스템 | 6–7축 협동로봇(Doosan Robotics, Rainbow Robotics, Franka, UR 계열), 병렬·흡착·링크형 그리퍼, 디팔레타이저, 키팅 셀, 검사 셀, 조선소 용접·핸들링 셀 |
 | 대표 과제 | 한국 SKU 클러터 빈 피킹, 폴리백 피킹, 디팔레타이징, 키팅, 페그·커넥터 삽입(공차 0.5 mm), 케이블 삽입, 관절 물체(서랍·도어) 조작, 조립 검사 |
-| 물리 백엔드·설정 | 강체·빈 피킹: Newton/MJWarp(elliptic cone, 관통 예산 0.5 mm), dt 5 ms·decimation 4(정책 50 Hz) [A]. 삽입: 팩토리 Isaac Lab 3.x + PhysX 5.11 SDF(Zone F), 테넌트 Newton SDF + hydroelastic, dt 1 ms [A], Drake v1.57 hydroelastic 오프라인 대조. 폴리백·케이블: Newton VBD(측정 전 성능 보증 금지). 링크형 그리퍼: Kamino(experimental). 인증: MuJoCo 3.15 CPU(D0) |
+| 물리 백엔드·설정 | 강체·빈 피킹: Newton/MJWarp(elliptic cone, 관통 예산 0.5 mm), dt 5 ms·decimation 4(정책 50 Hz) [A]. 삽입: 팩토리 Isaac Lab 3.x + PhysX 5.x SDF(Isaac Sim 6.1 번들 버전 [U], 공개 SDK 최신 5.11, Zone F), 테넌트 Newton SDF + hydroelastic, dt 1 ms [A], Drake v1.57 hydroelastic 오프라인 대조. 폴리백·케이블: Newton VBD(측정 전 성능 보증 금지). 링크형 그리퍼: Kamino(experimental). 인증: MuJoCo 3.15 CPU(D0) |
 | 센서 리그 | Test Cell 1 구성 기준: RGB-D 카메라 3대(오버헤드 1, 측면 1, 손목 1 [A]), 6축 F/T 센서. 촉각: 팩토리 TacSL(Isaac Lab, experimental), 테넌트 MuJoCo touch_grid. 렌더: 팩토리 RTX(PPISP 카메라), 테넌트 Warp Sensor Library + 디바이스 실측 프로파일 |
-| 표준·포맷 | USD(UsdPhysics + newton/mjc/physx 스키마), URDF·MJCF(Apache 변환기), ROS 2 Humble/Jazzy/Lyrical(Lyrical 2031-05 EOL), MCAP, LeRobotDataset v3, COCO, ONNX(opset 고정) → TensorRT → Jetson AGX Thor |
+| 표준·포맷 | USD(UsdPhysics + newton/mjc/physx 스키마), URDF·MJCF(Apache 변환기), ROS 2 Jazzy(2029-05 EOL)·Lyrical(2031-05 EOL) 기본, Humble(2027-05 EOL) 브리지는 M7 이후 best-effort, MCAP, LeRobotDataset v3, COCO, ONNX(opset 고정) → TensorRT → Jetson AGX Thor |
 | 자산 소스 | Forge 한국 SKU(G0까지 Silver/Gold 150개), 고객 CAD, 로봇 제조사 URDF·MuJoCo Menagerie(모델별 라이선스 확인). **사용 금지:** ManiSkill 자산(CC BY-NC), Lightwheel 무료 자산(비상업), Hunyuan3D 2.x(한국 제외) |
-| 학습 템플릿 | RL: 그래스프·리프트, 빈 피킹(한국 SKU), 디팔레타이징, 삽입(Zone F) — rsl_rl 5.5 PPO. IL·VLA: 텔레옵(GELLO·SpaceMouse) → Isaac Lab Mimic(팩토리) → ACT·Diffusion·SmolVLA 450M·GR00T N1.7. 인식: Replicator SDG(+Cosmos 3 Nano 증강, M9부터) → RF-DETR N–L |
+| 학습 템플릿 | RL: 팔 도달·큐브 들기(RL-01), 빈 피킹(한국 SKU, RL-02), 디팔레타이징(RL-03), 삽입(RL-04, 팩토리 PhysX SDF·테넌트 Newton SDF) — rsl_rl 5.5 PPO. IL·VLA: 텔레옵(GELLO·SpaceMouse) → Isaac Lab Mimic(팩토리) → ACT·Diffusion·SmolVLA 450M·GR00T N1.7. 인식: 팩토리 Replicator SDG(Zone F 전용), 테넌트 Newton Warp 래스터 + Warp Sensor Library → RF-DETR N–L(Apache-2.0). 증강은 M5–M8 Cosmos Transfer 2.5, M9부터 Cosmos 3 Nano 16B 파인튜닝(라벨 일관성 QA 동일). ID는 [06 §6.2](06-usability-and-agent.md) 마스터 |
 | 평가 지표 | 1,000회당 피킹 성공 수, 사이클 타임, 정책 sim-to-real 갭(%p), sim/real Pearson r(정책 5개 이상), 합성 전용 mAP ÷ 실데이터 mAP, 궤적 ADE, 접촉력 오차 |
-| 인증 기준 | 물체 Gold: 질량/마찰 오차 ≤15%/≤25%(P0) → ≤10%/≤20%(P1) → ≤8%/≤15%(P2) → ≤5%/≤10%(P3). 셀: Scorecard 지정 지표. PoC 인수: 갭 ≤15%p, 정책 5개 이상 r 보고 |
+| 인증 기준 | 물체 Gold: 랩 실측값(질량·마찰 μ)과 측정 불확도를 인증서에 기록, 프로토콜 AIC-OBJ-GOLD v1(불확도 상한 [A]은 Head of Fidelity가 측정 프로토콜 v1에서 확정). 셀: Scorecard 지정 지표. PoC 인수: 갭 ≤15%p, 정책 5개 이상 r 보고. **팩 KPI(인증 임계 아님):** Forge 자동 추정값(VLM 사전분포 + 영상 sysid)의 Gold 랩 실측 대비 질량/마찰 상대오차 ≤15%/≤25%(P0) → ≤10%/≤20%(P1) → ≤8%/≤15%(P2) → ≤5%/≤10%(P3)([05 §16.1](05-physics-and-realism.md) D4). 이 수치는 고객 보증 문구로 쓰지 않음 |
 | 한국 고객 | 로봇 OEM: Doosan Robotics(GitHub에서 Isaac·cuRobo·cuMotion 드라이버 확인), Rainbow Robotics(Samsung 지분 약 35% [U]), HD Hyundai Robotics. 물류: CJ Logistics, Hyundai Glovis, Coupang(수요 미검증). M.AX AI팩토리 주관 제조사, 1·2차 협력사(바우처), 조선 3사 작업장 |
 | 경쟁·파트너 | 경쟁: Lightwheel(SimReady 비상업 무료, LW-BenchHub 268개 과제는 시뮬 전용), CyLab(데이터만), 중국 데이터 팩토리(AgiBot World는 CC BY-NC-SA), NVIDIA usd-content-agents(자산 자동화 무료화). 파트너: NVIDIA(Inception→NPN, co-sell), 그룹 SI 리셀러, KTL·KIRIA·TTA(공동서명) |
 | 기술 준비 | P0–P1(M1–M12). CRL 3(M3, 첫 데이터셋 계약 협상) → CRL 4(M4, G0: Silver/Gold 한국 SKU 150개, 합성 전용 mAP ≥0.85, 인증 시험 결정론 재현 100%) → CRL 5는 생산화 게이트를 통과한 라인부터: Forge·Data는 M15(Studio GA), Skill 셀프서브는 P3 [A] |
@@ -360,10 +364,10 @@ quadrantChart
 | 과제 | 팩토리(Zone F) 학습 | 테넌트(Zone T·S) 학습 | 오프라인 기준 | 인증·재현 | 적합성 장면(04 §4.6) |
 |---|---|---|---|---|---|
 | 빈 피킹(강체 클러터) | Newton/MJWarp 또는 PhysX | Newton/MJWarp, mjlab | — | MuJoCo CPU, D0 | C03, C08 |
-| 폴리백 | Newton VBD | Newton VBD, MuJoCo flex(Stable Neo-Hookean, experimental) | — | D1(통계적 재현) | C04 |
+| 폴리백 | Newton VBD | Newton VBD, MuJoCo flex(Stable Neo-Hookean 3.15·IPC 접촉 3.14 모두 experimental) | — | D1(통계적 재현). 정적 보정 항목만 MuJoCo CPU D0 'experimental' 인증 | C04 |
 | 페그·커넥터 삽입 | Isaac Lab + PhysX SDF, TacSL | Newton SDF + hydroelastic | Drake hydroelastic(피크 접촉력 ±20%) | MuJoCo CPU, D0/D1 | C07 |
 | 케이블 삽입 | Newton VBD + PhysX | Newton VBD | — | D1 | C09(P2) |
-| 링크형 그리퍼 | Newton Kamino | Newton Kamino | MuJoCo equality | D1 | C10(P2) |
+| 링크형 그리퍼 | Newton Kamino | Newton Kamino | MuJoCo equality | MuJoCo CPU equality 모델 D0(별도 보정 세트), Kamino 산출물은 D1 | C10(P2) |
 | 관절 물체 | PhysX 또는 Newton | Newton, MuJoCo | — | MuJoCo CPU, D0 | C06 |
 
 - **Mimic 비용 기준:** 시연 10개 → 1,000개 생성에 상태 기반 18–40분, 시각운동 약 10시간. Franka 생성 성공률 약 50%. P1 KPI는 ≤1시간 / ≤12시간
@@ -379,9 +383,9 @@ quadrantChart
 |---|---|
 | 대상 시스템 | 차동구동·메카넘 AMR, 지게차형 AGV, 모바일 매니퓰레이터, 컨베이어·셔틀, 물류 피킹 스테이션, 조선소 야드 내 저속 운반차 |
 | 대표 과제 | 셀 재배치 처리량 what-if, 도킹·팔레트 진입, 협소 통로 주행, 사람 혼재 구역 감속, 모바일 매니퓰레이션(선반 피킹), 팔레트·사람·지게차 검출 |
-| 물리 백엔드·설정 | 테넌트: Newton 관절 휠 + 접촉 마찰(전용 타이어 모델 없음), dt 5 ms [A]. 팩토리: Isaac Lab + PhysX Vehicle2(Zone F). 바닥 마찰은 Fidelity Lab에서 바닥재별 실측(에폭시·콘크리트 [A]). 인증: MuJoCo CPU. 적합성: C05(백엔드 간 위치 ≤5 cm, 요 ≤3°), 슬립 곡선 검사(05 S12, RMSE ≤10%) |
+| 물리 백엔드·설정 | 테넌트: Newton 관절 휠 + 접촉 마찰(전용 타이어 모델 없음), dt 5 ms [A]. 팩토리: Isaac Lab + PhysX Vehicle2(Zone F). 바닥 마찰은 Fidelity Lab에서 바닥재별 실측(에폭시·콘크리트 [A]). 인증: MuJoCo CPU. 적합성: C05(백엔드 간 위치 ≤5 cm, 요 ≤3°), 타이어·휠 슬립 곡선 검사(05의 슬립 장면, C16+ 확장 후보, RMSE ≤10% [A]) |
 | 센서 리그 | 2D·3D 라이다, 깊이 카메라, IMU, 휠 오도메트리. Warp Sensor Library + 실측 프로파일. 라이다 거리 오차 목표 ≤3 cm(P1) → ≤2 cm(P2) |
-| 표준·포맷 | ROS 2(Humble/Jazzy/Lyrical, 자체 브리지 + Zenoh. Isaac Sim ROS 워크스페이스는 Humble·Jazzy만 지원), OPC UA(open62541), MQTT, MCAP. 내비게이션 스택 연동(Nav2 등)과 플릿 인터페이스 표준(VDA 5050 등)은 고객 요구 시 커넥터로 추가 [U] |
+| 표준·포맷 | ROS 2(Jazzy·Lyrical 기본, Humble은 2027-05 EOL이므로 M7 이후 best-effort 브리지. 자체 브리지 + Zenoh. Isaac Sim ROS 워크스페이스는 Humble·Jazzy만 지원), OPC UA(open62541), MQTT, MCAP. 내비게이션 스택 연동(Nav2 등)과 플릿 인터페이스 표준(VDA 5050 등)은 고객 요구 시 커넥터로 추가 [U] |
 | 자산 소스 | Forge 장면 단위 촬영(3DGUT 배경 + 숨김 충돌 프록시 메시), 팔레트·랙·카트 라이브러리, 고객 레이아웃 CAD, Siemens Process Simulate·Teamcenter 라인 → USD 커넥터([02](02-market-competition.md)) |
 | 학습 템플릿 | 인식 SDG(팔레트·사람·지게차, RF-DETR), 도킹 정밀도 RL, 모바일 매니퓰레이션 RL·IL, 플릿 what-if(fork-from-live, §4.8) |
 | 평가 지표 | 처리량 예측 오차(시뮬 예측 vs 이후 실측), 도킹 위치 오차(cm), 니어미스율, 합성 전용 mAP 비율, twin-fidelity score |
@@ -391,7 +395,7 @@ quadrantChart
 | 기술 준비 | P1–P2(M9–M18). CRL 2(M12) → CRL 3(M15) → CRL 4(M18) [A] |
 | 상업 시점 | P2 라이브 트윈 부가 기능. 첫 라이브 트윈은 M18 앵커 셀. 단독 라인은 §3.3 재평가 트리거 충족 시 검토 |
 
-- **PhysX Vehicle2의 구역 규칙:** Vehicle2는 PhysX SDK에 포함되지만, 지금 우리가 쓰는 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Zone F 전용. 테넌트에 Vehicle2를 열려면 PhysX SDK 소스 어댑터(P2 조건부: G1 통과, 베이크오프에서 PhysX 우위 실측, 온프렘 수요 2건 이상, 36–48 HM)가 필요. 그 전까지 테넌트 AMR은 Newton 관절 휠 + Chrono(차량 등급)로 처리
+- **PhysX Vehicle2의 구역 규칙:** Vehicle2는 PhysX SDK에 포함되지만, 지금 우리가 쓰는 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Zone F 전용. 테넌트에 Vehicle2를 열려면 PhysX SDK 소스 어댑터(P2 조건부: G1 통과, 베이크오프에서 PhysX 우위 실측, 온프렘 수요 2건 이상, 36–48 HM)가 필요(대안 경로: Mobility α 설계 메모(M17)의 C++ 바인딩 결정). 그 전까지 Zone T/S의 AMR은 Newton 관절 휠, 차량 등급은 Chrono::Vehicle로 처리하고, Zone T에서 Vehicle2를 쓰지 않음
 - **조작 팩과의 결합:** 모바일 매니퓰레이터는 조작 팩의 그래스프 템플릿 + AMR 팩의 베이스 이동을 USD 참조로 합성. 팩 간 결합은 `requires.packs` 필드로 선언 [A]
 
 ### 4.3 휴머노이드·덱스터러스 팩(humanoid-dex-pack): 휴머노이드, 양팔, 덱스터러스 핸드
@@ -406,9 +410,9 @@ quadrantChart
 | 대표 과제 | 속도 추종 보행(평지·험지), 모션 트래킹(BeyondMimic·HOVER 방식), 로코-매니퓰레이션, 양팔 접기·조립·전달, 손안 재배치, 공구 사용 |
 | 물리 백엔드·설정 | 기본 Newton/MJWarp, dt 5 ms·decimation 4(50 Hz) [A], PD + 액추에이터 네트워크. 60 DoF 초과: 팩토리 PhysX 경로 또는 관절 트리 분할(MJWarp 약점). 폐루프 다리: Kamino(DR Legs 6중 루프, 4,096 환경·GPU 1장 사례). 인증: MuJoCo CPU 분할 모델. 적합성 C11(관절 궤적 RMSE ≤2°, 발 접촉 타이밍 ≤10 ms) |
 | 센서 리그 | 관절 엔코더·토크, IMU, 발 접촉, 머리·손목 RGB-D, 촉각(TacSL 팩토리, Taccel 평가), 실측용 모션캡처 [A] |
-| 표준·포맷 | MJCF·URDF·USD, LeRobotDataset v3, MCAP, GR00T N1.7(코드 Apache-2.0, 가중치 NVIDIA Open Model License, 재배포·군사 조항 확인 필요), ONNX → TensorRT(Jetson AGX Thor) |
+| 표준·포맷 | MJCF·URDF·USD, LeRobotDataset v3, MCAP, GR00T N1.7(코드 Apache-2.0, 가중치 NVIDIA Open Model License. 학습·내부 사용 OK. 파인튜닝 가중치의 고객 납품은 재배포에 해당하므로 V7 법률 검토(M3) 통과 후. 결과가 부정적이면 SmolVLA 또는 ACT로 증류해 납품), ONNX → TensorRT(Jetson AGX Thor) |
 | 자산 소스 | 제조사 로봇 모델, 가정·공장 장면(Forge), 모션 데이터(BeyondMimic은 LAFAN1 사용, 데이터 라이선스 [U]), 텔레옵 시연(Isaac Teleop 팩토리, GELLO·SpaceMouse 테넌트). **사용 금지:** AgiBot World·GO-1(CC BY-NC-SA), RLDX-1 가중치(비상업) |
-| 학습 템플릿 | RL: 속도 추종(mjlab 기본 과제), 모션 트래킹(teacher→student 증류), 손안 재배치(DexSuite ADR·PBT). IL·VLA: GR00T N1.7 파인튜닝(≥40 GB GPU), 양팔 Mimic 증강(팩토리). pi0.5는 가중치 약관 확인 전 차단 |
+| 학습 템플릿 | RL(P1 3종, §7.1): G1 속도 추종(mjlab 기본 과제), 모션 트래킹(teacher→student 증류), 손안 재배치(상태 기반, DexSuite ADR·PBT. 시각 기반은 P2 이후). IL·VLA: GR00T N1.7 파인튜닝(≥40 GB GPU), 양팔 Mimic 증강(팩토리). pi0.5는 가중치 약관 확인 전 차단 |
 | 평가 지표 | 과제 성공률(신뢰구간), sim/real r ≥0.8(P2), 낙상률, 모션 추종 오차, 시연당 데이터 가치(파인튜닝 성공률 증분) [A], Crucible 과제 스위트 순위 일치 |
 | 인증 기준 | 로봇-과제 인증서(₩3,000만–1억): 실셀 + 시뮬 동시 채점, 공동서명 기관 입회. 자사 학습 정책은 공동서명 기관 검토 후에만 인증(회피 규정) |
 | 한국 고객 | K-Humanoid Alliance(2025-04-10 출범 [U]) 회원사, HMG/Boston Dynamics, Samsung/Rainbow, LG, RLWRLD(비상업 가중치이므로 '데이터 공급 대상'). 글로벌: Figure, Physical Intelligence, Skild, 1X, Agility, Apptronik, Field AI, Dyna, Genesis AI(자금 규모 [U]) |
@@ -456,7 +460,7 @@ quadrantChart
 
 ### 4.5 Mobility Pack(mobility-pack): 야드 차량 → 오프로드 UGV → 도로 AV 연결
 
-**결론: 자동차를 하지 않는 것이 아니다. 차량 동역학은 Chrono와 PhysX Vehicle2로 준비하고(α, M18–M24), 도로 AV는 시뮬레이터 정면 경쟁 대신 OpenSCENARIO·OSI·FMI 3.0과 MORAI 파트너십으로 '연결'한다. 우리가 파는 것은 한국 도로·야드의 인식 데이터와 시뮬레이션 신뢰성 증거다.**
+**결론: 자동차를 하지 않는 것이 아니다. 차량 동역학은 Chrono::Vehicle(Zone T/S·F)과 PhysX Vehicle2(Zone F 전용)로 준비하고(α, M18–M24), 도로 AV는 시뮬레이터 정면 경쟁 대신 OpenSCENARIO·OSI·FMI 3.0과 MORAI 파트너십으로 '연결'한다. 우리가 파는 것은 한국 도로·야드의 인식 데이터와 시뮬레이션 신뢰성 증거다.**
 
 #### 4.5.1 3단 구조
 
@@ -474,8 +478,8 @@ quadrantChart
 
 | 등급 | 모델 | 엔진 | 용도 | 구역 |
 |---|---|---|---|---|
-| V1 | 운동학 자전거 | Newton 관절 휠, PhysX Vehicle2 | AMR, 야드 저속 경로 | F·T |
-| V2 | 동역학 자전거 + 단순 타이어 | PhysX Vehicle2 | 야드 트랙터, 견인차 | F |
+| V1 | 운동학 자전거 | Newton 관절 휠(F·T·S), PhysX Vehicle2(F 전용) | AMR, 야드 저속 경로 | F·T·S(Vehicle2는 F) |
+| V2 | 동역학 자전거 + 단순 타이어 | PhysX Vehicle2(Zone F). Zone T/S는 Chrono::Vehicle V3로 대체 | 야드 트랙터, 견인차 | F |
 | V3 | 다물체 서스펜션 + TMeasy | Chrono::Vehicle | 인식 데이터용 일반 주행 | F·T·S |
 | V4 | Pacejka(Pac89/Pac02) + 파워트레인 | Chrono::Vehicle | 선회·제동 거동 재현, 정상상태 선회 평가 | F·T·S |
 | V5 | 변형 지형(SCM, CRM, DEM) | Chrono | 오프로드 UGV, 건설 | F·T·S(P3) |
@@ -576,7 +580,7 @@ flowchart LR
 | UL 4600 Ed.3 | 2023-03-17 발행(자율 트럭 포함) | 자율 제품 safety case | safety case 조각 포맷(UL 4600·UNECE ADS 양식) |
 | ISO/PAS 8800:2024 | 발행 | 도로 차량 AI 안전 | 데이터셋 출처·라벨 품질 증빙(Run Manifest, 라이선스 레지스트리) |
 | ISO 26262 | Ed.3 2027 전후 예상 | 기능안전, 도구 자격 | **대상 아님.** aiSim 5의 ASIL-D 인증이 업계 기준선. 우리는 도구 인증을 하지 않음 |
-| 국내 Level-4 성능인증 | 2025-03-20 시행 | 시뮬레이션 인정 범위 [U](DR §15 #22) | KATRI·K-City 상관 연구로 근거 축적 |
+| 국내 Level-4 성능인증 | 2025-03-20 시행 | 시뮬레이션 인정 범위(DR §15 #22) [U] | KATRI·K-City 상관 연구로 근거 축적 |
 | Euro NCAP 2026 | 4단계 × 100점 체계 | 시뮬레이션 지원 평가 확대 | 시나리오 변형 인식 데이터 |
 
 - **Credibility Dossier 구성:** ① 검증 데이터(실측 로그·Fidelity Lab trial) ② sim-vs-real 지표(검출 mAP 갭, 라이다 점 분포 거리) ③ ISO 34505 기준 시나리오 커버리지 ④ UL 4600·UNECE ADS 양식의 safety case 조각. 데이터셋 팩에 옵션으로 첨부[A]
@@ -598,12 +602,13 @@ flowchart LR
 |---|---|
 | 한국 고객 | 야드: HD Hyundai·Samsung Heavy·Hanwha Ocean 야드 물류, HMG 공장 물류, 항만 터미널. 오프로드: ADD, Hanwha Aerospace, LIG Nex1(Air-gap). 도로: Hyundai Mobis, 42dot, 로보택시 스타트업, L4 성능인증 신청자(MORAI 경유) |
 | 경쟁 | dSPACE AURELION, IPG CarMaker 15.0, Applied Intuition(CarSim), aiSim 5/6, Hexagon VTD/VTDx, rFpro, Ansys AVxcelerate 2026 R1, Cognata·Duality(오프로드·국방), CARLA 0.10.0(무료, UE 5.5), NVIDIA AlpaSim·OmniDreams(무료), MORAI |
-| 파트너 | MORAI, KATRI·화성 허브, 고객 보유 CarSim·CarMaker(FMI), BeamNG.tech(충돌·변형 데이터 필요 시, 견적 기반) |
+| 파트너 | MORAI, KATRI·화성 허브, 고객 보유 CarSim·CarMaker(FMI, 고객 라이선스 BYOL), BeamNG.tech(충돌·변형 데이터 필요 시, 견적 기반 벤더 라이선스. 'OK' 대상 아님) |
 | 평가 지표 | 정상상태 선회 반경·요레이트 오차(C12: ≤3%·≤3%), 합성 전용 mAP 비율, 라이다 거리 오차, 시나리오 커버리지 |
 | 인증 기준 | 차량 동역학 Silver: 요레이트 오차 임계(04 매니페스트 예시 0.05) + 프로토콜 AIC-MP-VEH [A]. Chrono 경로가 D0로 등록되기 전까지 동역학 항목은 D1 '통계적 재현' 라벨(§1.5) |
 | 완료 기준(α) | C12 통과(Chrono vs PhysX Vehicle2), OpenSCENARIO 샘플 시나리오 재생, FMU 1종 연동 데모, 카메라·라이다 프로파일 1종 `validated` [A] |
 | 기술 준비(CRL) | CRL 1(M18, Chrono::Vehicle 어댑터 + C12 착수) → CRL 2(M20, 야드 차량 템플릿·센서 리그) → CRL 3(M21, 고정가 PoC·파일럿 데이터 팩) → CRL 4(M24, 완료 기준 충족) [A] |
-| 인력 | WS1-M 1명(P2) + WS3 지원. DR 고정값 안의 일정 조정, 인원·예산 증액 없음 |
+| 범위 밖(α) | 승용차 ADAS·섀시 제어 수준의 트윈. 승용 OEM·Tier-1 수요가 확정되면(트리거 X14) §6 Type B(18–37 HM, 인건비 약 ₩2.5–5.2억 [A])로 고객 NRE 또는 공격안 예산에서 착수하며, 이때 준비 시점은 약 M30 [A] |
+| 인력 | WS1-M 1명(서치 M16, 착석 M18, 최종 기한 M20) + WS3 지원, 약 7 HM. 착석 전 공백은 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당. DR 고정값 안의 일정 조정, 인원·예산 증액 없음 |
 
 ### 4.6 드론 팩(aerial-pack): PX4 SITL, Pegasus, Gazebo Jetty, Aerial Gym
 
@@ -615,8 +620,8 @@ flowchart LR
 |---|---|
 | 대상 시스템 | 멀티로터(점검·ISR·물류), 고정익(P3 검토), 대드론 탐지용 표적 드론 |
 | 대표 과제 | 호버·웨이포인트, 시각 항법, 선체·플랜트·교량 점검 비행, 대드론 탐지 인식 데이터, ISR 표적 인식 |
-| 물리·비행 스택 | **PX4 SITL + Gazebo Jetty**가 기본. Gazebo Jetty는 LTS(2025-09, 2031-05까지 지원). PX4 1.16은 Gazebo Harmonic, PX4 1.17이 Jetty 지원과 Ackermann SIH 추가. Kernel은 SITL과 lockstep 클록으로 동기화하고, 우리 장면은 센서 렌더와 환경(바람 외란 [A])을 담당. 적합성 C14(호버·스텝 응답 오버슈트 ≤5%, 정착 시간 ≤10%) |
-| Isaac 계열 경로 | Pegasus Simulator v5.1.0(2025-10-26, BSD-3)은 Isaac Sim 5.1·PX4 1.14.3에 묶여 있고 메인테이너 1인. **포팅하거나 자체 브리지 개발**(DR §2 #7). 팩토리 RTX SDG는 Isaac Sim 6.1에서 자체 브리지로 |
+| 물리·비행 스택 | **PX4 SITL + Gazebo Jetty**가 기본. Gazebo Jetty는 LTS(2025-09, 2031-05까지 지원). PX4 1.16은 Gazebo Harmonic, PX4 1.17이 Jetty 지원과 Ackermann SIH 추가. Kernel은 SITL과 lockstep 클록으로 동기화하고, 우리 장면은 센서 렌더와 환경(바람 외란 [A])을 담당. 적합성 C14(호버·스텝 응답 오버슈트 ≤5%, 정착 시간 ≤10%)는 P3 적합성(6×15)에 정식 편입하고, P2에는 템플릿 회귀용으로 사전 실행만 함. PX4 SITL lockstep은 D0 등록 전까지 D1 |
+| Isaac 계열 경로 | Pegasus Simulator v5.1.0(2025-10-26, BSD-3)은 Isaac Sim 5.1·PX4 1.14.3에 묶여 있고 메인테이너 1인. **포팅하거나 자체 브리지 개발**(DR §2 #7). Pegasus 포팅은 Isaac Sim 런타임에 의존하므로 Zone F·BYOL 전용이고, 테넌트·온프렘 경로는 자체 PX4 브리지만 씀. 팩토리 RTX SDG는 Isaac Sim 6.1에서 자체 브리지로 |
 | RL 경로 | Aerial Gym(BSD-3, NTNU): GPU 대량 병렬 멀티로터 RL, 상태 기반 정책은 1분 이내, 시각 항법은 1시간 이내 학습 보고. Isaac Gym 기반이며 Isaac Lab 포팅 진행 중. 포팅 완료 전까지 참조 레시피로만 사용 |
 | 센서 리그 | EO 카메라, IR(검증 프로파일 전 판매 금지), 라이다, IMU, GPS, 기압계. Warp Sensor Library + 실측 프로파일 |
 | 표준·포맷 | MAVLink, ROS 2(ros_gz는 Lyrical과 Jetty를 짝지음), MCAP, COCO·OpenLABEL |
@@ -629,7 +634,7 @@ flowchart LR
 | 기술 준비 | P2 PX4 SITL 브리지 기본 템플릿(M20–M24, CRL 2) → CRL 3(P3, 국방 에디션 디자인 파트너) → CRL 4(EO/IR 프로파일 검증 후) [A] |
 | 상업 시점 | 민수는 CRL 3 도달 후(P3) PoC만. 본격 판매는 Air-gap 에디션(M27–, 트리거 조건부) |
 
-- **DR 문구 조정:** DR §2 #7은 드론을 'P3 국방 에디션 안에서만 착수'로 적었으나, 보완 지시가 P2(M20–M24) PX4 SITL 템플릿을 요구한다. 이 문서는 보완 지시를 따른다(표 2-3 #2). 템플릿은 기술 준비이고, 상업 착수는 여전히 P3 국방 에디션이다
+- **DR 문구 조정:** DR v1.0 §2 #7은 드론을 'P3 국방 에디션 안에서만 착수'로 적었으나, v1.1 보완이 P2(M20–M24) PX4 SITL 템플릿을 요구한다. DR v1.1은 이를 반영해 기본 템플릿을 P2 RL 1종으로 세고 상업화를 P3 국방 에디션에 둔다(표 2-3 #2). 템플릿은 기술 준비이고, 상업 착수는 여전히 P3 국방 에디션이다
 
 ### 4.7 해양 팩(maritime-pack): 선박, 항만, 조선소
 
@@ -650,17 +655,24 @@ flowchart LR
 M ν̇ + C(ν) ν + D(ν) ν + g(η) = τ_control + τ_wind + τ_wave
 η̇ = J(η) ν
 
-η = [x, y, z, φ, θ, ψ]ᵀ    (지구 고정 좌표의 위치·자세)
+η = [x, y, z, φ, θ, ψ]ᵀ    (지구 고정 NED 좌표의 위치·자세, z 아래 방향)
 ν = [u, v, w, p, q, r]ᵀ    (선체 고정 좌표의 선속·각속도)
 M = M_RB + M_A             (강체 질량 + 부가질량)
 C(ν) = C_RB(ν) + C_A(ν)    (코리올리·구심력)
 D(ν) = D_L + D_NL(ν)       (선형 + 비선형 감쇠)
 g(η)                       (복원력)
+
+조류가 있을 때(ν_c = 선체 좌표로 변환한 조류 속도):
+M_RB ν̇ + M_A ν̇_r + C_RB(ν) ν + C_A(ν_r) ν_r + D(ν_r) ν_r + g(η) = τ_control + τ_wind + τ_wave
+ν_r = ν − ν_c              (상대 속도. 부가질량·감쇠 항은 상대 속도에 작용)
 ```
+
+- **좌표계 변환:** Fossen 모듈은 내부에서 NED(지구 고정)·선체 고정 좌표로 계산하고, Kernel 경계에서 플랫폼 정본 좌표인 SI Z-up(ENU)으로 변환한다([04](04-system-architecture.md) AIC-V001/AC-3). 변환은 어댑터 안에서만 하며, 장면 USD와 Run Manifest에는 Z-up 값만 기록한다
 
 - **파랑:** 파랑 스펙트럼(JONSWAP 또는 Pierson–Moskowitz [A])에서 성분파를 합성하고, 1차 파랑 강제력은 고객·선급이 제공하는 RAO(응답진폭연산자)로 계산[A]. 2차 표류력은 P3 후반 검토
 - **고충실도 검증:** Chrono 10.0 FSI(SPH, TDPF)로 슬래밍·계류·크레인 하중을 오프라인 검증. RL 규모가 아니라 기준 생성용
-- **적합성:** C13 롤 감쇠(해석해 대비 롤 주기 ≤2%, 감쇠비 ≤5%). 실측 기준은 05 S15(수조 시험 또는 문헌, 롤 주기 ±3%, 감쇠비 ±10% [U])
+- **적합성:** C13 롤 감쇠(해석해 대비 롤 주기 ≤2%, 감쇠비 ≤5%, 04 §4.6 정본). 실측 대조 기준은 [05 §8.1](05-physics-and-realism.md)의 부유체 롤 장면(수조 시험 또는 문헌, 롤 주기 ±3%, 감쇠비 ±10% [U])을 C13의 실측 확장으로 씀. 허용치 최종값은 결정 메모에서 고정
+- **결정론:** 클린룸 Fossen(Warp CPU) 경로는 반복 비트 일치 시험 통과와 CTO 등록(목표 M28 [A]) 전까지 D1. Chrono FSI(유체) 산출물은 인증 대상에서 제외
 - **물리 주기[A]:** 선체 동역학 100 Hz, 센서 렌더 10–30 Hz
 - **참조하되 탑재하지 않는 것:** Stonefish(GPL-3.0), HoloOcean 2.0(UE 5.3 미리보기, pip 0.5.8), OceanSim(라이선스 미확인), MarineGym(비공개). DAVE(Apache-2.0)·VRX 2.0(Gazebo Sim + ROS 2)은 USV 제어 SITL 층으로만 고려
 
@@ -685,11 +697,11 @@ g(η)                       (복원력)
 | 학습 템플릿 | 해양 인식 SDG 2종(EO/IR, 레이더), USV 충돌 회피 RL·평가 2종(P3) [A] |
 | 평가 지표 | 실선 로그 대비 합성 학습 검출기 mAP(M30: 합성 90% 이상으로 학습한 검출기의 해상 벤치마크), 레이더 프로파일 오차, COLREG 커버리지, 롤 감쇠 오차 |
 | 인증 기준 | 해양 센서 프로파일 Gold: 실측 캠페인 오차 막대 공개 + 제3자 시험성적서 1개 이상 [A] |
-| 한국 고객 | HD Hyundai(Avikus 약 350척 운용 [U], HiNAS Control은 HMM 선박 40척), Samsung Heavy(SAS가 15,000 TEU 선박을 Oakland→Kaohsiung 약 10,000 km 무개입 항해, 2025-08-25~09-06), Hanwha Ocean. 검증 파트너: KRISO, KR [U] |
+| 한국 고객 | HD Hyundai(Avikus 약 350척 운용 [U], HiNAS Control은 HMM 선박 40척 [U]), Samsung Heavy(SAS가 15,000 TEU 선박을 Oakland→Kaohsiung 약 10,000 km 무개입 항해, 2025-08-25~09-06 [U]), Hanwha Ocean. 검증 파트너: KRISO, KR [U] |
 | 경쟁·파트너 | 상업적 선두 없음. 위협: 대형 조선사의 내재화(HD Hyundai는 Omniverse·Siemens·Palantir와 트윈 구축), MORAI 해양 확장, Bifrost(해양 합성 데이터). 원칙: 해양에서는 도구가 아니라 데이터·평가를 판다 |
-| 수요 근거 | 자율운항선박법(2025-01-03 시행)의 성능 검증 요구(시뮬레이션 인정 범위 [U]), HD Hyundai 'Future of Shipyard' 2030년 생산 시간 30% 단축 목표, 자율운항 R&D(2020–2025, 약 ₩1,600억) |
+| 수요 근거 | 자율운항선박법(2025-01-03 시행)의 성능 검증 요구(시뮬레이션 인정 범위 [U]), HD Hyundai 'Future of Shipyard' 2030년 생산 시간 30% 단축 목표 [U], 자율운항 R&D(2020–2025, 약 ₩1,600억 [U]) |
 | 기술 준비 | P3(M25–). WS1-M 2명(P3): P2에 채용한 차량·해양 동역학 엔지니어(표 2-3 #4) + P3 1명 추가. CRL 1(M25, Fossen 어댑터 + C13) → CRL 3(M28, 디자인 파트너 PoC) → CRL 4(레이더·EO/IR 프로파일 오차 막대 공개 시점, M30 실선 검증과 연동) [A] |
-| 상업 시점 | Wave 3(M25–). 트리거: ARR ₩30억 이상 또는 확정 금액 ₩5억 이상 앵커 계약, 그리고 Sovereign GA와 센서 검증 프로파일. 공격안에서는 해양 트랙 M18 병행 착수(DR §9.3) |
+| 상업 시점 | Wave 3(M25–). 트리거: ARR ₩30억 이상 또는 확정 금액 ₩5억 이상 앵커 계약, 그리고 Sovereign GA와 센서 검증 프로파일. 기준안의 2028년 말 ARR 목표는 ₩20억이므로 M25에 ARR ₩30억 트리거는 충족되지 않는 것이 기본 경로이고, M25 착수는 확정 ₩5억 이상 앵커 계약(조선사 공동개발 또는 국방 과제)에 달려 있음 [A]. M25는 트리거 판정 개시 시점. 공격안에서는 해양 트랙 M18 병행 착수(DR §9.3) |
 
 ### 4.8 공장 라이브 팩(factory-live-pack): OPC UA, PLC, MQTT, fork-from-live
 
@@ -719,7 +731,7 @@ flowchart LR
 |---|---|
 | 대상 시스템 | 로봇 셀, 조립·검사 라인 구간, 물류 피킹 스테이션, AMR 플릿, 조선소 블록 공정 구간 |
 | 대표 과제 | 배포 스킬 인수 모니터링(현장 KPI), 실패 마이닝(실패 → 새 시나리오 → 재학습 → 게이트 재배포), 재배치 what-if(예측 처리량 vs 실측), 트윈 드리프트 경보 |
-| 커넥터·설정 | OPC UA: open62541(MPL-2.0, v1.5.9·v1.4.21·v1.3.22 2026-10 동시 릴리스, PubSub 암호화·TLS MQTT 지원). MQTT, ROS 2(Humble/Jazzy/Lyrical, 자체 브리지 + Zenoh). Kafka → 트윈 상태 서비스(Eclipse Ditto 방식, Ditto 3.9.x는 WoT TD 지원·EPL-2.0. 자체 구현 여부는 M12에 트윈 수·갱신율로 결정) → USD 라이브 세션 레이어(10–60 Hz) |
+| 커넥터·설정 | OPC UA: open62541(MPL-2.0, v1.5.9·v1.4.21·v1.3.22 2026-10 동시 릴리스, PubSub 암호화·TLS MQTT 지원). MQTT, ROS 2(Jazzy·Lyrical 기본, Humble은 M7 이후 best-effort 브리지. 자체 브리지 + Zenoh). Kafka → 트윈 상태 서비스(Eclipse Ditto 방식, Ditto 3.9.x는 WoT TD 지원·EPL-2.0. 자체 구현 여부는 M12에 트윈 수·갱신율로 결정) → USD 라이브 세션 레이어(10–60 Hz) |
 | PLC 정책 | PLC 코드를 에뮬레이션하지 않음[A]. 실제 PLC 또는 소프트 PLC의 OPC UA 서버에 읽기 전용으로 연결이 기본. 섀도·HIL 모드에서는 고객 공정·PLC 모델을 FMI 3.0 FMU로 받아 lockstep 클록으로 실행. 쓰기(제어) 경로는 고객 승인과 별도 안전 검토 없이는 열지 않음 |
 | fork-from-live 절차 [A] | ① 스냅샷(라이브 레이어 고정, 1초 이내) ② 보정(MuJoCo sysid·영상 기반 식별, 30–120분) ③ 장면 브랜치에서 what-if·RL 배치(시나리오 수백–수천 회) ④ 1–4주 뒤 라이브 데이터와 비교 ⑤ twin-fidelity score 기록, 임계 미달 시 재보정 |
 | 센서·데이터 | PLC 태그, 로봇 관절 상태, AMR 위치, 셀 카메라(선택), MCAP 현장 로그 |
@@ -748,13 +760,13 @@ flowchart LR
 
 | 영역 | 허용 | 금지·보류 | 근거 |
 |---|---|---|---|
-| 물리 | Newton, MuJoCo/MJWarp, Isaac Lab(GitHub 소스 빌드, Kit-less), PhysX SDK(소스, 조건부 어댑터), Chrono 10.0, Drake, 클린룸 Fossen | Kit, Isaac Sim, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠(NVIDIA 서면 조건 전) | Zone S 규칙. 온프렘 = 배포 |
+| 물리 | Newton, MuJoCo/MJWarp, Isaac Lab(GitHub 소스 빌드, Kit-less), PhysX SDK(소스, 조건부 어댑터), Chrono 10.0, Drake(Zone F 내부 검증 전용. 온프렘·에어갭 번들은 독점 서드파티 솔버를 제외한 소스 빌드만, V2 법률 의견 후), 클린룸 Fossen | Kit, Isaac Sim, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠(NVIDIA 서면 조건 전), **Drake PyPI 휠**(분류 'BSD and Other/Proprietary', 번들 서드파티 솔버에 별도 약관) | Zone S 규칙. 온프렘 = 배포. DR §2 #5 |
 | 비행·제어 | PX4(BSD-3), Gazebo(Apache-2.0) | ArduPilot(GPL-3.0) | 온프렘 GPL 번들 금지 |
-| Forge·기하 | gsplat 1.6.0, 3DGRUT 2.0, MapAnything(Apache 변형), DA3 Small/Base/Metric, CoACD/CuACD, Articulate-Anything | **SAM 계열(SAM 3D Objects, SAM 3)**: SAM License가 ITAR·군사 용도 제한. **VGGT-1B-Commercial**: 군사 용도 금지. Hunyuan3D, Inria 3DGS 계열 등 NEVER 목록 전체 | DR §2 #12, §3.3 |
-| 학습·모델 | LeRobot, rsl_rl, skrl, **SmolVLA 450M(국방 기본 VLA)**, ACT, Diffusion Policy, RF-DETR N–L | GR00T N1.7(군사 조항 확인 전), openpi 가중치(약관 불명), Cosmos 3·Transfer 2.5(OpenMDW-1.1·Open Model License 사용 분야 법률 검토 V7 전) | DR §2 #13·#15, §15 #4 |
+| Forge·기하 | gsplat 1.6.0, 3DGRUT 2.0, MapAnything-apache 가중치(기본 비 apache 가중치는 NEVER 후보 #22), DA3 Small/Base/Metric, CoACD/CuACD, Articulate-Anything | **SAM 계열(SAM 3D Objects, SAM 3)**: SAM License가 ITAR·군사 용도 제한. **VGGT-1B-Commercial**: 군사 용도 금지. Hunyuan3D, Inria 3DGS 계열 등 NEVER 목록 전체 | DR §2 #12, §3.3 |
+| 학습·모델 | LeRobot, rsl_rl, skrl, **SmolVLA 450M(국방 기본 VLA)**, ACT, Diffusion Policy, RF-DETR N–L | GR00T N1.7(군사·재배포 조항 V7 확인 전, 파인튜닝 가중치 납품 불가), openpi 가중치(약관 불명), Cosmos 3·Transfer 2.5(OpenMDW-1.1·Open Model License 사용 분야 법률 검토 V7 전) | DR §2 #13·#15, §15 #4 |
 | 렌더·센서 | 자체 Warp Sensor Library + 실측 프로파일. RTX는 고객이 자기 라이선스로 직접 운영할 때만 연동(BYOL) | AICHEMIST가 고객 라이선스로 대신 호스팅 | DR §6.2 |
 | 에이전트 LLM | 온프렘 오픈 가중치 모델, 출처를 확인한 국산 모델 우선(V8) | 프런티어 API, 출처 미확인 가중치 | DR §6.4 |
-| 인프라 | SeaweedFS 또는 Ceph RGW, Postgres, Kafka, KAI Scheduler | MinIO(AGPL [A]), lakeFS 1.87 이상(BSL 1.1), BlenderProc·Stonefish(GPL) | DR §2 #19 |
+| 인프라 | SeaweedFS 또는 Ceph RGW, Postgres, Kafka, KAI Scheduler | MinIO(AGPL-3.0 [U]), lakeFS 1.87 이상(BSL 1.1), TimescaleDB 고급 기능(TSL), BlenderProc·Stonefish(GPL) | DR §2 #19, §6.2 |
 
 ### 5.3 운영 규칙
 
@@ -771,6 +783,7 @@ flowchart LR
 ```
 
 - **텔레메트리 0:** 모든 구성요소의 외부 호출 차단을 설치기에서 검사. Kit 익명 사용 데이터는 Kit 자체를 배포하지 않으므로 해당 없음(BYOL 환경은 고객 책임, NVIDIA 체크리스트 #7로 비활성화 방법 확인)
+- **Zone S SBOM 차단 규칙:** 서명 SBOM 생성 단계에서 표 5-1의 금지·보류 구성요소가 하나라도 있으면 번들 서명을 중단. 차단 대상에는 Kit·Isaac Sim 바이너리, ovrtx·ovphysx·isaacsim/isaaclab 휠, **Drake PyPI 휠**(독점 서드파티 솔버 번들), SAM 계열·VGGT-Commercial 가중치, GPL·AGPL·BSL·TSL 구성요소, MapAnything 기본 가중치가 포함. Drake는 독점 솔버를 뺀 소스 빌드 산출물만 V2 법률 의견 후 허용
 - **업데이트 주기[A]:** 분기 1회 서명 번들 + 긴급 보안 패치. 릴리스 트레인의 동결 릴리스(GS 인증본)를 기준으로 빌드
 - **데이터 반입·반출[A]:** 반입은 고객 보안 검사를 거친 매체로만. 반출은 산출물(정책, 리포트, 인증서)만, 고객 승인 기록과 함께. 페어드 코퍼스 측정권은 국방 계약에서 기본 제외
 - **센서 증거:** 레이더·EO/IR은 오차 막대가 공개된 프로파일만 탑재. '단순화 FMCW 레이더'는 증거물로 판매 금지(DR §4.2)
@@ -836,7 +849,7 @@ flowchart LR
 **건설 장비(굴착 자동화)**
 - **물리:** Chrono SCM·CRM(GPU SPH)·DEM 입상체로 굴착 토사, 유압 실린더·밸브는 고객 Modelica·Simulink 모델을 FMI 3.0 FMU로 연결
 - **센서:** 라이다, 카메라, IMU, GNSS
-- **지표:** 버킷 채움률, 굴착 깊이 오차, 사이클 타임, 토사 침하 깊이(05 S12 확장, C15 SCM 침하 ≤15%)
+- **지표:** 버킷 채움률, 굴착 깊이 오차, 사이클 타임, 토사 침하 깊이(C15 SCM 침하 ≤15%). 입상체 산출물은 인증 대상이 아니므로 Scorecard 리포트로만 납품
 - **판정 근거:** Mobility β(오프로드 UGV)와 Chrono 지형 코드를 공유하므로 P3에 묶어 편입하면 한계비용이 낮아짐
 
 **의료 로봇(수술 보조·재활)**
@@ -852,7 +865,7 @@ flowchart LR
 
 ### 7.1 학습 템플릿 배분(DR §4.4 총량 기준) [A]
 
-DR KPI의 템플릿 수(RL / IL·VLA / 인식)는 P0 3/1/1, P1 8/3/3, P2 15/6/5, P3 25/10/8이다. 팩별 배분은 다음과 같다.
+DR KPI의 템플릿 수(RL / IL·VLA / 인식)는 P0 3/1/1, P1 8/3/3, P2 15/6/5, P3 25/10/8이다. 템플릿 ID의 마스터는 [06 §6.2](06-usability-and-agent.md)(RL-/IL-/PE- 번호), 팩별 배분의 마스터는 이 표다(DR v1.1 §16 #1). 팩별 배분은 다음과 같다.
 
 | 팩 | P0(M4) RL/IL/인식 | P1(M12) | P2(M24) | P3(M36) |
 |---|---|---|---|---|
@@ -865,6 +878,11 @@ DR KPI의 템플릿 수(RL / IL·VLA / 인식)는 P0 3/1/1, P1 8/3/3, P2 15/6/5,
 | 해양 | — | — | — | 2 / 0 / 2 |
 | 공장 라이브(검사 인식) | — | — | 0 / 0 / 1 | 0 / 0 / 1 |
 | **합계(DR KPI와 일치)** | **3 / 1 / 1** | **8 / 3 / 3** | **15 / 6 / 5** | **25 / 10 / 8** |
+
+- **P0 RL 3종의 구성:** 팔 도달·큐브 들기, 빈 피킹(한국 SKU), 디팔레타이징. 모두 조작 팩이다
+- **P1에 처음 들어가는 템플릿(M6–M12):** 휴머노이드·덱스터러스 RL 3종(G1 속도 추종, 모션 추적, 손안 재배치(상태 기반)), 사족 RL 1종(속도 추종)
+- **드론:** PX4 SITL 기본 템플릿(호버·웨이포인트)은 P2(M20–M24)의 RL 1종으로 센다. 상업화는 P3 국방 에디션에서 한다
+- **사족 범위:** P2 상업화는 휴머노이드·덱스터러스 핸드에만 해당한다. 사족은 거부권(경쟁 지형 1점)에 따라 템플릿과 Crucible 평가로만 수익화한다
 
 ### 7.2 Silver/Gold 자산 배분(DR §13.2 총량 기준) [A]
 
@@ -886,7 +904,7 @@ DR KPI의 템플릿 수(RL / IL·VLA / 인식)는 P0 3/1/1, P1 8/3/3, P2 15/6/5,
 | AMR·셀 | WS1 | WS3, WS6 | 조작 팩 인력 공유 |
 | 휴머노이드·덱스터러스 | WS5 | WS1, WS4(Arena) | VLA 엔지니어 M6 채용 |
 | 사족 | WS5 | WS1 | 연 2 HM 상한 |
-| Mobility | WS1-M(P2 1명) | WS3 | 보완 지시, 표 2-3 #4 |
+| Mobility | WS1-M(P2 1명, M18 착석) | WS3 | v1.1 보완, 표 2-3 #4 |
 | 드론 | WS1-M | WS3 | P2 템플릿, P3 본격화 |
 | 해양 | WS1-M(P3 2명) | WS3, WS4 | P2 채용 차량·해양 동역학 엔지니어(표 2-3 #4) + P3 1명 |
 | 공장 라이브 | WS6 | WS1 | OPC UA·라이브 트윈 엔지니어 M13 |
@@ -918,16 +936,17 @@ flowchart LR
 **확정 사항**
 1. Domain Pack은 7요소(자산·물리 프로파일·센서 리그·표준 커넥터·학습 템플릿·평가지표·인증 기준)로 정의하고, `domainpack.yaml` + `AicDomainPackAPI`로 버전·서명 관리
 2. 팩 성숙도는 CRL 0–5로 판정하고, CRL 4 전에는 해당 도메인의 Silver/Gold 인증 결과물을 판매하지 않음
-3. 상업 Wave(DR §5)와 Capability Readiness(보완 지시)를 모든 대외 문서에서 별도 축으로 표기
+3. 상업 Wave(DR §5)와 Capability Readiness(v1.1 보완)를 모든 대외 문서에서 별도 축으로 표기
 4. AV·사족은 거부권 영역. AV는 MORAI 경유 인식 데이터와 OpenSCENARIO·OSI·FMI 3.0 브리지로만, 사족은 템플릿·Crucible로만 수익화
 5. 국방은 모든 팩 위에 덧씌우는 별도 라이선스 프로파일로 운영(SAM 계열·VGGT-Commercial·GPL·미확인 모델 제외)
 6. 새 도메인은 11단계(0–10번) 절차로 편입하며, DR 인원·예산 고정값 안에서 고객 NRE·정부과제로 충당
+7. 팩 인증서는 D0 등록 경로에서만 발행. 차량·선박·드론 동역학은 반복 비트 일치 시험과 CTO 등록 전까지 D1 라벨과 Scorecard만 납품. Gold 인증서에는 랩 실측값과 측정 불확도를 기록하고, '질량/마찰 오차' KPI는 Forge 자동 추정의 정확도 지표로만 사용
 
 **표 8-1. 다음 액션**
 
 | 액션 | 책임 | 기한 |
 |---|---|---|
-| 팩 매니페스트 스키마 v0(`domainpack.yaml`, `AicDomainPackAPI`) 확정, 적합성 장면 번호 체계를 04(C01–C15)로 통일하고 05(S1–S15)와 대응표 작성 | WS1 Kernel 리드 + Platform Lead | M2(2026-12) |
+| 팩 매니페스트 스키마 v0(`domainpack.yaml`, `AicDomainPackAPI`) 확정. 어댑터·Cap 이름은 04 §4.2 레지스트리(snake_case)를, 적합성 장면은 04 §4.6의 C01–C15와 S→C 대응표를 그대로 적용 | WS1 Kernel 리드 + Platform Lead | M2(2026-12) |
 | CRL 판정 기준과 분기 리뷰 운영 규칙 승인 | CTO | M3(2027-01) |
 | manipulation-pack v0.1: 한국 SKU Silver/Gold 150개, 템플릿 RL 3 / IL 1 / 인식 1, C01–C05 통과 | Forge Lead + Skill Lead | M4(2027-02, G0) |
 | 베이크오프 T11 결과로 휴머노이드 + 양손 경로(MJWarp 분할 vs PhysX 팩토리) 결정 | CTO | 2027-01 첫 주(결정 메모) |
@@ -935,12 +954,12 @@ flowchart LR
 | humanoid-dex-pack·legged-pack 템플릿(CRL 2) 출시 | Skill Lead | M12(2027-10) |
 | amr-cell-pack α: Newton 관절 휠 C05 회귀, AMR 인식 SDG 템플릿, 바닥재 마찰 실측 | WS1 + WS3 | M9 착수, M18 CRL 4 |
 | factory-live-pack: OPC UA·라이브 트윈 엔지니어 채용, 트윈 상태 서비스 Ditto vs 자체 결정 | Platform Lead | 채용 M13, 결정 M12, 첫 라이브 트윈 M18 |
-| WS1-M(P2 1명) 직무를 '차량·해양 동역학(Chrono, FMI, Fossen)'으로 정의하고 서치 착수 | CEO + CTO | 서치 M16, 온보딩 M18–M20 |
-| Mobility Pack α 설계 메모(Chrono::Vehicle·PhysX Vehicle2·esmini·FMI 3.0 범위, esmini 라이선스 확인) | CTO(WS1-M 채용 전) | M17(2028-03) |
+| WS1-M(P2 1명) 직무를 '차량·해양 동역학 엔지니어(Chrono, FMI, Fossen)'로 정의하고 서치 착수. 공백 시 CTO 설계 메모(M17)와 WS1·WS3가 어댑터 골격 담당 | CEO + CTO | 서치 M16, 착석 M18([09 §7.1](09-roadmap-organization-budget.md) 채용 표 기준. DR §8.3의 M20은 최종 기한) |
+| Mobility Pack α 설계 메모(Chrono::Vehicle·PhysX Vehicle2(Zone F)·esmini·FMI 3.0 범위, esmini 라이선스 확인, Vehicle2 C++ 바인딩의 Zone T 개방 여부 결정) | CTO(WS1-M 채용 전) | M17(2028-03) |
 | MORAI 파트너십: 상호 비경쟁 범위와 한국 도로 인식 데이터 팩 유통 조건 협의 | WS9 BD | 협의 착수 M12, MOU M18 |
 | KATRI·화성 허브 K-City 상관 연구 제안 | Head of Fidelity | M20(2028-06) |
-| aerial-pack: PX4 SITL 브리지 템플릿과 C14, Pegasus 포팅 vs 자체 브리지 결정 | WS1-M | 결정 M20, 완료 M24 |
+| aerial-pack: PX4 SITL 브리지 기본 템플릿(P2 RL 1종)과 C14 사전 실행(정식 편입은 P3 적합성 6×15), Pegasus 포팅(Zone F·BYOL 전용) vs 자체 브리지 결정 | WS1-M | 결정 M20, 템플릿 완료 M24 |
 | 해양 센서 검증 계획: IITP 공동연구(레이더·EO/IR 프로파일) 제안, KRISO·KR 협력 의향 확인 | Head of Fidelity + BD | IITP 제안 2027-04, 트리거 판정 M24(G3) |
 | 국방 라이선스 프로파일 v0(허용 목록 CI)과 에어갭 설치기 요구사항 | 라이선스 매니저 + Platform Lead | v0 M14(Sovereign 베타), v1 M26 |
-| DR 문구 정합(표 2-3의 6건): Chrono 착수 시점, 드론 P2 템플릿, 사족 해석, WS1-M 직무·시점, Vehicle2 구역, 차량·해양 결정론 경로 | Chief Strategist | 다음 DR 개정(M2) |
-| Chrono CPU·Fossen CPU 반복 비트 일치 시험 후 D0 경로 등록 DR 개정안 제출 | WS1-M + Head of Fidelity | Chrono M22, Fossen M28 [A] |
+| DR 문구 정합(표 2-3의 6건): Chrono 착수 시점, 드론 P2 템플릿, 사족 해석, WS1-M 직무·시점, Vehicle2 구역, 차량·해양 결정론 경로 | Chief Strategist | **완료**(DR v1.1 반영). 이후 변경은 DR §16 정합 결정 표로만 관리 |
+| Chrono CPU·클린룸 Fossen·PX4 SITL lockstep 반복 비트 일치 시험(N1–N4 동등) 실행, 통과 시 CTO가 D0 목록에 등록(DR v1.1 §4.1 D0 경로 확장 규칙) | WS1-M + Head of Fidelity(시험) / CTO(등록) | Chrono M22, Fossen M28, PX4 SITL은 Air-gap 에디션(M27) 전 [A] |

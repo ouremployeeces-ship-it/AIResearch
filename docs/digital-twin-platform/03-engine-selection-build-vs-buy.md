@@ -9,12 +9,12 @@
 ## 핵심 요약
 
 - **물리 엔진도, 렌더러도 직접 만들지 않는다(NO).** 자체 엔진은 150–300 engineer-year, ₩400–600억, MVP까지 30–48개월 이상이 든다. 24개월 기준 예산 ₩122억의 3–5배다. 리서치 의사결정 매트릭스에서 하이브리드(전략 D)가 4.23점으로 1위이고, 가중치를 다섯 방식으로 흔들어도 1위를 지킨다(§8.4).
-- **물리는 '한 엔진'이 아니라 역할별 포트폴리오다.** 학습 처리량은 Newton 1.6.x(MJWarp 솔버), 인증·재현은 MuJoCo 3.15 CPU, 팩토리의 접촉 집약 조작은 Isaac Lab 3.x + PhysX 5.11, 오프라인 접촉 기준은 Drake v1.57, 차량·지형·해양은 Chrono 10.0이 맡는다. Genesis는 관찰만 한다.
-- **렌더러도 4개 티어로 나눈다.** R0 WebGPU(서버 GPU 0), R1 Newton Warp 렌더러, R2 3DGUT 신경 렌더, R3 Isaac Sim 6.1 RTX다. R3는 내부 팩토리(Zone F)와 고객 자체 라이선스(BYOL) 환경에서만 돈다.
-- **테넌트·온프렘 경로는 100% 허용형 라이선스다.** Kit, Isaac Sim, RTX, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠은 NVIDIA 서면 조건을 받기 전까지 Zone F에서 산출물을 만드는 데에만 쓴다. NEVER 목록 21개 항목은 CI와 마켓플레이스에서 자동 차단한다.
-- **직접 만드는 것은 13개의 '이음새'다(엔지니어링의 약 60%).** 엔진 사이의 이음새(Sim Kernel API, 적합성 스위트, Run Manifest), 현실과의 이음새(Forge, Fidelity Lab, 인증서), 사용자와의 이음새(Outcome Console, Studio, 한국어 MCP 에이전트)다. 엔진은 무료로 2–3주마다 좋아지지만, 측정과 인증은 아무도 무료로 주지 않는다.
-- **'무엇이든 트윈으로'는 아키텍처로 보장하고, 시점만 상업 순서에 맞춘다.** 차량 Mobility Pack α는 M18–M24(Chrono::Vehicle + PhysX Vehicle2 + esmini + FMI 3.0), 드론 PX4 SITL 템플릿은 M20–M24, 해양·오프로드 UGV는 P3(M25–)다. 엔진은 지금 이미 정해져 있다.
-- **엔진 선택은 고정값이 아니라 측정으로 갱신하는 결정이다.** 6–8주 베이크오프(W1 = 2026.11 첫 주, 결정 메모 2027.01 첫 주), 반기 릴리스 트레인, 엔진 접촉 워크스트림 용량의 25% 예약, 15개 재결정 트리거로 운영한다.
+- **물리는 '한 엔진'이 아니라 역할별 포트폴리오다.** 학습 처리량은 Newton(MJWarp 솔버. 버전은 Isaac Lab 3.x GA가 지원하는 릴리스 트레인 핀으로 통일하며, 2026-10 최신은 1.6.1이다. §12.3), 인증·재현은 MuJoCo 3.15 CPU, 팩토리의 접촉 집약 조작은 Isaac Lab 3.x + PhysX 5.x(Isaac Sim 6.1 번들 버전 [U], 공개 SDK 최신 5.11), 오프라인 접촉 기준은 Drake v1.57, 차량·지형·해양은 Chrono 10.0과 클린룸 Fossen 6-DOF가 맡는다. Genesis는 관찰만 한다.
+- **렌더러도 4개 티어로 나눈다.** R0 웹(WebGPU/WebGL2, 서버 GPU 0), R1 Newton Warp 렌더러, R2 3DGUT 신경 렌더, R3 Isaac Sim 6.1 RTX다. R3는 내부 팩토리(Zone F)와 고객 자체 라이선스(BYOL) 환경에서만 돈다.
+- **테넌트·온프렘 경로는 허용형과 의무 이행이 가능한 약한 카피레프트로만 구성한다.** 허용형(Apache-2.0/BSD/MIT)에 MPL-2.0(open62541·Selkies·OpenBao·Lichtblick), EPL-2.0(Ditto), LGPL(Ceph RGW)만 더하고, TSL·BSL·AGPL·GPL·비상업 라이선스는 넣지 않는다(§10). Kit, Isaac Sim, RTX, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠은 NVIDIA 서면 조건을 받기 전까지 Zone F에서 산출물을 만드는 데에만 쓴다. NEVER 목록 21개 항목(후보 #22 MapAnything 기본 가중치)은 CI와 마켓플레이스에서 자동 차단한다.
+- **직접 만드는 것은 네 종류의 이음새 13개다(엔지니어링의 약 60%).** 엔진 사이의 이음새(Sim Kernel API, 적합성 스위트, Run Manifest, 센서 라이브러리), 현실과의 이음새(Forge, Fidelity Lab, Crucible, 한국 콘텐츠), 사용자와의 이음새(Outcome Orchestrator, 한국어 에이전트, 게이트웨이), 신뢰의 이음새(라이선스 레지스트리, 소버린 패키징)다(§9). 엔진은 무료로 2–3주마다 좋아지지만, 측정과 인증은 아무도 무료로 주지 않는다.
+- **'무엇이든 트윈으로'는 아키텍처로 보장하고, 시점만 상업 순서에 맞춘다.** 차량 Mobility Pack α는 M18–M24(Chrono::Vehicle + PhysX Vehicle2(Zone F 전용) + esmini + FMI 3.0), 드론 PX4 SITL 템플릿은 M20–M24, 해양·오프로드 UGV는 P3(M25–)다. 엔진은 지금 이미 정해져 있다.
+- **엔진 선택은 고정값이 아니라 측정으로 갱신하는 결정이다.** 6–8주 베이크오프(W1 = 2026-11-02 주 ~ W8 = 2026-12-27 주, 결정 메모 2027-01 첫 주), 반기 릴리스 트레인, 엔진 접촉 워크스트림 용량의 25% 예약, 15개 재결정 트리거로 운영한다.
 
 ---
 
@@ -37,13 +37,13 @@ flowchart LR
     K["Sim Kernel API + 적합성 스위트 + Run Manifest"]
     subgraph ZF["Zone F 내부 팩토리 - 산출물 전용"]
         IS["Isaac Sim 6.1 RTX + Replicator"]
-        IL["Isaac Lab 3.x + PhysX 5.11 - TacSL, Mimic, Teleop"]
+        IL["Isaac Lab 3.x + PhysX 5.x - TacSL, Mimic, Teleop, Vehicle2"]
         DR["Drake v1.57 - 오프라인 접촉 기준"]
     end
-    subgraph ZT["Zone T 테넌트 / Zone S 소버린 - 100% 허용형"]
-        NW["Newton 1.6.x - MJWarp, Kamino, VBD, MPM"]
+    subgraph ZT["Zone T 테넌트 / Zone S 소버린 - 허용형 + 약한 카피레프트"]
+        NW["Newton 트레인 핀 - MJWarp, Kamino, VBD, MPM"]
         MJ["MuJoCo 3.15 CPU - 인증 재현"]
-        CH["Chrono 10 - 차량, 지형, FSI"]
+        CH["Chrono 10, 클린룸 Fossen - 차량, 지형, 해양"]
         R0["R0 WebGPU"]
         R1["R1 Newton Warp 렌더"]
         R2["R2 gsplat, 3DGRUT"]
@@ -68,11 +68,11 @@ flowchart LR
 
 ### 2.1 평가 원칙
 
-- **원칙 1. 라이선스 관문 우선:** Zone T/S 탑재 불가이고 산출물 전용 사용도 불가 → 즉시 NEVER. 독점이지만 산출물 사용 가능 → Zone F 한정 후보. 허용형 → 점수 평가로 진행.
-- **원칙 2. 벤더 수치 배제:** 측정 단위와 조건이 서로 다른 수치(§2.6)는 의사결정 매트릭스에 넣지 않음. 사내 steps/s/$와 보상 도달 시간으로 대체.
-- **원칙 3. 역할별 평가:** 학습 처리량, 인증·재현, 접촉 집약 조작, 차량, 렌더·센서 역할마다 가중치를 따로 둠.
-- **원칙 4. 측정 가능성:** 결정론, 적합성 스위트 통과, Run Manifest 기록 가능 여부가 인증 사업의 전제.
-- **원칙 5. 범용성:** CEO 요구("대상은 로봇, 자동차 등 어떤 것도 가능")는 단일 엔진이 아니라 Kernel API 뒤의 포트폴리오와 Domain Pack으로 충족([08 도메인 팩](08-domain-packs.md)).
+- **원칙 1. 라이선스 관문 우선:** Zone T/S 탑재 불가이고 산출물 전용 사용도 불가하면 즉시 NEVER로 둔다. 독점이지만 산출물 사용이 가능하면 Zone F 한정 후보로 둔다. 허용형과 의무 이행이 가능한 약한 카피레프트(MPL·EPL·LGPL)는 점수 평가로 넘긴다.
+- **원칙 2. 벤더 수치 배제:** 측정 단위와 조건이 서로 다른 수치(§2.6)는 의사결정 매트릭스에 넣지 않는다. 사내 steps/s/$와 보상 도달 시간으로 대체한다.
+- **원칙 3. 역할별 평가:** 학습 처리량, 인증·재현, 접촉 집약 조작, 차량, 렌더·센서 역할마다 가중치를 따로 둔다.
+- **원칙 4. 측정 가능성:** 결정론, 적합성 스위트 통과, Run Manifest 기록 가능 여부가 인증 사업의 전제다.
+- **원칙 5. 범용성:** CEO 요구("대상은 로봇, 자동차 등 어떤 것도 가능")는 단일 엔진이 아니라 Kernel API 뒤의 포트폴리오와 Domain Pack으로 충족한다([08 도메인 팩](08-domain-packs.md)).
 
 ### 2.2 평가 기준 11개와 4대 요구사항 매핑
 
@@ -110,8 +110,8 @@ flowchart LR
 | C10 GPU 이식성 | 2 | 5 | 0 |
 | C11 결정론 | 3 | 20 | 5 |
 
-- 접촉 집약 역할의 C7을 5로 낮춘 이유: 산출물 전용 판매가 가능하므로 Zone F 독점 런타임을 감수할 수 있음.
-- 인증 역할의 C2를 2로 낮춘 이유: 인증 재현은 처리량이 아니라 비트 일치가 핵심.
+- 접촉 집약 역할의 C7을 5로 낮춘 이유: 산출물 전용 판매가 가능하므로 Zone F 독점 런타임을 감수할 수 있다.
+- 인증 역할의 C2를 2로 낮춘 이유: 인증 재현은 처리량이 아니라 비트 일치가 핵심이다.
 
 **데스크 점수(1–5)**
 
@@ -119,7 +119,7 @@ flowchart LR
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Newton 1.6 (MJWarp) | 4 | 5 | 5 | 3 | 4 | 5 | 5 | 3 | 4 | 1 | 3 |
 | MuJoCo 3.15 CPU | 5 | 1 | 3 | 5 | 5 | 2 | 5 | 5 | 5 | 5 | 5 |
-| Isaac Lab 3.x + PhysX 5.11 | 4 | 4 | 4 | 5 | 3 | 5 | 2 | 4 | 5 | 1 | 3 |
+| Isaac Lab 3.x + PhysX 5.x | 4 | 4 | 4 | 5 | 3 | 5 | 2 | 4 | 5 | 1 | 3 |
 | Genesis 1.4.3 | 3 | 4 | 5 | 2 | 4 | 3 | 4 | 3 | 3 | 4 | 3 |
 | Drake v1.57 | 5 | 1 | 3 | 4 | 3 | 1 | 5 | 5 | 4 | 4 | 5 |
 
@@ -129,22 +129,22 @@ flowchart LR
 |---|---|---|---|
 | Newton 1.6 (MJWarp) | **4.28 (1위)** | 3.67 | 4.10 |
 | MuJoCo 3.15 CPU | 3.59 | **4.73 (1위)** | 3.85 |
-| Isaac Lab 3.x + PhysX 5.11 | 3.92 | 3.51 | **4.15 (1위)** |
+| Isaac Lab 3.x + PhysX 5.x | 3.92 | 3.51 | **4.15 (1위)** |
 | Genesis 1.4.3 | 3.45 | 3.27 | 3.20 |
 | Drake v1.57 | 3.17 | 4.34 (2위) | 3.40 |
 
-- **해석 1:** 역할별 1위가 DR의 엔진 선정과 정확히 일치. 학습 = Newton, 인증 = MuJoCo CPU, 접촉 집약 = PhysX, 오프라인 접촉 기준 = Drake(인증 역할 2위).
-- **해석 2:** 접촉 집약 역할에서 PhysX와 Newton의 차이는 0.05점(약 1%)에 불과. C6에 TacSL·Mimic·Teleop 가용성을 반영해 Newton을 3점으로 낮추면 4.15 대 3.80으로 벌어짐. 즉 **팩토리의 PhysX 채택은 처리량이 아니라 기능 공백 때문**이고, 테넌트 경로의 기본값은 베이크오프 T7·T8과 '10% 이내면 허용형 우선' 규칙(§13)이 정함.
-- **해석 3:** Genesis는 어느 역할에서도 1위가 아님. 유일한 강점은 C10(비CUDA 경로)이므로 '공급 헤지'로만 의미가 있고, 그래서 관찰(Watch) 판정.
+- **해석 1:** 역할별 1위가 DR의 엔진 선정과 정확히 일치한다. 학습 = Newton, 인증 = MuJoCo CPU, 접촉 집약 = PhysX, 오프라인 접촉 기준 = Drake(인증 역할 2위)다.
+- **해석 2:** 접촉 집약 역할에서 PhysX와 Newton의 차이는 0.05점(약 1%)에 불과하다. C6에 TacSL·Mimic·Teleop 가용성을 반영해 Newton을 3점으로 낮추면 4.15 대 3.80으로 벌어진다. 즉 **팩토리가 PhysX를 채택하는 이유는 처리량이 아니라 기능 공백**이고, 테넌트 경로의 기본값은 베이크오프 T7·T8과 '10% 이내면 허용형 우선' 규칙(§13)이 정한다.
+- **해석 3:** Genesis는 어느 역할에서도 1위가 아니다. 유일한 강점은 C10(비CUDA 경로)이므로 '공급 헤지'로만 의미가 있고, 그래서 관찰(Watch)로 판정한다.
 
 ### 2.4 의사결정 절차
 
 ```mermaid
 flowchart LR
     A["후보 식별 - 리서치, 릴리스 감시"] --> B{"라이선스 관문"}
-    B -->|"NC, AGPL, BSL, 지역 제외"| X["NEVER - CI 거부 목록"]
+    B -->|"NC, AGPL, BSL, TSL, 지역 제외"| X["NEVER - CI 거부 목록"]
     B -->|"독점, 산출물 사용 가능"| F["Zone F 후보"]
-    B -->|"허용형"| T["Zone T, S 후보"]
+    B -->|"허용형, 의무 이행 가능한 약한 카피레프트"| T["Zone T, S 후보"]
     F --> D["데스크 점수 C1-C11, 역할별 가중"]
     T --> D
     D --> E["베이크오프 실측 - 비용당 처리량, 보상 도달, 결정론"]
@@ -191,10 +191,10 @@ flowchart LR
 | **MuJoCo CPU** | 3.15.0(2026-10-05). 3.5(2026-02-12)부터 8개월간 11회 릴리스 | Apache-2.0 | 월드당 단일 스레드. RL 규모 불가 | 기준 구현, float64. 3.13 discrete 적분기·실린더 멀티컨택트, 3.15 캡슐 멀티컨택트 | flex: Stable Neo-Hookean(3.15, 실험), IPC(3.14, 실험) | CPU에서 결정론적 | 제한적 [U] | MuJoCo Playground 제로샷: Go1, Berkeley Humanoid, G1, Booster T1, LEAP 손, Franka(RSS 2025) | 가능 | **Adopt(인증·재현·대화형)** |
 | **MJX**(JAX) | MuJoCo 3.15 동반. MJWarp를 `impl='warp'`로 노출 | Apache-2.0 | 네이티브 JAX 경로는 MJWarp 대비 수백 배 느리다는 벤더 주장 [U] | MuJoCo와 동일 | MuJoCo와 동일 | GPU 배치 재현성 미검증 [U] | JAX 자동미분 [U] | Playground(MJX 경로) | 가능 | **Watch(TPU·JAX 헤지)** |
 | **PhysX 5 SDK** | 5.11.0. GPU 소스(CUDA 커널 500개 이상)는 5.6(2025-04)부터 공개 | 코어 Apache-2.0(저장소 루트 BSD-3) | SDK 단독 공개 수치 없음 | TGS/PGS, 축약좌표 관절, 텐던, GPU SDF(비볼록 메시). 마찰은 패치 기반 근사 | FEM 체적·표면, 입자, Vehicle2 | 같은 하드웨어·버전의 강체·관절만 결정론. 하드웨어 간, 변형체는 보장 없음 | 불가 | Isaac Gym/Lab 계보의 공개 사례 대부분 | 소스 빌드로 가능. USD·텐서 어댑터는 직접 구축(36–48 HM) | **Secondary(P2 조건부 어댑터)** |
-| **Isaac Sim 6.1 / Isaac Lab 3.x**(PhysX 경로) | Isaac Sim 6.1.0(2026-09-10). Isaac Lab 3.0.0-EA(2026-09-16, GA 2026-10 말 목표) | 저장소는 Apache-2.0(Isaac Sim)·BSD-3(Isaac Lab, mimic은 Apache-2.0). **Kit·RTX 런타임과 isaacsim/isaaclab PyPI 휠은 NVIDIA 독점** | RTX 4090: G1 험지 82k, Shadow 손 170k env-steps/s(학습 포함). L40 16장(4노드) G1 1.2M | PhysX와 동일 | PhysX FEM과 Newton VBD를 묶은 통합 변형체 API | PhysX와 동일 | 불가 | 사족·휴머노이드·덱스터러스 공개 사례 최다. TacSL 삽입 sim2real | Kit 경로: NVIDIA 서면확인 필요. Kit-less Newton 경로: 가능 | **Adopt(Zone F 전용, 접촉 집약)** |
+| **Isaac Sim 6.1 / Isaac Lab 3.x**(PhysX 경로) | Isaac Sim 6.1.0(2026-09-10). Isaac Lab 3.0.0-EA(2026-09-16, GA 2026-10 말 목표) | 저장소는 Apache-2.0(Isaac Sim)·BSD-3(Isaac Lab, mimic은 Apache-2.0). **Kit·RTX 런타임과 isaacsim/isaaclab PyPI 휠은 NVIDIA 독점** | RTX 4090: G1 험지 82k, Shadow 손 170k env-steps/s(학습 포함). L40 16장(4노드): G1 960k·Shadow 1.8M(학습 포함), 스텝 전용 G1 1.2M | PhysX와 동일(번들 PhysX 5.x 버전 [U]) | PhysX FEM과 Newton VBD를 묶은 통합 변형체 API | PhysX와 동일 | 불가 | 사족·휴머노이드·덱스터러스 공개 사례 최다. TacSL 삽입 sim2real | Kit 경로: NVIDIA 서면확인 필요. Kit-less Newton 경로: 가능 | **Adopt(Zone F 전용, 접촉 집약)** |
 | **ovphysx** | 0.6.3 alpha(2026-09-16). PhysX 5.11 대응 | 소스 Apache-2.0. **pip 휠과 의존성 ovstage는 NVIDIA 독점** | 공개 수치 없음 | PhysX와 동일 | PhysX와 동일 | PhysX와 동일 [A] | 불가 | — | 휠은 Zone T 금지. ovstage 없는 소스 빌드는 V2에서 검증 | **Watch** |
 | **Genesis World** | 1.4.3(2026-09-30). 1.0은 2026-05 | 코드 Apache-2.0. Nyx 렌더러(gs-nyx 0.1.7)는 PyPI에 라이선스 미표기 | "43M FPS" 주장은 현실 설정에서 약 150배 낮게 재측정 | MuJoCo식 강체, IPC(libuipc), Drake 유래 SAP 커플러. 강체 솔버의 단순성과 튜닝 민감도 비판 | FEM, MPM, SPH, PBD, IPC + 촉각 센서 | 2026년 결정론 GPU 강체 모드 추가(벤더). GPUSimBench는 비결정성 지적 [U] | [U] | 기록이 적음. 회사는 자체 모델(GENE-26.5)로 무게 이동 | 코드 가능, Nyx 불가 | **Watch(비CUDA 헤지)** |
-| **Drake** | v1.57.0(2026-09-10). 월간 | BSD-3(번들 서드파티 솔버는 개별 확인) | CPU 전용. 10⁴ env RL 불가 | hydroelastic(압력장) + SAP 볼록 컴플라이언트 접촉 | FEM 변형체 + 강체-변형체 접촉 | CPU 결정론 [A] | AutoDiff [U] | TRI LBM Eval(49개 과제) 시뮬 벤치마크 | 가능(내부 검증용) | **Adopt(오프라인 기준)** |
+| **Drake** | v1.57.0(2026-09-10). 월간 | BSD-3. PyPI 휠 분류는 'BSD and Other/Proprietary'(번들 서드파티 솔버에 별도 약관) | CPU 전용. 10⁴ env RL 불가 | hydroelastic(압력장) + SAP 볼록 컴플라이언트 접촉 | FEM 변형체 + 강체-변형체 접촉 | CPU 결정론 [A] | AutoDiff [U] | TRI LBM Eval(49개 과제) 시뮬 벤치마크 | Zone F 내부 검증용 OK. Zone S 번들은 독점 솔버를 뺀 소스 빌드만(V2 법률 의견 후) | **Adopt(오프라인 기준)** |
 | **Chrono** | 10.0.0(2026-03 말 출시, 태그 04-07). 약 20,031 커밋 | BSD-3 | 10⁴ env 배치 RL용이 아님. CRM은 H100 1장에서 지형 29 km | NSC(상보성) + SMC(페널티) | FEA, DEM 입상체, SPH FSI, 페리다이내믹스 | 미검증 | 불가 | 차량·로버·오프로드 연구 | 가능 | **Adopt(차량·지형·해양)** |
 | **ManiSkill3 / SAPIEN 3** | mani-skill 3.0.1(2026-04-21) | 코드 Apache-2.0, SAPIEN MIT. **일부 자산 CC BY-NC 4.0** | RGBD+분할 30k FPS 이상(RTX 4090, 래스터) | PhysX 5 계승 | 제한적 | PhysX와 동일 | 불가 | VLA real2sim 평가. GPUSimBench 경사면 최저 오차 [U] | 코드 가능, 자산 금지 | **Watch(벤치마크 참조)**. PyPI 유지보수자 1인 |
 | **Brax** | 0.14.2(2026-03-15) | Apache-2.0 | 물리 파이프라인 폐기(0.13.0부터 training만 유지) | — | — | — | (구 버전) | — | — | **Avoid(엔진)**. brax/training은 JAX 경로에서만 허용 |
@@ -221,7 +221,7 @@ flowchart LR
 
 **Newton을 1차로 고른 이유.** 하나의 API 뒤에 8개 솔버(Featherstone, MuJoCo, SemiImplicit, XPBD, Kamino, VBD, Style3D, ImplicitMPM)가 있고, OpenUSD 네이티브이며, Isaac Lab 3.x가 Kit 없이 돌리는 백엔드다. 테넌트 경로의 중심이 될 수 있는 허용형 GPU 엔진은 이것 하나다. 거버넌스도 중요하다. NVIDIA 단독 소유가 아니라 Google DeepMind·Disney Research와 공동으로 시작했고 2025-09-29에 Linux Foundation에 기증됐다. 라이선스가 회수될 위험이 단일 기업 엔진보다 구조적으로 낮다. 약점은 네 가지다. ① MJWarp가 float32이고 GPU에서 비결정적이다. ② MJWarp는 미분할 수 없다. ③ 단일 메커니즘 약 60 DoF 이상에서 약하다. ④ 1.0이 나온 지 7개월이고 Isaac Lab의 Newton 경로는 beta다. 대응은 각각 ① MuJoCo CPU 재현 경로, ② Featherstone 미분 경로와 Warp 자동미분, ③ 베이크오프 T11과 관절 트리 분할, ④ 트레인 핀과 적합성 스위트다. 실무 함정도 하나 있다. PyPI의 `newton-physics`는 비활성 이름이다. 패키지는 `newton`으로 고정한다.
 
-**MuJoCo CPU를 인증 백엔드로 고른 이유.** 같은 MJCF를 float64로 결정론적으로 돌린다. 인증서와 '재현 가능' 주장은 이 경로나 Newton 결정론 모드에서, 고정된 하드웨어와 드라이버로만 발행한다(KPI: 인증 시험 결정론적 재현율 100%). 3.5에 들어온 시스템 식별(sysid) 툴박스, 3.7의 DC 모터, 3.12의 PID 액추에이터는 Fidelity Lab의 보정 도구가 된다. 지연이 낮아 Explorer 무료 등급의 샌드박스, 텔레옵, MPC 백엔드로도 쓴다. 2–3주 주기로 무료 업데이트가 나온다는 점 자체가 자체 엔진을 만들지 않을 이유다.
+**MuJoCo CPU를 인증 백엔드로 고른 이유.** 같은 MJCF를 float64로 결정론적으로 돌린다. 인증서와 '재현 가능' 주장은 이 경로나 Newton 결정론 모드에서, 고정된 하드웨어와 드라이버로만 발행한다(KPI: 인증 시험 결정론적 재현율 100%). Newton 결정론 모드는 베이크오프 W7의 N1–N5 시험을 통과한 뒤에만 인증 경로에 넣으며, 그 전까지 인증 재현은 MuJoCo CPU 단독이다. 3.5에 들어온 시스템 식별(sysid) 툴박스, 3.7의 DC 모터, 3.12의 PID 액추에이터는 Fidelity Lab의 보정 도구가 된다. 지연이 낮아 Explorer 무료 등급의 샌드박스, 텔레옵, MPC 백엔드로도 쓴다. 2–3주 주기로 무료 업데이트가 나온다는 점 자체가 자체 엔진을 만들지 않을 이유다.
 
 **PhysX를 팩토리 안에서만 받아들이는 이유.** 접촉 집약 조작(삽입, SDF 접촉, TacSL 촉각, Mimic 증강, 텔레옵)에서 검증된 스택은 Isaac Lab + PhysX뿐이다. Isaac Lab 3.0 문서상 Newton 백엔드는 MJWarp만 검증됐고, Kamino는 beta, VBD는 실험 단계이며, 검증 과제는 고전 RL과 평지 보행 위주다. 그래서 결과를 산출물로만 파는 조건으로 Zone F에서 쓴다. PhysX SDK 코어 자체는 Apache-2.0이므로 Zone T로 가는 장기 경로가 막혀 있지는 않다. 다만 Isaac Lab 수준의 articulation·텐서 API·SDF·드라이브 패리티를 맞추는 어댑터는 36–48 HM짜리 공사다. 그래서 G1 통과, 베이크오프에서 PhysX 우위 실측, 온프렘 수요 2건 이상이라는 세 조건을 모두 충족할 때만 P2에 착수한다. 대안으로 ovphysx를 Apache 소스에서 ovstage 없이 빌드하는 방법을 P0의 V2 검증에서 법률·기술 양면으로 확인한다.
 
@@ -238,67 +238,50 @@ flowchart LR
 | 보행·전신(사족, 휴머노이드) | Newton/MJWarp | mjlab 1.6.0 | MuJoCo CPU | F·T·S | T1 G1 속도 추종, T2 BeyondMimic |
 | 일반 픽앤플레이스 | 테넌트 Newton/MJWarp, 팩토리 Isaac Lab + PhysX | MuJoCo CPU | MuJoCo CPU | F·T·S | T3 Franka 큐브 들기, T5 한국 SKU 빈 피킹 |
 | 손안 재배치(덱스터러스) | Newton/MJWarp | PhysX(팩토리) | MuJoCo CPU | F·T·S | T4 LEAP/Allegro |
-| 삽입·SDF·촉각 | 팩토리 Isaac Lab + PhysX(TacSL) | 테넌트 Newton SDF + hydroelastic | Drake 대조 + MuJoCo CPU | F(T는 Newton) | T7 페그·커넥터, T8 케이블 |
-| 폴리백·케이블·천 | Newton VBD / Style3D | MuJoCo 3.15 flex | '통계적 재현' 라벨만 | F·T·S | T6 폴리백, T8, T9 천 접기 |
+| 삽입·SDF·촉각 | 팩토리 Isaac Lab + PhysX(TacSL) | 테넌트 Newton SDF + hydroelastic | Newton 결정론 모드(W7 통과 시) 또는 MuJoCo CPU + SDF 근사(별도 보정 세트, 인증서에 '접촉 모델 상이' 표기). Drake는 대조 기준 | F(T는 Newton) | T7 페그·커넥터, T8 케이블 |
+| 폴리백·케이블·천 | Newton VBD / Style3D | MuJoCo 3.15 flex | 동역학 산출물은 D1 '통계적 재현'. 인증은 정적 보정 시험(처짐·정지 형상)을 MuJoCo CPU로 D0 재현한 항목만, 'experimental' 표기 | F·T·S | T6 폴리백, T8, T9 천 접기 |
 | 폐루프 그리퍼·링크 기구 | Newton Kamino | MuJoCo equality 제약 | MuJoCo CPU | F·T·S | T10 Kamino 그리퍼 |
 | 휴머노이드 + 양손(60 DoF 초과) | PhysX 경로 또는 관절 트리 분할 | — | MuJoCo CPU(분할 모델) | F | T11 스트레스 테스트 |
-| 입상체·식품 | Newton ImplicitMPM | Genesis MPM(관찰) | '통계적 재현' 라벨만 | F·T·S | P1 추가 과제 [A] |
-| AMR·공장 셀 차량 | 테넌트 Newton 관절형 휠 모델 [A], 팩토리 PhysX Vehicle2 | Chrono::Vehicle | MuJoCo CPU / Chrono | F·T·S | 적합성 장면 '바퀴 차량'(베이크오프 W2부터) |
-| 승용·상용 차량, 오프로드 | Chrono 10(Vehicle, SCM) | PhysX Vehicle2, 고객 FMU | Chrono CPU [A] | F·T·S | Mobility Pack α(M18–M24) |
+| 입상체·식품 | Newton ImplicitMPM | Genesis MPM(관찰) | D1 '통계적 재현'. 인증 대상 아님(Scorecard만) | F·T·S | P1 추가 과제 [A] |
+| AMR·공장 셀 차량 | 테넌트 Newton 관절형 휠 모델 [A], 팩토리 PhysX Vehicle2(F) | Chrono::Vehicle | MuJoCo CPU(D0), Chrono는 D1 | F·T·S(Vehicle2는 F) | 적합성 장면 C05 '바퀴 차량'(베이크오프 W2부터) |
+| 승용·상용 차량, 오프로드 | Chrono 10(Vehicle, SCM) | PhysX Vehicle2(Zone F), 고객 FMU(BYOL) | 통계적 재현(D1)만. Chrono CPU는 반복 비트 일치 시험 + DR 개정 후 D0 등록(목표 M22) [A] | F·T·S | Mobility Pack α(M18–M24) |
 
-- **변형체 원칙:** 어떤 엔진도 변형체 결정론을 보장하지 않음. 폴리백·케이블 성능은 실측(Gold) 전에는 계약서에 보증하지 않음.
-- **Newton 차량 모델의 공백:** Newton에는 전용 차량·타이어·파워트레인 모델이 없음. AMR은 구동 관절 + 마찰 휠로 표현하고, 고충실도 차량은 Chrono로 보냄. 휠·타이어 훅은 Newton 업스트림 기여 후보.
+- **변형체 원칙:** 어떤 엔진도 변형체 결정론을 보장하지 않는다. 폴리백·케이블 성능은 실측(Gold) 전에는 계약서에 보증하지 않는다.
+- **D0 경로 확장 규칙:** DR이 인증 재현에 허용한 경로는 MuJoCo CPU와 Newton 결정론 모드(W7 N1–N5 통과 후) 두 가지다. Chrono CPU(차량), 클린룸 Fossen(Warp CPU, 선박), PX4 SITL lockstep(드론)은 반복 비트 일치 시험(N1–N4와 동등)을 통과하고 CTO가 D0 목록에 등록한 뒤에만 인증에 쓴다(목표 등재: Chrono M22, Fossen M28 [A]). 등록 전 해당 동역학 산출물은 D1 '통계적 재현'으로 표기하고 Scorecard만 납품하며, 인증서는 자산·센서 항목에만 발행한다. 입상체·유체는 인증 대상에서 제외한다.
+- **Newton 차량 모델의 공백:** Newton에는 전용 차량·타이어·파워트레인 모델이 없다. AMR은 구동 관절 + 마찰 휠로 표현하고, 고충실도 차량은 Chrono로 보낸다. 휠·타이어 훅은 Newton 업스트림 기여 후보다.
+- **PhysX Vehicle2의 구역:** 현재 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Vehicle2는 Zone F 전용이다. 테넌트·온프렘 개방 조건은 §4.2에 있다.
 
 ---
 
 ## 4. 차량·드론·해양 엔진 비교
 
-**결론: 차량·드론·선박은 '나중에 만드는 제품'이 아니라 '같은 Kernel에 꽂히는 어댑터'다. 엔진은 Chrono, PhysX Vehicle2, PX4, 클린룸 Fossen으로 이미 정했다. 상업 순서에 맞춰 바뀌는 것은 착수 시점뿐이다.**
+**결론: 차량·드론·선박은 '나중에 만드는 제품'이 아니라 '같은 Kernel에 꽂히는 어댑터'다. 엔진은 Chrono, PhysX Vehicle2(Zone F 전용), PX4, 클린룸 Fossen으로 이미 정했다. 상업 순서에 맞춰 바뀌는 것은 착수 시점뿐이다.**
 
 ### 4.1 기술적 범용성과 상업적 집중 순서의 분리
 
-DR의 Wave 1·2·3은 **어디서 먼저 돈을 버는가**의 순서다. **무엇이든 트윈으로 만들 수 있는가**는 처음부터 아키텍처로 보장한다. OpenUSD 단일 장면, 엔진 중립 Sim Kernel API, Domain Pack(자산·물리 프로파일·센서 리그·표준 커넥터·학습 템플릿·평가지표·인증 기준)이 로봇·차량·드론·선박·공장을 같은 방식으로 받아들인다. "자동차는 안 한다"가 아니라 "자동차 시뮬레이터 시장에서 dSPACE·IPG·Applied Intuition과 정면으로 붙지 않고, 표준으로 연결한다"가 정확한 표현이다. 이 절의 일정은 기존 인원·예산 고정값(16/26/36/48명, ₩122.0억) 안에서 조정한 것이다.
+DR의 Wave 1·2·3은 **어디서 먼저 돈을 버는가**의 순서다. **무엇이든 트윈으로 만들 수 있는가**는 처음부터 아키텍처로 보장한다. OpenUSD 단일 장면, 엔진 중립 Sim Kernel API, Domain Pack(자산·물리 프로파일·센서 리그·표준 커넥터·학습 템플릿·평가지표·인증 기준)이 로봇·차량·드론·선박·공장을 같은 방식으로 받아들인다. "자동차는 안 한다"가 아니라 "도로 자율주행 HIL·인증 도구 시장에서 dSPACE·IPG·Applied Intuition과 정면 경쟁하지 않는다. 차량 트윈 자체는 만든다"가 정확한 표현이다. 이 절의 엔진 배치는 기존 인원·예산 고정값(16/26/36/48명, ₩122.0억) 안에서 조정한 것이다.
 
-**그림 2. Capability Readiness 로드맵(기술 준비 시점, 상업 Wave와 별도)**
+- **준비 시점과 상업 Wave의 정본은 [08 도메인 팩 §2.3](08-domain-packs.md)이다.** 이 절은 엔진 관점(물리·센서·커넥터·수행 인력)만 다룬다. 핵심 숫자만 옮기면 기술 준비 완료 시점은 로봇 조작 M12, AMR·공장 셀 M18, 차량 Mobility Pack α M24, 드론 PX4 SITL 템플릿 M24, 선박·해양과 오프로드 UGV M36(P3)이다. 간트 차트는 [09 §1.1](09-roadmap-organization-budget.md)과 [README §5](README.md)에만 둔다.
 
-```mermaid
-gantt
-    title Capability Readiness - 기술 준비 시점
-    dateFormat YYYY-MM-DD
-    axisFormat %Y-%m
-    section 로봇
-    로봇 조작 - 암·빈피킹·조립·삽입 P0-P1      :r1, 2026-11-01, 2027-10-31
-    휴머노이드·사족·덱스터러스 템플릿 P1        :r2, 2027-04-01, 2027-10-31
-    휴머노이드 상업화 P2                         :r3, 2027-11-01, 2028-10-31
-    section 모바일
-    AMR·공장 및 물류 셀 M9-M18                 :m1, 2027-07-01, 2028-04-30
-    section 차량
-    Mobility Pack 알파 M18-M24                 :v1, 2028-04-01, 2028-10-31
-    section 드론
-    PX4 SITL 기본 템플릿 M20-M24               :d1, 2028-06-01, 2028-10-31
-    국방 에디션 본격화 P3                        :d2, 2028-11-01, 2029-10-31
-    section 해양 및 오프로드
-    해양 Fossen 6-DOF·Chrono FSI P3           :s1, 2028-11-01, 2029-10-31
-    오프로드 UGV·Chrono CRM P3                 :s2, 2028-11-01, 2029-10-31
-```
+| 도메인 | 물리 엔진 | 센서·렌더 | 표준 커넥터 | 인증 재현 경로 | 수행 인력 |
+|---|---|---|---|---|---|
+| 로봇 조작 | Newton, PhysX(F), MuJoCo CPU, Drake | RTX(F), Warp Sensor, 3DGUT | URDF/MJCF, ROS 2, LeRobot v3 | MuJoCo CPU(D0), Newton 결정론 모드(W7 후) | WS1, WS5 |
+| 휴머노이드·사족·덱스터러스 | Newton/MJWarp, PhysX(60 DoF 초과, F) | 동일 | 동일 + GR00T N1.7 | MuJoCo CPU(분할 모델 포함) | WS1, WS5 |
+| AMR·공장/물류 셀 | 테넌트 Newton 관절형 휠, 팩토리 PhysX Vehicle2(F) | 동일 | OPC UA, ROS 2 | MuJoCo CPU(D0) | WS1, WS6 |
+| 차량(Mobility Pack α) | Chrono::Vehicle(Pacejka·TMeasy, SCM). 야드·저속 차량 대조용 PhysX Vehicle2(F) | 카메라·라이다 리그 | OpenDRIVE·OpenSCENARIO(esmini), FMI 3.0 | D1(Chrono D0 등록 목표 M22 [A]) | WS1-M 1명(차량·해양 동역학 엔지니어, 서치 M16·착석 M18) + WS3 지원 |
+| 도로 AV | 시뮬레이터 정면 경쟁 대신 연결 | NuRec·Cosmos(Zone F, 약관 후) | OpenSCENARIO, OSI, FMI | 해당 없음(브리지) | WS1-M, WS3 |
+| 드론 | PX4 SITL + Gazebo Jetty | Warp Sensor, RTX(F) | MAVLink, ROS 2 | D1(PX4 SITL lockstep D0 등록 후) | WS1-M + WS5 템플릿 |
+| 선박·항만·조선 해양 | 클린룸 Fossen 6-DOF(Warp) + Chrono FSI | 검증된 레이더·EO/IR 프로파일 | AIS, COLREG 시나리오 | D1(Fossen D0 등록 목표 M28 [A]) | WS1-M 2명(P3) |
+| 오프로드 UGV | Chrono CRM/SCM 지형 | Warp Sensor | ROS 2 | D1(Chrono D0 등록 후) | WS1-M |
 
-| 도메인 | 물리 엔진 | 센서·렌더 | 표준 커넥터 | 기술 준비 | 상업 Wave | 수행 인력 |
-|---|---|---|---|---|---|---|
-| 로봇 조작 | Newton, PhysX(F), MuJoCo CPU, Drake | RTX(F), Warp Sensor, 3DGUT | URDF/MJCF, ROS 2, LeRobot v3 | P0–P1(M1–M12) | Wave 1(M1–M18) | WS1, WS5 |
-| 휴머노이드·사족·덱스터러스 | Newton/MJWarp, PhysX(60 DoF 초과) | 동일 | 동일 + GR00T N1.7 | 템플릿 M6–M12, 상업화 P2 | Wave 2(M12–M24) | WS1, WS5 |
-| AMR·공장/물류 셀 | Newton 휠 모델, PhysX Vehicle2(F) | 동일 | OPC UA, ROS 2 | P1–P2(M9–M18) | 부가 기능(P2 라이브 트윈) | WS1, WS6 |
-| 차량(Mobility Pack α) | Chrono::Vehicle(Pacejka·TMeasy, SCM) + PhysX Vehicle2 | 카메라·라이다 리그 | OpenDRIVE·OpenSCENARIO(esmini), FMI 3.0 | **P2(M18–M24)** | 파트너(MORAI), 인식 데이터 | WS1-M 1명(P2) + WS3 지원 |
-| 도로 AV | 시뮬레이터 정면 경쟁 대신 연결 | NuRec·Cosmos(Zone F, 약관 후) | OpenSCENARIO, OSI, FMI | P2부터 브리지 | 파트너 전용 | WS1-M, WS3 |
-| 드론 | PX4 SITL + Gazebo Jetty | Warp Sensor, RTX(F) | MAVLink, ROS 2 | 기본 템플릿 P2(M20–M24) | P3 국방 에디션 | WS1-M |
-| 선박·항만·조선 해양 | 클린룸 Fossen 6-DOF(Warp) + Chrono FSI | 검증된 레이더·EO/IR 프로파일 | AIS, COLREG 시나리오 | P3(M25–) | Wave 3(트리거 조건부) | WS1-M 2명(P3) |
-| 오프로드 UGV | Chrono CRM/SCM 지형 | Warp Sensor | ROS 2 | P3 | Wave 3b(M27–) | WS1-M |
+- **공백 기간 운영:** WS1-M이 착석하는 M18 전까지는 CTO가 Mobility α 설계 메모(M17)를 쓰고, WS1·WS3가 Chrono 어댑터 골격을 맡는다. 인원·예산 고정값은 바뀌지 않는다.
 
 ### 4.2 차량 동역학·AV 시뮬레이터
 
 | 제품 | 최신 버전·상태 | 라이선스·가격 | 강점 | 약점 | Athanor에서의 역할 | 판정 |
 |---|---|---|---|---|---|---|
 | **Project Chrono 10.0**(Vehicle, SCM, CRM, FSI, Sensor) | 10.0.0(2026-03 말). 체크포인팅, FSI(SPH·TDPF) 리팩터, 페리다이내믹스. AMD ROCm은 dev 브랜치에만 | BSD-3, 무료 | 바퀴·궤도 차량 템플릿. 타이어 Pac89/Pac02, TMeasy, Fiala, FEA/ANCF. SCM·CRM·DEM 변형 지형 | 학술형 UX, 센서 약함, FTire·MF 6.2 미포함, HIL 실시간 튜닝 필요, 코어 팀 작음 | Mobility α의 차량 동역학 코어. P3 오프로드·해양 FSI | **Adopt** |
-| **PhysX Vehicle2**(PhysX SDK 5.11) | SDK 포함 | 코어 Apache-2.0 | 경량 운전, AMR·야드 차량, Isaac 생태계 자산 호환 | 고충실도 타이어 부족 | L1–L2 경량 차량, AMR. Zone T에서는 좁은 C++ 바인딩으로만 사용 [A] | **Adopt** |
+| **PhysX Vehicle2**(PhysX SDK 5.11) | SDK 포함 | 코어 Apache-2.0 | 경량 운전, AMR·야드 차량, Isaac 생태계 자산 호환 | 고충실도 타이어 부족 | L1–L2 경량 차량·AMR. 현재 PhysX 경로는 Isaac Lab·Isaac Sim을 거치므로 Zone F 전용이다. Zone T/S의 AMR은 Newton 관절형 휠, 차량은 Chrono::Vehicle을 쓴다. 독립 PhysX SDK 소스 어댑터가 생기기 전에는 Zone T/S에서 쓰지 않는다. 그 어댑터는 P2 조건부 전체 어댑터(G1 통과·베이크오프 우위·온프렘 수요 2건, 트리거 X6) 또는 Mobility α 설계 메모(M17)에서 결정하는 Vehicle2 전용 C++ 바인딩(좁은 PhysX SDK 소스 어댑터) 중 하나다 | **Adopt(Zone F)** |
 | **CARLA** | 0.10.0(2024-12-19, UE 5.5, Chaos 물리). 0.9.16(2025-09, UE4 라인: Cosmos Transfer1·NuRec·SimReady 변환기). 후속 태그 없음, ue5-dev 브랜치는 활성(2026-10-02 푸시) | 코드 MIT, 자산 CC-BY(귀속 의무), UE EULA | 연구 표준, ScenarioRunner(OpenSCENARIO), 리더보드, 개발자 15만 명 이상 | 소규모 팀, UE4/UE5 분열, 차량·센서 물리가 엔지니어링급 아님, UE5 빌드는 16 GB 이상 VRAM | OpenSCENARIO 호환 커넥터, 벤치마크 | **Secondary(커넥터)** |
 | **BeamNG.tech** | v0.39(2026 여름): 2,000 Hz 소프트바디, C++ ROS 2, MCP | 학술 무료, 상업은 견적 | 충돌·변형·손상 | 폐쇄 엔진, 센서 기초 수준 | 충돌·엣지 케이스 데이터 파트너 | **Secondary(견적 기반)** |
 | **CarSim/TruckSim**(Applied Intuition, 2022-03-14 인수) | — | 독점, 견적 | 200개 이상 OEM·Tier-1의 HIL 차량 동역학 기준 | 고가, 폐쇄, 직접 경쟁자 | 고객 보유 FMU를 FMI 3.0으로 연결 | **Secondary(BYO FMU)** |
@@ -316,7 +299,7 @@ gantt
 |---|---|---|---|---|---|---|
 | **Gazebo Jetty + PX4 1.16/1.17 SITL** | Jetty LTS(2031-05까지). PX4 1.16은 Harmonic, 1.17은 Jetty·Ackermann SIH 추가 | Apache-2.0 / BSD-3 | 비행 스택 SITL 표준, 대형 커뮤니티 | 시각 현실감 낮음 | **P2 기본 템플릿(M20–M24)**, 비행 제어 CI | **Adopt** |
 | ArduPilot SITL | ardupilot_gazebo 플러그인 | GPL-3 | 생태계 | 온프렘 번들 시 배포 의무 | 고객 환경 연동만 | **Avoid(온프렘 번들)** |
-| **Pegasus Simulator** | v5.1.0(2025-10-26). Isaac Sim 5.1, PX4 1.14.3 | BSD-3(Isaac Sim 약관 적용) | RTX 센서 + PX4가 같은 USD 월드 | 1인 유지보수, Isaac 버전 지연 | Isaac Sim 6.x 포팅 또는 자체 브리지 | Secondary |
+| **Pegasus Simulator** | v5.1.0(2025-10-26). Isaac Sim 5.1, PX4 1.14.3 | BSD-3(Isaac Sim 약관 적용) | RTX 센서 + PX4가 같은 USD 월드 | 1인 유지보수, Isaac 버전 지연 | Isaac Sim 6.x 포팅(Isaac Sim 런타임 의존이므로 Zone F·BYOL 전용) 또는 테넌트용 자체 브리지 | Secondary(Zone F·BYOL) |
 | **Project AirSim**(IAMAI) | 1.0.0, UE 5.x, JSBSim 고정익 | MIT + UE EULA | 고정익·UAM·UGV | UE 좌석비 노출 [U] | 고정익 수요 발생 시 | Watch |
 | Microsoft AirSim | 2022 아카이브 | MIT | — | 중단 | — | **Avoid** |
 | **Aerial Gym** | Isaac Gym 기반, Isaac Lab 포팅 진행 중 | BSD-3 | 수백만 멀티로터 병렬, 상태 정책 1분 내 학습 | 폐기된 Isaac Gym 의존 | 드론 RL 백엔드 후보 | Watch |
@@ -326,7 +309,7 @@ gantt
 
 | 제품 | 상태 | 라이선스 | 강점 | 약점 | 역할 | 판정 |
 |---|---|---|---|---|---|---|
-| **클린룸 Fossen 6-DOF + 파랑 스펙트럼**(자체 Warp 커널) | P3 착수 | 자체 | GPL 오염 없이 선박·USV 동역학 확보 | 검증 데이터 필요(KRISO·KR 협력 [U]) | 해양 Domain Pack 코어 | **Adopt(OWN)** |
+| **클린룸 Fossen 6-DOF + 파랑 스펙트럼**(자체 Warp 커널) | P3 착수 | 자체 | GPL 오염 없이 선박·USV 동역학 확보 | 검증 데이터 필요(KRISO·KR 협력 [U]). Warp CPU 경로의 D0 등록 전(목표 M28 [A])에는 D1 | 해양 Domain Pack 코어, 적합성 6번째 백엔드(C13) | **Adopt(OWN)** |
 | **Chrono FSI**(SPH·TDPF) | 10.0에서 리팩터 | BSD-3 | 유체-구조 연성 | 계산량 큼 | 계류·파랑 상호작용 | **Adopt(P3)** |
 | **Stonefish** | 1인 저자, 활성 | **GPL-3.0** | 공개 수중 유체역학·광학 최고 수준 | GPL, RTX·USD 없음 | 코드 사용 금지. 논문 수준 참고만 | **Avoid(온프렘 NEVER)** |
 | **HoloOcean** | pip 0.5.8(2024-04). 2.0 프리뷰(UE 5.3, Fossen, 소나) | MIT 추정 [U] + UE EULA | 소나·음향 통신 모델링 | 2.0 미정식 출시, UE 의존 | 소나 모델 참고 | Watch |
@@ -335,33 +318,33 @@ gantt
 | **DAVE / VRX 2.0** | Gazebo + ROS 2 | Apache-2.0 | USV 경진 생태계 | 시각 현실감 낮음 | USV·AUV 제어 SITL | Secondary |
 | RadaRays / Remcom WaveFarer | 오픈소스 FMCW 레이 트레이싱 / 상용 근거리 레이 트레이싱 | 미확인 [U] / 독점 | 다중경로·미세 도플러 | 느림, 연구 코드 | IITP 공동연구 레이더 모델링 참고 | Watch |
 
-- **해양 센서 원칙:** 레이더·EO/IR은 실측 캠페인으로 오차 막대를 공개한 프로파일이 나오기 전에는 해양·국방에 판매하지 않음. '단순화된 FMCW 레이더'는 국방 증거물로 팔지 않음([05 물리·현실감](05-physics-and-realism.md)).
+- **해양 센서 원칙:** 레이더·EO/IR은 실측 캠페인으로 오차 막대를 공개한 프로파일이 나오기 전에는 해양·국방에 판매하지 않는다. '단순화된 FMCW 레이더'는 국방 증거물로 팔지 않는다([05 물리·현실감](05-physics-and-realism.md)).
 
 ### 4.5 신경 AV 시뮬레이션과 월드모델
 
 | 제품 | 상태 | 라이선스 | 역할 | 판정 |
 |---|---|---|---|---|
 | **Omniverse NuRec**(+ Instant NuRec) | GTC 2026 GA 보도 [U]. Instant NuRec은 10–20초 다중 카메라 클립을 약 1.5초에 재구성 [U] | 약관 미확인 [U] | Zone F의 로그 재현·신경 재구성. 약관 확보 후 | Watch → Adopt(약관 후) |
-| **Cosmos Transfer 2.5 → Cosmos 3 Nano 16B** | Transfer 2.5(2025-10-06, 유지보수 축소). Cosmos 3(2026-05/06, Super 64B·Nano 16B·Edge 4B) | Transfer 2.5 가중치 NVIDIA Open Model License. Cosmos 3 OpenMDW-1.1(전문 미확인 [U]) | 깊이·분할·엣지 조건 외형 증강. M9부터 Nano 파인튜닝 | **Adopt** |
+| **Cosmos Transfer 2.5 → Cosmos 3 Nano 16B** | Transfer 2.5(2025-10-06, 유지보수 축소). Cosmos 3(2026-05/06, Super 64B·Nano 16B·Edge 4B) | Transfer 2.5 가중치 NVIDIA Open Model License. Cosmos 3 OpenMDW-1.1(전문 미확인 [U]) | 깊이·분할·엣지 조건 외형 증강. P1 DATA 라인은 M5–M8에 Transfer 2.5, M9부터 Cosmos 3 Nano 파인튜닝(라벨 일관성 QA 동일) | **Adopt** |
 | **AlpaSim / AlpaGym** | gRPC 마이크로서비스, 재구성 장면 약 900개 | Apache-2.0 | 도로 AV 폐루프 평가 커넥터(Mobility α 이후) | Secondary |
 | Alpamayo 1.5 / 2 Super(32B) | 2026-03 / 2026-06-01 | 가중치 OpenMDW-1.1(이전 HF 카드는 비상업, 상충 [U]) | 주행 정책 기준선 | Watch |
 | OmniDreams | 주행 2.1만 시간으로 사후학습한 생성형 폐루프 | 미확인 | 롱테일 생성 | Watch |
 | Waymo World Model, Wayve GAIA-3/4, Waabi World, Tesla 월드 시뮬레이터 | 비공개 | — | 시장 신호만 | 해당 없음 |
 | Decart Oasis 3 | API $0.02/초(약 $72/시간) [U] | 독점 API | 롱테일 영상 소스 후보 | Watch |
 
-- **원칙:** 월드모델은 외형 증강과 정책 사전 선별에만 사용. 물리·라벨·센서는 시뮬레이터 책임. 증강 프레임은 라벨 일관성 검사(KPI ≥98%, P1)를 통과한 것만 납품.
+- **원칙:** 월드모델은 외형 증강과 정책 사전 선별에만 쓴다. 물리·라벨·센서는 시뮬레이터가 책임진다. 증강 프레임은 결정론 등급 D2(생성형)로 표기하고, 라벨 일관성 검사(KPI ≥98%, P1)를 통과한 것만 납품한다.
 
 ### 4.6 Mobility Pack α 구성(M18–M24)
 
-**그림 3. Mobility Pack α 데이터·제어 흐름**
+**그림 2. Mobility Pack α 데이터·제어 흐름**
 
 ```mermaid
 flowchart LR
     OD["OpenDRIVE 1.8 도로망"] --> ES["esmini - OpenSCENARIO XML 1.3 실행"]
     ES --> K["Sim Kernel API"]
     K --> CV["Chrono::Vehicle 어댑터 - Pac02, TMeasy 타이어, SCM 지형"]
-    K --> PV["PhysX Vehicle2 - L1-L2 경량 차량, AMR"]
-    K --> FM["FMI 3.0 브리지 - 고객 CarSim, CarMaker FMU"]
+    K --> PV["PhysX Vehicle2 - Zone F 전용, 야드 차량 대조"]
+    K --> FM["FMI 3.0 브리지 - 고객 CarSim, CarMaker FMU, BYOL"]
     K --> SR["센서 리그 - 카메라, 라이다"]
     SR --> WSL["Zone T, S - Warp Sensor Library"]
     SR --> RTX["Zone F - Isaac Sim RTX"]
@@ -372,10 +355,12 @@ flowchart LR
     RTX --> OUT
 ```
 
-- **범위:** 차량 동역학 어댑터, 시나리오 임포트, 센서 리그, 고객 모델 브리지. **비범위:** ISO 26262 도구 인증, HIL 리그, 자체 타이어 모델(FTire·MF-Swift는 고객 라이선스로만).
-- **표준 버전:** OpenSCENARIO DSL 2.1.0, XML 1.3.0, OpenDRIVE 1.8.0, OSI 3.7.0(3.8.0 존재 보고, 날짜 미확인 [U]), FMI 3.0.2. esmini 라이선스는 Mobility α 설계 메모에서 확인 [U].
-- **인력:** WS1-M 1명(P2) + WS3 지원. DR 고정값 안의 일정 조정이며 인원·예산 증액 없음.
-- **완료 기준 [A]:** 적합성 스위트 '바퀴 차량' 장면에서 Chrono와 PhysX Vehicle2의 정상상태 선회 궤적 편차 허용치 내, OpenSCENARIO 샘플 시나리오 재생, FMU 1종 연동 데모.
+- **범위:** 차량 동역학 어댑터, 시나리오 임포트, 센서 리그, 고객 모델 브리지다. **비범위:** ISO 26262 도구 인증, HIL 리그, 자체 타이어 모델(FTire·MF-Swift는 고객 라이선스로만)이다.
+- **구역:** 테넌트·온프렘(Zone T/S) 경로는 Chrono::Vehicle·FMI 브리지·Warp Sensor Library로만 구성한다. PhysX Vehicle2와 RTX 센서는 Zone F에서 야드 차량 대조·SDG 산출물에만 쓴다. 고객 CarSim/CarMaker FMU와 BeamNG.tech는 고객·벤더 라이선스(BYOL)다.
+- **표준 버전:** OpenSCENARIO DSL 2.1.0, XML 1.3.0, OpenDRIVE 1.8.0, OSI 3.7.0(3.8.0 존재 보고, 날짜 미확인 [U]), FMI 3.0.2다. esmini 라이선스는 Mobility α 설계 메모에서 확인한다 [U].
+- **인력:** WS1-M 1명(차량·해양 동역학 엔지니어, 서치 M16·착석 M18, 늦어도 M20) + WS3 지원이다. DR 고정값 안의 일정 조정이며 인원·예산 증액은 없다.
+- **결정론:** Chrono CPU 경로는 반복 비트 일치 시험을 통과하고 CTO가 D0 목록에 등록하기 전(목표 M22 [A])까지 D1이다. 그 전 차량 동역학 산출물에는 Scorecard와 '통계적 재현' 라벨만 붙인다.
+- **완료 기준 [A]:** 적합성 장면 C12(정상상태 선회)에서 Chrono와 PhysX Vehicle2(Zone F)의 선회 반경·요레이트 편차가 허용치 안에 들고, OpenSCENARIO 샘플 시나리오를 재생하며, FMU 1종 연동을 시연하면 완료로 본다.
 
 ---
 
@@ -387,14 +372,14 @@ flowchart LR
 
 | 렌더러 | 최신 버전·날짜 | 라이선스 | RT 코어 | 센서 충실도 | 3DGS 지원 | 구역·SaaS | 티어·역할 | 판정 |
 |---|---|---|---|---|---|---|---|---|
-| **Omniverse RTX / Isaac Sim 6.1** | Isaac Sim 6.1.0(2026-09-10), Kit 110.3.0(2026-08-28). RTX Real-Time 2.0 기본, Interactive Path Tracing | NVIDIA 독점(SLA + Omniverse PST) | **필수**(A40 최소, L40S 권장, RTX PRO 6000 Blackwell 최적) | 카메라(PPISP)·라이다·레이더·초음파를 한 USD 스테이지에서 | Fabric Scene Delegate로 3DGS/3DGUT 렌더, 메시 조명 상호작용 | Zone F. NVIDIA 서면확인 필요 | R3 팩토리 SDG | **Adopt(Zone F)** |
+| **Omniverse RTX / Isaac Sim 6.1** | Isaac Sim 6.1.0(2026-09-10), Kit 110.x(번들 버전 [U], 최신 Kit 110.3.0은 2026-08-28). RTX Real-Time 2.0 기본, Interactive Path Tracing | NVIDIA 독점(SLA + Omniverse PST) | **필수**(A40 최소, L40S 권장, RTX PRO 6000 Blackwell 최적) | 카메라(PPISP)·라이다·레이더·초음파를 한 USD 스테이지에서 | Fabric Scene Delegate로 3DGS/3DGUT 렌더, 메시 조명 상호작용 | Zone F. NVIDIA 서면확인 필요 | R3 팩토리 SDG | **Adopt(Zone F)** |
 | **ovrtx** | 0.5.1 alpha(2026-10-06) | 독점(SLA + AI Products PST) | 필수 | 카메라·라이다·레이더(Kit 없이) | — | Zone F 후보 | R3 대체 | Watch(GA + 약관 후 Adopt) |
 | **Newton Warp 렌더러 / Newton GL** | Isaac Lab 3.0-EA 렌더 백엔드 | Apache-2.0 / BSD-3 | 불필요 [A] | 래스터 타일드 카메라. 렌더러 중립 ISP 공유 | MJWarp 배치 렌더러가 3DGS 지원 | T·S | R1 비전 RL, 디버그 | **Adopt** |
 | **Unreal Engine 5.8** | 2026-06-17(UE5 마지막). UE6 얼리 액세스 2027년 말 목표 | 소스 공개 EULA. 비게임 매출 $1M 초과 시 좌석당 연 $1,850 [U] | 불필요(Lumen) | 래스터·Lumen 근사. 센서급 아님 | 서드파티 플러그인 | 코어 제외 | CARLA 고객용 커넥터 | **Avoid(코어)** |
 | **Unity 6 HDRP** | 2026 전략에서 HDRP 유지보수 모드(신기능 없음) | 좌석 구독(Industry 약 $4,950/석/년 [U]) | 불필요 | 약함 | XGRIDS SDK | — | — | **Avoid** |
 | **Blender 5.1 Cycles** | 2026-03-11 | GPL(출력물 제한 없음) | 불필요(CUDA·OptiX·HIP. H100에서도 동작) | 오프라인 경로추적 정답 품질 | — | Zone F 별도 프로세스. Zone S는 V2 의견 전 제외 | 오프라인 SDG, 자산 정리 | **Secondary(Zone F)** |
 | **Godot 4.6 / 4.7** | 4.6(2026-01, Jolt 기본), 4.7 beta(Vulkan 레이 트레이싱 작업) | MIT | — | SDFGI 래스터 | — | — | — | **Avoid** |
-| **three.js r186 + Spark 2.x** | r186(2026-09, WebGPU compute) | MIT | 클라이언트 GPU | 없음(뷰어) | Spark: PLY·SPZ·SPLAT·KSPLAT·SOG, 1억 개 이상 스플랫 LoD | T·S | R0 기본 | **Adopt** |
+| **three.js r186 + Spark 2.x** | r186(2026-09, WebGPU compute·WebGL2). Spark 2.x는 WebGL2 기반 | MIT | 클라이언트 GPU | 없음(뷰어) | Spark: PLY·SPZ·SPLAT·KSPLAT·SOG, 1억 개 이상 스플랫 LoD | T·S | R0 기본 | **Adopt** |
 | **Babylon.js 9.29** | 9.29.0(2026-10-01). 9.26부터 OpenUSD WebAssembly 로더 | Apache-2.0 | 클라이언트 | 없음 | 스플랫 스트리밍·LOD | T·S | R0(브라우저에서 USD 직접 읽기) | **Adopt** |
 | **PlayCanvas 2.23 / SuperSplat 3.0** | 2.23.0(2026-10). SuperSplat 3.0(2026-06-03, WebGPU 전용) | MIT | 클라이언트 | 없음 | 거리 기반 LOD. 2,400만 가우시안 약 60 fps | T·S | R0 스플랫 | **Adopt** |
 | **gsplat 1.6.0** | main 브랜치(PyPI 미배포). 3DGUT, 회전 라이다 래스터, 어안·FTheta, 멀티 GPU, PPISP | Apache-2.0 | 불필요 | 롤링셔터·왜곡·라이다 | 예 | F·T·S | R2 + Forge 재구성 | **Adopt** |
@@ -408,13 +393,14 @@ flowchart LR
 
 | 티어 | 엔진 | 용도 | GPU | 구역 | 단가 기준 [A] |
 |---|---|---|---|---|---|
-| **R0 Web** | three.js r186 + Spark, Babylon.js 9.29, PlayCanvas 2.23 | 편집·리뷰, 라이브 트윈 모니터링, 마켓 프리뷰 | 클라이언트(서버 GPU 0) | T·S | 무료 등급 포함 |
+| **R0 Web** | three.js r186(WebGPU/WebGL2) + Spark 2.x(WebGL2), PlayCanvas 2.23(WebGPU), Babylon.js 9.29(OpenUSD WASM) | 편집·리뷰, 라이브 트윈 모니터링, 마켓 프리뷰 | 클라이언트(서버 GPU 0) | T·S | 무료 등급 포함 |
 | **R1 Newton Warp** | Isaac Lab Newton 렌더러, MJWarp 배치 렌더러 | 비전 RL 타일드 카메라, RL 디버그 | CUDA GPU(RT 코어 불필요) | T·S | 풀 중 steps/s/$ 최저 |
 | **R2 Neural** | gsplat 1.6 / 3DGRUT 2.0(3DGUT) | 현장 재현 배경(UsdVolParticleField), 소버린 사실감 | CUDA(3DGRT만 RT 코어) | F·T·S | 래스터 이미지 ₩0.3 |
 | **R3 RTX** | Isaac Sim 6.1 RTX(ovrtx는 GA 후) | 물리 기반 카메라·라이다·레이더 SDG | **RT 코어 필수** | F, S는 BYOL만 | RTX 실시간 ₩1.5, 경로추적 ₩15 |
 
-- **티어 선택 규칙:** 고객이 요구하는 지표(mAP 비율, 라이다 거리 오차)를 만족하는 가장 낮은 티어. 상위 티어는 Scorecard 개선이 GPU-시간당 원가를 넘을 때만. 토큰 가격 체계는 [10 사업모델·GTM](10-business-model-gtm.md).
-- **이유:** 토큰 가격 기준 경로추적 이미지는 래스터의 50배(₩15 vs ₩0.3). 각 단가는 리서치 원가 하한(래스터 ≥$0.0001, RTX ≥$0.0005, 경로추적 ≥$0.005)의 약 2배로 책정된 값. 저장·이그레스(프레임 100만 장당 약 5.5 TB)가 래스터 렌더 원가보다 커질 수 있어 별도 미터링.
+- **티어 선택 규칙:** 고객이 요구하는 지표(mAP 비율, 라이다 거리 오차)를 만족하는 가장 낮은 티어를 고른다. 상위 티어는 Scorecard 개선이 GPU-시간당 원가를 넘을 때만 쓴다. 토큰 가격 체계는 [10 사업모델·GTM](10-business-model-gtm.md)에 있다.
+- **이유:** 토큰 가격 기준 경로추적 이미지는 래스터의 50배다(₩15 vs ₩0.3). 각 단가는 리서치 원가 하한(래스터 ≥$0.0001, RTX ≥$0.0005, 경로추적 ≥$0.005)의 약 2배로 책정했다. 저장·이그레스(프레임 100만 장당 약 5.5 TB)는 래스터 렌더 원가보다 커질 수 있어 별도로 미터링한다.
+- **저장·이그레스 단가의 위치:** 저장 ₩40,000/TB-월과 이그레스 ₩150/GB는 리서치 원가 기준 총마진이 16–20%로 하한 30%보다 낮다. 그래서 '원가 회수 품목'으로 분류하고, 자체 SeaweedFS·Ceph RGW 저장소로 옮긴 뒤 30%를 맞춘다. 2027 Q1 재산정에서 실측 원가로 다시 판정한다.
 
 ### 5.3 센서 현실감 경로(구역별)
 
@@ -436,7 +422,7 @@ flowchart LR
 | 구성요소 | 버전·날짜 | 라이선스 | 역할 | 판정 |
 |---|---|---|---|---|
 | Isaac Lab 3.x(GitHub 소스 빌드) | 3.0.0-EA(2026-09-16). PyTorch 2.11, Warp 1.16, Newton 1.5.2 | BSD-3(mimic Apache-2.0) | 팩토리 학습 런타임, Kit-less Newton은 테넌트 | **Adopt** |
-| mjlab | 1.6.0(2026-08-09) | Apache-2.0 | 테넌트 기본 경량 경로(Isaac Lab 매니저 API 호환) | **Adopt** |
+| mjlab | 1.6.0(2026-08-09). MuJoCo Warp 3.11 고정 | Apache-2.0 | 테넌트 기본 경량 경로(Isaac Lab 매니저 API 호환). MJWarp 3.11 고정 별도 이미지로 운영하고, 인증 재현은 MuJoCo 3.15 CPU에서 한다 | **Adopt** |
 | rsl_rl | 5.5.1(2026-09-09). bf16, torch.compile | BSD-3 | 기본 PPO·증류 | **Adopt** |
 | skrl | 2.1.0(2026-05-10) | MIT | 멀티에이전트·오프폴리시 | **Adopt** |
 | RLinf | 0.3(2026-07-15). Isaac Lab 3.0 백엔드 | Apache-2.0 | VLA RL 사후학습(P2) | Adopt(P2) |
@@ -448,43 +434,45 @@ flowchart LR
 | PufferLib / LeanRL | 3.0.0 / 2026-10-01 아카이브 | MIT | — | **Avoid** |
 | Isaac Lab Mimic / MimicGen 코드 | isaaclab_mimic 1.0.16 / NVIDIA Source Code License | Apache-2.0 / NC | 시연 증강 | Mimic **Adopt(F)** / MimicGen **NEVER** |
 
-- **학습 원가 기준(리서치):** 사족 0.3–1 GPU-시간, 휴머노이드 속도 추종 1–2 GPU-시간, 시각 덱스터러스 200–600 GPU-시간, SmolVLA 약 4 A100-시간, GR00T·pi0.5 단일 과제 약 2–40 H100-시간. 카메라 기반 RL은 상태 기반보다 약 16배 느림.
+- **학습 원가 기준(리서치):** 사족 0.3–1 GPU-시간, 휴머노이드 속도 추종 1–2 GPU-시간, 시각 덱스터러스 200–600 GPU-시간, SmolVLA 약 4 A100-시간, GR00T·pi0.5 단일 과제 약 2–40 H100-시간이다. 카메라 기반 RL은 상태 기반보다 약 16배 느리다.
+- **템플릿 출시 순서:** 템플릿 ID의 마스터는 [06 §6.2](06-usability-and-agent.md), 팩별 배분의 마스터는 [08 §7.1](08-domain-packs.md)이다. P0 RL 3종(팔 도달·큐브 들기, 한국 SKU 빈 피킹, 디팔레타이징)은 모두 조작 팩이고, 휴머노이드·사족·덱스터러스 템플릿은 P1(M6–M12), 드론 PX4 SITL 기본 템플릿은 P2(M20–M24)에 들어간다.
 
 ---
 
 ## 7. 최종 선정표(DR §2 확장)
 
-**결론: 23개 레이어 모두에 1차·폴백·구역·재결정 트리거를 고정한다. 테넌트에 노출되는 행은 전부 허용형이고, 독점 런타임은 모두 Zone F 행에 있다.**
+**결론: 23개 레이어 모두에 1차·폴백·구역·재결정 트리거를 고정한다. 테넌트에 노출되는 행은 전부 허용형이거나 의무 이행이 가능한 약한 카피레프트이고, 독점 런타임은 모두 Zone F 행에 있다. 커스텀 사용 제한 라이선스 모델은 V7 법률 검토를 통과할 때까지 조건부로 둔다.**
 
-범례: **OK** = 허용형, 멀티테넌트 SaaS·온프렘 탑재 가능 · **서면확인** = NVIDIA 독점 런타임, Zone F 산출물 생산 전용(산출물 면제 자체도 [U]) · **NO** = 사용·탑재 금지 또는 현 단계 보류. 트리거 코드(X1–X15)는 §14 참조.
+범례: **OK** = 허용형(또는 MPL·EPL·LGPL 의무 이행 조건), 멀티테넌트 SaaS·온프렘 탑재 가능 · **조건부(V7)** = 커스텀 사용 제한 라이선스. 테넌트 호스팅은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외 · **서면확인** = NVIDIA 독점 런타임, Zone F 산출물 생산 전용(산출물 면제 자체도 [U]) · **BYOL** = 고객·벤더 라이선스로만 연동 · **NO** = 사용·탑재 금지 또는 현 단계 보류. 트리거 코드(X1–X15)는 §14 참조.
 
 | # | 레이어 | 1차 | 폴백 | 버전(2026-10) | 라이선스 | 구역 | SaaS | 선정 근거 | 트리거 |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 로봇 물리: 보행·전신·학습 처리량 | **Newton**(MJWarp 솔버 기본) | MuJoCo 3.15 CPU(기준), mjlab 1.6.0 | Newton 1.6.1(2026-10-05). 트레인 핀은 Isaac Lab 3.x GA가 지원하는 버전. MJWarp 3.15(Alpha). Warp 1.18은 Turing 이상 + R580 이상 | Apache-2.0 | F·T·S | OK | LF 거버넌스, 처리량 최상위, Kit-less 백엔드. 약점은 float32·GPU 비결정·미분 불가·60 DoF | X4, X7, X8 |
-| 2 | 접촉 집약 조작: 삽입·SDF·촉각 | **Isaac Lab 3.x + PhysX 5.11**(Isaac Sim 6.1) | 테넌트 Newton SDF + hydroelastic. P2 조건부 PhysX SDK 소스 어댑터 | Isaac Lab 3.0.0-EA(GA 10월 말 목표), Isaac Sim 6.1.0, PhysX SDK 5.11 | Isaac Lab BSD-3. **Isaac Sim·Kit 런타임과 PyPI 휠은 독점**. PhysX 코어 Apache-2.0 | F | 서면확인 | TacSL·Mimic·Teleop·Arena가 가장 성숙. Kit-less Newton은 beta | X1, X5, X6 |
+| 1 | 로봇 물리: 보행·전신·학습 처리량 | **Newton**(MJWarp 솔버 기본) | MuJoCo 3.15 CPU(기준), mjlab 1.6.0 | 최신 Newton 1.6.1(2026-10-05). 버전은 Isaac Lab 3.x GA 핀으로 통일(§12.3). MJWarp 3.15(Alpha). Newton 1.6.1의 최소 Warp 버전은 pyproject로 확인 [U]. 최신 Warp 1.18 휠은 Turing(sm_75) 이상 + R580 이상(CUDA 13) | Apache-2.0 | F·T·S | OK | LF 거버넌스, 처리량 최상위, Kit-less 백엔드. 약점은 float32·GPU 비결정·미분 불가·60 DoF | X4, X7, X8 |
+| 2 | 접촉 집약 조작: 삽입·SDF·촉각 | **Isaac Lab 3.x + PhysX 5.x**(Isaac Sim 6.1 번들 버전 [U], 공개 SDK 최신 5.11) | 테넌트 Newton SDF + hydroelastic. P2 조건부 PhysX SDK 소스 어댑터 | Isaac Lab 3.0.0-EA(GA 10월 말 목표), Isaac Sim 6.1.0, 번들 PhysX 5.x [U], 공개 SDK 5.11 | Isaac Lab BSD-3. **Isaac Sim·Kit 런타임과 PyPI 휠은 독점**. PhysX 코어 Apache-2.0 | F | 서면확인 | TacSL·Mimic·Teleop·Arena가 가장 성숙. Kit-less Newton은 beta | X1, X5, X6 |
 | 3 | 폐루프 메커니즘 | Newton Kamino | MuJoCo equality 제약 | Kamino 실험적(Isaac Lab beta) | Apache-2.0 | F·T·S | OK | 링크 기구 그리퍼, 클로즈드 체인 | X4 |
-| 4 | 변형체·케이블·입상체 | Newton VBD / Style3D / ImplicitMPM | MuJoCo 3.15 flex, Genesis IPC(관찰) | MuJoCo 3.15.0(2026-10-05) | Apache-2.0 | F·T·S | OK | 폴리백·케이블·호스. 결정론 보장 엔진 없음 → 측정 전 보증 금지 | X9 |
-| 5 | 오프라인 접촉 기준 | **Drake** | — | v1.57.0(2026-09-10) | BSD-3 | F | OK(내부 검증) | hydroelastic·SAP 정밀도 최고. CPU 전용 | — |
-| 6 | 차량·지형·해양 | **Chrono 10.0** + PhysX Vehicle2 + 클린룸 Fossen 6-DOF | BeamNG.tech(견적), 고객 CarSim/CarMaker FMU(FMI 3.0) | Chrono 10.0.0(ROCm은 dev 브랜치) | BSD-3 / Apache-2.0 / 자체 | F·T·S | OK | Mobility Pack α M18–M24, 해양·UGV P3. Stonefish(GPL) 미사용 | X14 |
-| 7 | 드론 | PX4 SITL + Gazebo Jetty | Pegasus 포팅 또는 자체 브리지 | Pegasus v5.1.0(Isaac Sim 5.1 종속) | BSD-3 / Apache-2.0 | T·S | OK | 기본 템플릿 M20–M24, 본격화는 P3 국방 에디션. ArduPilot(GPL) 온프렘 제외 | X14 |
-| 8 | 렌더·센서(팩토리 SDG) | **Isaac Sim 6.1 RTX 실시간** + Replicator | ovrtx(GA + 약관 후), Blender Cycles(별도 프로세스, 내부) | Kit 110.3.0(2026-08-28), ovrtx 0.5.1 alpha | NVIDIA 독점 | F | 서면확인 | RT 코어 GPU 필수. H100/H200/B200 불가 | X1, X10 |
-| 9 | 렌더(테넌트·웹) | **WebGPU**: three.js r186 + Spark, PlayCanvas 2.23, Babylon.js 9.29 | Newton Warp 렌더러 | — | MIT / Apache-2.0 | T·S | OK | 서버 GPU 비용 0이 기본. 고충실도 보기는 별도 세션 | — |
+| 4 | 변형체·케이블·입상체 | Newton VBD / Style3D / ImplicitMPM | MuJoCo 3.15 flex(Stable Neo-Hookean 3.15·IPC 접촉 3.14 모두 실험적), Genesis IPC(관찰) | MuJoCo 3.15.0(2026-10-05) | Apache-2.0 | F·T·S | OK | 폴리백·케이블·호스. 결정론 보장 엔진 없음 → 측정 전 보증 금지. 산출물 D1, 인증은 MuJoCo CPU 정적 보정 시험만(experimental) | X9 |
+| 5 | 오프라인 접촉 기준 | **Drake** | — | v1.57.0(2026-09-10) | BSD-3. PyPI 휠 분류 'BSD and Other/Proprietary'(번들 서드파티 솔버 별도 약관) | F | OK(Zone F 내부 검증). Zone S 번들은 독점 솔버를 뺀 소스 빌드만(V2 후) | hydroelastic·SAP 정밀도 최고. CPU 전용 | — |
+| 6 | 차량·지형·해양 | **Chrono 10.0** + 클린룸 Fossen 6-DOF. PhysX Vehicle2는 Zone F 전용(Isaac Lab·Isaac Sim 경유) | BeamNG.tech(견적, 벤더 라이선스), 고객 CarSim/CarMaker FMU(FMI 3.0, BYOL) | Chrono 10.0.0(ROCm은 dev 브랜치) | BSD-3 / 자체 / Vehicle2는 PhysX 코어 Apache-2.0이나 현 경로는 Isaac 약관 | Chrono·Fossen F·T·S / Vehicle2 F | Chrono·Fossen OK / Vehicle2 서면확인(Zone F 산출물 전용, 테넌트 개방은 P2 조건부 PhysX SDK 소스 어댑터 이후) / BeamNG·고객 FMU BYOL | Mobility Pack α M18–M24, 해양·UGV P3. Stonefish(GPL) 미사용. Chrono·Fossen은 D0 등록(목표 M22·M28 [A]) 전 D1 | X6, X14 |
+| 7 | 드론 | PX4 SITL + Gazebo Jetty | Pegasus 포팅(Isaac Sim 런타임 의존, Zone F·BYOL 전용) 또는 자체 브리지 | Pegasus v5.1.0(Isaac Sim 5.1 종속) | BSD-3 / Apache-2.0 | PX4·Gazebo T·S / Pegasus F | PX4·Gazebo OK / Pegasus 서면확인·BYOL | 기본 템플릿 M20–M24(P2 RL 1종), 상업화는 P3 국방 에디션. ArduPilot(GPL) 온프렘 제외. PX4 SITL lockstep은 D0 등록 전 D1 | X14 |
+| 8 | 렌더·센서(팩토리 SDG) | **Isaac Sim 6.1 RTX 실시간** + Replicator | ovrtx(GA + 약관 후), Blender Cycles(별도 프로세스, 내부) | Kit 110.x(Isaac Sim 6.1 번들 버전 [U], 최신 110.3.0은 2026-08-28), ovrtx 0.5.1 alpha | NVIDIA 독점 | F | 서면확인 | RT 코어 GPU 필수. H100/H200/B200 불가 | X1, X10 |
+| 9 | 렌더(테넌트·웹) | **웹 R0**: three.js r186(WebGPU/WebGL2) + Spark 2.x(WebGL2), PlayCanvas 2.23(WebGPU), Babylon.js 9.29(OpenUSD WASM) | Newton Warp 렌더러 | — | MIT / Apache-2.0 | T·S | OK | 서버 GPU 비용 0이 기본. 고충실도 보기는 별도 세션 | — |
 | 10 | 센서 모델(테넌트·소버린) | **자체 Warp Sensor Library** + 실측 센서 프로파일 | RTX 센서(BYOL) | — | 자체(Apache 의존성) | T·S | OK | 레이더·EO/IR은 검증 계획 통과 전 판매 금지 | — |
 | 11 | 신경 재구성 | **gsplat 1.6.0 + 3DGRUT 2.0** | fVDB, NuRec([U]) | 3DGRUT 2.0(2026-06) | Apache-2.0 | F·T·S | OK(NuRec 확인 필요) | Instant-NGP(NC)·Inria 3DGS 계열 대체 | X10 |
-| 12 | 피드포워드 기하·생성형 3D | VGGT-1B-Commercial, MapAnything(Apache 변형), DA3 S/B/Metric, TRELLIS.2(nvdiffrast 교체), SAM 3D Objects(민수) | Articulate-Anything(MIT), CoACD/CuACD | TRELLIS.2-4B | 다양. VGGT-Commercial·SAM은 군사 용도 제한 | F·T | OK(민수) / NO(국방) | Hunyuan3D 2.1은 한국 제외로 금지 | X12 |
-| 13 | 생성형 증강·월드모델 | Cosmos Transfer 2.5 → **Cosmos 3 Nano 16B**(M9부터) | Cosmos 3 Super 64B(P3), Edge 4B | Cosmos 3(2026-05/06) | OpenMDW-1.1(전문 [U]). Transfer 2.5는 NVIDIA Open Model License | F·T | OK(V7 조건) | 라벨 일관성 QA 통과 프레임만 납품 | X15 |
-| 14 | 학습 프레임워크 | **Isaac Lab 3.x(소스 빌드)** + rsl_rl 5.5 / skrl 2.1, **mjlab 1.6.0** | RLinf 0.3(P2), SB3 2.9(교육) | mjlab 1.6.0(2026-08-09) | BSD-3 / Apache-2.0 / MIT | F·T | Kit-less OK | PyPI 휠(독점) 대신 소스 빌드 | X5 |
-| 15 | 모방학습·VLA | **LeRobot 0.6.1** + v3. SmolVLA 450M(기본·국방), GR00T N1.7 | ACT, Diffusion Policy. pi0.5는 가중치 약관 전 차단 | LeRobot 0.6.1(2026-08-03), GR00T N1.7 GA(3B) | Apache-2.0. GR00T 가중치 NVIDIA Open Model License | F·T | OK(GR00T 군사 조항 확인) | 상세는 07 | X15 |
+| 12 | 피드포워드 기하·생성형 3D | VGGT-1B-Commercial, MapAnything-apache 가중치, DA3 S/B/Metric, TRELLIS.2(nvdiffrast 교체), SAM 3D Objects(민수) | Articulate-Anything(MIT), CoACD/CuACD | TRELLIS.2-4B | 다양. SAM License(SAM 3D Objects·SAM 3)와 VGGT-1B-Commercial은 커스텀 사용 제한 라이선스(신청서, 군사·ITAR 제외). MapAnything 기본 가중치는 CC-BY-NC(NEVER 후보 #22) | F·T | 허용형 모델 OK. SAM·VGGT-Commercial은 **조건부(V7)**: 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외 / NO(국방) | Hunyuan3D 2.1은 한국 제외로 금지 | X12 |
+| 13 | 생성형 증강·월드모델 | Cosmos Transfer 2.5(P1 M5–M8) → **Cosmos 3 Nano 16B** 파인튜닝(M9부터) | Cosmos 3 Super 64B(P3), Edge 4B | Cosmos 3(2026-05/06) | OpenMDW-1.1(전문 [U]). Transfer 2.5는 NVIDIA Open Model License | F·T | OK(V7 조건) | 라벨 일관성 QA 통과 프레임만 납품(결정론 등급 D2) | X15 |
+| 14 | 학습 프레임워크 | **Isaac Lab 3.x(소스 빌드)** + rsl_rl 5.5 / skrl 2.1, **mjlab 1.6.0** | RLinf 0.3(P2), SB3 2.9(교육) | mjlab 1.6.0(2026-08-09, MJWarp 3.11 고정 별도 이미지) | BSD-3 / Apache-2.0 / MIT | F·T | Kit-less OK | PyPI 휠(독점) 대신 소스 빌드. mjlab 정책의 인증 재현은 MuJoCo 3.15 CPU | X5 |
+| 15 | 모방학습·VLA | **LeRobot 0.6.1** + v3. SmolVLA 450M(기본·국방), GR00T N1.7 | ACT, Diffusion Policy. pi0.5는 가중치 약관 전 차단 | LeRobot 0.6.1(2026-08-03), GR00T N1.7 GA(3B) | Apache-2.0. GR00T 가중치 NVIDIA Open Model License | F·T | LeRobot·SmolVLA OK. GR00T는 학습·내부 사용 OK, 파인튜닝 가중치의 고객 납품(재배포)은 V7 법률 검토(M3) 통과 후 **조건부(V7)**. 부정적이면 SmolVLA 또는 ACT로 증류해 납품 | 상세는 07 | X15 |
 | 16 | 시연 증강·텔레옵 | Isaac Lab Mimic(팩토리). 테넌트 GELLO + SpaceMouse + LeRobot | SkillGen(Apache 태그 cuRobo + NVIDIA 확인 시) | isaaclab_mimic 1.0.16 | Mimic Apache-2.0. **MimicGen 코드 금지** | F | Kit-less 검증 전 팩토리 전용 | 시각운동 1,000개 생성 약 10시간 | X5 |
-| 17 | 인식 모델 | Replicator SDG + RF-DETR N–L | — | — | Apache-2.0(XL/2XL은 PML 1.0) | F·T | OK | Ultralytics(AGPL) SaaS 금지 | — |
+| 17 | SDG·인식 모델 | Replicator SDG(Zone F) / Newton Warp 래스터 + Warp Sensor Library SDG(Zone T·S) + RF-DETR N–L | Ultralytics Enterprise(고객 요구 시) | — | Replicator NVIDIA 독점(Kit·Omniverse 약관) / Warp SDG 자체(Apache 의존성) / RF-DETR N–L Apache-2.0(XL/2XL은 PML 1.0) | Replicator F / Warp SDG T·S / RF-DETR F·T·S | Replicator 서면확인(팩토리 산출물 전용) / Warp SDG·RF-DETR N–L OK | Ultralytics(AGPL) SaaS 금지 | X1 |
 | 18 | 장면·데이터 포맷 | **OpenUSD**(툴링 26.08) + UsdPhysics + newton/mjc/physx 스키마 + `aic:TwinCertificate` | glTF + KHR_gaussian_splatting, URDF/MJCF, MCAP, LeRobot v3, FMI 3.0/SSP, ASAM OpenX | UsdPhysics 중첩·Hydra 2 기본값은 25.11부터 | AOUSD Core 1.0.1(CC-BY-ND 사양), 변환기 Apache-2.0 | F·T·S | OK | AOUSD Core에 UsdPhysics 미포함 → 적합성 스위트로 보완 | — |
-| 19 | 오케스트레이션 | K8s 1.32+, GPU Operator v26.7.x, KAI Scheduler v0.18.x, Ray 2.59, SkyPilot, MLflow 3 | OSMO, Kueue/KubeRay | — | Apache-2.0 | F·T·S | OK | MinIO(AGPL [A])·lakeFS 1.87 이상(BSL) 제외 | — |
+| 19 | 오케스트레이션 | K8s 1.32+, GPU Operator v26.7.x, KAI Scheduler v0.18.x, Ray 2.59, SkyPilot, MLflow 3 | OSMO, Kueue/KubeRay | — | Apache-2.0 | F·T·S | OK | MinIO(AGPL-3.0 [U])·lakeFS 1.87 이상(BSL)·TimescaleDB TSL 고급 기능 제외 | — |
 | 20 | 스트리밍 | **자체 WebRTC 게이트웨이** | Kit App Streaming(게이트웨이 뒤, F·BYOL), Selkies(MPL-2.0) | — | 자체 / MPL-2.0 | T·S | OK | Isaac Sim 스트리밍은 인증·암호화 없음, host 네트워크 필요 | X1 |
-| 21 | 라이브 트윈 연결 | 자체 ROS 2 브리지(Humble·Jazzy·Lyrical, Zenoh), open62541, MQTT, Kafka | Eclipse Ditto 방식 상태 서비스 | ROS 2 Lyrical(2026-05-22, 2031-05 EOL) | MPL-2.0 / Apache-2.0 | T·S | OK | Isaac Sim ROS 워크스페이스는 Humble·Jazzy만 | — |
+| 21 | 라이브 트윈 연결 | 자체 ROS 2 브리지(Jazzy·Lyrical 기본, Humble은 M7 이후 best-effort, Zenoh), open62541, MQTT, Kafka | Eclipse Ditto 방식 상태 서비스 | ROS 2 Lyrical(2026-05-22, 2031-05 EOL), Jazzy(2029-05 EOL), Humble(2027-05 EOL) | MPL-2.0 / EPL-2.0(Ditto) / Apache-2.0 | T·S | OK(MPL·EPL 의무 이행) | Isaac Sim ROS 워크스페이스는 Humble·Jazzy만. 신규 배포 기본은 Jazzy·Lyrical | — |
 | 22 | 에이전트 | **자체 MCP 서버**(사양 2026-07-28) + 샌드박스 USD 코드 에이전트 | kit-usd-agents(개발 단계 API 그라운딩) | — | 자체 / Apache-2.0 | T·S | OK | 임의 코드 실행 커뮤니티 MCP는 테넌트 비노출 | — |
 | 23 | 관찰 전용 | Genesis World 1.4.3, Isaac Sim 7.0 alpha(사이드 브랜치), ovphysx 0.6.3 alpha | — | — | Genesis Apache(Nyx 제외). ovphysx 소스 Apache, 휠·ovstage 독점 | — | **NO**(현 단계) | Genesis 43M FPS 주장은 약 150배 차이로 비판 | X6, X9, X11 |
 
-- **아키텍처 상세:** 레이어 18–22의 설계는 [04 시스템 아키텍처](04-system-architecture.md), 기술 항목 전체 목록은 [부록 A 기술 카탈로그](appendix-a-technology-catalog.md).
+- **아키텍처 상세:** 레이어 18–22의 설계는 [04 시스템 아키텍처](04-system-architecture.md), 기술 항목 전체 목록은 [부록 A 기술 카탈로그](appendix-a-technology-catalog.md)에 있다.
+- **DR §2 정오표 반영:** 이 표는 DR §2를 확장한 것이며, DR 정오표 T-2(#17 Replicator 구역), T-3·E2(#6·#7 Vehicle2·Pegasus 구역, BeamNG·고객 FMU의 BYOL), T-5·E14(#12·#15 SAM·VGGT-Commercial·GR00T의 V7 조건부), T-6(#5 Drake 휠 분류), T-8(#2·#8 번들 PhysX·Kit 버전 [U]), T-9(#4 flex 실험 기능), T-10(#9 Spark WebGL2), T-11(Warp 하한), T-12(#19 MinIO [U]), T-13(#21 ROS 2 EOL)을 반영했다. DR 원문과 다르면 이 표와 정오표를 따른다.
 
 ---
 
@@ -498,7 +486,7 @@ flowchart LR
 >
 > **렌더러 직접 구축? NO.** 팩토리는 Isaac Sim RTX, 테넌트는 WebGPU + Newton Warp 렌더러, 신경 렌더는 3DGUT(Apache-2.0)를 쓴다. 자체 패스 트레이서는 고객이 돈을 낼 가치를 하나도 더하지 않는다.
 >
-> **그럼 무엇을 직접 구축하나? → OWN 13종(§9).** 엔진 사이의 이음새(Kernel API, 적합성 스위트, Run Manifest), 현실과의 이음새(Forge, Fidelity Lab, Crucible, 인증서), 사용자와의 이음새(Outcome Orchestrator, 한국어 MCP 에이전트, 게이트웨이), 신뢰의 이음새(라이선스 레지스트리, 소버린 패키징).
+> **그럼 무엇을 직접 구축하나? → OWN 13종(§9).** 엔진 사이의 이음새(Sim Kernel API, 적합성 스위트, Run Manifest, 센서 라이브러리), 현실과의 이음새(Forge, Fidelity Lab, Crucible, 한국 콘텐츠), 사용자와의 이음새(Outcome Orchestrator, 한국어 MCP 에이전트, 게이트웨이), 신뢰의 이음새(라이선스 레지스트리, 소버린 패키징)다. 인증서는 Fidelity Lab과 Crucible이 내는 산출물이며, 그 스키마는 Run Manifest·장면 커밋과 함께 엔진 이음새에 속한다.
 
 ### 8.2 네 가지 전략의 정의
 
@@ -539,9 +527,9 @@ flowchart LR
 | S4 자체 엔진 '성공' 가정 | A의 물리 2 → 4, 시각 2 → 4 | 3.00 | 3.70 | 3.20 | **4.23** | D |
 | S5 CUDA 종속 비관 | D의 통제 3 → 2 | 2.40 | 3.70 | 3.20 | **4.13** | D |
 
-- **B가 D를 역전하는 조건:** 시각 충실도와 MVP 시간의 가중치 합이 약 59%를 넘고(기준 30%), 나머지 기준을 기준 비율대로 줄일 때만 동률. 즉 '라이선스·통제·비용을 거의 무시하고 속도와 화질만 보는' 세계관이며, DR이 폐기한 '약관 전 호스팅 베타'의 전제와 같음.
-- **NVIDIA가 서면 조건을 줘도(S3) D가 1위:** 서면 조건은 D의 R3 티어를 Zone T로 넓히는 옵션이지 전략 전환의 이유가 아님(§14 X1).
-- **자체 엔진이 기술적으로 성공해도(S4) 꼴찌:** 시간(1점)과 비용(1점)은 성공으로 회복되지 않음.
+- **B가 D를 역전하는 조건:** 시각 충실도와 MVP 시간의 가중치 합이 약 59%를 넘고(기준 30%), 나머지 기준을 기준 비율대로 줄일 때에야 동률이 된다. 즉 '라이선스·통제·비용을 거의 무시하고 속도와 화질만 보는' 세계관이며, DR이 폐기한 '약관 전 호스팅 베타'의 전제와 같다.
+- **NVIDIA가 서면 조건을 줘도(S3) D가 1위다:** 서면 조건은 D의 R3 티어를 Zone T로 넓히는 옵션이지 전략을 바꿀 이유가 아니다(§14 X1).
+- **자체 엔진이 기술적으로 성공해도(S4) 꼴찌다:** 시간(1점)과 비용(1점)은 기술적 성공으로 회복되지 않는다.
 
 ### 8.5 근거: 엔진 개발 이력
 
@@ -555,7 +543,7 @@ flowchart LR
 | Gazebo | 16년 이상, 현재 Intrinsic 유지 | — | Jetty LTS(2031-05까지) | ROS 표준 지위는 생태계가 유지한다 |
 | Warp | NVIDIA | — | 1.15(7월) → 1.18(10-05): 4개월 4회 | 커널 언어조차 월간으로 진화한다 |
 
-**그림 4. 엔진 개발 기간과 자체 엔진 가정의 비교**
+**그림 3. 엔진 개발 기간과 자체 엔진 가정의 비교**
 
 ```mermaid
 gantt
@@ -591,11 +579,11 @@ gantt
 | 엔진 품질 리스크 | 자체 부담 | 업스트림 부담 | 업스트림 부담 + 적합성 스위트로 측정 |
 | 엔진 유지비 | 전액 | 업그레이드 세금 | 엔진 접촉 WS 용량의 25%(약 ₩6억/24개월) |
 
-- **산식 교차검증 [A]:** DR 혼합 단가 ₩1,400만/HM을 그대로 적용하면 150–300 engineer-year는 인건비만 ₩252–504억. 엔진 전문가 프리미엄, GPU 검증 인프라, 실측 랩을 더하면 리서치의 ₩400–600억 범위와 정합.
-- **비율:** ₩400–600억은 24개월 기준안 ₩122억의 3.3–4.9배. 반대로 D의 엔진 유지비(약 ₩6억)는 자체 엔진 비용의 1.0–1.5%.
-- **DR 기준안이 리서치 D보다 큰 이유:** 리서치 D(₩80–84억)는 엔진·플랫폼만 셈. DR 기준안은 Fidelity Lab ₩6.8억, 법무·IP·인증 ₩3.5억, GTM·관리 ₩5.5억, NVAIE 예비비 ₩2.9억, 예비비 ₩9.0억 등 **해자와 상업화 비용**을 포함([09 로드맵·조직·예산](09-roadmap-organization-budget.md)).
+- **산식 교차검증 [A]:** DR 혼합 단가 ₩1,400만/HM을 그대로 적용하면 150–300 engineer-year는 인건비만 ₩252–504억이다. 엔진 전문가 프리미엄, GPU 검증 인프라, 실측 랩을 더하면 리서치의 ₩400–600억 범위와 맞는다.
+- **비율:** ₩400–600억은 24개월 기준안 ₩122억의 3.3–4.9배다. 반대로 D의 엔진 유지비(약 ₩6억)는 자체 엔진 비용의 1.0–1.5%다.
+- **DR 기준안이 리서치 D보다 큰 이유:** 리서치 D(₩80–84억)는 엔진·플랫폼만 셌다. DR 기준안은 Fidelity Lab ₩6.8억, 법무·IP·인증 ₩3.5억, GTM·관리 ₩5.5억, NVAIE 예비비 ₩2.9억, 예비비 ₩9.0억 등 **해자와 상업화 비용**을 포함한다([09 로드맵·조직·예산](09-roadmap-organization-budget.md)).
 
-**그림 5. 전략 포지셔닝(출시 속도 × 라이선스 안전·통제)**
+**그림 4. 전략 포지셔닝(출시 속도 × 라이선스 안전·통제)**
 
 x축은 'MVP까지 시간' 점수, y축은 '라이선스 안전'과 '전략 통제' 점수의 평균이다. 점수 s를 (s−1)/4 × 0.84 + 0.08로 환산했다.
 
@@ -636,8 +624,8 @@ quadrantChart
 | PhysX SDK 소스 어댑터 | 부분(ovphysx 휠 독점) | 아니오 | **아니오(36–48 HM)** | 부분 | **조건부(P2, 3조건)** |
 | Newton 차량·휠 훅 | 부분 | 아니오 | 예 | 부분 | **업스트림 기여** |
 
-- **업스트림 원칙:** 범용 커널(촉각 압력장 샘플링, 휠 접촉 훅, 한국 산업 자산 예제)은 Newton·MuJoCo에 기여. 측정 프로파일, 인증 산출 로직, 충실도 예측기는 비공개.
-- **기대 효과:** 로드맵 영향력, 업그레이드 세금 절감(업스트림된 코드는 상류가 유지), 채용 흡인(Newton 커밋 권한).
+- **업스트림 원칙:** 범용 커널(촉각 압력장 샘플링, 휠 접촉 훅, 한국 산업 자산 예제)은 Newton·MuJoCo에 기여한다. 측정 프로파일, 인증 산출 로직, 충실도 예측기는 공개하지 않는다.
+- **기대 효과:** 로드맵 영향력, 업그레이드 세금 절감(업스트림된 코드는 상류가 유지한다), 채용 흡인(Newton 커밋 권한)을 얻는다.
 
 ---
 
@@ -645,7 +633,7 @@ quadrantChart
 
 **결론: 엔진은 모두가 공짜로 받는다. 우리가 파는 증거(측정·인증·제3자 평가)를 만드는 이음새만 소유한다. 13개 중 진짜 해자는 실측 코퍼스·인증 체계·Arena·한국 콘텐츠이고, 나머지는 해자를 지키는 성벽이거나 위생 요건이다.**
 
-**그림 6. OWN 13종: 네 개의 이음새**
+**그림 5. OWN 13종: 네 개의 이음새**
 
 ```mermaid
 mindmap
@@ -672,35 +660,36 @@ mindmap
 | # | OWN 항목 | 무엇을 만드나 | 왜 해자인가 | 해자 유형·강도 | 4대 요구 | 담당·첫 버전 | 측정 지표 |
 |---|---|---|---|---|---|---|---|
 | ① | **Sim Kernel API** | load/step/get_state/set_state/apply_actions/render/contacts/snapshot/restore/set_seed/capabilities. Isaac Lab 3.0 팩토리 패턴 미러링 | 고객 템플릿·정책이 엔진이 아니라 우리 API에 붙음. 엔진 교체 자유가 NVIDIA 협상력이 됨 | 전환비용 ★★ | (1)(3)(4) + 범용성 | WS1, v0 M4 | 백엔드 수, 어댑터 교체 공수 |
-| ② | **적합성 스위트** | 낙하 박스, 진자, Franka 픽, 폴리백, 바퀴 차량 → 15장면 | '엔진이 바뀌어도 결과가 같다'를 증명하는 유일한 도구. 오픈소스화 시 채용 흡인 | 표준·신뢰 ★★ | (1)(2) | WS1, v0 M4 | 3×5 → 4×8 → 5×12 → 6×15 |
-| ③ | **Run Manifest + 장면 커밋** | 장면 해시, 자산 해시, 컨테이너 다이제스트, 백엔드·버전, GPU SKU·드라이버, 시드, dt, MCAP 입력 로그 | 데이터셋·정책의 감사 가능한 계보. 규제·조달 증빙의 기반 | 감사 가능성 ★★ | (2)(3) | WS6, v0 M4 | 계보 누락률 0% |
+| ② | **적합성 스위트** | 낙하 박스, 진자, Franka 픽, 폴리백, 바퀴 차량 → 15장면(정본은 [04 §4.6](04-system-architecture.md) C01–C15). 백엔드는 Newton/MJWarp·MuJoCo CPU·PhysX → +Drake → +Chrono → +클린룸 Fossen | '엔진이 바뀌어도 결과가 같다'를 증명하는 유일한 도구. 오픈소스화 시 채용 흡인 | 표준·신뢰 ★★ | (1)(2) | WS1, v0 M4 | 3×5 → 4×8 → 5×12 → 6×15 |
+| ③ | **Run Manifest + 장면 커밋** | 장면 해시, 자산 해시, 컨테이너 다이제스트, 백엔드·버전, GPU SKU·드라이버, 시드, dt, MCAP 입력 로그 | 데이터셋·정책의 감사 가능한 계보. 규제·조달 증빙의 기반 | 감사 가능성 ★★ | (2)(3) | WS1(P0, 재배치 CEN 플랫폼 엔지니어) → WS6(P1부터 운영). 스키마 v0 W1(2026-11-06, 측정 하네스용), 서비스 v0(어드미션·서명) D60(2026-12-17), v1 동결 M4(G0) | 계보 누락률 0% |
 | ④ | **Athanor Forge** | 촬영 → 포즈·깊이 → 3DGUT → 메시 → 관절·물성 추정 → 물리 QA → 인증서 | 스캔한 SKU를 다음 고객에게 다시 팜. 자산이 복리로 쌓임 | 데이터 복리 ★★★ | (2)(3) | WS2, v0 M4 | 무개입 비율 30→60→80→90% |
-| ⑤ | **Fidelity Lab** | 측정 프로토콜, Test Cell, 페어드 실측/시뮬 코퍼스, Scorecard, 충실도 예측기 | 실제 로봇 랩과 시간이 있어야만 복제 가능. NVIDIA가 운영하지 않음 | 실측 데이터 ★★★ | (2) | WS4, Test Cell 1 M4 | 페어드 trial 1k→10k→50k→150k |
+| ⑤ | **Fidelity Lab** | 측정 프로토콜, Test Cell, 페어드 실측/시뮬 코퍼스, Scorecard, 충실도 예측기 | 실제 로봇 랩과 시간이 있어야만 복제 가능. NVIDIA가 운영하지 않음 | 실측 데이터 ★★★ | (2) | WS4. Test Cell 1 발주 2026-11-30(D43), 시운전·측정 프로토콜 v1 D61–90 | 페어드 trial 1k→10k→50k→150k |
 | ⑥ | **Crucible + K-Physical AI Arena** | 과제 스위트, 실셀+시뮬 채점, 거버넌스 헌장, 제3자 공동서명 | 제3자 서명 인증서가 조달 문서에 인용되면 네트워크 효과 | 신뢰·네트워크 ★★★ | (2)(4) | WS4, v0 P1 | Arena 회원 3→8→20, 조달 인용 |
 | ⑦ | **Outcome Orchestrator** | 주문 명세 → 작업 DAG → QA 게이트 → 납품·인증서, 토큰 미터링 | 결과물당 엔지니어 시간 학습곡선이 원가 우위 | 학습곡선 ★★ | (3)(4) | WS6, v1 P1 | 엔지니어 시간 지수 100→50→25→15 |
-| ⑧ | **라이선스·출처 레지스트리** | 코드 SPDX, 자산·데이터·가중치 권리, 마켓 매니페스트 | 재벌·국방 구매의 전제. 라이선스 결함 데이터셋은 판매 불가 | 위생·조달 ★ | 전체 | WS7, v0 M4 | CI 차단 건수, 감사 지적 0 |
+| ⑧ | **라이선스·출처 레지스트리** | 코드 SPDX, 자산·데이터·가중치 권리, 마켓 매니페스트 | 재벌·국방 구매의 전제. 라이선스 결함 데이터셋은 판매 불가 | 위생·조달 ★ | 전체 | 백엔드 WS1(P0) → WS6(P1부터), UI WS7. v0 D60(2026-12-17), M4까지 CI·마켓 출처 게이트 연동 | CI 차단 건수, 감사 지적 0 |
 | ⑨ | **한국어 MCP 에이전트** | 타입 지정 도구, 샌드박스 USD 코드 생성, 검증 게이트, 사람 승인 | 사내 딜리버리 생산성이 먼저. NVIDIA도 에이전트를 배포하므로 단독 해자는 약함([06 사용성·에이전트](06-usability-and-agent.md)) | 사용성 ★ | (3) | WS7, 사내용 P1 | 명령 성공률 ≥80%→≥92% |
 | ⑩ | **WebRTC 게이트웨이 + 컨트롤 플레인** | 인증·TLS·NVENC·세션 관리, 테넌시·RBAC·데이터 거주 태그 | Isaac Sim 스트리밍의 보안 공백을 메움 | 위생·보안 ★ | (3) | WS6, P1 | 침투 테스트 고위험 0 |
 | ⑪ | **Warp Sensor Library + 클린룸 Fossen** | 카메라 ISP·라이다·노이즈 모델 + 디바이스 실측 프로파일, 해양 6-DOF | Zone T/S에서 RTX 없이 쓸 수 있는 유일한 센서 경로. 실측 프로파일 자체가 상품 | 소버린 센서 ★★ | (2) + 범용성 | WS3, v0 P1 | 라이다 거리 오차 ≤3→≤2 cm |
 | ⑫ | **소버린 패키징** | 서명 SBOM, 에어갭 설치기, 드라이버 사전 점검기, 오프라인 업데이트 | 재벌·국방 온프렘 조달의 진입 장벽 | 규제·조달 ★★ | (3) | WS6, 베타 M14 | 설치 소요 시간, 첫 온프렘 유료 설치(G2) |
 | ⑬ | **한국 콘텐츠** | 한국 SKU, 공장·물류·조선 셀 트윈, 센서 디바이스 프로파일 | 현장 접근권과 축적이 필요. 해외 경쟁자는 한국 SKU가 없음 | 로컬 데이터 ★★★ | (2) | WS2·WS8, P0 | Silver/Gold 150→1,000→4,000→12,000 |
 
-- **배분 원칙:** OWN이 엔지니어링의 약 60%. P1–P2 공수는 해자 35%, 생산 라인 20%, Studio·에이전트·플랫폼 20%, 엔진 통합·업그레이드 세금 15%, FDE 10% 이하.
-- **Domain Pack과의 관계:** ④⑪⑬과 학습 템플릿·평가지표·인증 기준을 도메인 단위로 묶은 것이 Domain Pack([08 도메인 팩](08-domain-packs.md)). 새 대상(차량·선박)을 받아들이는 단위.
+- **배분 원칙:** OWN이 엔지니어링의 약 60%다. P1–P2 공수는 해자 35%, 생산 라인 20%, Studio·에이전트·플랫폼 20%, 엔진 통합·업그레이드 세금 15%, FDE 10% 이하로 나눈다.
+- **P0 소유권:** P0의 Run Manifest·장면 커밋 서비스·라이선스 레지스트리 백엔드는 WS1(재배치된 CEN 마켓플레이스·플랫폼 엔지니어, Kernel 리드 대행)이 맡는다. WS6 Platform 리드(K8s GPU 플랫폼 엔지니어)는 M3에 착석하므로, P1부터 운영을 WS6로 넘기고 레지스트리 UI는 WS7이 맡는다.
+- **Domain Pack과의 관계:** ④⑪⑬과 학습 템플릿·평가지표·인증 기준을 도메인 단위로 묶은 것이 Domain Pack이다([08 도메인 팩](08-domain-packs.md)). 새 대상(차량·선박)을 받아들이는 단위다.
 
 ---
 
 ## 10. 라이선스 3-Zone 모델
 
-**결론: 라이선스 리스크는 '조심'이 아니라 '구역'으로 관리한다. 독점 런타임은 Zone F 울타리 안에서 산출물만 만들고, 고객에게 닿는 모든 바이너리는 허용형이며, 금지 항목은 사람이 아니라 CI가 막는다.**
+**결론: 라이선스 리스크는 '조심'이 아니라 '구역'으로 관리한다. 독점 런타임은 Zone F 울타리 안에서 산출물만 만들고, 고객에게 닿는 모든 바이너리는 허용형이거나 의무 이행이 가능한 약한 카피레프트이며, 금지 항목은 사람이 아니라 CI가 막는다.**
 
 ### 10.1 구역 정의와 집행 장치
 
 | 구역 | 사용자 | 허용 구성요소 | 금지 | 매출 연결 | 집행 장치 [A] |
 |---|---|---|---|---|---|
 | **Zone F 내부 팩토리** | AICHEMIST 엔지니어만 | 허용형 전체 + Isaac Sim 6.1/Kit, RTX 센서, Replicator, Isaac Lab PhysX 경로, TacSL, Mimic, Isaac Teleop. 약관 확인 후 NuRec·ovrtx | 테넌트 접근, 고객 화면 스트리밍 | 산출물(데이터셋, 정책, 인증 자산, 리포트)만. 산출물 면제 자체가 [U] → NVIDIA 서면 확인. 필요 시 NVAIE(예비비 ₩2.9억) | 별도 노드 풀(RT 풀), 테넌트 네트워크 경로 없음. 산출물은 '반출 게이트'(라이선스 매니페스트 + 출처 + Run Manifest) 통과 후 Zone T로 이동 |
-| **Zone T 테넌트 대면** | Studio·Cloud 고객 | Newton, MuJoCo, mjlab, Isaac Lab 소스(Kit-less Newton), PhysX SDK 소스, Chrono, WebGPU, Warp 센서, gsplat/3DGRUT, LeRobot, 자체 게이트웨이 | Kit, Isaac Sim, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠(서면 조건 전) | 구독, 토큰, 마켓플레이스 | 이미지 SPDX 허용 목록. 금지 패키지(isaacsim, isaaclab 휠, ovrtx, ovphysx, omni.kit 계열) 감지 시 빌드 실패. 이미지 서명 |
-| **Zone S 소버린·온프렘·에어갭** | 고객 사이트, 국내 CSP | Zone T + 서명 SBOM, 텔레메트리 없음, 오프라인 업데이트 | Zone T 금지 + GPL 번들(Blender는 V2 의견 전 제외) + 국방 에디션의 SAM 계열·VGGT-Commercial | Sovereign 라이선스. RTX는 고객이 자기 라이선스로 직접 운영(BYOL)할 때만 연동 | 서명 SBOM, 드라이버 사전 점검기, 국방 프로파일 화이트리스트. AICHEMIST가 고객 라이선스로 대신 호스팅하는 것은 NVIDIA 확인 전 금지 |
+| **Zone T 테넌트 대면** | Studio·Cloud 고객 | 허용형(Apache-2.0/BSD/MIT): Newton, MuJoCo, mjlab, Isaac Lab 소스(Kit-less Newton), PhysX SDK 소스(조건부 어댑터 착수 후), Chrono, 클린룸 Fossen, 웹 R0, Warp 센서, gsplat/3DGRUT, LeRobot, 자체 게이트웨이. 의무 이행이 가능한 약한 카피레프트: MPL-2.0(open62541·Selkies·OpenBao·Lichtblick), EPL-2.0(Ditto), LGPL(Ceph RGW) | Kit, Isaac Sim, ovrtx, ovphysx 휠, isaacsim/isaaclab PyPI 휠, Replicator, PhysX Vehicle2(Isaac 경유)(서면 조건 전). TSL(TimescaleDB 고급 기능)·BSL·AGPL·GPL·비상업 라이선스 | 구독, 토큰, 마켓플레이스 | 이미지 SPDX 허용 목록. 금지 패키지(isaacsim, isaaclab 휠, ovrtx, ovphysx, omni.kit 계열) 감지 시 빌드 실패. 이미지 서명 |
+| **Zone S 소버린·온프렘·에어갭** | 고객 사이트, 국내 CSP | Zone T + 서명 SBOM, 텔레메트리 없음, 오프라인 업데이트 | Zone T 금지 + GPL 번들(Blender는 V2 의견 전 제외) + 독점 솔버가 든 Drake PyPI 휠(소스 빌드만, V2 후) + 재배포 조항 서면 확인 전의 SAM 계열·VGGT-Commercial·GR00T 파인튜닝 가중치 번들 + 국방 에디션의 SAM 계열·VGGT-Commercial | Sovereign 라이선스. RTX는 고객이 자기 라이선스로 직접 운영(BYOL)할 때만 연동 | 서명 SBOM, 드라이버 사전 점검기, 국방 프로파일 화이트리스트. AICHEMIST가 고객 라이선스로 대신 호스팅하는 것은 NVIDIA 확인 전 금지 |
 
 ### 10.2 의존성 분류 흐름
 
@@ -711,22 +700,23 @@ flowchart TD
     S -->|"예"| N{"NEVER 목록 해당?"}
     N -->|"예"| X["CI 차단 + 대체재 안내"]
     N -->|"아니오"| L{"라이선스 유형"}
-    L -->|"Apache, BSD, MIT, MPL"| D{"국방 프로파일 제한?"}
+    L -->|"Apache, BSD, MIT, 의무 이행 가능한 MPL, EPL, LGPL"| D{"국방·사용 제한 프로파일?"}
     L -->|"NVIDIA 독점"| F["Zone F 전용 태그"]
-    L -->|"AGPL, BSL, 비상업, 지역 제외"| X
+    L -->|"AGPL, BSL, TSL, 비상업, 지역 제외"| X
     L -->|"GPL"| G{"사용 형태"}
     G -->|"온프렘 번들"| X
     G -->|"내부 별도 프로세스"| F
     G -->|"SaaS 서버 측"| H
-    D -->|"SAM, VGGT-Commercial, 출처 미확인 모델"| Q["Zone T 허용, Air-gap 에디션 제외"]
+    D -->|"SAM, VGGT-Commercial, GR00T 납품 가중치"| Q["조건부 V7 - Zone T 호스팅은 V7 후, 온프렘 번들과 Air-gap 제외"]
+    D -->|"출처 미확인 모델"| Q
     D -->|"해당 없음"| OK["Zone T, S 허용 - 레지스트리 기록"]
 ```
 
-### 10.3 NEVER 목록(21개)과 사유
+### 10.3 NEVER 목록(21개 + 후보 1개)과 사유
 
 | # | 항목 | 라이선스 | 금지 사유 | 대체재 |
 |---|---|---|---|---|
-| 1 | Hunyuan3D 2.x | Tencent Hunyuan 3D 2.1 Community License | 적용 지역에서 EU·영국·**한국을 제외**하고, 지역 밖의 **출력물 사용도 금지**. MAU 100만 초과 시 승인 조항 | TRELLIS.2(nvdiffrast 교체), SAM 3D Objects(민수) |
+| 1 | Hunyuan3D 2.x | Tencent Hunyuan 3D 2.1 Community License | 적용 지역에서 EU·영국·**한국을 제외**하고, 지역 밖의 **출력물 사용도 금지**. MAU 100만 초과 시 승인 조항 | TRELLIS.2(nvdiffrast 교체), SAM 3D Objects(민수, V7 조건부) |
 | 2 | Inria 3DGS 원본 | Gaussian-Splatting License | 연구·평가 전용. 상업 사용은 Inria 동의 필요 | gsplat, 3DGRUT |
 | 3 | 2DGS, MILo | Inria 라이선스 계승 | 위와 동일 | gsplat 2DGS 모드, fVDB, 논문 기반 재구현 |
 | 4 | PGSR | ZJU 라이선스 | 교육·연구·비영리 전용 | gsplat 위 재구현 |
@@ -747,8 +737,10 @@ flowchart TD
 | 19 | lakeFS 1.87 이상 | BSL 1.1 | 경쟁 호스팅 제한, IAM 플러그인 제거 | 자체 장면 커밋 서비스, DVC·Iceberg |
 | 20 | 국방 에디션 내 SAM 계열·VGGT-Commercial | SAM License / VGGT-Commercial 약관 | ITAR·무역통제 금지 용도, 군사 용도 금지 | 자체 모델, Apache 가중치(MapAnything-apache, DA3 S/B) |
 | 21 | Isaac Lab 번들 cuRobo | Isaac Lab Additional Software and Materials License | **Isaac Lab 밖에서 사용 금지** | Apache-2.0 태그로 고정한 업스트림 NVlabs/curobo + NVIDIA 서면 확인 |
+| 22(후보) | MapAnything 기본(비 apache) 가중치 | CC-BY-NC | 비상업. 코드는 Apache-2.0이지만 기본 가중치는 상업 사용 불가 | MapAnything-apache 가중치(Apache-2.0)만 허용. DR §3.3 개정 시 정식 편입([부록 A](appendix-a-technology-catalog.md) §0.3, [05](05-physics-and-realism.md) Forge 라인과 정합) |
 
-- **조건부 보류(NEVER는 아님):** MinIO(AGPL [A]), Genesis Nyx(라이선스 미표기), pi0.5 가중치(약관 미명시), OpenVLA 가중치(Llama 2 약관), Stability SPAR3D(매출 $1M 초과 시 엔터프라이즈 라이선스), UE 런타임(코어 탑재 금지, 커넥터만).
+- **조건부 보류(NEVER는 아님):** MinIO(AGPL-3.0 [U]), TimescaleDB TSL 고급 기능(Apache-2.0 에디션만 쓰거나 InfluxDB 3 Core로 대체), Genesis Nyx(라이선스 미표기), pi0.5 가중치(약관 미명시), OpenVLA 가중치(Llama 2 약관), Stability SPAR3D(매출 $1M 초과 시 엔터프라이즈 라이선스), UE 런타임(코어 탑재 금지, 커넥터만)이다.
+- **조건부(V7) 모델:** SAM License(SAM 3D Objects·SAM 3)와 VGGT-1B-Commercial은 신청서 기반 커스텀 사용 제한 라이선스(군사·ITAR 제외)다. 테넌트 호스팅 추론은 V7 통과 후에 열고, 온프렘 가중치 번들은 재배포 조항을 서면으로 확인하기 전까지 넣지 않는다. GR00T N1.7 파인튜닝 가중치의 고객 납품도 재배포에 해당하므로 같은 조건을 따른다.
 
 ### 10.4 라이선스 함정 상세
 
@@ -760,19 +752,19 @@ flowchart TD
 | **Hunyuan3D 2.1의 한국 제외** | 지역 조항이 출력물 사용까지 금지 | 마켓 자산 하나가 Hunyuan3D 출력이면 그 자산이 들어간 데이터셋 전체가 결함 | 마켓 출처 게이트에서 생성 모델 메타데이터 필수 | 확인(LICENSE 원문) |
 | **NC 연구 코드의 의존성 전염** | MIT 프로젝트가 NC 라이브러리를 필수로 가져옴(TRELLIS.2 → nvdiffrast). 과거 파이프라인이 NC 코드를 품었을 수 있음(CEN NeRF → Instant-NGP) | 실사(M&A, 대기업 보안 심사)에서 IP 결함 | 전이 의존성까지 SPDX 스캔. M1 감사 후 gsplat/3DGRUT 이전 | M1 감사 |
 | **GPL·AGPL 트리거** | 온프렘 납품은 배포(GPL 의무 발생). AGPL은 네트워크 사용만으로 발생 | 재벌·국방 온프렘에 BlenderProc가 섞여 들어감 / SaaS에 YOLO 탑재 | Zone S GPL 금지, SaaS AGPL 금지, ArduPilot 대신 PX4 | Blender 별도 프로세스 해석은 V2 |
-| **SAM 군사 조항** | SAM License(SAM 3D, SAM 3)는 ITAR·무역통제 금지 용도를 배제. VGGT-1B-Commercial도 군사 용도 금지 | ADD·방산 과제 산출물에 SAM 기반 자산 포함 | 국방 에디션 화이트리스트, 프로파일별 빌드 | 약관 확인(V7) |
+| **SAM·VGGT 커스텀 라이선스** | SAM License(SAM 3D, SAM 3)는 신청서 기반 커스텀 사용 제한 라이선스로 ITAR·무역통제 금지 용도를 배제. VGGT-1B-Commercial도 신청서 기반이며 군사 용도 금지. 재배포 조항 불명확 | ADD·방산 과제 산출물에 SAM 기반 자산 포함 / 온프렘 번들에 가중치를 넣어 재배포 조항 위반 | 국방 에디션 화이트리스트, 프로파일별 빌드. 'OK(민수)'가 아니라 '조건부(V7)'로 분류하고, 온프렘 번들은 서면 확인 전 제외 | 약관 확인(V7, M3) |
 | **cuRobo 이중 라이선스** | 업스트림 NVlabs/curobo는 Apache-2.0으로 전환. Isaac Lab이 설치하는 cuRobo는 Isaac Lab 전용 약관 | SkillGen을 Isaac Lab 밖 모션 계획에 재사용 | Apache 태그 고정 업스트림만 허용 + NVIDIA 확인(체크리스트 #8) | 미확인 |
 | **기타** | UE 비게임 좌석비(연 $1,850 [U])와 Fab 자산 제약, CARLA 자산 CC-BY 귀속, Cosmos 귀속·가드레일 조항, GR00T Open Model License, lakeFS BSL 전환 선례 | 파생 데이터셋 귀속 누락, 가드레일 우회 시 권리 종료 | 데이터셋마다 라이선스 매니페스트 첨부, 귀속 문구 자동 생성 | 모델 약관 V7(M3) |
 
-- **V-코드(P0 검증 항목, 결정 기록 §15·[11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md)):** V2 = Blender 별도 프로세스 GPL 해석·ovstage 대체 가능성·ArduPilot 법률 의견(M3), V4 = 국내 CSP RT GPU·MIG·R580 이미지(M2), V7 = OpenMDW-1.1·GR00T·openpi·SAM 약관 법률 검토(M3), V8 = 온프렘 LLM 출처 확인.
+- **V-코드(P0 검증 항목, 결정 기록 §15·[11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md)):** V2 = Blender 별도 프로세스 GPL 해석·ovstage 대체 가능성·ArduPilot·Drake 독점 솔버 번들 법률 의견(M3), V4 = 국내 CSP RT GPU·MIG·R580 이미지(M2), V7 = OpenMDW-1.1·GR00T·openpi·SAM·VGGT-Commercial 약관 법률 검토(M3), V8 = 온프렘 LLM 출처 확인이다.
 
 ### 10.5 SPDX 게이트 운영 절차 [A]
 
-1. **PR 단계:** 신규 의존성·모델·자산은 SPDX 식별자와 출처 URL 필수. 누락 시 머지 불가.
-2. **빌드 단계:** 컨테이너 이미지 전이 의존성 스캔. NEVER 21개와 Zone T 금지 패키지 발견 시 빌드 실패.
-3. **반출 단계:** Zone F 산출물은 라이선스 매니페스트(사용 엔진·모델·자산), Run Manifest, 출처(촬영원·동의·익명화)를 붙여야 Zone T로 이동.
-4. **마켓 단계:** 비상업 품목은 상업 워크스페이스에서 자동 차단. 생성 모델 메타데이터 없는 자산은 등록 거부.
-5. **감사:** 분기 1회 라이선스 매니저 + 외부 자문 샘플링. 의존성 라이선스 변경 감지 시 트리거 X12.
+1. **PR 단계:** 신규 의존성·모델·자산은 SPDX 식별자와 출처 URL을 반드시 단다. 누락하면 머지할 수 없다.
+2. **빌드 단계:** 컨테이너 이미지의 전이 의존성까지 스캔한다. NEVER 21개(+ 후보 #22), Zone T 금지 패키지, TSL·BSL·AGPL·GPL 구성요소를 발견하면 빌드를 실패시킨다. MPL·EPL·LGPL 구성요소는 의무 이행(소스 고지·수정분 공개) 체크리스트를 통과해야 한다.
+3. **반출 단계:** Zone F 산출물은 라이선스 매니페스트(사용 엔진·모델·자산), Run Manifest, 출처(촬영원·동의·익명화)를 붙여야 Zone T로 옮길 수 있다.
+4. **마켓 단계:** 비상업 품목은 상업 워크스페이스에서 자동 차단한다. 생성 모델 메타데이터가 없는 자산은 등록을 거부한다.
+5. **감사:** 분기 1회 라이선스 매니저와 외부 자문이 표본을 점검한다. 의존성 라이선스 변경을 감지하면 트리거 X12를 당긴다.
 
 ---
 
@@ -788,14 +780,14 @@ flowchart TD
 | L40S | 있음 | **권장** | 가능 | 제한적 | RunPod $1.09, AWS 미국 $1.861, AWS 서울 $2.288 | RT |
 | RTX PRO 6000 Blackwell(96 GB) | 있음 | **최적** | 가능 | Cosmos 3 Nano | RunPod $2.09, AWS 미국 $3.363, AWS 서울 $4.135, GCP G4 $4.50(스팟 $1.71) | RT(자체 16장) |
 | RTX 4090 / 5090 | 있음 | 워크스테이션(최소 RTX 4080) | 가능 | — | RunPod $0.74 / $0.99 | 개발·CI |
-| L4 | [U] | 미권장 | 경량 | — | RunPod $0.49, AWS 서울 $0.99 | LIGHT |
+| L4 | 있음(Ada, 24 GB) | 미권장(Isaac Sim 요구 목록 외 [U]) | 경량 | — | RunPod $0.49, AWS 서울 $0.99 | LIGHT |
 | H100 | **없음** | **불가** | 가능 | 가능 | RunPod $2.89–3.49, Lambda $3.99, AWS 미국 $6.88, AWS 서울 $9.49 | TRAIN |
 | H200 | **없음** | **불가** | 가능 | Cosmos 3 Super | RunPod $4.59, AWS 미국 $7.91 | TRAIN |
 | B200 / B300 | **없음** | **불가** | 가능 | Cosmos 3 Super | RunPod $6.79, Lambda $6.69, AWS 미국 $14.24 | TRAIN(정부 배정분은 업사이드) |
 | Jetson AGX Thor | — | — | 배포 대상 | Cosmos 3 Edge 4B | — | LAB EDGE |
 
-- **RTX PRO 6000 MIG:** 최대 4분할, 세션당 약 $0.84/시간은 미검증 [U] → 검증 전까지 세션당 GPU 1장 단위 과금. L40S는 MIG 미지원으로 알려짐 [U].
-- **서울 프리미엄:** 동일 인스턴스가 미국 대비 23–38% 비쌈. 서울 리전은 지연이 중요한 대화형 세션 전용.
+- **RTX PRO 6000 MIG:** 최대 4분할, 세션당 약 $0.84/시간은 미검증이다 [U]. 검증 전까지 세션당 GPU 1장 단위로 과금한다. L40S는 MIG 미지원으로 알려져 있다 [U].
+- **서울 프리미엄:** 동일 인스턴스가 미국 대비 23–38% 비싸다. 서울 리전은 지연이 중요한 대화형 세션 전용으로 쓴다.
 
 ### 11.2 작업별 풀 라우팅
 
@@ -804,7 +796,7 @@ flowchart TD
 | RTX SDG, 고충실도 세션 | Isaac Sim RTX | 주력 | **불가** | 불가 | RT 코어 필수 |
 | 3DGRT 렌더 | 3DGRUT | 주력 | 불가 | 불가 | RT 코어 필수 |
 | 3DGUT 학습·렌더 | gsplat, 3DGRUT | 가능 | 주력 | 불가 | 메모리·처리량 기준 |
-| 카메라 없는 물리 RL | Newton/MJWarp, mjlab | 유휴 시 | 주력 | 불가 | steps/s/$ 최저 풀로 자동 라우팅. 리서치는 L40S·RTX PRO 6000이 H100보다 env-step당 싼 경우가 많다고 봄 |
+| 카메라 없는 물리 RL | Newton/MJWarp, mjlab | 주력(자체 서버·네오클라우드 L40S/RTX PRO 6000) | 유휴 시 | 불가 | 월간 steps/s/$ 표로 자동 라우팅. 리서치는 L40S·RTX PRO 6000이 H100보다 env-step당 싼 경우가 많다고 본다(DR §6.5 RT 풀의 Kernel 경량 RL) |
 | R1 카메라 RL | Newton Warp 렌더러 | 주력 | 가능 [A] | 불가 | 베이크오프 SDG 측정 후 확정 |
 | RTX 카메라 RL | Isaac Lab + RTX | 주력 | 불가 | 불가 | Zone F |
 | VLA·Cosmos 파인튜닝 | LeRobot, GR00T, Cosmos 3 | Nano만 가능 | 주력 | 불가 | GR00T 파인튜닝 40 GB 이상 GPU |
@@ -813,15 +805,15 @@ flowchart TD
 
 ### 11.3 드라이버 R580과 이식성
 
-- **드라이버 하한:** Warp 1.18(Newton 1.6.x의 핵심 의존성)은 Turing(sm_75) 이상 GPU와 R580 이상 드라이버(CUDA 13) 요구. Newton README의 'Maxwell 이상, 드라이버 545'는 낡은 정보. Turing 이전 세대(예: V100 [U])는 Newton 1.6.x 경로에서 제외.
-- **조달 점검(V4, M2):** 국내 CSP 3사(NHN·Naver·KT)의 RT GPU 공급, MIG, R580 이상 이미지 확인. 베이크오프 W1에서 국내 CSP 이미지 1종으로 재현.
-- **드라이버 사전 점검기(OWN ⑫):** 설치 전 드라이버 ≥ R580, compute capability ≥ 7.5, R3 노드의 RT 코어, MIG 모드, CUDA 13 런타임, Zone S 텔레메트리 차단을 자동 확인 [A].
-- **CUDA 종속 헤지:** Newton·MJWarp·Warp·Isaac은 모두 NVIDIA 전용. 헤지 경로는 MuJoCo CPU(모든 CPU), MJX(TPU), Genesis Quadrants(ROCm·Metal·Vulkan). Chrono의 ROCm 경로는 dev 브랜치에만 있음. 비용이 거의 들지 않는 MuJoCo CPU 경로를 상시 유지하는 이유.
+- **드라이버 하한:** Newton 1.6.1의 최소 Warp 버전은 pyproject로 확인한다 [U]. 최신 Warp 1.18 휠을 쓰면 Turing(sm_75) 이상 GPU와 R580 이상 드라이버(CUDA 13)가 필요하다. 모든 노드를 R580 이상으로 표준화하므로 트레인 핀이 Warp 1.16이어도 같은 하한을 적용한다. Newton README의 'Maxwell 이상, 드라이버 545'는 낡은 정보다. Turing 이전 세대(예: V100 [U])는 Newton 경로에서 제외한다.
+- **조달 점검(V4, M2):** 국내 CSP 3사(NHN·Naver·KT)의 RT GPU 공급, MIG, R580 이상 이미지를 확인한다. 베이크오프 W1에서 국내 CSP 이미지 1종으로 재현한다.
+- **드라이버 사전 점검기(OWN ⑫):** 설치 전 드라이버 ≥ R580, compute capability ≥ 7.5, R3 노드의 RT 코어, MIG 모드, CUDA 13 런타임, Zone S 텔레메트리 차단을 자동 확인한다 [A].
+- **CUDA 종속 헤지:** Newton·MJWarp·Warp·Isaac은 모두 NVIDIA 전용이다. 헤지 경로는 MuJoCo CPU(모든 CPU), MJX(TPU), Genesis Quadrants(ROCm·Metal·Vulkan)다. Chrono의 ROCm 경로는 dev 브랜치에만 있다. 비용이 거의 들지 않는 MuJoCo CPU 경로를 상시 유지하는 이유가 여기에 있다.
 
 ### 11.4 단위 원가와 KPI 정합
 
-- **1B env-step 원가(리서치 산식):** Isaac Lab G1 험지 보행 기준 RTX 4090 3.39 GPU-시간($1.17–2.51), L40S급 4.48 GPU-시간($2.69 Vast, $4.88 RunPod, $8.34 AWS 미국, $10.25 AWS 서울). 카메라 1대 포함 시 L40S급 13.2 GPU-시간($7.94–30.26). MJWarp 물리 전용 humanoid는 약 0.10 GPU-시간.
-- **KPI 정합 [A]:** DR 목표는 카메라 없는 RL 1B 스텝당 ≤$10(P1), ≤$6(P2), ≤$4(P3). P1은 미국 하이퍼스케일러로도 가능. P2는 자체 서버(내부 원가 약 ₩1,600/GPU-시간, 가동률 60% [A])나 네오클라우드 라우팅이 필요하고, 이때 L40S급 4.48 GPU-시간은 약 ₩7,200(약 $5.1). P3의 ≤$4는 Newton/MJWarp 경로의 처리량 우위가 실측으로 확인돼야 달성 가능 → 베이크오프 T1·T5의 핵심 질문.
+- **1B env-step 원가(리서치 산식):** Isaac Lab G1 험지 보행 기준 RTX 4090 3.39 GPU-시간($1.17–2.51), L40S급 4.48 GPU-시간($2.69 Vast, $4.88 RunPod, $8.34 AWS 미국, $10.25 AWS 서울)이다. 카메라 1대를 넣으면 L40S급 13.2 GPU-시간($7.94–30.26)이다. MJWarp 물리 전용 humanoid는 약 0.10 GPU-시간이다.
+- **KPI 정합 [A]:** DR 목표는 카메라 없는 RL 1B 스텝당 ≤$10(P1), ≤$6(P2), ≤$4(P3)다. P1은 미국 하이퍼스케일러로도 가능하다. P2는 자체 서버(내부 원가 약 ₩1,600/GPU-시간, 가동률 60% [A])나 네오클라우드 라우팅이 필요하고, 이때 L40S급 4.48 GPU-시간은 약 ₩7,200(약 $5.1)이다. P3의 ≤$4는 Newton/MJWarp 경로의 처리량 우위가 실측으로 확인돼야 달성할 수 있으며, 이것이 베이크오프 T1·T5의 핵심 질문이다.
 
 ---
 
@@ -831,37 +823,38 @@ flowchart TD
 
 ### 12.1 확인된 버전 불일치
 
-- **Isaac Lab ↔ Newton:** Isaac Lab 3.0.0-EA는 Isaac Sim 6.1, PyTorch 2.11, **Warp 1.16, Newton 1.5.2** 대상. Newton 1.6.1 단독은 **Warp 1.18** → Turing 이상 + R580 이상.
-- **mjlab ↔ MuJoCo:** Fact-check 기준 mjlab 1.6.0은 마지막 확인 시 MuJoCo Warp 3.11에 고정. DR Train 1의 MuJoCo 3.15.x와 어긋날 수 있음 → W1에서 재확인, 다르면 mjlab 전용 이미지로 분리하고 인증 재현은 MuJoCo 3.15 CPU에서 수행(차이는 적합성 스위트로 관리).
-- **Isaac Lab 3.0의 브레이킹 체인지:** 쿼터니언 순서(w,x,y,z) → (x,y,z,w), 반환 타입 ProxyArray. → Kernel API가 정준 규약 하나를 고정하고 어댑터에서 변환, 적합성 스위트에 회전 규약 테스트 포함 [A].
-- **ROS 2:** Isaac Sim ROS 워크스페이스는 Humble·Jazzy만. Lyrical(2031-05 EOL)은 자체 브리지로 지원.
+- **Isaac Lab ↔ Newton:** Isaac Lab 3.0.0-EA는 Isaac Sim 6.1, PyTorch 2.11, **Warp 1.16, Newton 1.5.2**를 대상으로 한다. Newton 1.6.1의 최소 Warp 버전은 pyproject로 확인한다 [U]. 최신 **Warp 1.18** 휠을 쓰면 Turing(sm_75) 이상 GPU와 R580 이상 드라이버(CUDA 13)가 필요하다.
+- **mjlab ↔ MuJoCo:** Fact-check 기준 mjlab 1.6.0은 MuJoCo Warp 3.11에 고정돼 있어 DR Train 1의 MuJoCo 3.15.x와 어긋난다. 그래서 mjlab은 MJWarp 3.11에 고정한 별도 이미지로 운영하고, 인증 재현은 MuJoCo 3.15 CPU에서 한다. 두 버전의 차이는 적합성 스위트로 관리하고, W1에서 핀을 다시 확인한다.
+- **Isaac Lab 3.0의 브레이킹 체인지:** 쿼터니언 순서가 (w,x,y,z)에서 (x,y,z,w)로 바뀌었고, 반환 타입이 ProxyArray가 됐다. Kernel API가 정준 규약 하나를 고정하고 어댑터에서 변환하며, 적합성 스위트에 회전 규약 테스트를 넣는다 [A].
+- **ROS 2:** Isaac Sim ROS 워크스페이스는 Humble·Jazzy만 지원한다. Humble은 2027-05, Jazzy는 2029-05, Lyrical은 2031-05에 EOL이다. 신규 배포의 기본은 Jazzy·Lyrical로 하고(Lyrical은 자체 브리지로 지원), Humble 브리지는 M7 이후 best-effort로만 유지한다.
 
 ### 12.2 핀 원칙
 
-1. 트레인마다 Newton은 **Isaac Lab 3.x GA가 실제로 지원하는 버전 하나**로 통일.
-2. 테넌트 Kernel 경로가 1.6.x 신기능(솔버 등)을 반드시 써야 할 때만 이중 핀 허용. 차이는 적합성 스위트로 관리.
-3. 호환성 매트릭스는 **실제 국내 CSP GPU 이미지에서 검증한 뒤** 발행.
-4. PyPI에 없는 구성요소(gsplat 1.6.0은 main 브랜치)는 커밋 해시로 고정.
+1. 트레인마다 Newton은 **Isaac Lab 3.x GA가 실제로 지원하는 버전 하나**로 통일한다.
+2. 테넌트 Kernel 경로가 1.6.x 신기능(솔버 등)을 반드시 써야 할 때만 이중 핀을 허용한다. 차이는 적합성 스위트로 관리한다.
+3. 호환성 매트릭스는 **실제 국내 CSP GPU 이미지에서 검증한 뒤** 발행한다.
+4. PyPI에 없는 구성요소(gsplat 1.6.0은 main 브랜치)는 커밋 해시로 고정한다.
+5. 문서·대외 자료의 Newton 버전은 '트레인 핀(2026-10 최신 1.6.1)'으로 적는다. 헤드라인 버전과 실제 운영 버전이 어긋나지 않게 하기 위해서다.
 
 ### 12.3 Train 1 호환성 매트릭스(초안, W8 확정)
 
 | 구성요소 | Zone F 핀 | Zone T·S 핀 | 제약·근거 |
 |---|---|---|---|
 | Isaac Sim | 6.1.x | — (Zone T 금지) | 7.x는 GA + 패치 1회 후 다음 트레인 |
-| Kit | 110.x(110.3.0 기준) | — | 약 12개월에 메이저 3회 |
+| Kit | 110.x(Isaac Sim 6.1 번들 버전 [U], 최신 110.3.0) | — | 약 12개월에 메이저 3회 |
 | Isaac Lab | 3.x GA(소스 빌드) | 3.x GA(소스, Kit-less Newton) | GA 2026-10 말 목표. 지연 시 EA |
 | Newton | GA 릴리스 노트 핀(EA 기준 1.5.2) | 동일 핀 원칙, 예외 승인 시 1.6.x | 패키지명 `newton` |
 | Warp | GA 핀(EA 기준 1.16) | 예외 시 1.18 | 1.18은 R580·Turing 이상 |
 | MuJoCo / MJWarp | 3.15.x | 3.15.x | MJWarp는 PyPI Alpha |
-| mjlab | — | 1.6.x | MJWarp 핀 재확인(W1) |
+| mjlab | — | 1.6.x(MJWarp 3.11 고정 별도 이미지) | 인증 재현은 MuJoCo 3.15 CPU. 핀 재확인(W1) |
 | PyTorch | 2.11 | 2.11 | Isaac Lab EA 기준 |
 | Python | 3.12 | 3.12 | Isaac Sim 6.1 기준 |
 | 드라이버 / CUDA | R580 이상 / 13.x | R580 이상 / 13.x | 사전 점검기로 강제 |
 | OpenUSD | 런타임은 Isaac Sim 번들 USD | 툴링 26.08 | UsdPhysics 중첩·Hydra 2 기본값은 25.11부터 |
-| Drake | v1.57.x | (내부 검증만) | 월간 릴리스, 트레인마다 갱신 |
-| Chrono | — | 10.0.x(Mobility α부터) | ROCm 미사용 |
+| Drake | v1.57.x | (내부 검증만. Zone S 번들은 독점 솔버 제외 소스 빌드, V2 후) | 월간 릴리스, 트레인마다 갱신. PyPI 휠 분류 'BSD and Other/Proprietary' |
+| Chrono | — | 10.0.x(Mobility α부터) | ROCm 미사용. D0 등록 전 D1 |
 | gsplat / 3DGRUT | 커밋 해시 / 2.0 | 커밋 해시 / 2.0 | gsplat 1.6.0 PyPI 미배포 |
-| ROS 2 | Humble, Jazzy | Humble, Jazzy, Lyrical | 자체 브리지 + Zenoh |
+| ROS 2 | Humble, Jazzy | Jazzy, Lyrical(기본), Humble(M7 이후 best-effort) | 자체 브리지 + Zenoh. Humble 2027-05 EOL |
 
 ### 12.4 2026년 릴리스 속도와 대응
 
@@ -892,13 +885,13 @@ sequenceDiagram
     C-->>S: 편차 리포트, 성능 회귀
     S->>G: 정책 교차 이전 검사
     G-->>S: 허용치 판정
-    S->>T: 검증 완료 후보로 등록, 목표 45일 이내
+    S->>T: 검증 완료 후보로 등록, 목표 P1 45일, P2 이후 30일
     T->>T: 분기 중간점검은 보안 패치만, 반기 트레인에서 승격
 ```
 
-- **트레인 일정:** Train 1(2026-12 ~ 2027-06), Train 2(2027-07 ~ 2027-12), Train 3(2028-01 ~ 2028-06), 이후 반기마다.
-- **'채택 지연' KPI의 정의:** 업스트림 릴리스부터 사이드 브랜치에서 적합성·sim2sim 게이트를 통과해 '검증 완료 후보'가 되기까지의 기간. 목표 ≤45일(P1), ≤30일(P2·P3). 프로덕션 승격은 다음 트레인.
-- **업그레이드 세금:** 엔진에 닿는 워크스트림(WS1·WS3·WS6) 용량의 25% 고정 예약(약 ₩6억/24개월). 업그레이드에 계획 대비 1.5배 이상 공수가 들면 경보 → 백엔드 수 축소 또는 트레인 연기를 엔진 검토 위원회가 결정.
+- **트레인 일정:** Train 1(2026-12 ~ 2027-06), Train 2(2027-07 ~ 2027-12), Train 3(2028-01 ~ 2028-06)이고, 이후 반기마다 이어진다.
+- **'채택 지연' KPI의 정의:** 업스트림 릴리스부터 사이드 브랜치에서 적합성·sim2sim 게이트를 통과해 '검증 완료 후보'가 되기까지의 일수다. 목표는 ≤45일(P1), ≤30일(P2·P3)이다. 프로덕션 반영은 다음 릴리스 트레인에서 한다. DR §4.1 KPI '신규 엔진 릴리스 채택 지연'도 이 정의를 따른다.
+- **업그레이드 세금:** 엔진에 닿는 워크스트림(WS1·WS3·WS6) 용량의 25%를 고정 예약한다(약 ₩6억/24개월). 업그레이드에 계획 대비 1.5배 이상 공수가 들면 경보를 내고, 백엔드 수 축소 또는 트레인 연기를 엔진 검토 위원회가 결정한다.
 
 ---
 
@@ -908,9 +901,9 @@ sequenceDiagram
 
 | 항목 | 내용 |
 |---|---|
-| 일정 | W1 = 2026.11 첫 주 ~ W8 = 2026.12 말. 결정 메모 2027.01 첫 주 |
+| 일정 | W1 = 2026-11-02 주 ~ W8 = 2026-12-27 주. 결정 메모 2027-01 첫 주 |
 | 하드웨어 | RTX PRO 6000 Blackwell Server 1장, H100 1장(클라우드), SDG 단가 비교용 L40S 1장. 동일 이미지, 드라이버 R580 이상, CUDA 13. 국내 CSP 이미지 1종에서 재현 |
-| 백엔드 | B1 Newton 1.6.x 단독(Kernel v0 경유), B2 Isaac Lab 3.x Kit-less Newton(번들 핀), B3 Isaac Lab 3.x + PhysX(Zone F), B4 MuJoCo 3.15 CPU(기준), B5 mjlab 1.6.0. 오프라인 기준 Drake v1.57. 선택: Genesis 1.4.3(2개 과제, 관찰) |
+| 백엔드 | B1 Newton 1.6.x 단독(Kernel v0 경유), B2 Isaac Lab 3.x Kit-less Newton(번들 핀), B3 Isaac Lab 3.x + PhysX(Zone F), B4 MuJoCo 3.15 CPU(기준), B5 mjlab 1.6.0(MJWarp 3.11 고정 이미지). 오프라인 기준 Drake v1.57. 선택: Genesis 1.4.3(2개 과제, 관찰). 적합성 KPI의 백엔드 수(P0 3개)는 B1–B5 중 Newton/MJWarp 계열·PhysX·MuJoCo CPU의 통과 수로 센다 |
 | 제외 | PhysX SDK 소스 어댑터(아직 존재하지 않음) |
 | 예산·책임 | 클라우드 약 ₩0.4억(P0 컴퓨트 안). CTO(대행) + Kernel 리드 |
 
@@ -928,14 +921,14 @@ sequenceDiagram
 | T10 | Kamino 폐루프 그리퍼 | Kamino의 Adopt 범위 |
 | T11 | 휴머노이드 + 양손 덱스터러스(60 DoF 초과) | 휴머노이드+핸드 템플릿 경로(PhysX vs 트리 분할) |
 | SDG | 래스터·RTX·경로추적 이미지/초/GPU(RTX PRO 6000 vs L40S) | 토큰 단가(₩0.3·₩1.5·₩15) 원가 검증, RT 풀 사이징 |
-| W7 | Newton 결정론 모드·MuJoCo CPU 비트 일치, GPU 간 재현 | 인증 발행 경로(트리거 X8) |
+| W7 | Newton 결정론 모드 N1–N5(동일 GPU 반복, GPU 간, env 수 독립성, 드라이버 마이너, 처리량 비용)·MuJoCo CPU 비트 일치 | 인증 발행 경로(트리거 X8). 통과 전 Newton은 인증 경로 아님 |
 
 **결정 규칙**
-- **효율 지표 [A]:** `E(b, t) = [env-steps/s ÷ GPU 시간당 단가($)] × [SR_교차(b, t) ÷ max SR_교차(t)]`. SR_교차는 백엔드 b에서 학습한 정책을 다른 백엔드(Newton → PhysX → MuJoCo)에서 돌렸을 때의 성공률. '성공률을 보정한 steps/s/$'의 구체식.
-- **관문:** 적합성 스위트 통과 + sim2sim 이전 편차가 허용치 이내(초안: 성공률 차 ≤10%p [A], 결정 메모에서 확정).
-- **동률 규칙:** 최고 E 대비 10% 이내면 허용형 경로(Zone T 호환)를 우선.
-- **보조 지표:** 보상 임계 도달 비용 = 벽시계 시간(h) × $/h. VRAM. 스팟 단가 기준 재계산.
-- **산출물:** 작업 유형별 기본 백엔드 매트릭스(§3.4 갱신), Train 1 호환성 매트릭스(§12.3 확정), GPU 풀 사이징 수정안, 토큰 원가 갱신.
+- **효율 지표 [A]:** `E(b, t) = [env-steps/s ÷ GPU 시간당 단가($)] × [SR_교차(b, t) ÷ max SR_교차(t)]`이다. SR_교차는 백엔드 b에서 학습한 정책을 다른 백엔드에서 돌렸을 때의 성공률이며, 교차 백엔드는 Zone F 정책이면 Newton·PhysX·MuJoCo CPU 3개, Zone T/S 정책이면 Newton·MuJoCo CPU 2개다. '성공률을 보정한 steps/s/$'의 구체식이다.
+- **관문:** 적합성 스위트를 통과하고 sim2sim Tier 1 기준(1,000 에피소드, 성공률 차 ≤10%p, 평균 반환 비율 ≥0.85)을 만족해야 한다. 인증 후보 정책의 Tier 2 기준(초기 조건 200개, 백엔드 쌍별 ≤5%p, 관절 RMSE ≤0.05 rad)은 [07 §7.3](07-training-module.md)을 따른다. 최종 허용치는 결정 메모에서 확정한다 [A].
+- **동률 규칙:** 최고 E 대비 10% 이내면 허용형 경로(Zone T 호환)를 우선한다.
+- **보조 지표:** 보상 임계 도달 비용(= 벽시계 시간(h) × $/h), VRAM을 함께 보고, 스팟 단가 기준으로 다시 계산한다.
+- **산출물:** 작업 유형별 기본 백엔드 매트릭스(§3.4 갱신), Train 1 호환성 매트릭스(§12.3 확정), GPU 풀 사이징 수정안, 토큰 원가 갱신을 낸다.
 
 ---
 
@@ -958,11 +951,11 @@ sequenceDiagram
 | X11 | Isaac Sim 7.x | GitHub 릴리스 | GA + 패치 1회 | 레이어 2·8 | 다음 트레인에서 채택 |
 | X12 | 의존성 라이선스 변경 | SPDX 경보(lakeFS BSL 전환 선례) | 허용형 → 비허용형 전환 | 해당 레이어 | 1개 트레인 안에 대체. 필요 시 마지막 허용형 버전 고정 |
 | X13 | GPU 공급·가격·수출통제 쇼크 | RT 가동률, 단가, 규제 | RT 가동률 80% 초과 지속, NVIDIA GPU 단가 30% 이상 상승 [A], 수출통제 강화 | 레이어 1·8, 조달 | MuJoCo CPU·Genesis 헤지 가동, 국내 CSP 장기 계약 |
-| X14 | 차량·드론·해양 수요 | 영업 파이프라인 | 자금 확보 앵커(확정 ₩5억 이상) 또는 ARR ₩30억 | 레이어 6·7 | Mobility·해양 착수를 앞당김(공격안 범위 안에서) |
+| X14 | 차량·드론·해양 수요 | 영업 파이프라인 | 자금 확보 앵커(확정 ₩5억 이상) 또는 ARR ₩30억. 기준안의 2028년 말 ARR은 ₩20억이므로 M25 판정의 현실적 경로는 앵커 계약(조선사 공동개발 또는 국방 과제)이고, ARR ₩30억 경로는 2029년 중에야 충족된다 | 레이어 6·7 | Mobility·해양 착수를 앞당김(공격안 범위 안에서). 국방 Air-gap 에디션은 M27부터 |
 | X15 | 모델 약관 변경·후속 모델 | 모델 카드, NVIDIA 서면 | Cosmos 3 OpenMDW 전문, GR00T·openpi 약관 확인, 후속 세대 출시 | 레이어 13·15 | pi0.5 차단 해제 여부, Cosmos 세대 교체 |
 
-- **엔진 검토 위원회 [A]:** CTO(의장), Kernel 리드, Head of Fidelity, 라이선스 매니저. 분기 1회 정기 회의, 트리거 발생 시 10영업일 안에 임시 회의. 결정은 결정 메모와 트레인 매트릭스로 남김.
-- **변경하지 않는 것:** 트리거가 당겨져도 Zone 경계(허용형 테넌트 경로)와 DR 부록 A 고정값(인원·예산·게이트)은 이 위원회가 바꾸지 않음. 바꾸려면 이사회 승인.
+- **엔진 검토 위원회 [A]:** CTO(의장), Kernel 리드, Head of Fidelity, 라이선스 매니저로 구성한다. 분기 1회 정기 회의를 열고, 트리거가 발생하면 10영업일 안에 임시 회의를 연다. 결정은 결정 메모와 트레인 매트릭스로 남긴다.
+- **변경하지 않는 것:** 트리거가 당겨져도 Zone 경계(허용형·약한 카피레프트 테넌트 경로)와 DR 부록 A 고정값(인원·예산·게이트)은 이 위원회가 바꾸지 않는다. 바꾸려면 이사회 승인이 필요하다.
 
 ---
 
@@ -971,25 +964,26 @@ sequenceDiagram
 **결론: 이번 분기에 확정하는 것은 엔진 포트폴리오, 3-Zone 경계, NEVER 21개, Train 1 원칙이다. 베이크오프와 NVIDIA 서면 회신이 그다음 결정을 만든다.**
 
 **결정 사항**
-- 물리 엔진·렌더러 자체 구축 NO. 전략 D(하이브리드) 채택.
-- 역할별 엔진 포트폴리오: Newton(MJWarp) / MuJoCo 3.15 CPU / Isaac Lab 3.x + PhysX 5.11(Zone F) / Drake / Chrono 10. Genesis는 Watch.
-- 렌더 4티어(R0–R3). RTX는 Zone F와 BYOL에만.
-- 3-Zone 라이선스 경계와 NEVER 21개를 CI·마켓플레이스에서 자동 집행.
-- Capability Readiness: Mobility Pack α M18–M24, 드론 템플릿 M20–M24, 해양·UGV P3.
+- 물리 엔진·렌더러를 직접 구축하지 않는다. 전략 D(하이브리드)를 채택한다.
+- 역할별 엔진 포트폴리오는 Newton(MJWarp, 트레인 핀) / MuJoCo 3.15 CPU / Isaac Lab 3.x + PhysX 5.x(Zone F) / Drake / Chrono 10 + 클린룸 Fossen이다. Genesis는 Watch로 둔다.
+- 렌더는 4티어(R0–R3)로 나누고, RTX는 Zone F와 BYOL에만 둔다.
+- 3-Zone 라이선스 경계와 NEVER 21개(+ 후보 #22)를 CI·마켓플레이스에서 자동 집행한다. PhysX Vehicle2·Replicator·Pegasus 포팅은 Zone F 전용이다.
+- 인증 재현은 MuJoCo CPU와 W7 통과 후의 Newton 결정론 모드에서만 한다. Chrono·Fossen·PX4 SITL은 비트 일치 시험과 CTO 등록 전까지 D1이다.
+- 도메인별 기술 준비 시점은 [08 §2.3](08-domain-packs.md)을 따른다(Mobility Pack α M18–M24, 드론 템플릿 M20–M24, 해양·UGV P3).
 
 | 액션 | 책임 | 기한 |
 |---|---|---|
-| NVIDIA Korea에 서면 조건 요청서 발송(엔진 관련 #1 산출물 면제, #2 멀티테넌트, #4 재배포, #8 cuRobo, #10 ovrtx·ovphysx 포함) | CEO + 라이선스 매니저 | D1–30 중 1주 차(2026-11 첫 주). 1차 회신 M3(2027-01), 최종 M10(2027-08) |
-| 베이크오프 W1 착수: 이미지·드라이버(R580 이상, CUDA 13)·국내 CSP 이미지 1종 검증, mjlab의 MJWarp 핀 재확인 | CTO(대행) + Kernel 리드 | 2026-11 첫 주 |
+| NVIDIA Korea에 서면 조건 요청서 발송(엔진 관련 #1 산출물 면제, #2 멀티테넌트, #4 재배포, #8 cuRobo, #10 ovrtx·ovphysx 포함) | CEO + 라이선스 매니저 | D5(2026-10-23, D0 이후 1주 차, [12 §3](12-execution-90days.md) 기준). 1차 회신 M3(2027-01), 최종 M10(2027-08) |
+| 베이크오프 W1 착수: 이미지·드라이버(R580 이상, CUDA 13)·국내 CSP 이미지 1종 검증, mjlab의 MJWarp 핀 재확인 | CTO(대행) + Kernel 리드 | 2026-11-02(W1) |
 | SPDX 거부 목록 CI(NEVER 21개) 적용 + CEN NeRF 파이프라인 라이선스 감사 착수 | CTO + 라이선스 자문 | M1(2026-11) |
-| 국내 CSP 3사 RT GPU·MIG·R580 이미지 확인(V4) | Platform Lead | M2(2026-12) |
+| 국내 CSP 3사 RT GPU·MIG·R580 이미지 확인(V4) | WS1 재배치 플랫폼 엔지니어(M3부터 WS6 Platform Lead) | M2(2026-12) |
 | 엔진 검토 위원회 구성, 첫 분기 회의 | CTO | M2(2026-12) |
 | ovphysx 소스 빌드(ovstage 제거)와 Blender 별도 프로세스 GPL 해석 법률·기술 검토(V2) | 라이선스 자문 + Kernel 리드 | M3(2027-01) |
 | Newton 하드웨어 간 결정론 시험(W7) → 인증 발행 경로 확정 | Head of Fidelity(대행) + Kernel 리드 | M3(2027-01) |
 | 결정 메모(작업 유형별 기본 백엔드, T11 결과 포함) + Train 1 호환성 매트릭스 발행 | CTO | 2027-01 첫 주 |
 | Isaac Lab 3.x GA 릴리스 노트의 Newton·Warp 핀 확인 → Train 1 핀 확정 | Kernel 리드 | GA 후 2주 이내(GA 목표 2026-10 말) |
-| Sim Kernel API v0 + 적합성 스위트 v0(장면 5개 × 백엔드 3) | WS1 Sim Kernel & Physics | M4(2027-02, G0) |
+| Sim Kernel API v0 + 적합성 스위트 v0(장면 5개 × 백엔드 3) | WS1 Sim Kernel & Physics | M4(G0 심의 2027-02-26) |
 | Kit-less 모드에서 TacSL·Mimic·Teleop 동작 시험 → 트리거 X5 판정 | WS5 + WS1 | M6(2027-04) |
 | Newton 업스트림 기여 계획(촉각 압력장, 휠 접촉 훅, 한국 산업 자산 예제) | WS1 | M6(2027-04) |
-| PhysX SDK 어댑터 착수 여부 판정(트리거 X6, 3조건) | CTO + 엔진 검토 위원회 | G1(M11, 2027-09) |
-| Mobility Pack α 설계 메모(Chrono::Vehicle·PhysX Vehicle2·esmini·FMI 3.0 범위, esmini 라이선스 확인) | WS1-M(채용 전 CTO) | M17(2028-03) |
+| PhysX SDK 어댑터 착수 여부 판정(트리거 X6, 3조건) | CTO + 엔진 검토 위원회 | G1(M11, 심의 2027-09-24) |
+| Mobility Pack α 설계 메모(Chrono::Vehicle·PhysX Vehicle2·esmini·FMI 3.0 범위, esmini 라이선스 확인, Vehicle2의 Zone T C++ 바인딩 여부, Chrono D0 등록 시험 계획) | CTO(WS1-M 착석 M18 전 대행) + WS1·WS3 | M17(2028-03) |

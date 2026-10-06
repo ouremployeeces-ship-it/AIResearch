@@ -1,19 +1,19 @@
 # 07. 학습 모듈: Athanor Skill과 Crucible — 실셀에서 검증되는 RL·IL·VLA·인식 학습 라인
 
-> **문서 번호** 07 · **기준일** 2026-10-06 · **버전** v1.0 · **상위 문서** [README](README.md)
+> **문서 번호** 07 · **기준일** 2026-10-06 · **버전** v1.1(DR v1.1·문서 간 정합 반영) · **상위 문서** [README](README.md)
 > **관련 문서** [01 비전·포지셔닝](01-vision-positioning.md) · [02 시장·경쟁](02-market-competition.md) · [03 엔진 선정·Build vs Buy](03-engine-selection-build-vs-buy.md) · [04 시스템 아키텍처](04-system-architecture.md) · [05 물리·현실감](05-physics-and-realism.md) · [06 사용성·에이전트](06-usability-and-agent.md) · [08 도메인 팩](08-domain-packs.md) · [09 로드맵·조직·예산](09-roadmap-organization-budget.md) · [10 사업모델·GTM](10-business-model-gtm.md) · [11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md) · [12 90일 실행](12-execution-90days.md) · [부록 A 기술 카탈로그](appendix-a-technology-catalog.md) · [부록 B 출처·검증](appendix-b-sources-verification.md)
-> **표기** **[A]** 계획 가정(실적·실측 확인 전까지 설계 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 버전·라이선스·수치는 GitHub·PyPI·SkyPilot 카탈로그로 확인한 값(2026-10-05/06) · 1 토큰 = ₩100, 1 USD = ₩1,400 [A] · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · 게이트 G0 M4, G1 M11, G2 M18, G3 M24 · DR = 결정 기록(Decision Record, 전 문서의 단일 기준) · 독자: CEO, Skill·Fidelity 리드, 투자·정부 실사 담당, 고객 기술 책임자
+> **표기** **[A]** 계획 가정(실적·실측 확인 전까지 설계 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 버전·라이선스·수치는 GitHub·PyPI·SkyPilot 카탈로그로 확인한 값(2026-10-05/06) · 1 토큰 = ₩100, 1 USD = ₩1,400 [A] · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · 게이트 G0 M4(2027-02-26), G1 M11(2027-09-24), G2 M18(2028-04-28), G3 M24(2028-10-27) · DR = 결정 기록(Decision Record, 전 문서의 단일 기준) · 독자: CEO, Skill·Fidelity 리드, 투자·정부 실사 담당, 고객 기술 책임자
 
 ---
 
 ## 핵심 요약
 
-- **학습 엔진은 만들지 않고, '실셀에서 통과하는 정책'을 만드는 공정을 만든다.** RL은 Isaac Lab 3.x(GitHub 소스 빌드) + rsl_rl 5.5.1 / skrl 2.1.0과 mjlab 1.6.0, IL·VLA는 LeRobot 0.6.1 + LeRobotDataset v3, 인식은 Replicator + RF-DETR N–L로 고정한다. AICHEMIST의 몫은 task-spec, 인증서 기반 도메인 랜덤화, Mimic 증식 서비스, sim2sim 게이트, Crucible 평가, Jetson 패키징, 계보·라이선스 게이트다.
+- **학습 엔진은 만들지 않고, '실셀에서 통과하는 정책'을 만드는 공정을 만든다.** RL은 Isaac Lab 3.x(GitHub 소스 빌드) + rsl_rl 5.5.1 / skrl 2.1.0과 mjlab 1.6.0, IL·VLA는 LeRobot 0.6.1 + LeRobotDataset v3, 인식은 RF-DETR N–L(SDG는 Zone F에서 Replicator, Zone T/S에서 Newton Warp 래스터 + Warp Sensor Library)로 고정한다. 템플릿 ID와 출시 단계는 [06 §6.2](06-usability-and-agent.md), 팩별 배분은 [08 §7.1](08-domain-packs.md)이 마스터이며, P0 RL 3종은 모두 조작 팩(큐브 들기·빈 피킹·디팔레타이징)이다. AICHEMIST의 몫은 task-spec, 인증서 기반 도메인 랜덤화, Mimic 증식 서비스, sim2sim 게이트, Crucible 평가, Jetson 패키징, 계보·라이선스 게이트다.
 - **두 개의 문을 라이선스로 나눈다.** Zone F(내부 팩토리)는 PhysX·TacSL·Isaac Lab Mimic·Isaac Teleop·RTX Replicator까지 전부 쓰고 산출물만 판다. Zone T/S(테넌트·온프렘)는 허용형 구성요소(mjlab, Isaac Lab Kit-less Newton, LeRobot, GELLO·SpaceMouse, Warp 렌더러, RF-DETR N–L)로만 짠다. Kit-less 모드의 Mimic·Teleop·TacSL은 M6 사내 시험 전까지 테넌트에 약속하지 않는다.
 - **Mimic의 진짜 숫자로 계획한다.** 시연 10개 → 1,000개 증식은 상태 기반 18–40분, 시각운동 약 10시간이며 Franka 생성 성공률은 약 50%다. 시각 정책·VLA에 필요한 쪽은 10시간 쪽이므로 KPI(P1 ≤12시간 → P3 ≤6시간)와 토큰 가격(시각운동 1,000개 ≈ RT 600 토큰)을 여기에 맞춘다.
-- **VLA는 3등급 + 베이스라인으로 판다.** SmolVLA 450M(Apache-2.0, 약 4 A100-시간, 기본·국방), GR00T N1.7 3B(휴머노이드·양팔, NVIDIA Open Model License), pi0.5(가중치 약관 확인 전 차단). ACT·Diffusion Policy는 단일 과제 베이스라인이다. 파인튜닝 가중치는 입력 라이선스의 교집합을 상속하고, 레지스트리가 워크스페이스 프로파일과 맞지 않는 수출을 차단한다.
+- **VLA는 3등급 + 베이스라인으로 판다.** SmolVLA 450M(Apache-2.0, 약 4 A100-시간, 기본·국방), GR00T N1.7 3B(휴머노이드·양팔, NVIDIA Open Model License. 학습·내부 사용 OK, 파인튜닝 가중치 납품은 V7 통과 후), pi0.5(가중치 약관 확인 전 차단). ACT·Diffusion Policy는 단일 과제 베이스라인이다. 파인튜닝 가중치는 입력 라이선스의 교집합을 상속하고, 레지스트리가 워크스페이스 프로파일과 맞지 않는 수출을 차단한다.
 - **Crucible은 통계로 말한다.** 성공률은 Wilson 95% 신뢰구간으로, sim/real 일치는 Pearson r·Kendall τ·MMRV로 보고한다. 정책 5개로 잰 r = 0.8의 95% 구간은 약 [−0.28, 0.99]로 쓸모가 없으므로 인증용 r은 정책 패밀리 8개 이상(권장 12개)으로 잰다. 실셀 50 trial의 성공률 반폭은 ±14%p라서, 갭 ≤10%p(P2)를 주장하려면 정책·과제당 실셀 100 trial을 권장한다.
-- **Arena의 신뢰는 헌장과 회피 규정에서 나온다.** 공동서명 기관(KTL·KIRIA·TTA 중 1곳) MOU M10, 헌장 서명은 K-Pick Challenge(M12) 이전으로 당긴다. 우리가 학습한 정책은 공동서명 기관 검토 없이 인증하지 않고, Skill 팀은 비공개 테스트 분할에 접근할 수 없다. 포화된 LIBERO(97–99%)는 비교용으로만 쓰고, 채점은 비공개·순환 과제와 실셀로 한다.
+- **Arena의 신뢰는 헌장과 회피 규정에서 나온다.** 헌장 초안 M8 → 공동서명 기관(KTL·KIRIA·TTA 중 1곳) MOU M10(2027-08-27) → 헌장 서명 M12 초(K-Pick Challenge 2027-10-22 이전)로 운영한다(DR v1.1 §5.3). 우리가 학습한 정책은 공동서명 기관 검토 없이 인증하지 않고, Skill 팀은 비공개 테스트 분할에 접근할 수 없다. 포화된 LIBERO(97–99%)는 비교용으로만 쓰고, 채점은 비공개·순환 과제와 실셀로 한다.
 - **컴퓨트는 원가가 아니라 증거의 단위다.** Skill 라인 직접원가 예시에서 12주 PoC의 컴퓨트는 약 22,500 토큰(₩225만)으로 PoC 가격의 1–1.5%다. 마진을 결정하는 것은 GPU가 아니라 결과물당 엔지니어 시간이며, 지수 100 → 50 → 25 → 15(DR) 달성이 학습 모듈 자동화의 목표다.
 
 ---
@@ -66,7 +66,7 @@ mindmap
 
 | 유형 | 입력 | 산출물 | 기본 프레임워크 | 구역 | 첫 출시 | 대표 과제(Wave 1 우선) |
 |---|---|---|---|---|---|---|
-| **RL** | 인증 자산 장면, 보상·관측·랜덤화 명세 | 정책(PPO 등) + 롤아웃 영상 | Isaac Lab 3.x + rsl_rl 5.5 / mjlab 1.6.0 | F·T·S | P0 | 빈 피킹 그래스프, 큐브 들기, 휴머노이드 속도 추종 |
+| **RL** | 인증 자산 장면, 보상·관측·랜덤화 명세 | 정책(PPO 등) + 롤아웃 영상 | Isaac Lab 3.x + rsl_rl 5.5 / mjlab 1.6.0 | F·T·S | P0 | 큐브 들기, 빈 피킹 그래스프, 디팔레타이징(P0, 모두 조작). 휴머노이드 속도 추종은 P1(M6–M8) |
 | **IL** | 텔레옵 시연(LeRobot v3), Mimic 증식 데이터 | BC·ACT·Diffusion 정책 | LeRobot 0.6.1, Isaac Lab Mimic | F(증식)·T(학습) | P0 | 픽앤플레이스, 키팅, 커넥터 삽입 |
 | **VLA** | 언어 지시 + 멀티뷰 영상 + 행동 시연 | 파인튜닝 VLA 체크포인트 | LeRobot 0.6.1(SmolVLA, GR00T N1.7) | F·T(국방은 SmolVLA만) | P1 | 다품종 토트 피킹, 양팔 핸드오버 |
 | **인식** | Replicator SDG + 증강 + 소량 실데이터 | 검출·분할 모델 + Scorecard | RF-DETR N–L | F(RTX SDG)·T·S | P0 | 한국 SKU 빈 검출, 팔레트 검출 |
@@ -79,10 +79,10 @@ CEO 요구는 "로봇, 자동차 등 어떤 대상도 가능"이다. 학습 모�
 | 대상 | 학습 템플릿 준비 | 주 학습 유형 | 물리·센서 백엔드 | 평가 지표 | 상업 Wave |
 |---|---|---|---|---|---|
 | 로봇 팔 조작(빈 피킹·조립·삽입) | P0–P1(M1–M12) | RL, IL, VLA, 인식 | Isaac Lab + PhysX(F), Newton SDF·hydroelastic(T) | 실셀 성공률, 갭, r | Wave 1 |
-| 모바일 로봇·AMR·공장 셀 | M9–M18 | RL(내비게이션), 인식 | PhysX Vehicle2, Newton 휠 모델 | 충돌률, 처리량 예측 오차 | Wave 1 부가(P2 라이브 트윈) |
-| 휴머노이드·사족·덱스터러스 | P1 템플릿(M6–M12) | RL(WBC·보행), VLA | Newton/MJWarp, 60 DoF 초과는 PhysX 또는 트리 분할 | 추종 오차, 낙상률, 성공률 | Wave 2(M12–) |
-| 차량(Mobility Pack α) | P2(M18–M24) | 인식 데이터, 폐루프 시나리오 평가 | Chrono::Vehicle, PhysX Vehicle2, esmini | mAP 비율, 시나리오 통과율 | 파트너(MORAI)·데이터 |
-| 드론 | P2(M20–M24) | RL(자세·추종), 인식 | PX4 SITL, Isaac Lab 멀티로터 액추에이터 | 추종 오차, 검출 mAP | P3 국방 에디션 |
+| 모바일 로봇·AMR·공장 셀 | M9–M18 | RL(내비게이션), 인식 | PhysX Vehicle2(Zone F 전용), Newton 관절 휠 모델(Zone T/S) | 충돌률, 처리량 예측 오차 | Wave 1 부가(P2 라이브 트윈) |
+| 휴머노이드·사족·덱스터러스 | P1 템플릿(M6–M12) | RL(WBC·보행), VLA | Newton/MJWarp, 60 DoF 초과는 PhysX 또는 트리 분할 | 추종 오차, 낙상률, 성공률 | Wave 2(M12–). P2 상업화는 휴머노이드·덱스터러스만, 사족은 템플릿·Crucible 평가로만 수익화 |
+| 차량(Mobility Pack α) | P2(M18–M24) | 인식 데이터, 경로 추종 RL(RL-15), 폐루프 시나리오 평가 | Chrono::Vehicle(Zone T/S), PhysX Vehicle2(Zone F 전용), esmini | mAP 비율, 시나리오 통과율 | 파트너(MORAI)·데이터 |
+| 드론 | P2(M20–M24, RL 템플릿 1종 = RL-16) | RL(호버·추종), 인식 | PX4 SITL(자체 브리지), Isaac Lab 멀티로터 액추에이터(Zone F) | 추종 오차, 검출 mAP | P3 국방 에디션 |
 | 선박·항만, 오프로드 UGV | P3(M25–) | 인식, 시나리오 평가 | Fossen 6-DOF, Chrono FSI·CRM | EO/IR mAP, COLREG 통과율 | Wave 3(트리거 조건부) |
 
 ### 1.4 하지 않는 것
@@ -148,23 +148,23 @@ flowchart LR
 
 | 기능 | 기본(Default) | 대안 | 금지·차단 | 버전(2026-10) | 라이선스 | 구역 | 판단 근거 |
 |---|---|---|---|---|---|---|---|
-| RL 런타임(팩토리) | **Isaac Lab 3.x, GitHub 소스 빌드** | Isaac Lab 2.3.2(레거시 과제 재현만) | isaacsim·isaaclab **PyPI 휠**(독점), Isaac Sim 7.0 alpha | 3.0.0-EA(2026-09-16, Isaac Sim 6.1, Python 3.12, PyTorch 2.11, Warp 1.16, Newton 1.5.2). GA 2026년 10월 말 목표 | BSD-3(isaaclab_mimic Apache-2.0). Isaac Sim·Kit 런타임은 NVIDIA 독점 | F(PhysX·RTX), T·S(Kit-less Newton) | 다중 백엔드, Kit-less 모드, 단일 `isaaclab` 학습 명령, 멀티 GPU·멀티 노드 |
-| RL 런타임(테넌트 경량) | **mjlab 1.6.0** | Isaac Lab Kit-less Newton(beta) | — | 1.6.0(2026-08-09). 업스트림 MJWarp보다 뒤처진 핀(3.11) | Apache-2.0 | T·S·F | Isaac Lab과 같은 매니저 API, Omniverse 약관 없음, G1 속도·모션 모방 내장 |
+| RL 런타임(팩토리) | **Isaac Lab 3.x, GitHub 소스 빌드** | Isaac Lab 2.3.2(레거시 과제 재현만) | isaacsim·isaaclab **PyPI 휠**(독점), Isaac Sim 7.0 alpha | 3.0.0-EA(2026-09-16, Isaac Sim 6.1(번들 PhysX 5.x·Kit 110.x [U]), Python 3.12, PyTorch 2.11, Warp 1.16, Newton 1.5.2). GA 2026년 10월 말 목표 | BSD-3(isaaclab_mimic Apache-2.0). Isaac Sim·Kit 런타임은 NVIDIA 독점 | F(PhysX·RTX), T·S(Kit-less Newton) | 다중 백엔드, Kit-less 모드, 단일 `isaaclab` 학습 명령, 멀티 GPU·멀티 노드 |
+| RL 런타임(테넌트 경량) | **mjlab 1.6.0** | Isaac Lab Kit-less Newton(beta) | — | 1.6.0(2026-08-09). 업스트림 MJWarp보다 뒤처진 핀(3.11) | Apache-2.0 | T·S·F | Isaac Lab과 같은 매니저 API, Omniverse 약관 없음, G1 속도·모션 모방 내장. MJWarp 3.11 고정 별도 이미지로 운영하고 인증 재현은 MuJoCo 3.15 CPU에서 |
 | RL 알고리즘 | **rsl_rl 5.5.1** | **skrl 2.1.0**(멀티에이전트 IPPO/MAPPO, SAC/TD3), RL-Games 1.6.5(레거시 덱스터러스·PBT) | PufferLib(로보틱스 통합 없음), LeanRL(2026-10-01 아카이브) | 5.5.1(2026-09-09: bf16, torch.compile, 멀티 GPU 그래디언트 축약 개선) | BSD-3 / MIT / MIT | 전 구역 | PPO + teacher→student 증류 + 대칭 + RND |
 | 교육·소규모 RL | **SB3 2.9.0** | TorchRL 0.14.0(연구 고객의 오프라인 RL) | — | 2.9.0(2026-06-15) | MIT | T | 벡터화·분산 없음. 4,096 env 규모 부적합 |
 | VLA RL 후처리 | **RLinf 0.3**(P2) | LeRobot HIL-SERL(실세계 RL) | — | 0.3.0(2026-07-15), Isaac Lab 3.0 학습 백엔드로 통합 | Apache-2.0 | F → T(P2 검증 후) | OpenVLA·pi0/pi0.5·GR00T N1.5–N1.7 RL 파인튜닝 |
 | IL·VLA 엔진, 데이터 포맷 | **LeRobot 0.6.1 + LeRobotDataset v3** | robomimic HDF5(경계 포맷 import만) | — | 0.6.1(2026-08-03), Python 3.12 이상, PyTorch 2.7 이상 | Apache-2.0 | 전 구역 | Parquet + MP4 샤드, 스트리밍, 마켓플레이스 교환 포맷 |
 | IL 베이스라인 | **ACT, Diffusion Policy**(LeRobot 내장) | VQ-BeT | — | LeRobot 0.6.1 | Apache-2.0 | 전 구역 | 단일 과제를 1 GPU에서 빠르게 학습 |
 | VLA: 저비용·국방 | **SmolVLA 450M** | — | — | smolvla_base | Apache-2.0 | 전 구역(Air-gap 기본) | 약 4 A100-시간, 소비자 GPU·엣지 서빙 |
-| VLA: 휴머노이드·양팔 | **GR00T N1.7 3B** | X-VLA, Wall-X, EO-1(약관 확인 후 [U]) | — | GA. Cosmos-Reason2-2B 백본 + 16층 flow-matching DiT 행동 헤드 | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | F·T(국방 프로파일은 V7 전 차단) | 40 GB 이상 GPU 파인튜닝, 16 GB 이상 추론(Jetson AGX Thor 포함) |
+| VLA: 휴머노이드·양팔 | **GR00T N1.7 3B** | X-VLA, Wall-X, EO-1(약관 확인 후 [U]) | — | GA. Cosmos-Reason2-2B 백본 + 16층 flow-matching DiT 행동 헤드 | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | F·T(학습·내부 사용 OK. 파인튜닝 가중치 고객 납품은 V7 통과 후, 부정적이면 SmolVLA·ACT로 증류 납품. 국방 프로파일 차단) | 40 GB 이상 GPU 파인튜닝, 16 GB 이상 추론(Jetson AGX Thor 포함) |
 | VLA: 팔 범용 | pi0.5(openpi) **차단** | RDT2-FM(Apache-2.0, UMI 데이터용 옵션) | 약관 확인 전 상업 사용 금지 | pi0.5 + PyTorch(2025-09) | 코드 Apache-2.0, **가중치 약관 미명시** | 내부 평가만 | 가중치 약관 서면 확인(V7) 후 해제 |
 | VLA: 참고만 | OpenVLA-OFT(벤치마크 기준선) | — | 상업 납품 | 7B, 8 GPU·150k 스텝 | 코드 MIT, 가중치 Llama 2 Community License | F(내부 비교) | 고비용·구형 백본 |
 | VLA: 금지 | — | — | **AgiBot GO-1**(CC BY-NC-SA), **RLDX-1 가중치**(비상업) | — | 비상업 | 차단 | RLWRLD는 데이터 고객 후보로만 접근 |
 | 시연 증식 | **Isaac Lab Mimic** | SkillGen(Apache 태그 cuRobo 고정 + NVIDIA 확인 후) | **MimicGen·DexMimicGen 코드**(NVIDIA Source Code License). Isaac Lab 번들 cuRobo | isaaclab_mimic 1.0.16 | Apache-2.0 | F(Kit-less 검증 전) | 10개 → 1,000개, 생성 성공률 약 50%(Franka) |
 | 텔레옵 | **Isaac Teleop**(팩토리), **GELLO + SpaceMouse**(테넌트·현장) | 키보드, Apple Vision Pro 손 추적(Isaac Teleop 경유) | 테넌트용 CloudXR(약관 전) | Isaac Teleop은 Isaac Lab 3.0 beta부터 내장 텔레옵 대체 | GELLO MIT. Isaac Teleop 라이선스 [U] | F / T·S | MCAP 기록·재생, 리타게팅, 양팔 GELLO |
-| 인식 SDG | **Replicator**(Isaac Sim 6.1 RTX) | Newton Warp 타일드 카메라(래스터, T), Blender Cycles(별도 프로세스, 내부) | BlenderProc(GPL-3.0) 온프렘 번들, Kubric(정체) | Isaac Sim 6.1.0(2026-09-10) | NVIDIA 독점 / Apache-2.0 | F / T·S | RT 코어 GPU 필수(L40S, RTX PRO 6000) |
+| 인식 SDG | **Replicator**(Isaac Sim 6.1 RTX, Zone F 전용) / **Newton Warp 래스터 + Warp Sensor Library**(Zone T·S 기본) | Blender Cycles(별도 프로세스, 내부) | BlenderProc(GPL-3.0) 온프렘 번들, Kubric(정체) | Isaac Sim 6.1.0(2026-09-10) | Replicator는 NVIDIA 독점(Kit·Omniverse 약관, 팩토리 산출물 전용은 서면 확인 필요) / Warp 경로 Apache-2.0 | F / T·S | RT 코어 GPU 필수(L40S, RTX PRO 6000) |
 | 생성형 증강 | **Cosmos Transfer 2.5**(현재) → **Cosmos 3 Nano 16B**(M9) | Cosmos 3 Super 64B(P3 선별), Edge 4B(관찰) | Genie 3·GAIA 등 독점 모델의 데이터 생산 사용 | Cosmos 3(2026년 5–6월), Transfer 2.5는 유지보수 축소 | OpenMDW-1.1(전문 [U]) / NVIDIA Open Model License | F | 깊이·분할·엣지 제어로 라벨 보존 |
-| 자동 라벨링(실데이터) | **SAM 3.1 + VLM 캡션**(민수 전용) | RF-DETR 교사 + 사람 검수(국방) | 국방 에디션의 SAM 계열 | SAM 3.1 Object Multiplex(2026-03-27) | SAM License(군사·ITAR 제한) | F·T(민수) | 개방 어휘 분할·추적 |
+| 자동 라벨링(실데이터) | **SAM 3.1 + VLM 캡션**(민수 전용) | RF-DETR 교사 + 사람 검수(국방) | 국방 에디션의 SAM 계열 | SAM 3.1 Object Multiplex(2026-03-27) | SAM License(커스텀 사용 제한, 신청서, 군사·ITAR 제외) → 조건부(V7) | F·T(민수. 테넌트 호스팅 추론은 V7 통과 후, 온프렘 가중치 번들은 재배포 조항 서면 확인 전 제외) | 개방 어휘 분할·추적 |
 | 검출기 | **RF-DETR N–L** | RT-DETR·D-FINE 계열 Apache 모델 [A] | **Ultralytics YOLO(AGPL-3.0) SaaS 사용**, RF-DETR XL/2XL(PML 1.0) 기본 사용 | COCO AP50:95 48.4–56.5, T4 TensorRT FP16 2.3–6.8 ms | Apache-2.0 | 전 구역 | ONNX·TensorRT로 Jetson 수출 |
 | 촉각 | **TacSL**(Isaac Lab, PhysX 전용) | MuJoCo touch_grid | — | Isaac Lab 3.0-EA 실험 기능 | BSD-3 | F | 시각촉각 이미지·힘장, 기존 대비 200배 이상 빠름 |
 | WBC 레퍼런스 | HOVER, BeyondMimic | GEAR-SONIC(P3, 64 GPU 이상) | — | HOVER Isaac Lab 2.0 확장 | Apache-2.0 / MIT / 코드 Apache-2.0 + 가중치 NVIDIA OML | F·T | 검증된 teacher-student·모션 추적 레시피 |
@@ -175,7 +175,7 @@ flowchart LR
 | 분산·설정 | **Ray 2.59 + torchrun**, Hydra 1.3.7 | KubeRay·Kueue | Ray Sandbox(실험적) 의존 | ray 2.59.0(2026-10-02) | Apache-2.0 / MIT | 전 구역 | KAI 큐 귀속과 결합 |
 | 데이터셋 스냅샷 | **DVC 3.67.1 / Iceberg** | — | lakeFS 1.87 이상 | dvc 3.67.1 | Apache-2.0 | 전 구역 | 콘텐츠 해시 계보 |
 | 롤아웃 뷰어 | **Rerun 0.38.1, Viser 1.1.1** | Newton GL 뷰어 | — | rerun-sdk 0.38.1, viser 1.1.1 | MIT·Apache-2.0 / Apache-2.0 | 전 구역 | 브라우저 재생 |
-| 수출·엣지 | **ONNX(opset 고정) → TensorRT → Jetson AGX Thor** | ONNX Runtime CPU(BeyondMimic식 경량 정책) | — | onnxruntime 1.30.0, tensorrt 11.3.0.99, JetPack 7.2 / CUDA 13.2 | MIT / NVIDIA 독점(무료) | 전 구역 | GR00T 저장소가 Thor·Orin 지원 명시 |
+| 수출·엣지 | **ONNX(opset 고정) → TensorRT → Jetson AGX Thor** | ONNX Runtime CPU(BeyondMimic식 경량 정책) | — | onnxruntime 1.30.0, tensorrt 11.3.0.99(x86 PyPI, 데이터센터 서빙용), Jetson 엔진은 JetPack 7.2 번들 TensorRT(버전 [U]) / CUDA 13.2 | MIT / NVIDIA 독점(무료) | 전 구역 | GR00T 저장소가 Thor·Orin 지원 명시 |
 | 월드모델 연구 | — | V-JEPA 2.1(MIT), DreamerV3(MIT) | Genie 3(학습 API 없음) | V-JEPA 2.1(2026-03-16, 최대 2B) | MIT | 관찰 | 실로봇 데이터 희소 과제 연구 트랙 |
 
 ### 2.2 왜 PyPI 휠이 아니라 소스 빌드인가
@@ -219,7 +219,7 @@ flowchart LR
 ```yaml
 # athanor task-spec v0 (예시, Train 1) — 값은 [A]
 spec_version: "0.3"
-template: pick.bin.kr-sku.v1          # 템플릿 카탈로그 ID
+template: RL-02/pick.bin.kr-sku.v1   # 템플릿 ID(06 §6.2 마스터)
 zone: F                               # F | T | S
 scene_commit: sc_8f3a1c...            # 콘텐츠 해시 장면 커밋(인증 자산 포함)
 robot: cobot_6dof_parallel_gripper
@@ -252,28 +252,31 @@ export: {onnx_opset: pinned-per-train, trt_target: jetson-agx-thor-jp7.2}
 
 ### 3.2 RL 템플릿 카탈로그
 
-DR의 RL 템플릿 수(P0 3 → P1 8 → P2 15 → P3 25)를 아래 순서로 채운다. 순서는 Wave 1 매출 기여와 Capability Readiness를 함께 본 것이다[A].
+DR의 RL 템플릿 수(P0 3 → P1 8 → P2 15 → P3 25)를 아래 순서로 채운다. **템플릿 ID와 출시 단계의 마스터는 [06 §6.2](06-usability-and-agent.md), 팩별 배분의 마스터는 [08 §7.1](08-domain-packs.md)이다.** 이 표는 같은 ID에 학습 모듈의 알고리즘·환경 수·컴퓨트를 붙인 것이다. 기본 백엔드는 06과 같다(테넌트 기본 Newton/MJWarp·mjlab, 팩토리 Isaac Lab PhysX).
 
-| ID | 템플릿 | 단계 | 기본 백엔드 | 알고리즘 | 구역 | 환경 수/GPU | 1회 학습 컴퓨트 |
+| ID(06) | 템플릿 | 팩 | 단계 | 백엔드(Zone T 기본 / Zone F) | 알고리즘 | 환경 수/GPU | 1회 학습 컴퓨트 |
 |---|---|---|---|---|---|---|---|
-| R01 | 팔 도달·큐브 들기(베이크오프 T3) | P0 | Isaac Lab PhysX / mjlab | PPO | F·T | 4,096 | 1–3 GPU-시간[A] |
-| R02 | 빈 피킹 그래스프(한국 SKU 클러터, T5) | P0 | Isaac Lab PhysX | PPO + 증류 | F | 4,096 | 2–6 GPU-시간[A] |
-| R03 | 휴머노이드 속도 추종(G1, T1) | P0 | mjlab / Newton | PPO | F·T·S | 4,096 | 1–2 GPU-시간 |
-| R04 | 사족 보행 속도 추종 | P1 | mjlab / Newton | PPO | T·S | 4,096 | 0.3–1 GPU-시간 |
-| R05 | 휴머노이드 모션 추적(BeyondMimic식, T2) | P1 | mjlab / Isaac Lab Newton | PPO | F·T | 4,096 | 수–수십 GPU-시간[A] |
-| R06 | 페그·커넥터 삽입(SDF, T7) | P1 | Isaac Lab PhysX(F), Newton hydroelastic(T) | PPO + 접촉 랜덤화 | F·T | 2,048–4,096 | 4–12 GPU-시간[A] |
-| R07 | 디팔레타이징(박스 혼적) | P1 | Isaac Lab PhysX | PPO | F | 4,096 | 3–8 GPU-시간[A] |
-| R08 | 손안 재배치(LEAP/Allegro, 상태 기반, T4) | P1 | Isaac Lab PhysX / Newton | PPO(DexSuite) | F·T | 8,192 | 3–8 GPU-시간 |
-| R09 | 폴리백 피킹(VBD 변형체, T6) | P2 | Newton VBD | PPO | F·T | 1,024–4,096[A] | 측정 후 확정 |
-| R10 | 케이블 삽입(T8) | P2 | Newton VBD / PhysX | PPO | F | 측정 후 확정 | 측정 후 확정 |
-| R11 | 폐루프 그리퍼 조작(Kamino, T10) | P2 | Newton Kamino | PPO | F·T | 4,096 | 측정 후 확정 |
-| R12 | 시각 기반 덱스터러스(teacher → 카메라 student) | P2 | Isaac Lab PhysX, 타일드 카메라 | PPO + 온라인 증류 | F | teacher 4,096 / student 256 | 200–600 GPU-시간 |
-| R13 | AMR 내비게이션·도킹 | P2 | PhysX Vehicle2 / Newton 휠 | PPO | F·T | 4,096 | 2–6 GPU-시간[A] |
-| R14 | 멀티로봇 협업 피킹 | P2 | Isaac Lab | skrl MAPPO | F·T | 2,048[A] | 측정 후 확정 |
-| R15 | 휴머노이드 범용 추적 teacher-student(HOVER식) | P2 | Isaac Lab | PPO + 증류 | F | 4,096 이상 | teacher 23.3시간(RTX 4090) / 44.6시간(L40) |
-| R16–R25[A] | 양팔 핸드오버, 모바일 매니퓰레이션, 드론 자세·추종(PX4 SITL 연동), 차량 저속 주차·도킹(Mobility Pack α), 휴머노이드 + 덱스터러스 로코매니퓰레이션(60 DoF 초과, PhysX 또는 트리 분할), UGV 지형 보행 등 | P3 | 도메인 팩별 | PPO / MAPPO | 도메인 팩별 | ≥8,192(DR P2–P3 KPI) | 도메인 팩별 |
+| RL-01 | 팔 도달·큐브 들기(베이크오프 T3 장면) | 조작 | P0 | Newton/MJWarp·mjlab / Isaac Lab PhysX | PPO | 4,096 | 0.3–1 GPU-시간[A] |
+| RL-02 | 빈 피킹 그래스프(한국 SKU 클러터, T5 장면) | 조작 | P0 | Newton/MJWarp / Isaac Lab PhysX | PPO + 증류 | 4,096 | 1–3 GPU-시간[A] |
+| RL-03 | 디팔레타이징(박스 혼적) | 조작 | P0 | Newton/MJWarp / Isaac Lab PhysX | PPO | 4,096 | 1–3 GPU-시간[A] |
+| RL-04 | 페그·커넥터 삽입(SDF, T7 장면) | 조작 | P1 | Newton SDF·hydroelastic / Isaac Lab PhysX(SDF, TacSL) | PPO + 접촉 랜덤화 | 2,048–4,096 | 3–8 GPU-시간 |
+| RL-06 | 사족 보행 속도 추종 | 사족 | P1(M6–M8) | Newton/MJWarp·mjlab / — | PPO | 4,096 | 0.3–1 GPU-시간 |
+| RL-07 | 휴머노이드 G1 속도 추종(T1과 같은 장면) | 휴머노이드·덱스터러스 | P1(M6–M8, Studio M9) | Newton/MJWarp·mjlab / — | PPO | 4,096 | 1–2 GPU-시간 |
+| RL-08 | 휴머노이드 모션 추적(BeyondMimic식, T2 장면) | 휴머노이드·덱스터러스 | P1 | mjlab / Isaac Lab | PPO | 4,096 | 수–수십 GPU-시간(HOVER식 확장 teacher는 RTX 4090 23.3시간 / L40 44.6시간) [A] |
+| RL-10 | 손안 재배치(LEAP/Allegro, 상태 기반, T4 장면) | 휴머노이드·덱스터러스 | P1 | Newton/MJWarp / Isaac Lab DexSuite(PhysX) | PPO(DexSuite) | 8,192 | 3–8 GPU-시간 |
+| RL-05 | 2부품 조립(스냅 핏) | 조작 | P2 | Newton SDF / Isaac Lab PhysX | PPO + 접촉 랜덤화 | 2,048–4,096[A] | 3–8 GPU-시간[A] |
+| RL-12 | AMR 셀 내비게이션·도킹 | AMR·셀 | P2 | Newton 관절 휠 / PhysX Vehicle2(Zone F 전용) | PPO | 8,192 | 2–6 GPU-시간[A] |
+| RL-13 | 모바일 매니퓰레이션(AMR + 암) | AMR·셀 | P2 | Newton / Isaac Lab | PPO | 8,192[A] | 측정 후 확정 |
+| RL-15 | 차량 경로 추종(Mobility Pack α, 야드·저속) | Mobility | P2(M18–M24) | Chrono::Vehicle / PhysX Vehicle2(Zone F 전용) | PPO | 측정 후 확정(Chrono CPU 병렬) | 측정 후 확정 |
+| RL-16 | 드론 호버·웨이포인트 추종(PX4 SITL 브리지) | 드론 | P2(M20–M24) | PX4 SITL + Gazebo Jetty / Isaac Lab 멀티로터 | PPO | 측정 후 확정(lockstep 병렬) | 측정 후 확정 |
+| RL-17 | 사족 험지 보행(지형 커리큘럼·액추에이터 넷) | 사족 | P2 | Newton/MJWarp·mjlab / Isaac Lab | PPO + 증류 | 8,192 | 1–3 GPU-시간[A] |
+| RL-18 | 시각 기반 손안 재배치(teacher → 카메라 student) | 휴머노이드·덱스터러스 | P2 | — / Isaac Lab PhysX, 타일드 카메라 | PPO + 온라인 증류 | teacher 4,096 / student 256 | 200–600 GPU-시간 |
+| RL-09·11·14·19–25[A] | 폴리백 피킹 전용(VBD, T6)·폐루프 그리퍼(Kamino, T10)(조작 2), 양팔 핸드오버·휴머노이드 + 덱스터러스 로코매니퓰레이션(60 DoF 초과는 PhysX 또는 트리 분할)(휴머노이드·덱스터러스 2), 사족 시각 험지 보행(사족 1), 다중 AMR 플릿 협조(AMR 1), 오프로드 UGV(Chrono CRM)(Mobility 1), 드론 시각 항법(드론 1), 선박 접안·USV 충돌 회피(Fossen 6-DOF)(해양 2) | 팩별 | P3 | 도메인 팩별 | PPO / skrl MAPPO | ≥8,192(DR P2–P3 KPI) | 도메인 팩별 |
 
-- **환경 수 KPI:** 템플릿 과제의 GPU당 병렬 환경 수는 P0–P1 ≥4,096, P2–P3 ≥8,192(DR)다. 변형체·카메라 과제는 이 KPI의 예외로 등록하고, 대신 '1B 스텝당 원가'로 관리한다.
+- **옛 07 번호(R01–R25) 대응:** R01→RL-01, R02→RL-02, R03→RL-07, R04→RL-06, R05→RL-08, R06→RL-04, R07→RL-03, R08→RL-10, R09→RL-09(P3로 이동), R11→RL-11(P3로 이동), R12→RL-18, R13→RL-12다. R10 케이블 삽입은 RL-04의 케이블 커넥터 옵션(적합성 C09 통과 후, P2)으로, R14 멀티로봇 협업 피킹은 RL-21 다중 AMR 플릿 협조로, R15 HOVER식 범용 추적 teacher-student는 RL-08의 P2 확장 레시피로 옮겼다. R16–R25는 RL-14·15·16·19–25로 나눠 배치했다. R 번호는 더 쓰지 않는다.
+- **베이크오프 과제는 템플릿이 아니다:** T1(G1 속도 추종)·T3·T5는 엔진 벤치마크 과제로만 남는다. T1은 P0 출고 템플릿이 아니며, 같은 장면을 쓰는 출고 템플릿은 RL-07(P1, 내부 M6–M8, Studio M9)이다.
+- **환경 수 KPI:** 템플릿 과제의 GPU당 병렬 환경 수는 P0–P1 ≥4,096, P2–P3 ≥8,192(DR)다. 변형체·카메라·PX4 SITL·Chrono 과제는 이 KPI의 예외로 등록하고, 대신 '1B 스텝당 원가'로 관리한다.
+- **컴퓨트 기준:** 1회 학습 컴퓨트는 06 템플릿 카드의 기본 장면 기준이다. 고객 셀의 클러터·랜덤화를 넓히면 §11.1의 프로젝트 단가(예: 팔 피킹 RL 2–6 GPU-시간)로 견적한다[A].
 - **템플릿의 정의:** 장면 레이어, 보상 함수, 관측·행동 공간, 기본 랜덤화, 커리큘럼, 게이트 임계, 수출 설정, 평가 과제 ID까지 포함한 패키지다. 템플릿이 Crucible 과제 ID를 갖지 않으면 카탈로그에 등록할 수 없다.
 
 ### 3.3 도메인 랜덤화: 인증서가 폭을 정한다
@@ -285,7 +288,7 @@ DR의 RL 템플릿 수(P0 3 → P1 8 → P2 15 → P3 25)를 아래 순서로 �
 ```
 
 - `θ̂`는 인증서의 백엔드별 파라미터, `σ_rel`은 인증서에 기록된 상대 불확도, `k`는 템플릿 기본 2.0이다[A]. 마찰처럼 곱셈적으로 작용하는 값은 로그 균등 분포를 쓴다.
-- **등급별 기본 불확도[A]:** Bronze(VLM 추정)는 질량 ±30%, 마찰 ±50%. Silver(영상 sysid)는 사후분포 표준편차. Gold(랩 실측)는 DR 오차 목표(P0 질량 ≤15%·마찰 ≤25% → P3 ≤5%·≤10%)를 상한으로 쓴다.
+- **등급별 기본 불확도[A]:** Bronze(VLM 추정)는 질량 ±30%, 마찰 ±50%다. Silver(영상 sysid)는 사후분포 표준편차를 쓴다. Gold(랩 실측)는 인증서에 기록된 랩 측정 불확도(σ_lab)를 쓴다. DR 오차 목표(P0 질량 ≤15%·마찰 ≤25% → P3 ≤5%·≤10%, [05 §16.1](05-physics-and-realism.md))는 Forge 자동 추정의 정확도 KPI이므로, Silver 사후분포 폭의 상한 점검에만 쓴다(Silver σ가 이 목표보다 넓으면 상호작용 영상을 추가하거나 Gold 측정을 권고한다). Gold 자산의 랜덤화 폭을 DR KPI 값으로 잡으면 실제 불확도보다 넓어져 정책이 불필요하게 보수적이 된다.
 - **효과:** Gold 오차가 줄어들수록 랜덤화 폭이 좁아지고, 같은 컴퓨트로 덜 보수적인 정책이 나온다. 이 관계를 Crucible에서 'Gold vs Bronze 장면 학습 정책의 실셀 성공률 차'로 분기마다 측정해 인증 등급의 경제적 가치를 수치로 만든다[A].
 
 | 범주 | 파라미터 | 기본 범위 [A] | 프리셋 대상 |
@@ -342,14 +345,16 @@ P0–P1에서는 PBT 대신 템플릿별 검증된 고정 레시피와 소규모
 C_{1\mathrm{B}}=\frac{10^{9}}{\mathrm{FPS}_{\mathrm{train}}\times 3600}\times P_{\text{GPU-h}}
 ```
 
-| 사례 | FPS(학습 포함) | 1B 스텝 GPU-시간 | L40S 네오클라우드 $1.09/h | RT 혼합 $2.3/h | 자체 RTX PRO 6000 ≈ ₩1,600/h(≈$1.14) |
-|---|---|---|---|---|---|
-| G1 험지 보행(RTX 4090 기준) | 82,000 | 3.39 | $3.7 | $7.8 | $3.9 |
-| Shadow 손안 재배치 | 170,000 | 1.63 | $1.8 | $3.8 | $1.9 |
-| 접촉 많은 피킹(가정) | 40,000[A] | 6.94 | $7.6 | $16.0 | $7.9 |
+원가는 실제로 쓰는 GPU급(L40S급)의 처리량으로 계산한다. RTX 4090 수치는 리서치 원 측정값이라 참고로만 남긴다. 산식과 GPU-시간은 [03 §11.4](03-engine-selection-build-vs-buy.md)와 같다.
 
-- DR KPI(카메라 없는 RL, 1B 스텝당 P1 ≤$10 → P2 ≤$6 → P3 ≤$4)는 **네오클라우드·자체 서버에서는 보행류가 이미 달성 가능하고, 접촉 많은 피킹이 병목**이라는 뜻이다. P2–P3 목표는 자체 RT 서버 가동률 60% 이상, torch.compile·bf16(rsl_rl 5.1·5.5) 적용, 베이크오프 결과 기반 백엔드 라우팅으로 맞춘다.
-- 서울 하이퍼스케일러(AWS 서울 L40S $2.288)에서 배치 RL을 돌리면 같은 작업이 2배 이상 비싸다. 배치 학습을 서울 리전에 배정하지 않는다는 DR 원칙의 근거다.
+| 사례 | 처리량 근거 | 1B 스텝 GPU-시간(L40S급) | L40S 네오클라우드(RunPod) $1.09/h | RT 혼합 $2.3/h | 자체 RTX PRO 6000 ≈ ₩1,600/h(≈$1.14) | 참고: RTX 4090 |
+|---|---|---|---|---|---|---|
+| G1 험지 보행 | 리서치 산식(L40S급 약 62,000 steps/s, 학습 포함) | 4.48 | $4.9 | $10.3 | $5.1 | 82,000 steps/s, 3.39 GPU-시간 |
+| Shadow 손안 재배치 | RTX 4090 170,000 steps/s를 G1의 L40S/4090 비율(1.32)로 환산[A] | 약 2.15 | $2.3 | $5.0 | $2.5 | 170,000 steps/s, 1.63 GPU-시간 |
+| 접촉 많은 피킹(가정) | 40,000 steps/s(L40S급 가정) [A] | 6.94 | $7.6 | $16.0 | $7.9 | — |
+
+- **KPI 정합:** DR KPI(카메라 없는 RL, 1B 스텝당 P1 ≤$10 → P2 ≤$6 → P3 ≤$4)에 비춰 보면, **P1 ≤$10·P2 ≤$6은 네오클라우드·자체 서버에서 보행류(G1 $4.9–5.1)로 달성 가능하다.** RT 클라우드 혼합 단가($10.3)는 P1 상한도 넘으므로 배치 RL은 자체 서버·네오클라우드로 보낸다. 접촉 많은 피킹은 P1 ≤$10은 맞추지만 P2 ≤$6에는 못 미친다. **P3 ≤$4는 베이크오프(T1·T5)에서 Newton/MJWarp 경로의 처리량 우위가 실측될 때만 가능하다**([03 §11.4](03-engine-selection-build-vs-buy.md)). 그 밖의 수단은 자체 RT 서버 가동률 60% 이상, torch.compile·bf16(rsl_rl 5.1·5.5) 적용, 베이크오프 결과 기반 백엔드 라우팅이다.
+- 서울 하이퍼스케일러(AWS 서울 L40S $2.288)에서 배치 RL을 돌리면 G1 기준 1B 스텝당 약 $10.25로, 네오클라우드의 2배 이상이다. 배치 학습을 서울 리전에 배정하지 않는다는 DR 원칙의 근거다.
 
 ---
 
@@ -421,9 +426,9 @@ flowchart LR
 | B(베이스라인) | ACT | 소형 | Apache-2.0(LeRobot) | 단일 GPU | 2–8 GPU-시간[A] | Jetson, 산업 PC | 단일 과제 고정 셀 | 전 구역 |
 | B(베이스라인) | Diffusion Policy | 소형 | Apache-2.0(LeRobot) | 단일 GPU | 4–12 GPU-시간[A] | Jetson | 다봉 행동, 접촉 과제 | 전 구역 |
 | **V1** | **SmolVLA** | 450M | Apache-2.0 | 시연 50개 이상(25개는 부족), 배치 64, 20k 스텝 | **약 4 A100-시간** | 소비자 GPU, 엣지, 비동기 추론 | 기본 등급, 저가 팔, 교육, **국방** | 전 구역 |
-| **V2** | **GR00T N1.7** | 3B | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | 40 GB 이상 GPU 1장 이상, 예: 2,000 스텝·글로벌 배치 32·1 또는 8 GPU, NEW_EMBODIMENT 레시피 | 저장소 기준 2–16 GPU-시간, DR 범위 2–40 H100-시간 | 16 GB 이상, **Jetson AGX Thor·Orin(JetPack 7.2, CUDA 13.2)** | 휴머노이드, 양팔, 교차 체화 | F·T·S(파인튜닝 가중치 납품은 V7 확인 후, 국방은 차단) |
+| **V2** | **GR00T N1.7** | 3B | 코드 Apache-2.0, 가중치 NVIDIA Open Model License | 40 GB 이상 GPU 1장 이상, 예: 2,000 스텝·글로벌 배치 32·1 또는 8 GPU, NEW_EMBODIMENT 레시피 | 리서치 추정 2–16 GPU-시간(저장소 예시: 2,000 스텝·글로벌 배치 32·1 또는 8 GPU) [A], DR 범위 2–40 H100-시간 | 16 GB 이상, **Jetson AGX Thor·Orin(JetPack 7.2, CUDA 13.2)** | 휴머노이드, 양팔, 교차 체화 | F·T·S(파인튜닝 가중치 납품은 V7 확인 후, 국방은 차단) |
 | V2b(차단) | pi0.5(openpi) | — | 코드 Apache-2.0, 가중치 미명시 | 추론 8 GB 초과, LoRA 22.5 GB 초과, 전체 70 GB 초과 | 30k 스텝 전체 파인튜닝 10–40 H100-시간(추정) | 8 GB 초과 | 팔 범용 조작(LIBERO 평균 96.85%) | **내부 평가만** |
-| R(참고) | OpenVLA-OFT | 7B | Llama 2 Community License | 8 GPU, GPU당 약 62 GB, 150k 스텝 | 200–400 GPU-시간 | — | 기준선 비교 | F 내부 |
+| R(참고) | OpenVLA-OFT | 7B | Llama 2 Community License | 8 GPU, GPU당 약 62 GB, 150k 스텝 | 200–400 GPU-시간(추정) [A] | — | 기준선 비교 | F 내부 |
 | O(옵션) | RDT2-FM | Qwen2.5-VL-7B 기반 | Apache-2.0 | 약 16 GB | 측정 후 | — | UMI 휴대 그리퍼 데이터 상품 | 검토 후 |
 
 ```mermaid
@@ -669,11 +674,11 @@ flowchart TD
 
 ### 7.3 sim2sim 게이트 2단 구조
 
-[04 §4.7](04-system-architecture.md)과 [05 §8.4](05-physics-and-realism.md)는 게이트를 서로 다른 엄격도로 정의한다. 학습 모듈은 이를 **두 단으로 운영**해 정합시킨다[A].
+**이 표가 sim2sim 게이트의 정본이다.** DR §4.1, [04 §4.7](04-system-architecture.md), [05 §8.4](05-physics-and-realism.md)는 이 2단 구조를 그대로 인용한다. 처음에 04는 1,000 에피소드·≤10%p를, 05는 초기 조건 200개·≤5%p·RMSE ≤0.05 rad를 제시했는데, 학습 모듈은 둘을 **두 단으로 운영**해 정합시켰다[A]. DR KPI '수출 전 sim2sim 게이트 적용률 100%'는 Tier 1 기준이다.
 
 | 단 | 적용 대상 | 절차 | 합격 기준 | 실패 시 |
 |---|---|---|---|---|
-| **Tier 1: 수출 차단 게이트** | 모든 정책(수출 전 적용률 100%, DR KPI) | 학습 백엔드에서 1,000 에피소드 → 교차 백엔드(Zone F: PhysX·Newton·MuJoCo CPU, Zone T/S: Newton·MuJoCo CPU)에서 같은 정책·같은 시드 집합 → 지연·노이즈 주입 → ONNX 변환 대조 | 성공률 차 ≤10%p, 평균 반환 비율 ≥0.85, 주입 후 하락 ≤15%p, ONNX 행동 최대 오차 ≤1e-3 | 수출 차단, 원인 분류(물리 의존·과적합·수치) 후 반려 |
+| **Tier 1: 수출 차단 게이트** | 모든 정책(수출 전 적용률 100%, DR KPI) | 학습 백엔드에서 1,000 에피소드 → 교차 백엔드(Zone F: PhysX·Newton·MuJoCo CPU, Zone T/S: Newton·MuJoCo CPU. 조건부 PhysX SDK 소스 어댑터 편입 시 Zone T/S도 3개)에서 같은 정책·같은 시드 집합 → 지연·노이즈 주입 → ONNX 변환 대조 | 성공률 차 ≤10%p, 평균 반환 비율 ≥0.85, 주입 후 하락 ≤15%p, ONNX 행동 최대 오차 ≤1e-3 | 수출 차단, 원인 분류(물리 의존·과적합·수치) 후 반려 |
 | **Tier 2: 인증 등급 게이트** | 로봇-과제 인증서·Crucible 공식 캠페인 대상 정책 | 게이트 백엔드 전부에서 같은 초기 조건 200개 | 백엔드 쌍별 성공률 차 ≤5%p, 관절 궤적 RMSE ≤0.05 rad | 인증 보류, 접촉 파라미터 랜덤화 확대 또는 운영 범위 축소 |
 
 - **왜 두 단인가:** 모든 정책에 5%p 기준을 걸면 변형체·접촉 과제의 PoC 반복이 막힌다. 반대로 인증서에 10%p를 허용하면 인증의 의미가 희석된다. 납품 속도는 Tier 1이, 인증의 엄격성은 Tier 2가 지킨다.
@@ -786,7 +791,7 @@ z=\tfrac{1}{2}\ln\frac{1+r}{1-r},\qquad \mathrm{SE}=\frac{1}{\sqrt{K-3}},\qquad 
 
 | # | 조항 | 내용 [A] |
 |---|---|---|
-| 1 | 목적 | 한국 Physical-AI 정책의 시뮬·실셀 성능을 재현 가능한 프로토콜로 측정하고 공개한다 |
+| 1 | 목적 | 한국 피지컬 AI 정책의 시뮬·실셀 성능을 재현 가능한 프로토콜로 측정하고 공개한다 |
 | 2 | 공동서명 기관 | KTL·KIRIA·TTA 중 1곳이 프로토콜 승인, 실셀 입회, 결과 서명. 공개 거부권 보유 |
 | 3 | 운영 분리 | Arena PM은 Head of Fidelity & Evaluation에 보고하며 Skill 리드·영업 조직의 지휘를 받지 않는다 |
 | 4 | 운영위원회 | 공동서명 기관 1, 회원 대표 2(순환), AICHEMIST 1. AICHEMIST는 과제 채택 표결에서 소수다 |
@@ -810,7 +815,7 @@ z=\tfrac{1}{2}\ln\frac{1+r}{1-r},\qquad \mathrm{SE}=\frac{1}{\sqrt{K-3}},\qquad 
 | 고객 관계에 따른 결과 조정 | 결과물 고객이 Arena 제출사면 리포트에 관계 공시, 수수료 사전 확정 |
 | 헌장 전 외부 채점 | 금지. 헌장 서명 전 활동은 내부 평가와 비공개 파일럿으로 한정 |
 
-**일정 정합:** DR은 공동서명 MOU를 M10, 헌장 서명을 2027 Q4(M12–M14), K-Pick Challenge를 M12(외부 채점, 공동서명 기관 입회)로 둔다. 헌장 서명이 M13–M14로 밀리면 M12 외부 채점이 '헌장 전 외부 채점 금지' 원칙과 충돌한다. 학습 모듈은 **헌장 초안 M8, MOU M10, 헌장 서명은 K-Pick 행사 전 M12 초**로 당겨 운영한다[A]. 서명이 늦어지면 K-Pick은 공동서명 기관 입회 하의 '비순위 시연'으로 낮춰 연다.
+**일정 정합:** 초기 DR은 헌장 서명을 2027 Q4(M12–M14)로 두어, 서명이 M13–M14로 밀리면 K-Pick Challenge(M12)의 외부 채점이 '헌장 전 외부 채점 금지' 원칙과 충돌했다. 학습 모듈이 제안한 당김 일정을 DR v1.1(§5.3)이 채택했다. **헌장 초안 M8 → 공동서명 MOU M10(2027-08-27) → 헌장 서명 M12 초(2027-10-15 전후, K-Pick Challenge 2027-10-22 이전)**다. DR §13.3의 '2027 Q4 헌장 서명'은 이 일정으로 해석한다. 서명이 늦어지면 K-Pick은 공동서명 기관 입회 아래 순위를 매기지 않는 '비순위 공개 시연'으로 연다.
 
 ### 8.6 벤치마크 포화 문제
 
@@ -836,7 +841,7 @@ z=\tfrac{1}{2}\ln\frac{1+r}{1-r},\qquad \mathrm{SE}=\frac{1}{\sqrt{K-3}},\qquad 
 | 로봇-과제 인증서(₩3,000만–1억) | Tier 2 sim2sim, 실셀 200 trial[A], 운영 범위 명시 |
 | Cell-to-Policy PoC 인수(₩1.5–2.5억) | 실셀 성공률, 갭 ≤15%p, 정책 5개 이상 r 보고 |
 
-- **K-Pick Challenge(M12):** 로봇 OEM 3곳의 정책을 KP 스위트(시뮬)와 Test Cell 1(실셀)에서 동시에 채점한다. 채점 코드와 프로토콜은 M11에 공개한다.
+- **K-Pick Challenge(M12, 2027-10-22):** 로봇 OEM 3곳의 정책을 KP 스위트(시뮬)와 Test Cell 1(실셀)에서 동시에 채점한다. 채점 코드와 프로토콜은 M11에 공개한다. 헌장 서명이 행사 전에 끝나지 않으면 순위를 매기지 않는 공개 시연으로 진행한다(§8.5).
 
 ```mermaid
 sequenceDiagram
@@ -869,7 +874,7 @@ sequenceDiagram
 |---|---|---|
 | 1 | PyTorch 체크포인트 → ONNX | opset은 트레인별 고정, 동적 축 최소화 |
 | 2 | ONNX Runtime 1.30.0 대조 | 동일 입력 1,000개, 행동 최대 오차 ≤1e-3(Tier 1) |
-| 3 | TensorRT 11.3 엔진 빌드 | Jetson SKU·JetPack 7.2 버전별 엔진. 정밀도 FP16 기본, INT8·FP8은 보정 데이터셋과 정확도 회귀 검사 후[A] |
+| 3 | TensorRT 엔진 빌드 | 대상 Jetson에서 JetPack 7.2 번들 TensorRT(버전 [U])로 빌드한다. TensorRT 엔진은 TensorRT 버전·GPU 아키텍처 사이에 이식되지 않으므로 Jetson SKU·JetPack 버전별로 따로 만든다. x86 tensorrt 11.3(PyPI)은 데이터센터 서빙용이다. 정밀도 FP16 기본, INT8·FP8은 보정 데이터셋과 정확도 회귀 검사 후[A] |
 | 4 | 지연 프로파일 | p50·p99 지연, 메모리, 전력. 제어 주기 예산 대비 여유 ≥30%[A] |
 | 5 | 패키징 | 컨테이너 + ROS 2 노드(Jazzy·Lyrical) + 안전 래퍼(관절·속도 한계, 워치독) + 모델 카드 + 라이선스 매니페스트 + Run Manifest ID |
 | 6 | 서명·등록 | 패키지 해시 서명, MLflow `deployed` 단계 등록 |
@@ -997,7 +1002,7 @@ flowchart LR
 | 가중치·데이터 | 라이선스 | 상업 | 재배포 | 국방(Air-gap) | 게이트 판정 |
 |---|---|---|---|---|---|
 | SmolVLA | Apache-2.0 | O | O | O | **허용** |
-| GR00T N1.7 | NVIDIA Open Model License | O(약관 조건) | [U](파인튜닝 가중치 납품 포함) | [U] | 학습·내부 평가 허용. 고객 납품(Jetson 패키지 포함)은 V7(M3) 서면 해석 후. 국방은 차단 |
+| GR00T N1.7 | NVIDIA Open Model License | O(약관 조건) | 조건부(V7, 파인튜닝 가중치 납품 포함) [U] | X(정책상 차단, 약관 해석 [U]) | 학습·내부 평가 허용. 고객 납품(Jetson 패키지 포함)은 V7(M3) 서면 해석 후. 국방은 차단 |
 | GEAR-SONIC 가중치 | NVIDIA Open Model License | O(약관 조건) | [U] | [U] | GR00T와 동일 |
 | pi0.5(openpi) | 가중치 약관 미명시 | [U] | [U] | X | **차단**(내부 평가만) |
 | OpenVLA | Llama 2 Community License | 조건부 | 조건부 | X | 내부 기준선만 |
@@ -1005,7 +1010,7 @@ flowchart LR
 | RLDX-1 가중치 | RLWRLD Model License v1.0(비상업) | X | X | X | **차단** |
 | Cosmos 3 | OpenMDW-1.1 | 확인 중 | 확인 중 | 확인 중 | V7 전 외부 납품 증강은 Transfer 2.5만 |
 | Cosmos Transfer 2.5 | NVIDIA Open Model License | O(약관 조건) | [U] | X | Zone F 증강 허용 |
-| SAM 3 / 3.1 | SAM License | O(제한) | 조건부 | **X**(군사·ITAR) | 민수만 |
+| SAM 3 / 3.1 | SAM License(커스텀 사용 제한, 신청서) | 조건부(V7) | 조건부(재배포 조항 서면 확인 전 온프렘 번들 제외) | **X**(군사·ITAR) | 민수만. 테넌트 호스팅 추론은 V7 통과 후 |
 | RF-DETR N–L / XL·2XL | Apache-2.0 / PML 1.0 | O / 검토 | O / 검토 | O / X | N–L 허용, XL·2XL 차단 |
 | Ultralytics YOLO | AGPL-3.0 | SaaS 불가 | — | X | **차단**(고객 Enterprise 라이선스 시 예외) |
 | MimicGen·DexMimicGen 데이터셋 | CC-BY-4.0 | O(귀속) | O | 검토 | 데이터만 허용, 코드는 차단 |
@@ -1035,7 +1040,7 @@ flowchart LR
 | 시각 덱스터러스 teacher → student | RT | 200–600 | 12,000–36,000 | ₩120–360만 | — | 리서치 추정 |
 | Mimic 1,000개(상태 / 시각운동) | RT | 0.3–0.67 / 약 10 | 18–40 / 약 600 | ₩1,800–4,000 / ₩6만 | — | Isaac Lab Mimic 문서 |
 | SmolVLA 파인튜닝 | TRAIN | 약 4 | 약 320 | ₩3.2만 | 5회 = 1,600 | LeRobot 문서 |
-| GR00T N1.7 파인튜닝 | TRAIN | 2–40 | 160–3,200 | ₩1.6–32만 | 5회 = 800–16,000 | 저장소 예시·DR 범위 |
+| GR00T N1.7 파인튜닝 | TRAIN | 2–40 | 160–3,200 | ₩1.6–32만 | 5회 = 800–16,000 | 리서치 추정(저장소 예시 기반)·DR 범위 [A] |
 | pi0.5 전체 파인튜닝(차단) | TRAIN | 10–40 | 800–3,200 | ₩8–32만 | — | 추정 |
 | OpenVLA-OFT(참고) | TRAIN | 200–400 | 16,000–32,000 | ₩160–320만 | — | 추정 |
 | RLinf VLA RL 후처리(P2) | TRAIN | 50–300[A] | 4,000–24,000 | ₩40–240만 | — | P2 측정 |
@@ -1061,7 +1066,7 @@ flowchart LR
 | **합계** | RT 140 · TRAIN 164 · LIGHT 50 | 354 | **22,520 토큰(₩225만)** |
 
 - **컴퓨트 원가:** RT 140시간 × ₩1,600–3,220 + TRAIN 164시간 × ₩4,900 + LIGHT 50시간 × ₩686 ≈ ₩106–129만이다. PoC 가격 ₩1.5–2.5억의 1% 미만이다.
-- **진짜 원가는 사람이다.** Skill·FDE 공수 6 head-month(₩1,400만 × 6 = ₩8,400만)를 쓰면 ₩2억 PoC의 직접 마진은 약 57%, 공수를 3 head-month로 줄이면(엔지니어 시간 지수 50) 약 78%다[A]. 학습 모듈 자동화(task-spec, Mimic 원클릭, 게이트 자동화, 에이전트)의 사업적 목적이 여기에 있다.
+- **진짜 원가는 사람이다.** Skill·FDE 공수 6 head-month(₩1,400만 × 6 = ₩8,400만)를 쓰면 ₩2억 PoC의 **직접원가 마진(라인 총마진 아님)**은 약 57%, 공수를 3 head-month로 줄이면(엔지니어 시간 지수 50) 약 78%다[A]. 이 값은 컴퓨트와 Skill·FDE 공수만 뺀 직접원가 예시다. G1과 생산화 게이트가 판정하는 **라인 총마진은 [10 §6.4](10-business-model-gtm.md)의 완전원가 정의**(컴퓨트·토큰, 개입·FDE·Skill·Forge 인건비, 랩·현장 원가, 크레딧 이행 원가, 인수 리스크 충당금 차감)를 쓰며, 같은 12주 ₩2.0억 PoC가 지수 100에서 약 39%, 지수 50에서 약 60%다. 직접원가 마진을 G1 판정에 쓰지 않는다. 학습 모듈 자동화(task-spec, Mimic 원클릭, 게이트 자동화, 에이전트)의 사업적 목적이 여기에 있다.
 
 ### 11.3 DR 풀 안에서의 배분[A]
 
@@ -1107,26 +1112,32 @@ gantt
     section P0 Factory Zero
     Isaac Lab 3x 소스 빌드와 Train 1 핀 :a1, 2026-11-01, 2027-01-08
     task-spec v0와 어댑터 계층 :a2, 2026-11-15, 2027-01-31
-    RL 3 IL 1 인식 1 템플릿 :a3, 2026-12-01, 2027-02-28
+    RL 3 조작 IL 1 인식 1 템플릿 :a3, 2026-12-01, 2027-02-28
     sim2sim Tier 1 게이트 CI :a4, 2027-01-04, 2027-02-28
-    G0 :milestone, g0, 2027-02-28, 0d
+    G0 :milestone, g0, 2027-02-26, 0d
     section P1 Outcome MVP
     Cell-to-Policy PoC 판매 :b1, 2027-03-01, 2027-10-31
     SmolVLA와 GR00T 파인튜닝 라인 :b2, 2027-03-01, 2027-06-30
     Kit-less Mimic Teleop TacSL 시험 :b3, 2027-03-01, 2027-04-30
+    휴머노이드 사족 덱스 템플릿 M6-M8 :b7, 2027-04-01, 2027-06-30
+    Cosmos Transfer 2.5 증강 M5-M8 :b8, 2027-03-01, 2027-06-30
     Cosmos 3 Nano 파인튜닝 :b4, 2027-07-01, 2027-10-31
     Studio 베타 학습 템플릿 :b5, 2027-07-01, 2027-10-31
     Crucible v0 내부 운영 :b6, 2027-07-01, 2027-10-31
-    공동서명 MOU :milestone, mou, 2027-08-31, 0d
-    G1 :milestone, g1, 2027-09-30, 0d
-    K-Pick Challenge :milestone, kp, 2027-10-29, 0d
+    헌장 초안 :milestone, ch0, 2027-06-25, 0d
+    공동서명 MOU :milestone, mou, 2027-08-27, 0d
+    G1 :milestone, g1, 2027-09-24, 0d
+    헌장 서명 :milestone, ch1, 2027-10-15, 0d
+    K-Pick Challenge :milestone, kp, 2027-10-22, 0d
     section P2 Productize
     PBT ADR 멀티 노드 :c1, 2027-11-01, 2028-04-30
     RLinf VLA RL 후처리 :c2, 2027-11-01, 2028-06-30
     셀프서브 학습 템플릿 GA :c3, 2028-01-01, 2028-03-31
     외부 Arena v1과 휴머노이드 트랙 :c4, 2028-02-01, 2028-04-30
     현장 플라이휠 첫 주기 :c5, 2028-04-01, 2028-07-31
-    G3 :milestone, g3, 2028-10-31, 0d
+    Mobility 경로 추종 RL-15 :c6, 2028-04-01, 2028-10-31
+    드론 PX4 SITL 템플릿 RL-16 :c7, 2028-06-01, 2028-10-31
+    G3 :milestone, g3, 2028-10-27, 0d
     section P3 Scale
     Cosmos 3 Super 정책 사전 선별 :d1, 2028-11-01, 2029-04-30
     셀프서브 SKILL 라인 :d2, 2028-11-01, 2029-10-31
@@ -1145,7 +1156,7 @@ gantt
 | 처리량 | 템플릿 과제 GPU당 병렬 환경 수 | ≥4,096 | ≥4,096 | ≥8,192 | ≥8,192 | 템플릿 CI 벤치 | Skill 리드 |
 | 범위 | 템플릿 수(RL / IL·VLA / 인식) | 3 / 1 / 1 | 8 / 3 / 3 | 15 / 6 / 5 | 25 / 10 / 8 | 카탈로그 등록(Crucible 과제 ID 필수) | Skill 리드 |
 | 증식 | Mimic 1,000개 생성(상태 / 시각운동) | 측정 | ≤1시간 / ≤12시간 | ≤40분 / ≤8시간 | ≤30분 / ≤6시간 | 표준 과제 벽시계 시간 | Skill 리드 |
-| 게이트 | 수출 전 sim2sim 게이트 적용률 | 100% | 100% | 100% | 100% | 레지스트리 감사 | Kernel 리드 |
+| 게이트 | 수출 전 sim2sim 게이트 적용률(Tier 1) | 100% | 100% | 100% | 100% | 레지스트리 감사 | Kernel 리드 |
 | 이전 | 실셀 이전 정책 수(누적) | 1 | 8 | 30 | 80 | `real-validated` 단계 수 | Head of Fidelity |
 | 원가 | 1B 환경 스텝당 RL 비용(카메라 없음) | 측정 | ≤$10 | ≤$6 | ≤$4 | §3.8 공식, 분기 | Platform 리드 |
 | 충실도 | 정책 sim-to-real 갭(%p, 과제 수) | ≤25(1) | ≤15(3) | ≤10(5) | ≤8(10) | Scorecard(Wilson CI 병기) | Head of Fidelity |
@@ -1196,7 +1207,7 @@ gantt
 | 인식·SDG | WS5 + WS3 | P1 | RF-DETR, 소량 곡선, 증강 QA |
 | Head of Fidelity & Evaluation | 리더십 | M4까지 확정 | Crucible, 통계, 헌장 |
 | Arena 프로그램 매니저 | WS4 | M10 | Arena 운영, 회원, K-Pick |
-| MLOps·레지스트리 | WS6 | P0–P1 | MLflow, 계보, 라이선스 게이트 |
+| MLOps·레지스트리 | P0는 WS1(재배치된 CEN 마켓플레이스·플랫폼 엔지니어, Kernel 리드 대행: Run Manifest·장면 커밋·라이선스 레지스트리 백엔드), P1부터 운영은 WS6, 레지스트리 UI는 WS7 | P0–P1 | MLflow, 계보, 라이선스 게이트 |
 
 | 리스크 | 가능성 / 영향 | 완화 | 조기경보 |
 |---|---|---|---|
@@ -1215,21 +1226,23 @@ gantt
 
 ## 15. 결정 사항 및 다음 액션
 
-**결론: 이 문서로 학습 스택의 기본·금지 목록, 인증서 기반 랜덤화, Mimic 견적 기준(시각운동 10시간), VLA 3등급, sim2sim 2단 게이트, Crucible 통계 규칙, 헌장 일정 당김, 가중치 라이선스 교집합 규칙을 확정한다.**
+**결론: 이 문서로 학습 스택의 기본·금지 목록, RL 템플릿 순서(06 ID·08 배분 정합), 인증서 기반 랜덤화, Mimic 견적 기준(시각운동 10시간), VLA 3등급, sim2sim 2단 게이트, Crucible 통계 규칙, 헌장 일정 당김, 가중치 라이선스 교집합 규칙을 확정한다.**
 
 **결정 사항**
 
 | # | 결정 | 근거 절 |
 |---|---|---|
 | D1 | RL은 Isaac Lab 3.x 소스 빌드(F·T 이미지 분리) + rsl_rl 5.5.1 / skrl 2.1.0과 mjlab 1.6.0, IL·VLA는 LeRobot 0.6.1 + LeRobotDataset v3, 인식은 RF-DETR N–L을 기본으로 한다. PyPI 휠은 쓰지 않는다 | §2 |
-| D2 | 물리 도메인 랜덤화 폭은 자산 인증서 오차 막대 × k(기본 2.0)로 정하고, ADR(P2)의 하한으로 둔다 | §3.3, §3.4 |
+| D2 | 물리 도메인 랜덤화 폭은 자산 인증서 오차 막대 × k(기본 2.0)로 정하고(Gold는 랩 측정 불확도 σ_lab), ADR(P2)의 하한으로 둔다 | §3.3, §3.4 |
 | D3 | Mimic 견적·영업 자료는 시각운동 1,000개 약 10시간, 생성 성공률 약 50%(Franka)를 기준으로 쓴다 | §4.3 |
 | D4 | VLA는 SmolVLA(V1, 기본·국방), GR00T N1.7(V2, 휴머노이드·양팔), pi0.5(V7 전 차단)의 3등급과 ACT·Diffusion 베이스라인으로 운영한다 | §4.4 |
 | D5 | sim2sim은 Tier 1(수출 차단, 전 정책, ≤10%p)과 Tier 2(인증 대상, ≤5%p·RMSE ≤0.05 rad)로 운영한다 | §7.3 |
 | D6 | 인증용 sim/real r은 정책 패밀리 K ≥8로 계산하고 Fisher 신뢰구간을 병기한다. P2부터 실셀 권장 표본은 정책·과제당 100 trial이다 | §8.3 |
-| D7 | 거버넌스 헌장 서명을 K-Pick Challenge(M12) 이전으로 당긴다. 서명 지연 시 K-Pick은 비순위 시연으로 연다 | §8.5 |
+| D7 | 거버넌스 헌장은 초안 M8 → 공동서명 MOU M10(2027-08-27) → 서명 M12 초(K-Pick Challenge 2027-10-22 이전)로 운영한다(DR v1.1 §5.3 채택). 서명 지연 시 K-Pick은 비순위 공개 시연으로 연다 | §8.5 |
 | D8 | 파인튜닝 체크포인트의 허용 범위는 입력 가중치·데이터·코드 경로 라이선스의 교집합으로 계산하고 레지스트리가 강제한다 | §10.4 |
 | D9 | 월드모델 출력은 인증 증거로 쓰지 않는다. 사전 선별은 Kendall τ ≥0.6(정책 20개 이상) 검증 후에만 필터로 쓴다 | §6.3 |
+| D10 | RL 템플릿은 06 §6.2의 RL-xx ID와 08 §7.1 팩 배분을 따른다. P0는 조작 3종(RL-01–03), 휴머노이드·사족·덱스터러스는 P1(M6–M12), 드론 PX4 SITL(RL-16)은 P2 RL 1종이다. 베이크오프 T1은 엔진 벤치마크로만 쓴다 | §3.2 |
+| D11 | RL 원가는 L40S급 처리량으로 계산한다. P1 ≤$10·P2 ≤$6은 자체 서버·네오클라우드로 맞추고, P3 ≤$4는 Newton/MJWarp 처리량 우위가 실측될 때만 약속한다 | §3.8 |
 
 **다음 액션**
 
@@ -1237,16 +1250,18 @@ gantt
 |---|---|---|
 | Isaac Lab 3.x GA 소스 빌드, `-f`/`-t` 이미지 분리, SBOM 게이트 연결 | Sim Architect(CTO 대행) + Skill 리드 | 2026-12(Train 1 시작) |
 | task-spec v0 JSON Schema와 어댑터 계층(XYZW 쿼터니언, ProxyArray 정규화) | Skill 리드 | 2026-12 말(M2) |
-| 베이크오프 T1·T3·T5 결과로 RL 기본 GPU·백엔드 확정, 1B 스텝 원가 기준선 기록 | Skill 리드 + Kernel 리드 | 2027-01 첫 주(결정 메모) |
-| P0 템플릿 R01–R03, IL 1개(Mimic + BC), 인식 1개(RF-DETR + 소량 곡선) 출고 | Skill 리드 | 2027-02-28(G0) |
-| Mimic 상태·시각운동 1,000개 생성 시간과 성공률 사내 측정(시도·성공 기준 확정) | RL/IL 엔지니어 | 2027-02-28(G0) |
-| MLflow 3 레지스트리 + 모델 카드 필수 필드 + 라이선스 교집합 게이트 v0 | Platform 리드 | 2027-02-28(G0) |
+| 베이크오프 T1·T3·T5 결과로 RL 기본 GPU·백엔드 확정, L40S급 1B 스텝 원가 기준선 기록(P3 ≤$4 가능성 판정) | Skill 리드 + Kernel 리드 | 2027-01 첫 주(결정 메모, 2027-01-08) |
+| P0 템플릿 RL-01–03(큐브 들기·빈 피킹·디팔레타이징), IL 1개(IL-01, Mimic + BC), 인식 1개(PE-01, RF-DETR + 소량 곡선) 출고 | Skill 리드 | 2027-02-26(G0) |
+| Mimic 상태·시각운동 1,000개 생성 시간과 성공률 사내 측정(시도·성공 기준 확정) | RL/IL 엔지니어 | 2027-02-26(G0) |
+| MLflow 3 레지스트리 + 모델 카드 필수 필드 + 라이선스 교집합 게이트 v0(P0 라이선스 레지스트리 백엔드는 WS1, P1부터 운영 WS6) | WS1(Kernel 리드 대행) + Skill 리드 | 2027-02-26(G0) |
 | GR00T Open Model License·OpenMDW-1.1·openpi·SAM License 법률 검토(V7) | 라이선스 매니저 + 외부 자문 | 2027-01 말(M3) |
-| Thor 수출 레시피 v0와 Test Cell 1 지연 프로파일 | RL/IL 엔지니어 | 2027-02-28(G0) |
+| Thor 수출 레시피 v0(JetPack 7.2 번들 TensorRT로 대상 장비에서 엔진 빌드)와 Test Cell 1 지연 프로파일 | RL/IL 엔지니어 | 2027-02-26(G0) |
 | Kit-less 모드 Mimic·Teleop·TacSL 동작 시험과 테넌트 범위 결정 | Skill 리드 | 2027-04 말(M6) |
+| P1 템플릿 RL-06(사족)·RL-07(G1 속도 추종) 내부 출고, RL-08·RL-10 착수 | Skill 리드 + VLA 엔지니어 | 2027-06 말(M8), Studio M9 |
 | Crucible v0 과제 스위트(KP 12, KA 7, KS 3, KR 3 + 실셀 2) 명세와 채점 코드 | Head of Fidelity & Evaluation | 2027-06 말(M8) |
-| 거버넌스 헌장 초안과 공동서명 후보(KTL·KIRIA·TTA) 협의 | Head of Fidelity + BD | 초안 M8, MOU M10(2027-08) |
+| 거버넌스 헌장 초안과 공동서명 후보(KTL·KIRIA·TTA) 협의 | Head of Fidelity + BD | 초안 M8(2027-06), MOU M10(2027-08-27) |
 | K-Pick Challenge 규칙·프로토콜·채점 코드 공개 | Arena PM | 2027-09 말(M11) |
-| 헌장 서명(K-Pick 외부 채점 전) | CEO + 공동서명 기관 | 2027-10 초(M12) |
+| 헌장 서명(K-Pick 외부 채점 전) | CEO + 공동서명 기관 | 2027-10-15 전후(M12 초, K-Pick 2027-10-22 이전) |
 | Cosmos Transfer 2.5 증강 A/B(랜덤화 대비)와 Cosmos 3 Nano 착수 판단 | Skill(인식) + WS3 | A/B M8, 착수 M9 |
 | PBT·ADR, RLinf, 플라이휠 설계 착수(P2 백로그) | Skill 리드 | 2027-11(M13) |
+| 드론 PX4 SITL 템플릿 RL-16 출고(P2 RL 15종 완료) | Skill 리드 + WS1-M | 2028-10(M24) |

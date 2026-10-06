@@ -1,19 +1,19 @@
 # 06. 사용성과 한국어 에이전트: 두 개의 문, 원클릭 경로, 검증되는 말
 
-> **문서 번호** 06 · **기준일** 2026-10-06 · **버전** v1.0 · **상위 문서** [README](README.md)
+> **문서 번호** 06 · **기준일** 2026-10-06 · **버전** v1.1(DR v1.1·문서 간 정합 반영) · **상위 문서** [README](README.md)
 > **관련 문서** [01 비전·포지셔닝](01-vision-positioning.md) · [02 시장·경쟁](02-market-competition.md) · [03 엔진 선정·Build vs Buy](03-engine-selection-build-vs-buy.md) · [04 시스템 아키텍처](04-system-architecture.md) · [05 물리·현실감](05-physics-and-realism.md) · [07 학습 모듈](07-training-module.md) · [08 도메인 팩](08-domain-packs.md) · [09 로드맵·조직·예산](09-roadmap-organization-budget.md) · [10 사업모델·GTM](10-business-model-gtm.md) · [11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md) · [12 90일 실행](12-execution-90days.md) · [부록 A 기술 카탈로그](appendix-a-technology-catalog.md) · [부록 B 출처·검증](appendix-b-sources-verification.md)
-> **표기** **[A]** 계획 가정(실측·실적 확인 전까지 설계 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 버전·라이선스는 GitHub·PyPI에서 확인한 값(2026-10-05/06) · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · 게이트 G0 M4, G1 M11, G2 M18, G3 M24 · 1 토큰 = ₩100 · **DR** = [결정 기록](00-decision-record.md)(단일 기준, 수치 충돌 시 DR 우선) · 독자: CEO, Product Lead, WS7(Studio UX·Agent·Marketplace), 디자인 파트너, 투자·정부 실사 담당자
+> **표기** **[A]** 계획 가정(실측·실적 확인 전까지 설계 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 버전·라이선스는 GitHub·PyPI에서 확인한 값(2026-10-05/06) · M1 = 2026년 11월, P0 = M1–M4(2026.11–2027.02), P1 = M5–M12(2027.03–2027.10), P2 = M13–M24(2027.11–2028.10), P3 = M25–M36(2028.11–2029.10) · 게이트 G0 M4(2027-02-26), G1 M11(2027-09-24), G2 M18(2028-04-28), G3 M24(2028-10-27) · 1 토큰 = ₩100 · **DR** = [결정 기록](00-decision-record.md)(단일 기준, 수치 충돌 시 DR 우선) · 독자: CEO, Product Lead, WS7(Studio UX·Agent·Marketplace), 디자인 파트너, 투자·정부 실사 담당자
 
 ---
 
 ## 핵심 요약
 
-- **편의성은 기능 목록이 아니라 측정되는 시간이다.** 이 문서가 지키는 숫자는 DR의 여섯 개다. Studio 첫 시뮬레이션 ≤10분(M12 베타)→≤5분(M24), 한국어 명령 성공률 20개 중 ≥80%(M4)→50개 중 ≥85%(M12)→100개 중 ≥90%(M24)→≥92%(M36), 영상→Bronze 자산 ≤2시간(내부)→≤30분→≤15분(셀프서브)→≤10분, 영상→피킹 스킬 48시간(내부)→24시간→당일(셀프서브)→4시간, Forge 무개입 30→60→80→90%, 결과물당 엔지니어 시간 지수 100→50→25→15다.
-- **문은 두 개, 생산 라인은 하나다.** Outcome Console(한국어로 주문·검토·인수)과 Athanor Studio(CEN 워크스페이스 안에서 직접 제작)는 같은 MCP 도구, 같은 Orchestrator, 같은 인증 체계를 호출한다. Studio는 **M9(2027.07) 디자인 파트너 베타, M15(2028.01) GA**이고, 생산화 게이트(무개입 ≥80%, 라인 총마진 ≥60%, 서면 라이선스 근거)를 통과한 라인만 셀프서브로 연다.
+- **편의성은 '두 개의 문 + 한국어 에이전트 + 원클릭 경로'로 만들고, 시간으로 측정한다.** 대표 목표는 Studio 첫 시뮬레이션 5분(M24), 휴대폰 영상 → 학습된 피킹 스킬 당일(M24), 한국어 명령 성공률 90%(M24)다. 단계별 전체 KPI는 §11.1 표에 둔다.
+- **문은 두 개, 생산 라인은 하나다.** Outcome Console(한국어로 주문·검토·인수)과 Athanor Studio(CEN 워크스페이스 안에서 직접 제작)는 같은 MCP 도구, 같은 Orchestrator, 같은 인증 체계를 호출한다. Studio는 **M9(2027.07) 디자인 파트너 베타(Zone T 전용, Explorer는 대기자 명단 초대제), M15(2028.01) GA(공개 가입)**이고, 생산화 게이트(무개입 ≥80%, 라인 총마진 ≥60%(완전원가 기준, [10 §6.4](10-business-model-gtm.md)), 서면 라이선스 근거)를 통과한 라인만 셀프서브로 연다.
 - **에이전트는 '코드를 실행하는 챗봇'이 아니라 18개 타입 도구와 5단 가드레일이다.** 권한을 L0(읽기)부터 L4(사람 전용)까지 다섯 단계로 나눈다. 인증서 발행, `main` 병합, 거주지를 넘는 반출, 배포 롤백은 에이전트가 단독으로 할 수 없다. 모든 변경은 불변 커밋이라 '되돌리기'는 포인터 이동 한 번이다.
 - **에이전트는 사내 딜리버리 엔지니어가 먼저 쓴다.** P0에 읽기·실행 도구 8종으로 시작하고, 사내에서 엔지니어 시간 감소가 확인된 도구만 M9 디자인 파트너(읽기·실행·브랜치 편집), M15 전체 고객 순으로 연다. 목표는 M12 결과물당 엔지니어 시간 지수 50(P0 대비 절반)이다. 효과가 증명되지 않은 도구는 고객에게 열지 않는다.
 - **원클릭 경로는 6단계 파이프라인이다.** 휴대폰 영상 → 인증 자산(Forge) → 장면 → 데이터·정책 → Crucible 평가 → Jetson 수출(ONNX → TensorRT). 각 단계는 독립 게이트와 시간 예산을 가지며, M24에는 셀프서브로 당일(≤8시간 벽시계 [A]) 안에 끝나야 한다.
-- **기본 화면은 서버 GPU를 쓰지 않는다.** WebGPU(three.js r186, PlayCanvas 2.23, Babylon.js 9.29)와 스플랫 LOD 스트리밍이 기본이고, 서버 렌더 세션은 버튼을 눌렀을 때만 RT GPU 1장 단위로 과금한다(서울 대화형 95 토큰/시간). 그래서 뷰어·리뷰어 좌석을 무료·무제한으로 줄 수 있다.
+- **기본 화면은 서버 GPU를 쓰지 않는다.** 브라우저 렌더 R0(three.js r186(WebGPU/WebGL2) + Spark 2.x(WebGL2), PlayCanvas 2.23(WebGPU), Babylon.js 9.29(OpenUSD WASM))와 스플랫 LOD 스트리밍이 기본이고, 서버 렌더 세션은 버튼을 눌렀을 때만 RT GPU 1장 단위로 과금한다(서울 대화형 95 토큰/시간). 그래서 뷰어·리뷰어 좌석을 무료·무제한으로 줄 수 있다.
 - **언어는 한국어가 기본이고, 영어는 M12, 일본어는 M18에 붙인다[A].** 접근성은 WCAG 2.2 AA를 GA 출시 조건으로 둔다[A]. 3D 뷰포트도 키보드 조작과 스크린리더용 장면 트리를 제공한다.
 
 ---
@@ -217,9 +217,9 @@ gantt
 |---|---|---|---|
 | P0(M1–M4) | 사내 v0: 주문 명세, 견적, 인수 체크리스트 | — | — |
 | M5 | 고객 공개 v1(PoC 판매 개시와 동시) | — | Cell-to-Policy PoC |
-| **M9(2027.07)** | — | **베타**: WebGPU 뷰어, Newton·MuJoCo 템플릿, Bronze Forge 셀프서브 | Explorer(무료, 베타), Builder(₩99,000/월, 베타) |
+| **M9(2027.07)** | — | **베타(Zone T 전용)**: 브라우저 R0 뷰어, Newton·MuJoCo 템플릿, Bronze Forge 셀프서브 | Explorer(무료, 대기자 명단 초대제·주간 승인 상한), Builder(₩99,000/월, 베타) |
 | M12 | 영문 Console | 베타 MAW 30 | — |
-| **M15(2028.01)** | — | **GA**: 생산화 게이트 통과 라인부터 | Builder GA, Team(₩190만/월, 5석, 25,000 토큰), Enterprise VPC(연 ₩2억부터) |
+| **M15(2028.01)** | — | **GA**: 공개 가입, 생산화 게이트 통과 라인부터 | Builder GA, Explorer 공개 가입, Team(₩190만/월, 편집석 5석, 25,000 토큰. 리뷰어·뷰어 좌석 무료·무제한), Enterprise VPC(연 ₩2억부터) |
 | M18 | 일본어 Console[A] | Sovereign GA와 같은 UI | Athanor Sovereign GA |
 | M24 | — | 셀프서브 당일 원클릭, MAW 300 | — |
 | M36 | — | 셀프서브 SKILL 라인, MAW 1,500 | — |
@@ -252,11 +252,11 @@ flowchart LR
 | 단계 | 사용자 화면·행동 | 시스템 처리 | 게이트 | 사용자 결정 |
 |---|---|---|---|---|
 | **1 촬영** | 모바일 웹에서 '물체 등록'. 화면 가이드가 궤도 촬영을 안내하고, 흔들림·노출·가림을 실시간으로 경고한다. A4 ChArUco 카드를 함께 찍는다[A] | 업로드 중 프레임 품질 점수 계산, 부적합 구간 표시 | 선명 프레임 ≥120장, 커버리지 ≥80%[A] | ① 촬영 확인 |
-| **2 Forge** | 진행률 바(재구성 → 기하·충돌체 → 물성 추정 → 물리 QA). 완료 시 R0로 회전·낙하 미리보기 | gsplat 1.6.0/3DGRUT 2.0 재구성, VGGT-1B-Commercial·MapAnything 기하, CoACD 충돌체, VLM 물성 사전분포, 물리 QA | Bronze: 수밀 메시, 질량·관성 정합성, 2-백엔드 낙하 시험. Silver: 밀기·낙하 영상 기반 식별 | (선택) Silver 업그레이드 견적 |
+| **2 Forge** | 진행률 바(재구성 → 기하·충돌체 → 물성 추정 → 물리 QA). 완료 시 R0로 회전·낙하 미리보기 | gsplat 1.6.0/3DGRUT 2.0 재구성, MapAnything-apache·DA3 기하(VGGT-1B-Commercial은 V7 통과 후 조건부), CoACD 충돌체, VLM 물성 사전분포, 물리 QA | Bronze: 수밀 메시, 질량·관성 정합성, 2-백엔드 낙하 시험. Silver: 밀기·낙하 영상 기반 식별 | (선택) Silver 업그레이드 견적 |
 | **3 장면** | "이 박스를 2번 셀 빈에 20개 넣어"(에이전트) 또는 템플릿 셀 갤러리에서 드래그 | `scene.apply_ops`로 브랜치 커밋, R0 미리보기 | 5단 가드레일([04 §10.3](04-system-architecture.md)) | — |
 | **4 데이터·정책** | 목표 선택: 검출기(SDG) 또는 피킹 정책(RL·IL). 기본 프리셋으로 견적 표시 | `sdg.generate` 또는 `skill.train` DAG, 실시간 롤아웃 영상(R1 타일 카메라) | 견적 승인, 성공률 조기 종료 기준 | ② 견적 승인 |
-| **5 평가** | 자동 실행. 결과는 Scorecard 카드(성공률 95% 신뢰구간, 조건별 분해) | `eval.run` 시뮬 스위트, Newton→MuJoCo CPU sim2sim 교차 실행 | sim2sim 편차 허용치, 회귀 게이트 | — |
-| **6 Jetson 수출** | 대상 선택(Jetson AGX Thor, JetPack 7.2) → 패키지 다운로드 또는 장비 직접 배포 | ONNX(opset 고정) → TensorRT 11.3 엔진 빌드, 지연 프로파일, 서명 패키지 | sim2sim 게이트 적용률 100%(DR) | ③ 배포 승인(사람만) |
+| **5 평가** | 자동 실행. 결과는 Scorecard 카드(성공률 95% 신뢰구간, 조건별 분해) | `eval.run` 시뮬 스위트, sim2sim Tier 1 교차 실행(Zone T: Newton ↔ MuJoCo CPU, [07 §7.3](07-training-module.md)) | Tier 1 허용치(성공률 차 ≤10%p, 반환 비율 ≥0.85), 회귀 게이트 | — |
+| **6 Jetson 수출** | 대상 선택(Jetson AGX Thor, JetPack 7.2) → 패키지 다운로드 또는 장비 직접 배포 | ONNX(opset 고정) → 대상 Jetson에서 JetPack 7.2 번들 TensorRT(버전 [U])로 엔진 빌드, 지연 프로파일, 서명 패키지 | sim2sim Tier 1 적용률 100%(DR) | ③ 배포 승인(사람만) |
 
 - **Crucible 단계의 성격:** 셀프서브 경로의 평가는 시뮬 스위트에 대한 **'자체 평가(self-assessed)'**다. 실셀 평가와 공동서명 인증서는 Console에서 Crucible 캠페인으로 주문한다. 공동서명 기관과 헌장에 서명하기 전에는 외부 채점을 하지 않는다는 DR 원칙(§5.3)을 UI 라벨로 강제한다.
 - **Bronze 인증의 발급 주체:** Bronze는 Forge 파이프라인이 서비스 계정으로 자동 서명한다(VLM 추정 등급). Silver는 자동 식별 + 표본 QA, Gold는 랩 실측과 사람 2인 승인이다. 에이전트는 `cert.issue`를 호출할 수 없다(§5.3).
@@ -280,11 +280,11 @@ flowchart LR
 
 | 실패 | 탐지 지점 | 사용자에게 보이는 것 | 자동 조치 | 사람 개입 |
 |---|---|---|---|---|
-| 반사·투명 물체 재구성 실패 | Forge 기하 단계 | "표면 반사로 형상 신뢰도 낮음. 무광 스프레이 또는 다른 조명에서 재촬영" + 실패 프레임 | 생성형 3D 보완 후보 제시(TRELLIS.2는 nvdiffrast 교체 후, SAM 3D는 민수만) | Forge 무개입 실패 큐(P2 목표 무개입 80%) |
+| 반사·투명 물체 재구성 실패 | Forge 기하 단계 | "표면 반사로 형상 신뢰도 낮음. 무광 스프레이 또는 다른 조명에서 재촬영" + 실패 프레임 | 생성형 3D 보완 후보 제시(TRELLIS.2는 nvdiffrast 교체 후, SAM 3D는 민수·V7 통과 후) | Forge 무개입 실패 큐(P2 목표 무개입 80%) |
 | 질량·관성 비정상 | 물리 QA | 추정값과 허용 범위, '실측 질량 입력' 필드 | 바운딩 박스 기반 재추정 | — |
 | 장면 게이트 실패 | 가드레일 ②–④ | 실패한 prim 경로와 이유를 장면에서 강조 | 에이전트 재시도 최대 3회 | 3회 실패 시 사용자에게 선택지 |
 | 학습 미수렴 | `skill.train` 조기 종료 | 보상 곡선, 원인 후보(보상 스케일, 랜덤화 범위) | 예산 상한에서 정지, 체크포인트 보존 | 템플릿 담당자 알림(Builder 이상) |
-| sim2sim 편차 초과 | 평가 | 백엔드별 성공률 차이 표 | 수출 차단 | 랜덤화 확대 제안 |
+| sim2sim Tier 1 편차 초과 | 평가 | 백엔드별 성공률 차이 표 | 수출 차단 | 랜덤화 확대 제안 |
 
 ---
 
@@ -455,14 +455,14 @@ sequenceDiagram
 
 > **사용자:** 이 셀에서 피킹 정책을 학습시켜. 성공률 90% 넘으면 멈추고, 비용은 5만 원 안에서.
 >
-> **에이전트:** 빈 피킹 템플릿(RL-02)으로 Newton 백엔드에서 GPU당 4,096 환경, RT GPU 2장으로 학습합니다. 상한 500 토큰(₩50,000) 안에서 최대 4시간, 성공률 90%(최근 2,000 에피소드)에 도달하면 멈춥니다. 예상 소요는 2–3 GPU-시간(120–180 토큰)입니다. 학습이 끝나면 MuJoCo CPU 교차 실행으로 sim2sim 게이트를 자동으로 돌립니다.
+> **에이전트:** 빈 피킹 템플릿(RL-02)으로 Newton 백엔드에서 GPU당 4,096 환경, RT GPU 2장으로 학습합니다. 상한 500 토큰(₩50,000) 안에서 최대 4시간, 성공률 90%(최근 2,000 에피소드)에 도달하면 멈춥니다. 예상 소요는 2–3 GPU-시간(120–180 토큰)입니다. 학습이 끝나면 MuJoCo CPU 교차 실행으로 sim2sim Tier 1 게이트(수출 차단 기준)를 자동으로 돌립니다.
 
 ```text
 ① skill.train {template:"RL-02-bin-pick@1.3", scene:"agent/cell-busan-02@91ab", backend:"newton_mjwarp",
                envs_per_gpu:4096, gpus:2, pool:"RT-batch", stop:{success_rate:0.90, window:2000},
                budget_tokens:500, export_gate:"sim2sim"}
 ② [승인 카드] 상한 500 토큰 · 예상 120–180 · 롤아웃 영상 R1 타일 30초마다 갱신
-③ job.status → 1시간 22분 · 성공률 0.91 · 164 토큰 · sim2sim 편차 3.1%p(허용 5%p [A]) 통과
+③ job.status → 1시간 22분 · 성공률 0.91 · 164 토큰 · sim2sim Tier 1 편차 3.1%p(허용 10%p) 통과
 ```
 
 #### 예시 5. 평가
@@ -569,7 +569,7 @@ DR은 에이전트를 사내 딜리버리 엔지니어용으로 먼저 만들어
 | 셀 장면 구성·검수 | 16 | 6 | `scene.apply_ops` 타입 연산, 템플릿 셀, 게이트 자동 검사 |
 | 랜덤화 설계·튜닝 | 12 | 6 | 실측 범위 겹쳐 보기, 프리셋 |
 | SDG 실행·재실행 | 10 | 4 | `sdg.generate` DAG, 메모이제이션(같은 입력 재사용) |
-| 라벨 QA·실패 분석 | 14 | 7 | 라벨 일관성 자동 검사, 실패 표본 자동 분류 |
+| 라벨 QA·실패 분석 | 14 | 7 | 라벨 일관성 자동 검사(라벨 QA C1–C8), 실패 표본 자동 분류 |
 | 고객 커뮤니케이션·리포트 | 8 | 4 | Scorecard 자동 생성, Console 코멘트 |
 | **합계(지수)** | **60(100)** | **27(45)** | DR 목표 지수 50 대비 여유 5 |
 
@@ -580,56 +580,89 @@ DR은 에이전트를 사내 딜리버리 엔지니어용으로 먼저 만들어
 
 ## 6. 템플릿 카탈로그(RL / IL·VLA / 인식 / SDG)
 
-**결론: 템플릿 수는 DR 고정값(RL / IL·VLA / 인식 = P0 3/1/1, P1 8/3/3, P2 15/6/5, P3 25/10/8)을 그대로 따른다. P0 템플릿은 비치헤드(물체가 많은 조작)만 담고, 보행·휴머노이드는 보완 지시의 Capability Readiness대로 M6–M12에 붙인다. 셀프서브 공개는 별도 관문이다. Studio 베타(M9)에는 Zone T에서 도는 템플릿만 노출하고, GA(M15) 이후 셀프서브 라인에는 생산화 게이트를 넘은 템플릿만 올린다.**
+**결론: 템플릿 수는 DR 고정값(RL / IL·VLA / 인식 = P0 3/1/1, P1 8/3/3, P2 15/6/5, P3 25/10/8)을 그대로 따른다. 템플릿 ID의 마스터는 이 절(§6.2, RL-/IL-/PE- 번호)이고, 팩별 배분의 마스터는 [08 §7.1](08-domain-packs.md)이다. [07 §3.2](07-training-module.md)는 같은 ID에 학습 알고리즘·환경 수·컴퓨트를 붙인다. P0 RL 3종(팔 도달·큐브 들기, 빈 피킹(한국 SKU), 디팔레타이징)은 모두 조작 팩이고, 휴머노이드(G1 속도 추종·모션 추적)·사족(속도 추종)·덱스터러스(손안 재배치, 상태 기반) 템플릿은 DR v1.1의 기술 준비 일정대로 P1(M6–M12)에 처음 들어간다. 드론 PX4 SITL 기본 템플릿은 P2(M20–M24) RL 1종으로 센다. 셀프서브 공개는 별도 관문이다. Studio 베타(M9)에는 Zone T에서 도는 템플릿만 노출하고, GA(M15) 이후 셀프서브 라인에는 생산화 게이트를 넘은 템플릿만 올린다.**
 
 ### 6.1 집계 규칙
 
-- **인식 템플릿 = SDG 레시피 + 검출·분할 모델 학습의 쌍**으로 센다. 학습 없이 데이터만 만드는 SDG 레시피는 DATA 라인 레시피로 따로 관리하고 DR 템플릿 수에 넣지 않는다[A].
+- **인식 템플릿 = SDG 레시피 + 검출·분할 모델 학습의 쌍**으로 센다. 학습 없이 데이터만 만드는 SDG 레시피(생성형 증강 패스 포함)는 DATA 라인 레시피로 따로 관리하고 DR 템플릿 수에 넣지 않는다[A].
 - **템플릿 하나의 구성:** ① USD 셀 장면(Domain Pack 참조) ② 과제 명세 YAML(보상·관측·종료·랜덤화·커리큘럼) ③ 기본 프리셋과 허용 범위 ④ 평가 스위트 ⑤ 수출 프로파일(ONNX opset, TensorRT 정밀도) ⑥ 한국어·영어 문서와 예상 비용표 ⑦ 백엔드별 적합성 결과.
+- **ID는 바뀌지 않는다:** 출시 단계가 바뀌어도 ID는 그대로 두고 '내부 출시' 열만 고친다. 같은 과제의 변형(물체군·센서 추가)은 새 ID가 아니라 기존 템플릿의 옵션으로 관리한다.
+- **베이크오프 과제는 템플릿이 아니다:** 베이크오프 T1(G1 속도 추종)·T3·T5 등은 엔진 벤치마크 과제다. 같은 장면을 쓰는 출고 템플릿은 별도 ID(예: T1 → RL-07, P1)로 센다.
 
 ### 6.2 카탈로그
 
-| ID | 이름 | 유형 | 기본 백엔드(Zone T) | 팩토리 경로(Zone F) | 기준 컴퓨트 | 내부 출시 | Studio 공개 |
+**RL 템플릿(단계 순)**
+
+| ID | 이름 | 팩(08 §7.1) | 기본 백엔드(Zone T) | 팩토리 경로(Zone F) | 기준 컴퓨트 | 내부 출시 | Studio 공개 |
 |---|---|---|---|---|---|---|---|
-| RL-01 | 리치·큐브 들기(Franka·코봇) | RL | Newton/MJWarp, mjlab 1.6.0 | Isaac Lab PhysX | 0.3–1 GPU-시간 [A] | P0 | M9 |
-| RL-02 | 빈 피킹 그래스프(한국 SKU 클러터) | RL | Newton/MJWarp | Isaac Lab PhysX | 1–3 GPU-시간 [A] | P0 | M9 |
-| RL-03 | 디팔레타이징 | RL | Newton/MJWarp | Isaac Lab PhysX | 1–3 GPU-시간 [A] | P0 | M9 |
-| RL-04 | 페그·커넥터 삽입 | RL | Newton SDF + hydroelastic | Isaac Lab PhysX(SDF, TacSL) | 3–8 GPU-시간 | P1 | M15 |
-| RL-05 | 2부품 조립(스냅 핏) | RL | Newton SDF | Isaac Lab PhysX | 3–8 GPU-시간 [A] | P1 | M15 |
-| RL-06 | 사족 보행 속도 추종 | RL | Newton/MJWarp, mjlab | — | 0.3–1 GPU-시간 | P1(M6–M8) | M9 |
-| RL-07 | 휴머노이드 G1 속도 추종 | RL | Newton/MJWarp, mjlab | — | 1–2 GPU-시간 | P1(M6–M8) | M9 |
-| RL-08 | 휴머노이드 모션 트래킹(BeyondMimic 계열) | RL | mjlab | Isaac Lab | 교사 약 23시간(HOVER 레시피, RTX 4090 기준) | P1 | M15 |
-| RL-09 | 폴리백 피킹(VBD) | RL | Newton VBD | — | [A] 측정 후 | P2 | M18 |
-| RL-10 | 손안 재배치(LEAP·Allegro) | RL | Newton/MJWarp | Isaac Lab DexSuite | 상태 3–8, 시각 200–600 GPU-시간 | P2 | M21(상태 기반만) |
-| RL-11 | 폐루프 링크 그리퍼 조작 | RL | Newton Kamino(실험적) | — | [A] | P2 | M21(베타 라벨) |
-| RL-12 | AMR 셀 내비게이션 | RL | Newton 휠 모델 | PhysX Vehicle2 | [A] | P2(M9–M18 준비) | M18 |
-| RL-13 | 모바일 매니퓰레이션(AMR + 암) | RL | Newton | Isaac Lab | [A] | P2 | M21 |
-| RL-14 | 양팔 핸드오버 | RL | Newton/MJWarp | Isaac Lab | [A] | P2 | M21 |
-| RL-15 | 차량 경로 추종(Mobility Pack α) | RL | Chrono::Vehicle 어댑터 | PhysX Vehicle2 | [A] | P2(M18–M24) | M24 |
-| RL-16–25 | 케이블 삽입, 천 접기, 휴머노이드 + 덱스터러스 전신(60 DoF 초과는 PhysX 또는 트리 분할), 시각 덱스터러스 그래스프, 다중 AMR 플릿, 오프로드 UGV(Chrono CRM), 드론 비행(PX4 SITL·Isaac Lab 멀티로터), 선박 접안(Fossen 6-DOF), 항만 크레인, 조선 용접 토치 경로 | RL | 과제별 | 과제별 | [A] | P3 | P3, 국방 계열은 Air-gap 에디션만 |
-| IL-01 | 텔레옵 → Mimic 증강 → ACT/Diffusion | IL | — | Isaac Lab Mimic(데모 10개 → 1,000개: 상태 18–40분, 시각운동 약 10시간) | 생성 + 학습 | P0 | 주문 전용(Kit-less 검증 전) |
-| IL-02 | SmolVLA 450M 파인튜닝 | VLA | LeRobot 0.6.1 | 동일 | 약 4 A100-시간 | P1 | M9 |
-| IL-03 | GR00T N1.7(3B) 파인튜닝(휴머노이드·양팔) | VLA | LeRobot 0.6.1 | 동일 | 2–40 H100-시간, ≥40 GB GPU | P1 | M15(약관 확인 후) |
-| IL-04 | 테넌트 텔레옵(GELLO·SpaceMouse) → LeRobot v3 → ACT | IL | LeRobot | — | [A] | P2 | M15 |
-| IL-05 | RLinf 0.3 VLA RL 후처리 | VLA | RLinf | — | 다중 GPU [A] | P2 | M21 |
-| IL-06 | VLA 데이터 팩 생성(Mimic + 텔레옵, 휴머노이드) | IL | — | Isaac Lab Mimic, Isaac Teleop | [A] | P2 | 주문 전용 |
-| IL-07–10 | HIL-SERL 실로봇 RL, VLA 위 잔차 RL, pi0.5(가중치 약관 확인 시), 국방용 SmolVLA 에어갭 레시피 | IL·VLA | LeRobot, RLinf | — | [A] | P3 | P3 |
-| PE-01 | 박스·SKU 검출(SDG → RF-DETR N–L) | 인식 | R1·R2 SDG | Replicator R3 | 5만 장 기준 15–70 GPU-시간 | P0 | M9(R1·R2) |
-| PE-02 | 인스턴스 분할 + 그래스프 포인트 | 인식 | R1·R2 | R3 | [A] | P1 | M15 |
-| PE-03 | Cosmos 3 Nano 증강 + 라벨 일관성 QA | 인식 | — | Cosmos 3 Nano 16B(M9부터) | TRAIN 풀 | P1 | 주문 전용 |
-| PE-04 | 외관 결함 검사(공장 셀) | 인식 | R2 | R3 | [A] | P2 | M18 |
-| PE-05 | 한국 도로 인식 데이터 팩(MORAI 경유) | 인식 | — | R3, NuRec(약관 확인 후) | [A] | P2 | 주문 전용 |
-| PE-06–08 | 해양 EO/IR 검출, 해양 레이더·라이다 인식(검증 프로파일 통과 후), 드론 항공 인식(국방 에디션) | 인식 | — | 과제별 | [A] | P3 | 주문 전용 |
+| RL-01 | 리치·큐브 들기(Franka·코봇) | 조작 | Newton/MJWarp, mjlab 1.6.0 | Isaac Lab PhysX | 0.3–1 GPU-시간 [A] | P0 | M9 |
+| RL-02 | 빈 피킹 그래스프(한국 SKU 클러터). 폴리백 SKU 옵션(VBD)은 M12 실측 후 P2에 추가 | 조작 | Newton/MJWarp | Isaac Lab PhysX | 1–3 GPU-시간 [A] | P0 | M9 |
+| RL-03 | 디팔레타이징 | 조작 | Newton/MJWarp | Isaac Lab PhysX | 1–3 GPU-시간 [A] | P0 | M9 |
+| RL-04 | 페그·커넥터 삽입. 케이블 커넥터 옵션(VBD 로드)은 적합성 C09 통과 후 P2에 추가 | 조작 | Newton SDF + hydroelastic | Isaac Lab PhysX(SDF, TacSL) | 3–8 GPU-시간 | P1 | M15 |
+| RL-06 | 사족 보행 속도 추종 | 사족 | Newton/MJWarp, mjlab | — | 0.3–1 GPU-시간 | P1(M6–M8) | M9 |
+| RL-07 | 휴머노이드 G1 속도 추종 | 휴머노이드·덱스터러스 | Newton/MJWarp, mjlab | — | 1–2 GPU-시간 | P1(M6–M8) | M9 |
+| RL-08 | 휴머노이드 모션 트래킹(BeyondMimic 계열). HOVER식 범용 추적 teacher-student는 P2 확장 레시피 | 휴머노이드·덱스터러스 | mjlab | Isaac Lab | 수–수십 GPU-시간(HOVER식 범용 추적 teacher는 RTX 4090 약 23시간) [A] | P1 | M15 |
+| RL-10 | 손안 재배치(LEAP·Allegro, 상태 기반) | 휴머노이드·덱스터러스 | Newton/MJWarp | Isaac Lab DexSuite | 상태 3–8 GPU-시간 | P1 | M15 |
+| RL-05 | 2부품 조립(스냅 핏) | 조작 | Newton SDF | Isaac Lab PhysX | 3–8 GPU-시간 [A] | P2 | M18 |
+| RL-12 | AMR 셀 내비게이션·도킹 | AMR·셀 | Newton 관절 휠 모델 | PhysX Vehicle2(Zone F 전용, Isaac Lab 경유) | [A] | P2(M9–M18 준비) | M18 |
+| RL-13 | 모바일 매니퓰레이션(AMR + 암) | AMR·셀 | Newton | Isaac Lab | [A] | P2 | M21 |
+| RL-15 | 차량 경로 추종(Mobility Pack α, 야드·저속) | Mobility | Chrono::Vehicle 어댑터 | PhysX Vehicle2(Zone F 전용) | [A] | P2(M18–M24) | M24 |
+| RL-16 | 드론 호버·웨이포인트 추종(PX4 SITL 브리지) | 드론 | PX4 SITL + Gazebo Jetty(자체 브리지) | Isaac Lab 멀티로터, Pegasus 포팅(Isaac Sim 런타임 의존, Zone F·BYOL 전용) | [A] | P2(M20–M24 출고) | 주문 전용. 상업화는 P3 국방 에디션 |
+| RL-17 | 사족 험지 보행(지형 커리큘럼·액추에이터 넷) | 사족 | Newton/MJWarp, mjlab | Isaac Lab | 1–3 GPU-시간 [A] | P2 | M18 |
+| RL-18 | 시각 기반 손안 재배치(상태 teacher → 카메라 student) | 휴머노이드·덱스터러스 | — | Isaac Lab DexSuite + 타일드 카메라 | 200–600 GPU-시간 | P2 | 주문 전용(Zone F 산출물) |
+| RL-09 | 폴리백 피킹 전용 템플릿(VBD, 흡착·파지 변형) | 조작 | Newton VBD | — | [A] 측정 후 | P3 | P3 |
+| RL-11 | 폐루프 링크 그리퍼 조작 | 조작 | Newton Kamino(실험적) | — | [A] | P3 | P3(베타 라벨) |
+| RL-14 | 양팔 핸드오버 | 휴머노이드·덱스터러스 | Newton/MJWarp | Isaac Lab | [A] | P3 | P3 |
+| RL-19 | 휴머노이드 + 덱스터러스 전신 로코매니퓰레이션(60 DoF 초과는 PhysX 또는 트리 분할, T11 판정) | 휴머노이드·덱스터러스 | 관절 트리 분할 모델 | Isaac Lab PhysX | [A] | P3 | P3 |
+| RL-20 | 사족 시각 기반 험지 보행(카메라 student) | 사족 | Newton/MJWarp | Isaac Lab | [A] | P3 | P3(국방 에디션 수요 시) |
+| RL-21 | 다중 AMR 플릿 협조(skrl MAPPO) | AMR·셀 | Newton | Isaac Lab | [A] | P3 | P3 |
+| RL-22 | 오프로드 UGV 지형 주행(Chrono CRM) | Mobility | Chrono 어댑터 | — | [A] | P3 | Air-gap 에디션 |
+| RL-23 | 드론 시각 항법(국방 에디션) | 드론 | PX4 SITL 브리지 | — | [A] | P3 | Air-gap 에디션 |
+| RL-24 | 선박 접안(Fossen 6-DOF) | 해양 | 클린룸 Fossen | — | [A] | P3 | P3(Wave 3 트리거 후) |
+| RL-25 | USV 충돌 회피(COLREG) | 해양 | 클린룸 Fossen | — | [A] | P3 | P3(Wave 3 트리거 후) |
+
+**IL·VLA·인식 템플릿**
+
+| ID | 이름 | 유형 | 팩(08 §7.1) | 기본 백엔드(Zone T) | 팩토리 경로(Zone F) | 기준 컴퓨트 | 내부 출시 | Studio 공개 |
+|---|---|---|---|---|---|---|---|---|
+| IL-01 | 텔레옵 → Mimic 증강 → ACT/Diffusion | IL | 조작 | — | Isaac Lab Mimic(데모 10개 → 1,000개: 상태 18–40분, 시각운동 약 10시간) | 생성 + 학습 | P0 | 주문 전용(Kit-less 검증 전) |
+| IL-02 | SmolVLA 450M 파인튜닝 | VLA | 조작 | LeRobot 0.6.1 | 동일 | 약 4 A100-시간 | P1 | M9 |
+| IL-03 | GR00T N1.7(3B) 파인튜닝(휴머노이드·양팔) | VLA | 휴머노이드·덱스터러스 | LeRobot 0.6.1 | 동일 | 2–40 H100-시간, ≥40 GB GPU | P1 | M15(학습·내부 사용 OK, 파인튜닝 가중치 납품은 V7 통과 후) |
+| IL-04 | 테넌트 텔레옵(GELLO·SpaceMouse) → LeRobot v3 → ACT | IL | 조작 | LeRobot | — | [A] | P2 | M15 |
+| IL-05 | 모바일 매니퓰레이션 VLA(AMR + 암 텔레옵 → SmolVLA) + RLinf 0.3 RL 후처리 | VLA | AMR·셀 | LeRobot, RLinf | — | 다중 GPU [A] | P2 | M21 |
+| IL-06 | VLA 데이터 팩 생성(Mimic + 텔레옵, 휴머노이드) | IL | 휴머노이드·덱스터러스 | — | Isaac Lab Mimic, Isaac Teleop | [A] | P2 | 주문 전용 |
+| IL-07–10 | HIL-SERL 실로봇 RL·VLA 위 잔차 RL(조작 2), 휴머노이드 로코매니퓰레이션 VLA·덱스터러스 양손 VLA(휴머노이드·덱스터러스 2). pi0.5(가중치 약관 확인 시)와 국방용 SmolVLA 에어갭 레시피는 IL-02의 레시피 변형으로 관리 | IL·VLA | 조작 2 / 휴머노이드·덱스터러스 2 | LeRobot, RLinf | — | [A] | P3 | P3 |
+| PE-01 | 박스·SKU 검출(SDG → RF-DETR N–L) | 인식 | 조작 | R1·R2 SDG(Newton Warp 래스터 + Warp Sensor Library) | Replicator R3 | 5만 장 기준 15–70 GPU-시간 | P0 | M9(R1·R2) |
+| PE-02 | 인스턴스 분할 + 그래스프 포인트 | 인식 | 조작 | R1·R2 | R3 | [A] | P1 | M15 |
+| PE-03 | AMR·셀 인식(팔레트·사람·지게차 검출, SDG → RF-DETR) | 인식 | AMR·셀 | R1·R2 | R3 | [A] | P1(M9 착수) | M15 |
+| PE-04 | 외관 결함 검사(공장 셀) | 인식 | 공장 라이브 | R2 | R3 | [A] | P2 | M18 |
+| PE-05 | 한국 도로 인식 데이터 팩(MORAI 경유) | 인식 | Mobility | — | R3, NuRec(약관 확인 후) | [A] | P2 | 주문 전용 |
+| PE-06–08 | 해양 EO/IR 검출, 해양 레이더·라이다 인식(검증 프로파일 통과 후), 드론 항공 인식(국방 에디션) | 인식 | 해양 2 / 드론 1 | — | 과제별 | [A] | P3 | 주문 전용 |
+
+**누계와 팩별 대응(08 §7.1과 일치)**
 
 | 누계 | RL | IL·VLA | 인식 | 합계 |
 |---|---|---|---|---|
 | P0(M4) | 3 (RL-01–03) | 1 (IL-01) | 1 (PE-01) | 5 |
-| P1(M12) | 8 (+RL-04–08) | 3 (+IL-02–03) | 3 (+PE-02–03) | 14 |
-| P2(M24) | 15 (+RL-09–15) | 6 (+IL-04–06) | 5 (+PE-04–05) | 26 |
-| P3(M36) | 25 (+RL-16–25) | 10 (+IL-07–10) | 8 (+PE-06–08) | 43 |
+| P1(M12) | 8 (+RL-04, RL-06, RL-07, RL-08, RL-10) | 3 (+IL-02–03) | 3 (+PE-02–03) | 14 |
+| P2(M24) | 15 (+RL-05, RL-12, RL-13, RL-15, RL-16, RL-17, RL-18) | 6 (+IL-04–06) | 5 (+PE-04–05) | 26 |
+| P3(M36) | 25 (+RL-09, RL-11, RL-14, RL-19–25) | 10 (+IL-07–10) | 8 (+PE-06–08) | 43 |
 
-- **GPU당 병렬 환경:** 템플릿은 GPU당 ≥4,096 환경(P0–P1), ≥8,192 환경(P2–P3)에서 돌아야 출시한다(DR).
-- **범용성과 집계의 구분:** 드론 PX4 SITL 브리지 기본 템플릿(M20–M24)과 Mobility Pack α의 OpenDRIVE·OpenSCENARIO 가져오기 장면은 보완 지시의 Capability Readiness대로 P2에 나오지만, 학습 과제가 아니라 시나리오 템플릿이므로 RL 수에는 넣지 않는다. 상업 Wave가 늦게 오는 도메인도 기술 준비는 같은 템플릿 구조로 먼저 끝낸다.
+| 팩 | P0 RL | P1 RL(누적) | P2 RL(누적) | P3 RL(누적) |
+|---|---|---|---|---|
+| 조작 | 3 (RL-01–03) | 4 (+RL-04) | 5 (+RL-05) | 7 (+RL-09, RL-11) |
+| 휴머노이드·덱스터러스 | — | 3 (RL-07, RL-08, RL-10) | 4 (+RL-18) | 6 (+RL-14, RL-19) |
+| 사족 | — | 1 (RL-06) | 2 (+RL-17) | 3 (+RL-20) |
+| AMR·셀 | — | — | 2 (RL-12, RL-13) | 3 (+RL-21) |
+| Mobility | — | — | 1 (RL-15) | 2 (+RL-22) |
+| 드론 | — | — | 1 (RL-16) | 2 (+RL-23) |
+| 해양 | — | — | — | 2 (RL-24, RL-25) |
+| **합계** | **3** | **8** | **15** | **25** |
+
+- **GPU당 병렬 환경:** 템플릿은 GPU당 ≥4,096 환경(P0–P1), ≥8,192 환경(P2–P3)에서 돌아야 출시한다(DR). 변형체·카메라·PX4 SITL 과제는 예외로 등록하고 '1B 스텝당 원가'로 관리한다([07 §3.2](07-training-module.md)).
+- **범용성과 집계의 구분:** 드론 PX4 SITL 브리지 기본 템플릿은 DR v1.1대로 P2(M20–M24) RL 1종(RL-16)으로 센다. 상업화는 P3 국방 에디션에서 한다. Mobility Pack α의 OpenDRIVE·OpenSCENARIO 가져오기 장면은 학습 과제가 아니라 시나리오 템플릿이므로 템플릿 수에 넣지 않는다. 상업 Wave가 늦게 오는 도메인도 기술 준비는 같은 템플릿 구조로 먼저 끝낸다.
+- **사족의 수익화 범위:** P2 상업화는 휴머노이드·덱스터러스 핸드에만 해당한다. 사족(RL-06·17·20)은 경쟁 지형 거부권(DR §5.1, 1점)에 따라 템플릿과 Crucible 평가로만 수익화한다.
+- **후보 풀(집계 밖):** 천 접기(Style3D), 시각 덱스터러스 그래스프, 멀티로봇 협업 피킹, 항만 크레인, 조선 용접 토치 경로는 분기 배분 조정 때 같은 팩의 P3 템플릿을 대체할 수 있는 후보로 둔다. 대체해도 팩별 수와 총량은 08 §7.1을 넘지 않는다.
 - **수치 출처:** GPU-시간 범위는 리서치 수치(사족 0.3–1, 휴머노이드 속도 추종 1–2, 상태 기반 덱스터러스 3–8, 시각 덱스터러스 200–600, SmolVLA 약 4 A100-시간, GR00T 단일 과제 2–40 H100-시간, 검출기 5만 장 15–70 GPU-시간)다. 그 외 [A]는 베이크오프(W3–W6)와 첫 납품에서 측정해 템플릿 카드에 실측값으로 바꾼다.
 
 ### 6.3 SDG 레시피(DATA 라인, 템플릿 수 집계 밖)
@@ -639,7 +672,7 @@ DR은 에이전트를 사내 딜리버리 엔지니어용으로 먼저 만들어
 | SDG-01 빈 클러터 RGB-D + 인스턴스 | COCO, LeRobot v3 | R1·R2 래스터(₩0.3/장), R3(₩1.5/장, 산출물) | M9(래스터, 소규모) | 한국 SKU 라이브러리 |
 | SDG-02 팔레트·박스 조명 스윕 | COCO, KITTI | R2 3DGUT 배경 + 메시 | M15 | 현장 스플랫 배경 |
 | SDG-03 라이다 거리·강도 | PCD, KITTI | Warp Sensor Library(실측 프로파일) | M18 | 라이다 거리 오차 ≤3 cm(M12) |
-| SDG-04 Cosmos 증강 패스 | 원본 + 증강 프레임 | Cosmos 3 Nano | 주문 전용 | 라벨 일관성 통과 프레임만 납품(≥98%, M12) |
+| SDG-04 Cosmos 증강 패스 | 원본 + 증강 프레임 | Cosmos Transfer 2.5(M5–M8) → Cosmos 3 Nano 16B 파인튜닝(M9부터, V7 조건) | 주문 전용 | 라벨 QA C1–C8 통과 프레임만 납품(통과율 ≥98%, M12). 이전 판의 PE-03(증강 템플릿)을 이 레시피로 옮겼다 |
 
 ---
 
@@ -751,6 +784,7 @@ curriculum:
 
 - **잔액 표시 규칙:** 결과물 크레딧(12개월 유효)과 구독 포함 토큰, 충전 토큰을 따로 보여 주고 만료가 가까운 크레딧부터 쓴다. Explorer의 LIGHT 월 5시간은 '무료 시간'으로 따로 표시한다.
 - **단가 노출:** RT 배치 60, 서울 대화형 95, TRAIN 80, LIGHT 20 토큰/GPU-시간, 합성 이미지 래스터 ₩0.3·RTX 실시간 ₩1.5·패스트레이싱 ₩15, 스토리지 ₩40,000/TB-월, 이그레스 ₩150/GB를 가격 페이지와 견적 카드에 같은 표로 쓴다(DR §10.2).
+- **스토리지·이그레스는 원가 회수 품목이다:** 두 단가는 리서치 원가 기준 총마진 16–20%로 하한 30%보다 낮다. 가격 페이지에는 '원가 회수 품목'으로 표기하고, 자체 SeaweedFS·Ceph RGW 저장소로 옮긴 뒤 30%를 맞춘다. 2027 Q1 재산정에서 실측 원가로 다시 판정한다(DR §10.2).
 
 ### 8.3 마켓플레이스 원클릭 가져오기
 
@@ -850,7 +884,7 @@ flowchart LR
 
 | 상황 | 경로 | GPU | 과금 |
 |---|---|---|---|
-| 편집·리뷰·마켓 미리보기·라이브 트윈 모니터링 | **R0** three.js r186(WebGPU) + Spark 2.x(스플랫), Babylon.js 9.29(OpenUSD WASM 직접 열기), PlayCanvas 2.23(대형 현장 스플랫 LOD) | 클라이언트 | 무료 |
+| 편집·리뷰·마켓 미리보기·라이브 트윈 모니터링 | **R0** three.js r186(WebGPU/WebGL2) + Spark 2.x(WebGL2, 스플랫), PlayCanvas 2.23(WebGPU, 대형 현장 스플랫 LOD), Babylon.js 9.29(OpenUSD WASM 직접 열기) | 클라이언트 | 무료 |
 | 비전 RL 디버그, 타일 카메라 | **R1** Newton Warp 렌더러 세션 | RT 1장 | 95 토큰/시간(서울 대화형) |
 | 현장 재구성 배경 고충실도 보기 | **R2** gsplat·3DGRUT(3DGUT) 세션 | RT 1장 | 95 토큰/시간 |
 | RTX 센서 사실감 확인 | **R3** Isaac Sim 6.1 RTX | 사내 Zone F, 고객 BYOL만 | 테넌트에는 사전 렌더 영상·이미지로 제공 |
@@ -907,7 +941,7 @@ flowchart LR
 | 영상 → Bronze 강체 자산 | 업로드 완료 → Bronze 서명, 중앙값 | ≤2시간(내부) | ≤30분 | ≤15분(셀프서브) | ≤10분 | Forge Lead |
 | 영상 → 학습된 피킹 스킬 | 업로드 완료 → 서명된 Jetson 패키지, 중앙값 | 48시간(내부) | 24시간 | 당일(셀프서브) | 4시간 | Skill Lead |
 | Forge 무개입 비율 | 엔지니어 개입 이벤트 0인 Forge 작업 / 전체 | 30% | 60% | 80% | 90% | Forge Lead |
-| 결과물당 엔지니어 시간 지수 | 결과물 1건당 엔지니어 시간(P0 = 100) | 100 | 50 | 25 | 15 | CEO |
+| 결과물당 엔지니어 시간 지수 | 결과물 1건당 엔지니어 시간(P0 기준선 = 100). '연 50% 감소'는 P0 기준선 대비 연율이며, P3 말 지수 15는 연 약 −51%에 해당 | 100 | 50 | 25 | 15 | CEO |
 | 결과물 → 셀프서브 전환율 | 결과물 고객 중 Studio에서 자체 작업을 실행한 고객 비율. P1은 베타 워크스페이스 활성화 기준, P2부터는 크레딧 외 유상 토큰 사용 기준 | — | 25% | 50% | 60% | Product Lead |
 | Studio 월간 활성 워크스페이스 | 월 1회 이상 `sim.run` 또는 작업 실행 | — | 30(베타) | 300 | 1,500 | Product Lead |
 
@@ -975,22 +1009,24 @@ flowchart LR
 
 ## 13. 결정 사항 및 다음 액션
 
-**결론: 이 문서로 확정하는 결정은 다섯 개다. ① 두 문 + 한 생산 라인, 같은 18개 도구 ② 에이전트 권한 L0–L4, L4는 사람 전용 ③ 사내 → 디자인 파트너(M9) → 전체(M15) 공개 순서 ④ 템플릿 수는 DR 고정값, Studio 베타에는 Zone T 템플릿만, 셀프서브 GA에는 생산화 게이트 통과분만 ⑤ R0 기본 + 무료 뷰어·리뷰어 좌석.**
+**결론: 이 문서로 확정하는 결정은 다섯 개다. ① 두 문 + 한 생산 라인, 같은 18개 도구 ② 에이전트 권한 L0–L4, L4는 사람 전용 ③ 사내 → 디자인 파트너(M9) → 전체(M15) 공개 순서 ④ 템플릿 수는 DR 고정값(ID 마스터는 이 문서 §6.2, 팩별 배분 마스터는 08 §7.1. P0 RL은 조작 3종, 휴머노이드·사족·덱스터러스는 P1, 드론 PX4 SITL은 P2 RL 1종), Studio 베타에는 Zone T 템플릿만, 셀프서브 GA에는 생산화 게이트 통과분만 ⑤ R0 기본 + 무료 뷰어·리뷰어 좌석.**
 
 | 액션 | 책임 | 기한 |
 |---|---|---|
-| 사내 에이전트 v0 도구 8종 스키마 동결(`scene.search/query/diff/apply_ops`, `asset.search`, `sim.run`, `sdg.generate`, `job.status`) | WS7 엔지니어 + CTO(대행) | M2(2026-12) |
+| 사내 에이전트 v0 도구 8종 스키마 동결(`scene.search/query/diff/apply_ops`, `asset.search`, `sim.run`, `sdg.generate`, `job.status`) | WS7 엔지니어 + CTO(WS7 대행) | M2(2026-12) |
+| 템플릿 카탈로그 정합 점검(06 §6.2 ID ↔ 07 §3.2 학습 사양 ↔ 08 §7.1 팩 배분), 이후 분기마다 반복 | Skill Lead + CTO(WS7 대행) | M2(2026-12), 분기 |
 | 한국어 명령 스크립트 20개 세트와 CI 채점기 구축(사내 딜리버리 엔지니어 명령 로그 기반) | WS7 + WS5 Skill(딜리버리 담당) | M3(2027-01) |
-| 휴대폰 촬영 가이드 v1과 Bronze 자동 서명 정책 확정 | Forge Lead + 촬영·랩 테크니션 | M3(2027-01) |
-| Outcome Console 사내 v0(주문 명세·견적·인수 체크리스트) | WS7 | M4(2027-02) |
-| G0 보고: 명령 20개 중 ≥80%, 영상→Bronze ≤2시간, 영상→스킬 48시간(내부) 실측 | CEO | M4(2027-02) |
-| Product Lead 채용 확정(WS7 책임자) | CEO | M5(2027-03) |
-| Console 고객 공개 v1(Cell-to-Policy PoC 판매 개시와 동시) | Product Lead | M5(2027-03) |
-| 웹·에이전트 엔지니어 채용, 노코드 편집기 5종 베타 | Product Lead | M8(2027-06) |
-| Studio 베타 디자인 파트너 10곳 선정과 초대제 Explorer 운영 규칙[A] | Product Lead + BD | M8(2027-06) |
-| **Athanor Studio 베타 출시**(WebGPU 뷰어, Newton·MuJoCo 템플릿, Bronze 셀프서브, 에이전트 L0–L2 + 템플릿 학습·자체 평가 L3) | Product Lead | **M9(2027-07)** |
-| 템플릿 RL 8 / IL·VLA 3 / 인식 3 출시, 명령 50개 중 ≥85%, 영문 Console | Skill Lead + Product Lead | M12(2027-10) |
+| 휴대폰 촬영 가이드 v1과 Bronze 자동 서명 정책 확정(Forge 서비스 계정 서명, 에이전트 `cert.issue` 불가) | Forge Lead + 촬영·랩 테크니션 | M3(2027-01) |
+| Outcome Console 사내 v0(주문 명세·견적·인수 체크리스트) | WS7(책임 CTO 대행) | M4(2027-02) |
+| G0 보고: 명령 20개 중 ≥80%, 영상→Bronze ≤2시간, 영상→스킬 48시간(내부) 실측 | CEO | M4(2027-02-26, G0) |
+| Product Lead 서치 착수(M4) → 착석 M8(2027-06). 착석 전 WS7 책임은 CTO가 대행 | CEO | 서치 M4, 착석 M8 |
+| Console 고객 공개 v1(Cell-to-Policy PoC 판매 개시와 동시) | CTO(WS7 대행) | M5(2027-03) |
+| 웹·에이전트 엔지니어 채용, 노코드 편집기 5종 베타 | CTO(WS7 대행) → Product Lead(M8 착석 후 인수) | M8(2027-06) |
+| Studio 베타 디자인 파트너 10곳 선정과 초대제 Explorer 운영 규칙(대기자 명단·주간 승인 상한)[A] | CTO(WS7 대행) + BD → Product Lead | M8(2027-06) |
+| **Athanor Studio 베타 출시**(Zone T 전용, 브라우저 R0 뷰어, Newton·MuJoCo 템플릿, Bronze 셀프서브, 에이전트 L0–L2 + 템플릿 학습·자체 평가 L3) | Product Lead | **M9(2027-07)** |
+| 템플릿 RL 8 / IL·VLA 3 / 인식 3 출시(P1 추가분 RL-04·06·07·08·10, IL-02·03, PE-02·03), 명령 50개 중 ≥85%, 영문 Console | Skill Lead + Product Lead | M12(2027-10) |
 | Studio GA 전 침투 테스트와 WCAG 2.2 AA 감사 | Platform Lead + Product Lead | M14(2027-12) |
-| **Athanor Studio GA**(Team·Enterprise VPC, 생산화 게이트 통과 라인) | Product Lead | **M15(2028-01)** |
+| **Athanor Studio GA**(공개 가입, Team·Enterprise VPC, 생산화 게이트 통과 라인) | Product Lead | **M15(2028-01)** |
 | 일본어 Console·에이전트 30개 세트 ≥85% | Product Lead | M18(2028-04)[A] |
+| 드론 PX4 SITL 템플릿(RL-16) 출고와 P2 RL 15종 완료 | Skill Lead + WS1-M | M24(2028-10) |
 | 셀프서브 당일 원클릭 경로, 명령 100개 중 ≥90%, Studio MAW 300 | Product Lead + Skill Lead + Forge Lead | M24(2028-10) |

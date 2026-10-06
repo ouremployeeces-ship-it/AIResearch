@@ -1,8 +1,9 @@
 # 02. 시장과 경쟁: 엔진이 무료가 된 시장에서 '증거'를 파는 자리
 
-> **문서 번호** 02 · **기준일** 2026-10-06 · **버전** v1.0 · **상위 문서** [README](README.md)
+> **문서 번호** 02 · **기준일** 2026-10-06 · **버전** v1.1(DR §16 Errata 반영) · **상위 문서** [README](README.md) · **단일 기준** [00 결정 기록](00-decision-record.md)
 > **관련 문서** [01 비전·포지셔닝](01-vision-positioning.md) · [03 엔진 선정](03-engine-selection-build-vs-buy.md) · [04 시스템 아키텍처](04-system-architecture.md) · [05 물리·현실감](05-physics-and-realism.md) · [06 사용성·에이전트](06-usability-and-agent.md) · [07 학습 모듈](07-training-module.md) · [08 도메인 팩](08-domain-packs.md) · [09 로드맵·조직·예산](09-roadmap-organization-budget.md) · [10 사업모델·GTM](10-business-model-gtm.md) · [11 리스크·KPI·컴플라이언스](11-risk-kpi-compliance.md) · [12 90일 실행](12-execution-90days.md) · [부록 A 기술 카탈로그](appendix-a-technology-catalog.md) · [부록 B 출처·검증](appendix-b-sources-verification.md)
-> **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 사실은 GitHub·PyPI·SkyPilot 가격 카탈로그로 확인된 값 · ₩억 = 1억 원, 1 USD = ₩1,400 [A] · 모든 매출 수치는 예측이 아닌 목표 · M1 = 2026년 11월
+> **표기** **[A]** 계획 가정(실적 확인 전까지 목표치) · **[U]** 1차 출처 미확인(대외 사용 전 [부록 B](appendix-b-sources-verification.md) 절차로 재검증) · 태그 없는 사실은 GitHub·PyPI·SkyPilot 가격 카탈로그로 확인된 값 · ₩억 = 1억 원, 1 USD = ₩1,400 [A] · 모든 매출 수치는 예측이 아닌 목표 · M1 = 2026년 11월 · D0 = 2026-10-16(CEO 승인)
+> **용어** 피지컬 AI(Physical AI), SAM, ACV, ARR, 측정권, 화이트스페이스 등은 [README §9 용어집](README.md)에서 설명한다
 > **리서치 한계** 시장 규모, 투자 유치액, 가치평가, 경쟁사 가격은 대부분 사전 지식 기반이고 1차 출처로 재확인하지 못했다. 이 문서의 해당 수치는 모두 [U]이며, 이사회·IR·정부 제출 전에 재검증한다.
 
 ---
@@ -10,7 +11,7 @@
 ## 핵심 요약
 
 - **탑다운 시장 수치는 사업 규모의 근거로 쓰지 않는다.** 디지털 트윈 전체 시장(USD 21–25B, 2030년 약 USD 150B [U])은 기관마다 범위 정의가 달라 3–10배씩 벌어진다. 우리가 실제로 팔 수 있는 시장은 그 1% 남짓이다.
-- **바텀업 SAM:** 한국은 도달 가능 계정 50–100곳 × 평균 ACV ₩3–8억 = **연 ₩150–800억(USD 11–57M)**이다. 글로벌은 로봇 FM·휴머노이드, 글로벌 OEM·통합사, 셀프서브를 합쳐 **현재 USD 0.1–0.3B**, 2033년 USD 0.6–1.5B [A]다. **SOM은 2029년 매출 ₩110억, ARR ₩70억**이다.
+- **바텀업 SAM:** 한국은 도달 가능 계정 50–100곳 × 평균 ACV ₩3–8억 = **연 ₩150–800억(USD 11–57M)**이다. 글로벌은 로봇 FM·휴머노이드, 글로벌 OEM·통합사, 셀프서브를 합쳐 **현재 USD 0.1–0.3B**, 2033년 USD 0.6–1.5B [A]다. **2029년 목표 매출(₩110억, ARR ₩70억)은 한국 SAM 중간값의 약 14%와 글로벌 SAM의 0.6–2.1%를 점유해야 달성된다(§1.4).**
 - **자본은 시뮬레이터가 아니라 모델과 자율화 스택으로 간다** [U]. 그들에게 시뮬레이터는 내부 도구다. 따라서 우리의 글로벌 고객은 시뮬레이터 구매자가 아니라 **데이터·평가 구매자**다.
 - **NVIDIA는 엔진·모델·자산 도구를 무료로 풀고, GPU·NVAIE·독점 런타임으로 번다.** 무료 공개가 늘수록 우리의 원가는 내려간다. 다만 범용 기능은 몇 달 안에 따라잡힌다. 그래서 측정, 권리가 정리된 한국 콘텐츠, 중립 인증에만 투자한다.
 - **재벌은 트윈 인프라를 내재화한다. 하지만 자기 자신과 경쟁사를 인증할 수는 없고, 1·2차 협력사를 직접 키울 수도 없다.** 우리는 SI 계열사를 리셀러로 쓰고, 협력사와 로봇 OEM에 판매를 집중한다.
@@ -78,9 +79,9 @@
 
 **정합성 메모:** 2033년 범위(USD 0.6–1.5B)는 현재 값에 5–6배를 곱한 것으로, 연 약 26–29% 성장에 해당한다. 합성 데이터 시장 성장률(35–46% [U])을 7년간 그대로 복리로 적용하면 8–14배가 된다. 따라서 DR 수치는 의도적으로 보수적인 값이다. IR에서는 보수적인 DR 범위만 쓴다.
 
-### 1.4 SOM과 시장 점유율 정합성 점검
+### 1.4 목표 매출과 요구 점유율
 
-**공식:** SOM(연도 t) = 목표 매출(t). 정합성 검증은 '목표 매출 ÷ SAM = 요구 점유율'로 한다.
+**공식:** 요구 점유율(연도 t) = 목표 매출(t) ÷ SAM. 목표에서 거꾸로 정의한 'SOM'은 순환 논리이므로 쓰지 않는다. IR에서도 '요구 점유율'로 표현하고, 그 점유율이 현실적인지를 계정 수와 ACV로 검증한다.
 
 | 시점 | 목표 | 국내/해외 분해 | 요구 점유율 | 판정 |
 |---|---|---|---|---|
@@ -96,14 +97,14 @@ flowchart TB
     T1["탑다운: 디지털 트윈 USD 21-25B, 범위 3-10배 분산"] -.->|"사업 근거로 사용 금지"| X["IR 보조 자료로만 사용, U 표기"]
     B1["바텀업 한국 SAM: 94계정 x ACV, 연 150-800억원"] --> S1["2029 국내 상업 매출 68억원, SAM 중간값의 약 14%"]
     B2["바텀업 글로벌 SAM: 현재 USD 0.1-0.3B, 2033 USD 0.6-1.5B"] --> S2["2029 해외 30억원, 2033 글로벌 USD 65M"]
-    S1 --> SOM["SOM: 2029 매출 110억원, ARR 70억원"]
-    S2 --> SOM
-    SOM --> P["2033 ARR 약 USD 100M, 해외 70% 이상"]
+    S1 --> TGT["2029 목표 매출 110억원, ARR 70억원: 요구 점유율로 검증"]
+    S2 --> TGT
+    TGT --> P["2033 ARR 약 USD 100M, 해외 70% 이상"]
 ```
 
 ---
 
-## 2. 2025–2026 Physical AI 자본 흐름
+## 2. 2025–2026 피지컬 AI(Physical AI) 자본 흐름
 
 **결론: 돈은 '모델과 자율화 스택'으로 갔고, 독립 시뮬레이터·범용 합성 데이터 회사는 정체됐다. 우리는 돈을 받은 쪽(FM 기업)에게 데이터와 평가를 판다.**
 
@@ -120,7 +121,7 @@ flowchart TB
 | 2025-09 | Figure Series C | USD 1B 초과, 가치 USD 39B(NVIDIA, LG Technology Ventures 참여) | 휴머노이드 | [U] |
 | 2025-09 | NVIDIA, Wayve 투자 의향서 | 최대 USD 500M | 엔드투엔드 AV | [U] |
 | 2025-10 | 1X NEO 사전 예약 | USD 20,000 또는 월 USD 499. 가치 USD 10B 이상 라운드 보도 | 가정용 휴머노이드 | [U] |
-| 2025-10-31 | NVIDIA 한국 Blackwell 배정 | 260k장 이상(정부·Samsung·SK·HMG 각 약 50k, Naver 약 60k). HMG 약 USD 3B Physical-AI 클러스터 | 국가 인프라 | [U] |
+| 2025-10-31 | NVIDIA 한국 Blackwell 배정 | 260k장 이상(정부·Samsung·SK·HMG 각 약 50k, Naver 약 60k). HMG 약 USD 3B 피지컬 AI 클러스터 | 국가 인프라 | [U] |
 | 2025-11 | Physical Intelligence | USD 600M, 가치 USD 5.6B | 로봇 FM | [U] |
 | 2026-01 | Skild AI | 가치 약 USD 14B(SoftBank·NVIDIA 보도) | 로봇 FM | [U] |
 | 2026-01 | Foretellix 인력 29명 감축(누적 투자 USD 135M) | — | AV 검증 도구 | [U] |
@@ -186,7 +187,7 @@ flowchart TB
 |---|---|---|---|---|
 | ① 엔진·런타임 | NVIDIA, Google DeepMind, Newton(LF), Genesis AI, Epic, Unity | 무료 엔진 + GPU·엔터프라이즈 지원·독점 런타임 | 무료화가 끝났다. 월 단위 릴리스 | **통합**(Sim Kernel API 뒤에 둔다) |
 | ② 산업 PLM·운영 트윈 | Siemens, Dassault, Synopsys/Ansys, PTC, Bentley, Autodesk, AVEVA, Cognite, Microsoft, AWS | 좌석·엔터프라이즈 라이선스, 사용량 과금 | 솔버 통합. 로봇 학습 기능은 없다. 하이퍼스케일러는 범용 트윈 PaaS에서 후퇴했다 | **연결**(PLM 트윈 → USD 학습 환경) |
-| ③ AV 시뮬레이션 | Applied Intuition, Foretellix, dSPACE, IPG, rFpro, Cognata, aiMotive, CARLA, MORAI | OEM당 다년 라이선스, HIL 하드웨어 | 포화 상태. 신경·월드모델 시뮬레이션이 수작업 장면을 대체하고 있다 | **파트너·연결**(MORAI, OpenSCENARIO·FMI 브리지) |
+| ③ AV 시뮬레이션 | Applied Intuition, Foretellix, dSPACE, IPG, rFpro, Cognata, aiMotive, CARLA, MORAI | OEM당 다년 라이선스, HIL 하드웨어 | 포화 상태. 신경·월드모델 시뮬레이션이 수작업 장면을 대체하고 있다 | **파트너·연결**(MORAI, OpenSCENARIO·OSI·FMI 3.0 브리지). 도로 AV 시뮬레이터와는 정면 경쟁하지 않되, 차량 트윈 기술(Mobility Pack α: 야드·저속 차량 동역학과 도로 시나리오 재생)은 M18–M24에 직접 준비한다 |
 | ④ 합성 데이터 | Parallel Domain, Rendered.ai, Bifrost, Duality, CyLab, Scale AI | 데이터셋·구독·작업 단위 과금 | 수평형은 정체. 국방·항공 틈새에서만 생존 | **부분 경쟁**(물리·정책·전이 측정으로 차별화) |
 | ⑤ SimReady 자산·벤치마크 | Lightwheel, Hillbot/ManiSkill, NVIDIA usd-content-agents, 중국 데이터 팩토리 | 자산 판매, 데이터 서비스(비공개 가격) | 추정 수준 자산은 범용화. 측정·상업 라이선스 자산은 드물다 | **직접 경쟁** |
 | ⑥ 로봇 FM 기업 | Figure, Physical Intelligence, Skild, 1X, Agility, Apptronik, Field AI, Dyna, Genesis AI, RLWRLD | 로봇·모델 판매 | 자금 풍부. 시뮬레이션은 내재화, 데이터·평가는 외부 구매 | **고객**(데이터·평가 공급) |
@@ -198,54 +199,27 @@ flowchart TB
 
 **결론: 44개 행(개별 기업과 그룹)을 분석한 결과, 정면 경쟁은 4곳(Lightwheel, Hillbot/ManiSkill, CyLab, 중국 데이터 팩토리)뿐이다. 나머지는 기반, 연결 대상, 파트너, 고객이다.**
 
-가격 정보는 대부분 비공개이거나 사전 지식 기반이다 [U]. 'AICHEMIST 대응'의 동사는 **통합 / 연결 / 파트너 / 경쟁 / 판매(고객) / 회피 / 관찰** 중 하나로 표준화한다.
+가격 정보는 대부분 비공개이거나 사전 지식 기반이다 [U]. 'AICHEMIST 대응'의 동사는 **통합 / 연결 / 파트너 / 경쟁 / 판매(고객) / 회피 / 관찰** 중 하나로 표준화한다. 본문에는 정면 경쟁 4곳과 핵심 파트너·고객 6곳만 둔다. 나머지 34개 행은 이 문서 끝의 '부록 02-A. 전체 경쟁사 표(나머지 34개 행)'에, 회사·서비스 단위 판정은 [부록 A §7](appendix-a-technology-catalog.md)에 있다. 행 번호(#)는 44개 행 전체의 일련번호다.
+
+**정면 경쟁 4곳**
+
+| # | 기업 | 레이어 | 제공물 | 가격 모델 | 강점 | 약점 | AICHEMIST 대응 |
+|---|---|---|---|---|---|---|---|
+| 30 | **Lightwheel** | SimReady 자산 | SimReady 자산(비상업 무료), LW-BenchHub 268개 과제, leisaac, MJCF↔USD 변환기 | 상업 자산·데이터 서비스 비공개 [U] | 가장 가까운 유사 기업, NVIDIA 정렬, MuJoCo–USD 연결 | 시뮬 전용 평가, 무료 자산 비상업, 지역 거점 [U] | **경쟁**: 상업 라이선스, 실측 물리, 한국 SKU, 실셀 평가. 해외 **리셀러** 후보 |
+| 31 | **Hillbot / ManiSkill3** | SimReady 자산·벤치마크 | GPU 병렬 조작 시뮬레이션·렌더링 | 코드 Apache-2.0, 자산 CC BY-NC 4.0 | 빠른 시각 RL, Real2Sim 연구 계보 | 비상업 자산, 상업 실적 미확인 | **경쟁**: 벤치마크 호환 + 상업용 자산 팩으로 공백 공략 |
+| 39 | **CyLab(씨이랩)** | 한국 합성 데이터 | 인식 합성 데이터, XAIVA, NVIDIA 파트너 [U] | 프로젝트 | 국내 레퍼런스, NVIDIA 관계 | 물리·정책·전이 측정 없음 | **경쟁**: 단순 SDG 가격 경쟁은 피하고 물리·정책·측정된 전이로 차별화 |
+| 33 | **중국 데이터 팩토리**(51WORLD, Manycore SpatialVerse, AgiBot Genie Sim, Galbot) | 자산·데이터 | 저가 실내 장면, 대규모 실·합성 데이터셋 | 공격적 저가, 다수 공개 데이터셋 [U] | 규모, 원가, 정부 지원 | 국방·재벌·미국 연계 고객의 신뢰 장벽. AgiBot World·GO-1은 CC BY-NC-SA | **경쟁**: '신뢰할 수 있는 비중국·라이선스 청정 공급자' 포지션 |
+
+**핵심 파트너·고객 6곳**
 
 | # | 기업 | 레이어 | 제공물 | 가격 모델 | 강점 | 약점 | AICHEMIST 대응 |
 |---|---|---|---|---|---|---|---|
 | 1 | NVIDIA Isaac Sim·Isaac Lab·Omniverse | 엔진 | Isaac Sim 6.1.0, Isaac Lab 3.0-EA, Kit 110.x, ovrtx·ovphysx(alpha), Cosmos, GR00T N1.7, 블루프린트 | 코드 무료. 런타임 독점. NVAIE·Omniverse Enterprise 약 USD 4,500/GPU/년 [U] | 사실상 표준, OpenUSD 네이티브, RTX 센서 | GPU 종속, RT 코어 필요, 파괴적 API 변경, 연구자 UX | **통합 + co-sell.** Zone F에서만 독점 런타임 사용. 측정·인증·한국 콘텐츠로 가치 이전 |
-| 2 | Newton(Linux Foundation) | 엔진 | GPU 물리 엔진(MJWarp, VBD, Kamino, MPM) | Apache-2.0 무료 | 중립 거버넌스, 처리량 최상위 | float32, GPU 비결정적, 60 DoF 초과 메커니즘에 약함 | **통합(기본 백엔드) + 업스트림 기여** |
-| 3 | Google DeepMind(MuJoCo, MJWarp, Gemini Robotics, Intrinsic) | 엔진·모델 | MuJoCo 3.15, sysid 툴박스, Gemini Robotics 1.5 [U] | Apache-2.0 / API | 가장 많이 인용되는 접촉 물리, MJCF 표준 | 사실적 렌더링 없음, 최종 사용자 플랫폼 없음 | **통합**(재현·인증 백엔드). HMG·Boston Dynamics 계정 관련 동향 **관찰** |
-| 4 | Genesis AI(Genesis World) | 엔진·모델 | 멀티피직스 엔진 1.4.3, 자체 모델 GENE-26.5, Nyx 렌더러(폐쇄) | Apache-2.0(엔진). 시드 USD 105M [U] | 변형체·유체를 하나의 API로, 커뮤니티 약 30k stars | 산업·OpenUSD 도구 약함, 43M FPS 주장 비판받음 | **관찰**(비CUDA 헤지) + 데이터·평가 **판매** 후보 |
-| 5 | Epic Unreal Engine | 엔진 | UE5, Cesium for Unreal | 비게임 기업(연매출 USD 1M 초과) 약 USD 1,850/석/년 [U] | 최고 수준의 사실적 렌더링, 인재 풀 | Chaos 물리는 로봇용이 아님, 배치 RL 없음 | **회피**(Zone T 렌더는 WebGPU·3DGUT). 고객 보유 시 연결 |
-| 6 | Unity(Unity 6, Unity Industry) | 엔진 | 실시간 3D, 브라우저 배포 | 좌석 구독(Unity Industry 약 USD 4,950/석/년 [U]) | 개발자 저변 | PhysX 4 세대 물리, 로봇 투자 축소 | **회피** |
-| 7 | Siemens Xcelerator(Process Simulate, Teamcenter, Simcenter, Altair) | PLM | 공장·라인 엔지니어링 트윈, Omniverse 연동 | 좌석 + Xcelerator-as-a-Service, Altair 유닛 과금 | 한국 조선·자동차 설치 기반, 엔지니어링 데이터 장악 | 운동학·PLC 중심, 학습 불가, 고가 | **연결**: Process Simulate·Teamcenter → USD 학습 환경 커넥터 |
-| 8 | Dassault 3DEXPERIENCE(CATIA, DELMIA, SIMULIA) | PLM | 가상 트윈, 조선·항공 설계 | 역할·좌석 라이선스 | 한국 조선·항공 설계 표준 | 폐쇄적 생태계, 로봇 학습 없음 | **연결**: CATIA·DELMIA → USD(조선 Domain Pack) |
-| 9 | Synopsys + Ansys | PLM·솔버 | AVxcelerate Sensors 2026 R1, Fluent, SimAI | 엔터프라이즈 좌석, 고가 | 레이더·EM·CFD 솔버 정밀도 최고 | 실시간·배치 RL 불가, 고가 | **파트너**: 해양·국방 레이더 충실도 검증의 기준 솔버 후보 |
-| 10 | PTC(Creo, Windchill, Vuforia) | PLM | CAD·PLM, ThingWorx·Kepware 매각 합의 보도 [U] | 좌석 구독 | CAD 기반 | IoT 트윈 사업 후퇴 | **연결**(소규모 커넥터만) |
-| 11 | Bentley iTwin + Cesium | 인프라 트윈 | 도시·인프라 지리공간, 3D Tiles | 소비 기반, Cesium ion 구독 | 도시 규모 스트리밍 | 로봇·차량 물리 학습 없음 | **연결**(드론·AV 장면의 3D Tiles import) |
-| 12 | Autodesk(Tandem, Revit, Fusion) | AEC 트윈 | BIM, 시설 트윈 | 좌석, 시설 단위 [U] | 창고·공장 BIM 데이터 원천 | 운영 트윈, 학습용 아님 | **연결**(BIM → SimReady 파이프라인) |
-| 13 | AVEVA(Schneider Electric) | 공정·해양 트윈 | AVEVA Marine·E3D, PI System | 엔터프라이즈 구독 | 조선·플랜트 엔지니어링 데이터 | 로봇 학습 없음 | **연결**(조선 Domain Pack 데이터 커넥터) |
-| 14 | Cognite | 산업 DataOps | Data Fusion, Atlas AI | 엔터프라이즈 SaaS | OT/IT 데이터 맥락화 | 물리·로봇 시뮬레이션 없음 | **관찰**(에너지·중공업 데이터 원천) |
-| 15 | Microsoft(Azure Digital Twins, Fabric Digital Twin Builder) | 하이퍼스케일러 | 그래프·IoT 트윈 | 연산·메시지 단위 과금 | 엔터프라이즈 데이터 통합 | Fabric 트윈 빌더는 2026-05 문서 기준 프리뷰, 물리 없음 | **관찰**(KPI 데이터 싱크로만 연결) |
-| 16 | AWS IoT TwinMaker | 하이퍼스케일러 | IoT 트윈 | 엔티티·API 과금 [U] | AWS 통합 | 정체(신규 고객 수용 여부 [U]) | **회피**. AWS는 GPU 인프라로만 사용 |
-| 17 | Applied Intuition | AV | Simian, Spectral, Neural Sim, Vehicle OS, 국방 자율화 | OEM당 연 수백만 달러 추정 [U] | 카테고리 선두(가치 USD 15B, ARR 약 USD 830M 추정 [U]) | AV·국방 중심, 조작·휴머노이드 약함, 고가 | **회피**(정면 경쟁 금지). 사용 OEM에 OSI·OpenSCENARIO로 데이터 공급 |
-| 18 | Foretellix | AV 검증 | Foretify, OpenSCENARIO DSL | 엔터프라이즈(비공개) | 커버리지 기반 안전 논증, 표준 영향력 | 외부 시뮬레이터 의존, 2026-01 감원 | **연결**: LLM → OpenSCENARIO DSL 출력 호환 |
-| 19 | dSPACE AURELION, IPG CarMaker, Siemens Prescan, Hexagon VTD, MathWorks RoadRunner | AV·HIL | ADAS 시뮬레이션, HIL | 좌석·노드 고정 + HIL 하드웨어, 좌석당 연 수만 달러 [U] | 형식 인증·HIL 워크플로, OEM 신뢰 | ML 네이티브 아님, 배치 학습 없음 | **연결**: FMI 3.0·ASAM 포맷으로 합성 센서 데이터 공급 |
-| 20 | rFpro AV elevate | AV 센서 | 다중 경로 레이 트레이싱, 180개 이상 실제 장소 트윈(노면 1 mm 정밀) | 독점 라이선스 | 엔지니어링급 센서 현실감 | 고가, OEM 협소 | **관찰**(센서 충실도 벤치마크 기준) |
-| 21 | Cognata | AV·국방 | SimCloud, AVBox(오프로드·국방) | 독점(누적 약 USD 27.8M [U]) | 국방·오프로드 전환 | 소규모 | **관찰**(Wave 3b 참고) |
-| 22 | aiMotive aiSim(Stellantis) | AV | ASIL-D 툴 인증 시뮬레이터, 재조명 가능 스플랫 | 독점 | 유일한 ASIL-D 툴 인증 | Stellantis 종속 | **관찰**(툴 인증 접근법 참고) |
-| 23 | CARLA | AV 오픈소스 | 0.10.0(UE 5.5), 0.9.16(Cosmos·NuRec 연동) | MIT 코드, CC-BY 자산, 무료 | 학계 표준 | 상용 지원 제한, 릴리스 느림 | **연결**(학계 고객 커넥터). 자산은 CC-BY 귀속 관리 |
-| 24 | Waabi World, Wayve GAIA-3, Waymo World Model, Tesla 월드 시뮬레이터 | 내부 신경 시뮬레이션 | 생성형 폐루프 시뮬레이터(판매 안 함) | 내부용 | 시뮬레이션 우선 개발의 상업적 증거 | 외부 판매 없음 | **관찰**: 범용 AV 시뮬레이터 시장 축소 신호 |
-| 25 | Parallel Domain | 합성 데이터 | AV 합성 센서 데이터, PD Replica | 구독(비공개) | 초기 선도 | 공개 개발 정체(GitHub) | **관찰**(경고 사례: 수평형 AV 데이터의 한계) |
-| 26 | Rendered.ai | 합성 데이터 | 합성 데이터 PaaS(anatools) | 구독 PaaS | 개발자 친화 | 소규모, 범용 도구 | **경쟁 회피**(도구가 아니라 결과물 판매) |
-| 27 | Bifrost | 합성 데이터 | 국방·항공·해양 합성 데이터 | 데이터셋·엔터프라이즈(Series A 약 USD 8M [U]) | 국방 틈새, 끈끈한 계약 | 소규모 | **관찰**(Air-gap 에디션 사업모델 참고) |
-| 28 | Duality AI(Falcon) | 합성 데이터·트윈 | UE 기반 Falcon 5.4, DARPA RACER, 미 육군 대드론 합성 데이터 | 엔터프라이즈·정부 계약 | 국방 합성 데이터 사업모델 검증 | UE 물리는 조작용으로 한계, 미국 국방 중심 | **관찰**(Wave 3b 최근접 유사 기업). 한국 국방 진출 시 경쟁 |
-| 29 | Scale AI / Surge AI | 사람 데이터 | 텔레옵·라벨링 데이터 서비스 | 작업·시간 단위, 프로젝트 USD 100k–수천만 [U] | 노동 규모, 프런티어 랩 관계 | 사람 데이터는 비싸고 느리다 | **파트너**: Mimic이 시연을 100배로 늘리고 Arena가 정책을 채점한다 |
-| 30 | **Lightwheel** | SimReady 자산 | SimReady 자산(비상업 무료), LW-BenchHub 268개 과제, leisaac, MJCF↔USD 변환기 | 상업 자산·데이터 서비스 비공개 [U] | 가장 가까운 유사 기업, NVIDIA 정렬, MuJoCo–USD 연결 | 시뮬 전용 평가, 무료 자산 비상업, 지역 거점 [U] | **경쟁**: 상업 라이선스, 실측 물리, 한국 SKU, 실셀 평가. 해외 **리셀러** 후보 |
-| 31 | **Hillbot / ManiSkill3** | SimReady 자산·벤치마크 | GPU 병렬 조작 시뮬레이션·렌더링 | 코드 Apache-2.0, 자산 CC BY-NC 4.0 | 빠른 시각 RL, Real2Sim 연구 계보 | 비상업 자산, 상업 실적 미확인 | **경쟁**: 벤치마크 호환 + 상업용 자산 팩으로 공백 공략 |
-| 32 | NVIDIA usd-content-agents | 자산 도구 | 재질·물성 분류·관절 추론·검증 자동화 | Apache-2.0 무료 | 수작업 SimReady 변환을 범용화 | 추정치 수준, 실측 없음 | **통합**(Bronze 단계 자동화). Silver·Gold로 차별화 |
-| 33 | **중국 데이터 팩토리**(51WORLD, Manycore SpatialVerse, AgiBot Genie Sim, Galbot) | 자산·데이터 | 저가 실내 장면, 대규모 실·합성 데이터셋 | 공격적 저가, 다수 공개 데이터셋 [U] | 규모, 원가, 정부 지원 | 국방·재벌·미국 연계 고객의 신뢰 장벽. AgiBot World·GO-1은 CC BY-NC-SA | **경쟁**: '신뢰할 수 있는 비중국·라이선스 청정 공급자' 포지션 |
-| 34 | Physical Intelligence | 로봇 FM | pi0, pi0-FAST, pi0.5 오픈 가중치(openpi 14.1k stars) | 가치 USD 5.6B [U] | 최고 수준 오픈 VLA | 실텔레옵 데이터 의존 | **판매(고객)** + 베이스 모델(가중치 약관 확인 전까지 pi0.5 차단) |
-| 35 | Skild AI | 로봇 FM | Skild Brain | 가치 약 USD 14B [U] | 대규모 시뮬레이션·사람 영상 학습 | 플랫폼 벤더 아님 | **판매(고객)**: 합성 데이터·평가 |
-| 36 | Figure AI | 휴머노이드 | Figure 03, Helix VLA | 가치 USD 39B [U] | 자본, 수직 통합 | 시뮬레이션 내재화 | **판매(고객)**: 평가·롱테일 데이터. LG 연결고리 활용 |
-| 37 | Field AI, Dyna, 1X, Agility, Apptronik | 로봇 FM·휴머노이드 | 로봇·모델 | 수억 달러대 조달 [U] | 학습 데이터·평가 예산 급증 | 대부분 파이프라인 내재화 | **판매(고객)**: 인증 자산, VLA 데이터 팩, Crucible 평가 |
 | 38 | **MORAI** | 한국 AV 시뮬레이터 | MORAI SIM Drive·Sky, HD맵 → 트윈, K-City, 국방 MOU | 상용 라이선스(Series B ₩250억, 누적 약 USD 24.9M, 고객 100곳 이상 [U]) | 국내 OEM·정부·국방 관계, 미국·독일 법인 | 조작·휴머노이드 RL 제한, 고전적 시뮬레이터 | **파트너**(AV 인식 데이터 유통). 해양에서는 도구가 아니라 데이터·평가로 차별화 |
-| 39 | **CyLab(씨이랩)** | 한국 합성 데이터 | 인식 합성 데이터, XAIVA, NVIDIA 파트너 [U] | 프로젝트 | 국내 레퍼런스, NVIDIA 관계 | 물리·정책·전이 측정 없음 | **경쟁**: 단순 SDG 가격 경쟁은 피하고 물리·정책·측정된 전이로 차별화 |
-| 40 | E8(이에이트) NDX PRO | 한국 도시·산업 트윈 | 자체 SPH/CFD(NFLOW), 스마트시티·공장 트윈 | 공공 조달 프로젝트 [U] | 공공 레퍼런스, 자체 솔버 | 로봇·ML 학습 역량 약함 | **회피**(도시 트윈 예산에서 경쟁하지 않는다) |
-| 41 | VIRNECT | 한국 XR 트윈 | XR 저작·트래킹 | SaaS·엔터프라이즈(적자 [U]) | 산업 XR 고객 | 물리·로봇 학습 없음, 재무 제약 | **파트너** 후보(XR 채널) |
-| 42 | NAVER LABS / NAVER Cloud | 한국 지도 트윈·클라우드 | ALIKE 매핑, ARC 로봇, 사우디 디지털 트윈, 약 60k GPU [U] | 프로젝트·클라우드 | 도시 규모 트윈, 소버린 클라우드 | 시뮬·학습 플랫폼 판매 안 함 | **파트너**(RT GPU 호스팅, co-sell). 도시 트윈은 **회피** |
 | 43 | 그룹 SI(Samsung SDS, LG CNS, SK AX, Hyundai AutoEver, POSCO DX, HD Hyundai 계열 IT) | 한국 SI | Siemens·Dassault·NVIDIA 기반 그룹 트윈 구축 | 내부 이전가격·SI | 고객 관계와 조달 장악 | 로봇 학습·합성 데이터 깊이 부족 | **파트너(리셀러)**. 내재화 위험은 계약 조항으로 통제(§6) |
-| 44 | RLWRLD | 한국 로봇 FM | RLDX-1(6.9B/8.1B VLA, 2026-05-06), LIBERO 97.8% | 코드 Apache-2.0, 가중치 비상업 | 국내 덱스터러스 VLA, 합성 증강 활용 | 가중치 비상업 | **판매(고객)** + 공동 마케팅. 가중치는 NEVER 목록 |
+| 17 | Applied Intuition | AV | Simian, Spectral, Neural Sim, Vehicle OS, 국방 자율화 | OEM당 연 수백만 달러 추정 [U] | 카테고리 선두(가치 USD 15B, ARR 약 USD 830M 추정 [U]) | AV·국방 중심, 조작·휴머노이드 약함, 고가 | **회피**(정면 경쟁 금지). 사용 OEM에 OSI·OpenSCENARIO로 데이터 공급 |
+| 34 | Physical Intelligence | 로봇 FM | pi0, pi0-FAST, pi0.5 오픈 가중치(openpi 14.1k stars) | 가치 USD 5.6B [U] | 최고 수준 오픈 VLA | 실텔레옵 데이터 의존 | **판매(고객)** + 베이스 모델(가중치 약관 확인 전까지 pi0.5 차단) |
+| 36 | Figure AI | 휴머노이드 | Figure 03, Helix VLA | 가치 USD 39B [U] | 자본, 수직 통합 | 시뮬레이션 내재화 | **판매(고객)**: 평가·롱테일 데이터. LG 연결고리 활용 |
 
 ### 4.1 배틀카드: 영업 현장에서 가장 자주 나올 반론 6가지
 
@@ -309,10 +283,10 @@ flowchart LR
 
 ### 5.4 시사점과 행동 규칙
 
-1. **30일 채택 규칙:** NVIDIA·DeepMind의 무료 공개는 원가 절감 기회다. 결과물 원가에 영향을 주는 릴리스는 30일 안에 평가하고, 채택 여부를 릴리스 트레인에 반영한다.
+1. **채택 기한 규칙:** NVIDIA·DeepMind의 무료 공개는 원가 절감 기회다. 결과물 원가에 영향을 주는 릴리스는 P1에 45일, P2부터 30일 안에 사이드 브랜치에서 검증 완료 후보로 만들고, 프로덕션 반영은 다음 릴리스 트레인에서 한다([03 §12.5](03-engine-selection-build-vs-buy.md)).
 2. **범용 기능 투자 금지:** NVIDIA가 6개월 안에 무료로 낼 수 있는 기능(범용 자산 자동화, 범용 학습 UI)에는 엔지니어링을 쓰지 않는다.
-3. **3구역 원칙 고수:** 독점 런타임은 NVIDIA 서면 조건을 받기 전까지 Zone F(내부 팩토리)의 산출물 생산에만 쓴다. NVAIE 예비비 ₩2.9억을 잡아 둔다.
-4. **GPU 사용량을 늘리는 파트너로 포지셔닝:** Inception → NPN 등재(M10 목표) → HMG·Samsung·SK·Naver Physical-AI 프로그램 공동 판매. 독점 조항은 받아들이지 않는다.
+3. **3구역 원칙 고수:** 독점 런타임은 NVIDIA 서면 조건을 받기 전까지 Zone F(내부 팩토리)의 산출물 생산에만 쓴다. 서면 조건 요청서는 D5(2026-10-23)에 보내고, 1차 회신은 M3, 최종 조건은 M10까지 받는다. NVAIE 예비비 ₩2.9억을 잡아 둔다.
+4. **GPU 사용량을 늘리는 파트너로 포지셔닝:** Inception → NPN 등재(M10 목표) → HMG·Samsung·SK·Naver 피지컬 AI 프로그램 공동 판매. 독점 조항은 받아들이지 않는다.
 5. **RT GPU 경제성 관리:** RT 풀(L40S, RTX PRO 6000)과 TRAIN 풀(H100/H200/B200)을 분리한다. 정부 B200/H200 배정분은 RTX 렌더링에 절대 쓰지 않는다.
 
 ---
@@ -326,7 +300,7 @@ flowchart LR
 | 그룹 | GPU·투자 신호 | 내재화 역량과 진행 | 스스로 만들 것 | 만들 수 없거나 사야 하는 것 | 우리의 진입점 | 내재화 위험 |
 |---|---|---|---|---|---|---|
 | **Samsung** | Blackwell 약 50k, Omniverse 'AI Megafactory' [U]. Rainbow Robotics 최대주주(약 35%) [U] | Samsung SDS, Samsung Research | 팹·공장 Omniverse 트윈, 내부 데이터 인프라 | 휴머노이드 중립 평가, 협력사 생태계 데이터, 그룹 간 공유 가능한 SKU 자산 | Rainbow Robotics(Wave 2 VLA 데이터·Crucible), 협력사(바우처), Samsung SDS 리셀러 | 높음 |
-| **Hyundai Motor Group** | Blackwell 약 50k, 약 USD 3B Physical-AI 클러스터 [U]. Boston Dynamics Atlas 양산형 공개(CES 2026) [U] | 42dot, Hyundai AutoEver, Boston Dynamics | AV·SDV 시뮬레이션, Atlas 학습 스택 | 1·2차 협력사 셀 자동화, Arena 중립 평가, 한국 SKU | 협력사 Cell-to-Policy PoC, Hyundai AutoEver 리셀러, HMGMA(조지아) 추종 | 높음 |
+| **Hyundai Motor Group** | Blackwell 약 50k, 약 USD 3B 피지컬 AI 클러스터 [U]. Boston Dynamics Atlas 양산형 공개(CES 2026) [U] | 42dot, Hyundai AutoEver, Boston Dynamics | AV·SDV 시뮬레이션, Atlas 학습 스택 | 1·2차 협력사 셀 자동화, Arena 중립 평가, 한국 SKU | 협력사 Cell-to-Policy PoC, Hyundai AutoEver 리셀러, HMGMA(조지아) 추종 | 높음 |
 | **SK** | Blackwell 약 50k, 제조 AI 클라우드 [U] | SK AX | 제조 AI 클라우드 인프라 | 버티컬 콘텐츠, 측정된 데이터 | SK AX 리셀러, AI팩토리 과제 공급기업 | 중간 |
 | **LG** | Bear Robotics 과반 지분 [U], LG Technology Ventures의 Figure 투자 [U] | LG CNS | 서비스 로봇 스택 | 학습 데이터, 평가 | LG CNS 채널, Bear Robotics 데이터 공급 | 중간 |
 | **HD Hyundai** | 삼호 조선소 Blackwell Omniverse + Siemens 트윈, Palantir 협력. 'Future of Shipyard'로 2030년까지 생산 시간 30% 단축 목표. Avikus 약 350척 운용 [U] | HD Hyundai 계열 IT, HD Hyundai Robotics | 조선소 공정 트윈(Siemens·NVIDIA) | 작업장 로봇 셀 스킬, 해양 인식 데이터, 센서 검증 프로파일 | HD Hyundai Robotics 작업장 핸들링 셀(Wave 1). 해양 인식(Wave 3) | 중간 |
@@ -340,7 +314,7 @@ flowchart LR
 | 1 | **자기 인증의 이해상충** | 재벌은 자사 로봇이나 경쟁 그룹 로봇을 스스로 채점해 조달·투자 근거로 쓸 수 없다 | K-Physical AI Arena, 공동서명 인증서 |
 | 2 | **협력사 역량 공백** | 1·2차 협력사는 RL·시뮬 팀이 없다. 모회사는 협력사마다 맞춤 트윈을 만들어 줄 수 없다 | 바우처 연계 결과물 SKU, Studio |
 | 3 | **그룹 간 중립 자산** | 한 그룹이 만든 SKU·셀 자산은 경쟁 그룹이 쓰지 않는다. 중립 공급자의 자산은 모두가 쓴다 | 한국 콘텐츠 라이브러리, 마켓플레이스 |
-| 4 | **sim2real 과학 인재 희소** | Warp/CUDA 접촉 물리, 센서 물리, sim2real 과학자는 그룹 IT 계열사의 주력 인재가 아니다 | Fidelity Lab, Head of Fidelity & Evaluation |
+| 4 | **sim2real 과학 인재 희소** | Warp/CUDA 접촉 물리, 센서 물리, sim-to-real 과학자는 그룹 IT 계열사의 주력 인재가 아니다 | Fidelity Lab, Head of Fidelity & Evaluation |
 | 5 | **SI 계열사의 인센티브** | SI 계열사는 인프라 구축과 SI 마진으로 평가받는다. 측정 과학에 투자할 동기가 약하다 | SI 리셀러 마진을 주고 측정·인증은 우리가 맡는다 |
 
 ### 6.3 대응 전략과 계약 조항
@@ -369,7 +343,7 @@ flowchart LR
 | NAVER Cloud, KT Cloud, NHN Cloud | 파트너(인프라) | 소버린 클라우드. NHN·Naver는 정부 GPU(B200/H200) 운영사로 알려져 있다 [U] | RT GPU 공급·MIG·R580 이미지를 M2까지 확인한다(V4). CSAP 경유 공공 판매 |
 | 그룹 SI | 파트너(리셀러)이자 내재화 위험 | 그룹 트윈 구축 | 리셀러 마진, IP 유지 조항 |
 | RLWRLD | 고객·공동 마케팅 | RLDX-1 공개(2026-05-06), 합성 증강 사용 | 합성 데이터 공급, 공동 벤치마크 |
-| KTL·KIRIA·TTA | 파트너(Arena 공동서명) | 시험·인증 기관 | 공동서명 MOU M10, 거버넌스 헌장 |
+| KTL·KIRIA·TTA | 파트너(Arena 공동서명) | 시험·인증 기관 | 헌장 초안 M8 → 공동서명 MOU M10(2027-08-27) → 헌장 서명 M12 초(K-Pick Challenge 2027-10-22 이전). 지연 시 K-Pick은 비순위 공개 시연 |
 | KAIST·SNU·ETRI | 파트너(IITP 컨소시엄) | 센서 물리 공동연구 | 레이더·EO/IR 프로파일 R&D를 지분 희석 없이 수행 |
 | KRISO·KR | 파트너(해양 센서 검증) [U] | 해양 실측 캠페인 | Wave 3 센서 오차 막대 공개 |
 
@@ -413,25 +387,25 @@ flowchart LR
 | W1 | **PLM 트윈 ↔ 학습 가능한 시뮬레이터의 간극** | Siemens·Dassault 트윈은 운동학·PLC 중심이라 학습시킬 수 없다. 리서치가 '가장 큰 화이트스페이스'로 지목했다 | 재벌 공장 트윈 확산 | OpenUSD 커넥터, Sim Kernel | **채널 메시지로 채택**: "기존 PLM 트윈을 위한 AI 학습 레이어". 커넥터는 P2 |
 | W2 | **측정된 상업 라이선스 SimReady 자산** | Lightwheel 무료 자산과 ManiSkill 자산은 비상업, Hunyuan3D 2.1은 한국 제외, content agent는 추정 수준 | 로봇 FM 기업의 자산·데이터 수요 | Forge, Fidelity Lab, 라이선스 레지스트리, 한국 SKU | **핵심(Wave 1)** |
 | W3 | **중립 sim+real 평가·인증** | LW-BenchHub는 시뮬 전용, RoboArena는 학술용(DROID 전용). OEM·재벌은 스스로 인증할 수 없다 | K-Humanoid Alliance, 조달의 제3자 증빙 수요 | Crucible, 공동서명 헌장, 실셀 | **핵심(Wave 2, M12–)** |
-| W4 | **소버린·에어갭 Physical-AI 데이터 팩토리** | 독점 런타임은 재배포·텔레메트리 약관이 확인되지 않았다. 국방·재벌은 온프렘을 요구한다 | 260k GPU 배정 [U], 국방 AI 데이터 | 허용형 코어, 서명 SBOM, 텔레메트리 없음 | **에디션으로 채택**: Sovereign GA M18, Air-gap M27–(트리거) |
+| W4 | **소버린·에어갭 피지컬 AI 데이터 팩토리** | 독점 런타임은 재배포·텔레메트리 약관이 확인되지 않았다. 국방·재벌은 온프렘을 요구한다 | 260k GPU 배정 [U], 국방 AI 데이터 | 허용형 코어, 서명 SBOM, 텔레메트리 없음 | **에디션으로 채택**: Sovereign GA M18, Air-gap M27–(트리거) |
 | W5 | **해양·조선 인식과 시뮬레이션** | 해양 시뮬레이션에는 상업적 선두가 없다. 레이더·EO/IR 검증이 어렵다 | 자율운항선박법(2025-01-03) 성능 검증, Avikus 약 350척 [U] | 클린룸 Fossen, Chrono FSI, 조선 앵커 | **옵션**: Wave 3(M25–). 트리거는 ARR ₩30억 이상 또는 확정 금액 ₩5억 이상 앵커 계약이며, 소버린 에디션 GA와 센서 검증 프로파일이 함께 갖춰져야 한다 |
 
 ```mermaid
 quadrantChart
-    title White spaces attractiveness vs right to win
-    x-axis Low right to win --> High right to win
-    y-axis Low attractiveness --> High attractiveness
-    quadrant-1 Core bets
-    quadrant-2 Partner or channel
-    quadrant-3 Avoid
-    quadrant-4 Options to keep warm
-    W1 PLM to learning layer: [0.52, 0.74]
-    W2 Measured SimReady assets: [0.84, 0.70]
-    W3 Neutral eval and certification: [0.80, 0.82]
-    W4 Sovereign air-gap factory: [0.62, 0.58]
-    W5 Maritime perception: [0.40, 0.56]
-    Generic AV simulator: [0.10, 0.30]
-    Generic synthetic data tools: [0.28, 0.22]
+    title 화이트스페이스: 매력도 × 승리 가능성
+    x-axis 승리 가능성 낮음 --> 높음
+    y-axis 매력도 낮음 --> 높음
+    quadrant-1 핵심 베팅
+    quadrant-2 파트너·채널
+    quadrant-3 회피
+    quadrant-4 유지할 옵션
+    W1 PLM 학습 레이어: [0.52, 0.74]
+    W2 측정된 SimReady 자산: [0.84, 0.70]
+    W3 중립 평가·인증: [0.80, 0.82]
+    W4 소버린 에어갭 팩토리: [0.62, 0.58]
+    W5 해양 인식: [0.40, 0.56]
+    범용 AV 시뮬레이터: [0.10, 0.30]
+    범용 합성 데이터 도구: [0.28, 0.22]
 ```
 
 **선택 논리**
@@ -498,7 +472,7 @@ sequenceDiagram
 | 측정 가능한 인수 기준과 책임 한도 | 25% | 계약서의 mAP·성공률 숫자, 책임 상한 = 계약 금액 |
 | 보안·배포 형태(온프렘, VPC, 데이터 거주) | 20% | Sovereign 에디션, 데이터 거주 태그, ISMS-P(M18 취득) |
 | 총소유비용·속도 | 20% | 고정가 PoC, 영상 → 피킹 스킬 24시간(P1) |
-| 레퍼런스·제3자 증빙 | 15% | K-Pick Challenge(M12), 시험성적서 |
+| 레퍼런스·제3자 증빙 | 15% | K-Pick Challenge(M12, 2027-10-22), 시험성적서 |
 | 생태계 호환성(NVIDIA·PLM) | 10% | Isaac Lab·OpenUSD 호환, PLM 커넥터 |
 | 정부 지원 연계 | 10% | AI·데이터 바우처 공급기업 등록(2026.12–2027.01) |
 
@@ -522,7 +496,7 @@ sequenceDiagram
 | 10 | Genesis AI의 데이터 외부 판매 | 제품 발표 | 상용 데이터·평가 상품 출시 | 중간 / 중간 | 고객 후보에서 경쟁사로 재분류. 비CUDA 헤지 재평가 | CTO + BD | 분기 |
 | 11 | Applied Intuition 한국 국방 진출 | 국방 조달 공고 | 국내 수주 | 중간 / 중간 | Air-gap 에디션의 국산·출처 확인 포지션 강화 | CEO | 반기 |
 | 12 | K-Humanoid Alliance 데이터·평가 파트너 선정 | KEIT·MOTIE 공고 | 작업패키지 공모 | 높음 / 높음 | Crucible 기반 컨소시엄 제안 즉시 제출 | BD + Head of Fidelity | 월간 |
-| 13 | 2027 정부 예산의 Physical-AI 항목 | 예산안, IRIS | 신규 과제 공고 | 높음 / 중간 | 공통 제안 키트 재사용, 중복 매트릭스 첨부 | BD | 월간 |
+| 13 | 2027 정부 예산의 피지컬 AI 항목 | 예산안, IRIS | 신규 과제 공고 | 높음 / 중간 | 공통 제안 키트 재사용, 중복 매트릭스 첨부 | BD | 월간 |
 | 14 | 시뮬레이션 신뢰성 규제 수용(UN ADS, ISO 34505, 자율운항선박 성능 검증) | 규정 원문, KATRI·KRISO | 시뮬레이션 결과를 인증 증거로 인정 | 중간 / 높음 | Wave 3 트리거 재평가, Crucible 인증서의 규제 정합성 확보 | Head of Fidelity | 반기 |
 | 15 | MORAI의 조작·휴머노이드 진입 | 제품 발표, 채용 | 로봇 학습 제품 출시 | 낮음 / 중간 | 파트너십 범위 재협상, 해양 영역 경계 명확화 | CEO | 반기 |
 | 16 | RT GPU 공급·가격 급변 | SkyPilot 카탈로그, 국내 CSP 견적 | 서울 RT 단가 20% 이상 상승 또는 가동률 80% 초과 지속 | 중간 / 높음 | 자체 서버 2호기 조기 구매 검토, 토큰 가격 분기 재산정 | Platform Lead | 월간 |
@@ -534,8 +508,8 @@ sequenceDiagram
 **결론: 시장 수치는 바텀업만 쓰고, 경쟁은 레이어별 동사(통합·연결·파트너·경쟁·판매)로 관리하며, 트리거는 분기마다 점검한다.**
 
 **확정 사항**
-1. 사업 규모의 근거는 바텀업 SAM(한국 ₩150–800억, 글로벌 USD 0.1–0.3B)과 SOM(2029 매출 ₩110억, ARR ₩70억)만 쓴다. 탑다운 수치는 [U] 표기와 함께 보조 자료로만 쓴다.
-2. 정면 경쟁 대상은 Lightwheel, Hillbot/ManiSkill, CyLab, 중국 데이터 팩토리 4곳으로 한정한다. Applied Intuition과 AV 시뮬레이터와는 경쟁하지 않는다.
+1. 사업 규모의 근거는 바텀업 SAM(한국 ₩150–800억, 글로벌 USD 0.1–0.3B)과 그에 대한 요구 점유율(2029 목표 매출 ₩110억·ARR ₩70억 = 한국 SAM 중간값의 약 14%, 글로벌 SAM의 0.6–2.1%)만 쓴다. 탑다운 수치는 [U] 표기와 함께 보조 자료로만 쓴다.
+2. 정면 경쟁 대상은 Lightwheel, Hillbot/ManiSkill, CyLab, 중국 데이터 팩토리 4곳으로 한정한다. Applied Intuition과 도로 AV 시뮬레이터와는 경쟁하지 않는다. 차량 트윈 자체는 Mobility Pack α(M18–M24)로 만든다.
 3. 핵심 화이트스페이스는 W2(측정된 상업용 SimReady 자산)와 W3(중립 sim+real 평가·인증)다.
 4. 재벌 대응은 협력사·로봇 OEM 집중, SI 리셀러, IP 유지 조항의 세 축으로 한다.
 
@@ -543,7 +517,7 @@ sequenceDiagram
 |---|---|---|
 | 탑다운 시장 수치(디지털 트윈, 합성 데이터, 로보틱스 시뮬) 최신 애널리스트 보고서로 재검증 | CFO + BD | IR 자료 사용 전(Series A 데이터룸, M9 이전) |
 | 경쟁사 가치평가·ARR(Applied Intuition, Skild 등)과 Lightwheel 지역 거점 1차 출처 확인 | BD | IR 자료 사용 전 |
-| 앵커 3곳(로봇 OEM·조선 로보틱스·물류/AI팩토리) 타깃 확정, §7.3 기준으로 점수화 | CEO + BD | D1–30(2026.11 중순) |
+| 앵커 3곳(로봇 OEM·조선 로보틱스·물류/AI팩토리) 타깃 확정, §7.3 기준으로 점수화 | CEO + BD | D1–30(D30 = 2026-11-17) |
 | 앵커 LOI 3건 서명 | CEO | M3(2027.01) |
 | 국내 물류·조선사 실제 수요와 데이터 공유 의사 인터뷰(최소 6곳) | BD | M3(2027.01) |
 | 세그먼트별 실측 ACV 10건 이상 수집, 한국 SAM 재산정 | BD + CFO | 2027년 말 |
@@ -551,4 +525,47 @@ sequenceDiagram
 | MORAI AV 인식 데이터 파트너십 MOU 협의 개시 | CEO | M6(2027.04) |
 | SI 계열사 리셀러 계약 템플릿(IP 유지, 도구 이전 별도 SKU 조항) | 라이선스·법무 매니저 | M3(2027.01) |
 | 전략 트리거 워치리스트 대시보드 구축, 분기 이사회 보고 시작 | CEO 오피스 | 2027 Q1 이사회 |
-| NVIDIA Korea 서면 조건 요청서 발송(16개 항목) | CEO + 라이선스 매니저 | D1–30 |
+| NVIDIA Korea 서면 조건 요청서 발송(16개 항목) | CEO + 라이선스 매니저 | D5(2026-10-23) |
+
+---
+
+## 부록 02-A. 전체 경쟁사 표(나머지 34개 행)
+
+§4 본문의 10개 행(정면 경쟁 4곳, 핵심 파트너·고객 6곳)을 뺀 나머지다. 번호는 44개 행 전체의 일련번호이고, 대응 동사는 §4와 같다. 가치평가·투자·가격 수치는 모두 [U]다.
+
+| # | 기업 | 레이어 | 제공물 | 가격 모델 | 강점 | 약점 | AICHEMIST 대응 |
+|---|---|---|---|---|---|---|---|
+| 2 | Newton(Linux Foundation) | 엔진 | GPU 물리 엔진(MJWarp, VBD, Kamino, MPM) | Apache-2.0 무료 | 중립 거버넌스, 처리량 최상위 | float32, GPU 비결정적, 60 DoF 초과 메커니즘에 약함 | **통합(기본 백엔드) + 업스트림 기여** |
+| 3 | Google DeepMind(MuJoCo, MJWarp, Gemini Robotics, Intrinsic) | 엔진·모델 | MuJoCo 3.15, sysid 툴박스, Gemini Robotics 1.5 [U] | Apache-2.0 / API | 가장 많이 인용되는 접촉 물리, MJCF 표준 | 사실적 렌더링 없음, 최종 사용자 플랫폼 없음 | **통합**(재현·인증 백엔드). HMG·Boston Dynamics 계정 관련 동향 **관찰** |
+| 4 | Genesis AI(Genesis World) | 엔진·모델 | 멀티피직스 엔진 1.4.3, 자체 모델 GENE-26.5, Nyx 렌더러(폐쇄) | Apache-2.0(엔진). 시드 USD 105M [U] | 변형체·유체를 하나의 API로, 커뮤니티 약 30k stars | 산업·OpenUSD 도구 약함, 43M FPS 주장 비판받음 | **관찰**(비CUDA 헤지) + 데이터·평가 **판매** 후보 |
+| 5 | Epic Unreal Engine | 엔진 | UE5, Cesium for Unreal | 비게임 기업(연매출 USD 1M 초과) 약 USD 1,850/석/년 [U] | 최고 수준의 사실적 렌더링, 인재 풀 | Chaos 물리는 로봇용이 아님, 배치 RL 없음 | **회피**(Zone T 렌더는 WebGPU·3DGUT). 고객 보유 시 연결 |
+| 6 | Unity(Unity 6, Unity Industry) | 엔진 | 실시간 3D, 브라우저 배포 | 좌석 구독(Unity Industry 약 USD 4,950/석/년 [U]) | 개발자 저변 | PhysX 4 세대 물리, 로봇 투자 축소 | **회피** |
+| 7 | Siemens Xcelerator(Process Simulate, Teamcenter, Simcenter, Altair) | PLM | 공장·라인 엔지니어링 트윈, Omniverse 연동 | 좌석 + Xcelerator-as-a-Service, Altair 유닛 과금 | 한국 조선·자동차 설치 기반, 엔지니어링 데이터 장악 | 운동학·PLC 중심, 학습 불가, 고가 | **연결**: Process Simulate·Teamcenter → USD 학습 환경 커넥터 |
+| 8 | Dassault 3DEXPERIENCE(CATIA, DELMIA, SIMULIA) | PLM | 가상 트윈, 조선·항공 설계 | 역할·좌석 라이선스 | 한국 조선·항공 설계 표준 | 폐쇄적 생태계, 로봇 학습 없음 | **연결**: CATIA·DELMIA → USD(조선 Domain Pack) |
+| 9 | Synopsys + Ansys | PLM·솔버 | AVxcelerate Sensors 2026 R1, Fluent, SimAI | 엔터프라이즈 좌석, 고가 | 레이더·EM·CFD 솔버 정밀도 최고 | 실시간·배치 RL 불가, 고가 | **파트너**: 해양·국방 레이더 충실도 검증의 기준 솔버 후보 |
+| 10 | PTC(Creo, Windchill, Vuforia) | PLM | CAD·PLM, ThingWorx·Kepware 매각 합의 보도 [U] | 좌석 구독 | CAD 기반 | IoT 트윈 사업 후퇴 | **연결**(소규모 커넥터만) |
+| 11 | Bentley iTwin + Cesium | 인프라 트윈 | 도시·인프라 지리공간, 3D Tiles | 소비 기반, Cesium ion 구독 | 도시 규모 스트리밍 | 로봇·차량 물리 학습 없음 | **연결**(드론·AV 장면의 3D Tiles import) |
+| 12 | Autodesk(Tandem, Revit, Fusion) | AEC 트윈 | BIM, 시설 트윈 | 좌석, 시설 단위 [U] | 창고·공장 BIM 데이터 원천 | 운영 트윈, 학습용 아님 | **연결**(BIM → SimReady 파이프라인) |
+| 13 | AVEVA(Schneider Electric) | 공정·해양 트윈 | AVEVA Marine·E3D, PI System | 엔터프라이즈 구독 | 조선·플랜트 엔지니어링 데이터 | 로봇 학습 없음 | **연결**(조선 Domain Pack 데이터 커넥터) |
+| 14 | Cognite | 산업 DataOps | Data Fusion, Atlas AI | 엔터프라이즈 SaaS | OT/IT 데이터 맥락화 | 물리·로봇 시뮬레이션 없음 | **관찰**(에너지·중공업 데이터 원천) |
+| 15 | Microsoft(Azure Digital Twins, Fabric Digital Twin Builder) | 하이퍼스케일러 | 그래프·IoT 트윈 | 연산·메시지 단위 과금 | 엔터프라이즈 데이터 통합 | Fabric 트윈 빌더는 2026-05 문서 기준 프리뷰, 물리 없음 | **관찰**(KPI 데이터 싱크로만 연결) |
+| 16 | AWS IoT TwinMaker | 하이퍼스케일러 | IoT 트윈 | 엔티티·API 과금 [U] | AWS 통합 | 정체(신규 고객 수용 여부 [U]) | **회피**. AWS는 GPU 인프라로만 사용 |
+| 18 | Foretellix | AV 검증 | Foretify, OpenSCENARIO DSL | 엔터프라이즈(비공개) | 커버리지 기반 안전 논증, 표준 영향력 | 외부 시뮬레이터 의존, 2026-01 감원 | **연결**: LLM → OpenSCENARIO DSL 출력 호환 |
+| 19 | dSPACE AURELION, IPG CarMaker, Siemens Prescan, Hexagon VTD, MathWorks RoadRunner | AV·HIL | ADAS 시뮬레이션, HIL | 좌석·노드 고정 + HIL 하드웨어, 좌석당 연 수만 달러 [U] | 형식 인증·HIL 워크플로, OEM 신뢰 | ML 네이티브 아님, 배치 학습 없음 | **연결**: FMI 3.0·ASAM 포맷으로 합성 센서 데이터 공급 |
+| 20 | rFpro AV elevate | AV 센서 | 다중 경로 레이 트레이싱, 180개 이상 실제 장소 트윈(노면 1 mm 정밀) | 독점 라이선스 | 엔지니어링급 센서 현실감 | 고가, OEM 협소 | **관찰**(센서 충실도 벤치마크 기준) |
+| 21 | Cognata | AV·국방 | SimCloud, AVBox(오프로드·국방) | 독점(누적 약 USD 27.8M [U]) | 국방·오프로드 전환 | 소규모 | **관찰**(Wave 3b 참고) |
+| 22 | aiMotive aiSim(Stellantis) | AV | ASIL-D 툴 인증 시뮬레이터, 재조명 가능 스플랫 | 독점 | 유일한 ASIL-D 툴 인증 | Stellantis 종속 | **관찰**(툴 인증 접근법 참고) |
+| 23 | CARLA | AV 오픈소스 | 0.10.0(UE 5.5), 0.9.16(Cosmos·NuRec 연동) | MIT 코드, CC-BY 자산, 무료 | 학계 표준 | 상용 지원 제한, 릴리스 느림 | **연결**(학계 고객 커넥터). 자산은 CC-BY 귀속 관리 |
+| 24 | Waabi World, Wayve GAIA-3, Waymo World Model, Tesla 월드 시뮬레이터 | 내부 신경 시뮬레이션 | 생성형 폐루프 시뮬레이터(판매 안 함) | 내부용 | 시뮬레이션 우선 개발의 상업적 증거 | 외부 판매 없음 | **관찰**: 범용 AV 시뮬레이터 시장 축소 신호 |
+| 25 | Parallel Domain | 합성 데이터 | AV 합성 센서 데이터, PD Replica | 구독(비공개) | 초기 선도 | 공개 개발 정체(GitHub) | **관찰**(경고 사례: 수평형 AV 데이터의 한계) |
+| 26 | Rendered.ai | 합성 데이터 | 합성 데이터 PaaS(anatools) | 구독 PaaS | 개발자 친화 | 소규모, 범용 도구 | **경쟁 회피**(도구가 아니라 결과물 판매) |
+| 27 | Bifrost | 합성 데이터 | 국방·항공·해양 합성 데이터 | 데이터셋·엔터프라이즈(Series A 약 USD 8M [U]) | 국방 틈새, 끈끈한 계약 | 소규모 | **관찰**(Air-gap 에디션 사업모델 참고) |
+| 28 | Duality AI(Falcon) | 합성 데이터·트윈 | UE 기반 Falcon 5.4, DARPA RACER, 미 육군 대드론 합성 데이터 | 엔터프라이즈·정부 계약 | 국방 합성 데이터 사업모델 검증 | UE 물리는 조작용으로 한계, 미국 국방 중심 | **관찰**(Wave 3b 최근접 유사 기업). 한국 국방 진출 시 경쟁 |
+| 29 | Scale AI / Surge AI | 사람 데이터 | 텔레옵·라벨링 데이터 서비스 | 작업·시간 단위, 프로젝트 USD 100k–수천만 [U] | 노동 규모, 프런티어 랩 관계 | 사람 데이터는 비싸고 느리다 | **파트너**: Mimic이 시연을 100배로 늘리고 Arena가 정책을 채점한다 |
+| 32 | NVIDIA usd-content-agents | 자산 도구 | 재질·물성 분류·관절 추론·검증 자동화 | Apache-2.0 무료 | 수작업 SimReady 변환을 범용화 | 추정치 수준, 실측 없음 | **통합**(Bronze 단계 자동화). Silver·Gold로 차별화 |
+| 35 | Skild AI | 로봇 FM | Skild Brain | 가치 약 USD 14B [U] | 대규모 시뮬레이션·사람 영상 학습 | 플랫폼 벤더 아님 | **판매(고객)**: 합성 데이터·평가 |
+| 37 | Field AI, Dyna, 1X, Agility, Apptronik | 로봇 FM·휴머노이드 | 로봇·모델 | 수억 달러대 조달 [U] | 학습 데이터·평가 예산 급증 | 대부분 파이프라인 내재화 | **판매(고객)**: 인증 자산, VLA 데이터 팩, Crucible 평가 |
+| 40 | E8(이에이트) NDX PRO | 한국 도시·산업 트윈 | 자체 SPH/CFD(NFLOW), 스마트시티·공장 트윈 | 공공 조달 프로젝트 [U] | 공공 레퍼런스, 자체 솔버 | 로봇·ML 학습 역량 약함 | **회피**(도시 트윈 예산에서 경쟁하지 않는다) |
+| 41 | VIRNECT | 한국 XR 트윈 | XR 저작·트래킹 | SaaS·엔터프라이즈(적자 [U]) | 산업 XR 고객 | 물리·로봇 학습 없음, 재무 제약 | **파트너** 후보(XR 채널) |
+| 42 | NAVER LABS / NAVER Cloud | 한국 지도 트윈·클라우드 | ALIKE 매핑, ARC 로봇, 사우디 디지털 트윈, 약 60k GPU [U] | 프로젝트·클라우드 | 도시 규모 트윈, 소버린 클라우드 | 시뮬·학습 플랫폼 판매 안 함 | **파트너**(RT GPU 호스팅, co-sell). 도시 트윈은 **회피** |
+| 44 | RLWRLD | 한국 로봇 FM | RLDX-1(6.9B/8.1B VLA, 2026-05-06), LIBERO 97.8% | 코드 Apache-2.0, 가중치 비상업 | 국내 덱스터러스 VLA, 합성 증강 활용 | 가중치 비상업 | **판매(고객)** + 공동 마케팅. 가중치는 NEVER 목록 |
